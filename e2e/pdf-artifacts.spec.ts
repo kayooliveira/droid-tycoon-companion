@@ -37,6 +37,7 @@ async function seedPt(page: import('@playwright/test').Page) {
 }
 
 test('export sample PDFs (pt-BR)', async ({ page }) => {
+  test.setTimeout(120_000)
   fs.mkdirSync(ARTIFACTS, { recursive: true })
   await seedPt(page)
 
@@ -63,6 +64,6 @@ test('export sample PDFs (pt-BR)', async ({ page }) => {
     })
   }
 
-  rasterize('pdf-ciclo-guia-pt.pdf', 'pdf-ciclo-guia-pt-page', 3)
-  rasterize('pdf-progresso-pt.pdf', 'pdf-progresso-pt-page', 5)
+  rasterize('pdf-ciclo-guia-pt.pdf', 'pdf-ciclo-guia-pt-page', 7)
+  rasterize('pdf-progresso-pt.pdf', 'pdf-progresso-pt-page', 8)
 })

@@ -94,7 +94,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,webp,json,woff2,svg}'],
+        globPatterns: ['**/*.{js,css,html,webp,json,woff2,svg,ttf}'],
         globIgnores: [
           '**/manifest.webmanifest',
           '**/pwa-*.png',
