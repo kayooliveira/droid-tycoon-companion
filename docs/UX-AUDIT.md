@@ -2,7 +2,7 @@
 
 Data: 2026-11-01 · Viewports: mobile 390×844, desktop 1280×800 · Preview: `npm run build && npm run preview`
 
-Screenshots: `docs/audit-screenshots/before/` (pré) e `docs/audit-screenshots/after/` (pós).
+Screenshots: `docs/audit-screenshots/after/` (ver README — não há “before” fiel pré-rodada 3 no repo).
 
 ## Lighthouse (mobile, http://127.0.0.1:4173/)
 

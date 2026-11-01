@@ -21,5 +21,6 @@ describe('FusionLabPage', () => {
     )
     expect(screen.getByText(/Three of the same droid/i)).toBeInTheDocument()
     expect(screen.queryByText(/\{"id":"tier-up"/)).not.toBeInTheDocument()
+    expect(screen.getAllByText(/Result takes the lowest tier/i)).toHaveLength(1)
   })
 })

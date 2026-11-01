@@ -3,6 +3,16 @@ import { renderShareProgressCard } from './shareProgressCard'
 
 describe('renderShareProgressCard', () => {
   it('exports a PNG blob', async () => {
+    vi.stubGlobal(
+      'Image',
+      class {
+        onload: (() => void) | null = null
+        onerror: (() => void) | null = null
+        set src(_: string) {
+          queueMicrotask(() => this.onload?.())
+        }
+      },
+    )
     vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
       createLinearGradient: () => ({ addColorStop: () => {} }),
       fillRect: () => {},
@@ -11,6 +21,11 @@ describe('renderShareProgressCard', () => {
       arcTo: () => {},
       closePath: () => {},
       stroke: () => {},
+      fill: () => {},
+      clip: () => {},
+      save: () => {},
+      restore: () => {},
+      drawImage: () => {},
       fillText: () => {},
       fillStyle: '',
       strokeStyle: '',

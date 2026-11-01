@@ -30,6 +30,7 @@ export function FusionLabPage() {
   }, [search])
 
   const helpful = recipes.filter((f) => upcomingIds.has(f.resultDroidId))
+  const resultTierNote = gameData.fusions.find((f) => f.resultTierRule)?.resultTierRule
 
   return (
     <div className="space-y-6">
@@ -64,6 +65,9 @@ export function FusionLabPage() {
             </li>
           ))}
         </ul>
+        {resultTierNote ? (
+          <p className="text-xs text-zinc-400 border-t border-white/10 pt-3">{resultTierNote}</p>
+        ) : null}
         <p className="text-xs text-zinc-500">{t('fusion.rulesFootnote')}</p>
       </GlassCard>
 
@@ -98,18 +102,17 @@ function RecipeCard({ fusion }: { fusion: FusionRecipe }) {
   const { t } = useTranslation()
   const result = droidById.get(fusion.resultDroidId)
   return (
-    <GlassCard className="space-y-3">
-      <div className="flex items-center gap-3">
+    <GlassCard className="py-3 px-4">
+      <div className="flex items-center gap-3 flex-wrap">
         {result ? <DroidImage droid={result} size="sm" /> : null}
         <div className="min-w-0 flex-1">
-          <p className="font-medium">{result?.name ?? fusion.resultDroidId}</p>
-          {fusion.resultTierRule ? (
-            <p className="text-xs text-zinc-500">{fusion.resultTierRule}</p>
-          ) : null}
+          <p className="font-medium text-sm">{result?.name ?? fusion.resultDroidId}</p>
         </div>
-        <Badge tone="warn">{t(`confidence.${fusion.confidence ?? 'partial'}`)}</Badge>
+        <Badge tone="warn" className="shrink-0">
+          {t(`confidence.${fusion.confidence ?? 'partial'}`)}
+        </Badge>
       </div>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1.5 mt-2">
         {fusion.ingredients.map((ing) => {
           const d = droidById.get(ing.droidId)
           return (
