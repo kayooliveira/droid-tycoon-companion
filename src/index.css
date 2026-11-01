@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;600;700&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Orbitron', var(--font-sans);
+
+  --color-holo-50: #eef6ff;
+  --color-holo-100: #d9ebff;
+  --color-holo-200: #bcdcff;
+  --color-holo-300: #8ec5ff;
+  --color-holo-400: #59a3ff;
+  --color-holo-500: #3380ff;
+  --color-holo-600: #1d5ff5;
+  --color-holo-700: #164be1;
+  --color-holo-800: #183eb6;
+  --color-holo-900: #19388f;
+
+  --color-surface-950: #070b12;
+  --color-surface-900: #0c121c;
+  --color-surface-850: #111827;
+  --color-surface-800: #161f2e;
+  --color-surface-700: #1f2937;
+  --color-surface-600: #2d3748;
+
+  --color-accent-amber: #f5b942;
+  --color-accent-cyan: #5eead4;
+  --color-accent-violet: #a78bfa;
+
+  --radius-glass: 1.25rem;
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply min-h-dvh bg-surface-950 text-zinc-100 font-sans;
+  }
+
+  body.theme-light {
+    @apply bg-zinc-100 text-zinc-900;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-holo-400;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply border border-white/10 bg-white/5 backdrop-blur-xl shadow-[var(--shadow-glass)];
+  }
+
+  body.theme-light .glass-panel {
+    @apply border-zinc-900/10 bg-white/70;
+  }
+
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .text-gradient-holo {
+    @apply bg-gradient-to-r from-holo-300 via-accent-cyan to-holo-400 bg-clip-text text-transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
