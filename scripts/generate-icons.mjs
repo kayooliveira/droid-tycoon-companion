@@ -3,43 +3,50 @@ import path from 'node:path'
 import sharp from 'sharp'
 
 const publicDir = path.join(process.cwd(), 'public')
-const svgPath = path.join(publicDir, 'favicon.svg')
+const markPath = path.join(publicDir, 'icon-droid-mark.svg')
 
-function gradientBackground(size) {
+function gradientBackground(size, { square = false } = {}) {
+  const rx = square ? 0 : Math.round(size * 0.18)
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}">
     <defs>
       <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#0f172a"/>
-        <stop offset="45%" stop-color="#1d4ed8"/>
-        <stop offset="100%" stop-color="#0891b2"/>
+        <stop offset="0%" stop-color="#0c4a9e"/>
+        <stop offset="55%" stop-color="#1d4ed8"/>
+        <stop offset="100%" stop-color="#06b6d4"/>
       </linearGradient>
-      <radialGradient id="glow" cx="50%" cy="35%" r="55%">
-        <stop offset="0%" stop-color="#5eead4" stop-opacity="0.35"/>
-        <stop offset="100%" stop-color="#5eead4" stop-opacity="0"/>
-      </radialGradient>
     </defs>
-    <rect width="${size}" height="${size}" rx="${Math.round(size * 0.22)}" fill="url(#g)"/>
-    <rect width="${size}" height="${size}" rx="${Math.round(size * 0.22)}" fill="url(#glow)"/>
+    <rect width="${size}" height="${size}" rx="${rx}" fill="url(#g)"/>
   </svg>`
   return sharp(Buffer.from(svg)).png().toBuffer()
 }
 
+async function droidLayer(size, scale = 0.6) {
+  const inner = Math.round(size * scale)
+  return sharp(markPath).resize(inner, inner).png().toBuffer()
+}
+
 async function appIcon(outFile, size, { maskable = false, monochrome = false } = {}) {
-  const inner = maskable ? Math.round(size * 0.52) : Math.round(size * 0.58)
-  const fg = await sharp(svgPath).resize(inner, inner).png().toBuffer()
+  const scale = maskable ? 0.52 : 0.6
+  const fg = await droidLayer(size, scale)
 
   if (monochrome) {
-    await sharp(fg)
+    const silhouette = await sharp(fg)
       .greyscale()
-      .threshold(40)
+      .threshold(200)
       .negate()
+      .png()
+      .toBuffer()
+    await sharp({
+      create: { width: size, height: size, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
+    })
+      .composite([{ input: silhouette, gravity: 'center' }])
       .png()
       .toFile(path.join(publicDir, outFile))
     console.log('wrote', outFile)
     return
   }
 
-  const bg = await gradientBackground(size)
+  const bg = await gradientBackground(size, { square: maskable })
   await sharp(bg)
     .composite([{ input: fg, gravity: 'center' }])
     .png()
@@ -52,8 +59,8 @@ await appIcon('pwa-512.png', 512)
 await appIcon('pwa-512-maskable.png', 512, { maskable: true })
 await appIcon('pwa-monochrome.png', 512, { monochrome: true })
 await appIcon('apple-touch-icon.png', 180)
-await appIcon('favicon-32.png', 32)
-await appIcon('favicon-16.png', 16)
+await appIcon('favicon-32.png', 32, { maskable: false })
+await appIcon('favicon-16.png', 16, { maskable: false })
 
 await sharp(path.join(publicDir, 'og-image.svg'))
   .resize(1200, 630, { fit: 'cover' })
@@ -84,17 +91,17 @@ async function manifestScreenshot(outName, width, height, label) {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
     <defs>
       <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="#0c121c"/>
-        <stop offset="100%" stop-color="#111827"/>
+        <stop offset="0%" stop-color="#0c4a9e"/>
+        <stop offset="100%" stop-color="#06b6d4"/>
       </linearGradient>
     </defs>
     <rect width="${width}" height="${height}" fill="url(#bg)"/>
-    <text x="50%" y="45%" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="${Math.round(width * 0.045)}" text-anchor="middle">DT Helper</text>
-    <text x="50%" y="55%" fill="#38bdf8" font-family="system-ui,sans-serif" font-size="${Math.round(width * 0.035)}" text-anchor="middle">${label}</text>
+    <text x="50%" y="45%" fill="#f8fafc" font-family="system-ui,sans-serif" font-size="${Math.round(width * 0.045)}" text-anchor="middle">DT Helper</text>
+    <text x="50%" y="55%" fill="#e0f2fe" font-family="system-ui,sans-serif" font-size="${Math.round(width * 0.035)}" text-anchor="middle">${label}</text>
   </svg>`
   await sharp(Buffer.from(svg)).png().toFile(path.join(shotsDir, outName))
   console.log('wrote screenshots/' + outName)
 }
 
-await manifestScreenshot('mobile-narrow.png', 390, 844, 'Progress')
+await manifestScreenshot('mobile-narrow.png', 390, 844, 'Progresso')
 await manifestScreenshot('mobile-wide.png', 844, 390, 'Dashboard')

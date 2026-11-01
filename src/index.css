@@ -136,6 +136,26 @@
     @apply text-emerald-700;
   }
 
+  body.theme-light .ui-badge-default {
+    @apply bg-zinc-200/90 text-zinc-800 border-zinc-400/50;
+  }
+
+  body.theme-light .ui-badge-info {
+    @apply bg-sky-100 text-sky-900 border-sky-300/80;
+  }
+
+  body.theme-light .ui-badge-success {
+    @apply bg-emerald-100 text-emerald-900 border-emerald-300/80;
+  }
+
+  body.theme-light .ui-badge-warn {
+    @apply bg-amber-100 text-amber-950 border-amber-300/80;
+  }
+
+  body.theme-light .ui-badge-danger {
+    @apply bg-red-100 text-red-900 border-red-300/80;
+  }
+
   body.theme-light .text-holo-300 {
     @apply text-holo-700;
   }

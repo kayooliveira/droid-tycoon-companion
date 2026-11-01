@@ -4,7 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 import { defineConfig } from 'vitest/config'
 
 /** Bump when PWA icon assets change (manifest + HTML cache bust). */
-const PWA_ICON_VERSION = '4'
+const PWA_ICON_VERSION = '5'
 
 export default defineConfig({
   base: '/',

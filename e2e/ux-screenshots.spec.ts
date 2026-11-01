@@ -6,9 +6,28 @@ import sharp from 'sharp'
 const ARTIFACTS =
   process.env.UX_ARTIFACTS_DIR ?? path.join(process.cwd(), 'docs/ux-round-screenshots')
 
-async function seedPtBr(page: import('@playwright/test').Page) {
+async function waitOnboardingStep(page: import('@playwright/test').Page, step: string) {
+  const testId = `onboarding-step-${step}`
+  await page.getByTestId(testId).waitFor({ state: 'visible', timeout: 15000 })
+  await page.getByTestId(testId).getByTestId('onboarding-heading').waitFor({ state: 'visible' })
+  await page.waitForFunction(
+    (id) => {
+      const el = document.querySelector(`[data-testid="${id}"]`)
+      if (!el) return false
+      const style = getComputedStyle(el)
+      if (Number.parseFloat(style.opacity) < 0.9) return false
+      const heading = el.querySelector('[data-testid="onboarding-heading"]')
+      return Boolean(heading?.textContent?.trim())
+    },
+    testId,
+    { timeout: 10000 },
+  )
+  await page.waitForTimeout(120)
+}
+
+async function seedPtBr(page: import('@playwright/test').Page, theme: 'dark' | 'light' = 'dark') {
   await page.goto('/onboarding')
-  await page.evaluate(() => {
+  await page.evaluate((themeMode) => {
     localStorage.clear()
     const seed = {
       state: {
@@ -17,7 +36,7 @@ async function seedPtBr(page: import('@playwright/test').Page) {
         settings: {
           locale: 'pt-BR',
           localeSource: 'user',
-          theme: 'system',
+          theme: themeMode,
           trackInventory: true,
           animationsEnabled: true,
           disputedPreference: {},
@@ -35,9 +54,9 @@ async function seedPtBr(page: import('@playwright/test').Page) {
       version: 0,
     }
     localStorage.setItem('droid-tycoon-companion-store', JSON.stringify(seed))
-  })
+  }, theme)
   await page.reload()
-  await page.waitForTimeout(250)
+  await page.waitForTimeout(200)
 }
 
 async function writeIconArtifacts() {
@@ -49,22 +68,25 @@ async function writeIconArtifacts() {
   const mask = Buffer.from(
     `<svg width="${size}" height="${size}"><circle cx="${size / 2}" cy="${size / 2}" r="${size / 2}" fill="white"/></svg>`,
   )
-  const masked = await sharp(path.join(publicDir, 'pwa-512-maskable.png'))
+  await sharp(path.join(publicDir, 'pwa-512-maskable.png'))
     .resize(size, size)
     .composite([{ input: mask, blend: 'dest-in' }])
     .png()
-    .toBuffer()
-  await sharp({
-    create: {
-      width: size + 80,
-      height: size + 80,
-      channels: 4,
-      background: { r: 12, g: 18, b: 28, alpha: 1 },
-    },
-  })
-    .composite([{ input: masked, gravity: 'center' }])
-    .png()
     .toFile(path.join(ARTIFACTS, 'icon-maskable-preview.png'))
+}
+
+async function captureDashboard(
+  page: import('@playwright/test').Page,
+  fileName: string,
+  theme: 'dark' | 'light',
+) {
+  await seedPtBr(page, theme)
+  await page.getByTestId('onboarding-skip').click()
+  await page.waitForURL('/', { timeout: 10000 })
+  await page.waitForTimeout(400)
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+  await page.waitForTimeout(350)
+  await page.screenshot({ path: path.join(ARTIFACTS, fileName), fullPage: false })
 }
 
 test('ux round screenshots (pt-BR artifacts)', async ({ page, browser }) => {
@@ -74,45 +96,32 @@ test('ux round screenshots (pt-BR artifacts)', async ({ page, browser }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await seedPtBr(page)
 
+  await waitOnboardingStep(page, 'welcome')
   await page.screenshot({ path: path.join(ARTIFACTS, 'onboarding-1.png') })
+
   await page.getByTestId('onboarding-start').click()
-  await page.waitForTimeout(250)
+  await waitOnboardingStep(page, 'cycle')
   await page.screenshot({ path: path.join(ARTIFACTS, 'onboarding-2.png') })
+
   await page.getByTestId('onboarding-next').click()
-  await page.waitForTimeout(250)
+  await waitOnboardingStep(page, 'progress')
   await page.screenshot({ path: path.join(ARTIFACTS, 'onboarding-3.png') })
+
   await page.getByTestId('onboarding-next').click()
-  await page.waitForTimeout(250)
+  await waitOnboardingStep(page, 'features')
   await page.screenshot({ path: path.join(ARTIFACTS, 'onboarding-4.png') })
-  await page.getByTestId('onboarding-finish').click()
-  await page.waitForTimeout(400)
-
-  const routes = [
-    { file: 'dashboard.png', path: '/' },
-    { file: 'progresso.png', path: '/progress' },
-    { file: 'inventario.png', path: '/inventory' },
-    { file: 'vender.png', path: '/sell' },
-    { file: 'ajustes.png', path: '/settings' },
-  ] as const
-
-  for (const r of routes) {
-    await page.goto(r.path)
-    await page.waitForTimeout(350)
-    await page.screenshot({ path: path.join(ARTIFACTS, r.file), fullPage: true })
-  }
-
-  await page.goto('/progress')
-  await page.getByRole('heading', { name: /Rebirth #/i }).first().waitFor({ timeout: 10000 })
-  const moreBtn = page.getByRole('button', { name: 'Mais ações' })
-  await moreBtn.waitFor({ state: 'visible', timeout: 10000 })
-  await moreBtn.click()
-  await page.getByRole('dialog').waitFor({ state: 'visible', timeout: 5000 })
-  await page.waitForTimeout(200)
-  await page.screenshot({ path: path.join(ARTIFACTS, 'bottom-sheet.png') })
 
   const desktop = await browser.newPage()
   await desktop.setViewportSize({ width: 1280, height: 800 })
   await seedPtBr(desktop)
+  await waitOnboardingStep(desktop, 'welcome')
   await desktop.screenshot({ path: path.join(ARTIFACTS, 'onboarding-desktop.png'), fullPage: false })
   await desktop.close()
+
+  await captureDashboard(page, 'dashboard.png', 'dark')
+
+  const lightPage = await browser.newPage()
+  await lightPage.setViewportSize({ width: 390, height: 844 })
+  await captureDashboard(lightPage, 'dashboard-light.png', 'light')
+  await lightPage.close()
 })
