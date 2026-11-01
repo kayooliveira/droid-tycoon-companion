@@ -116,13 +116,13 @@ export async function renderShareProgressCard(data: ShareCardInput): Promise<Blo
   }
 
   const titleX = ix + logoSize + 24
-  ctx.fillStyle = '#59a3ff'
-  ctx.font = '700 30px system-ui, sans-serif'
-  ctx.fillText('DROID TYCOON', titleX, iy + 36)
   ctx.fillStyle = '#fafafa'
-  ctx.font = '600 38px system-ui, sans-serif'
-  ctx.fillText('Companion', titleX, iy + 78)
+  ctx.font = '700 38px system-ui, sans-serif'
+  ctx.fillText('DT Helper', titleX, iy + 44)
   ctx.fillStyle = '#a1a1aa'
+  ctx.font = '22px system-ui, sans-serif'
+  ctx.fillText('Companion for Star Wars Droid Tycoon', titleX, iy + 78)
+  ctx.fillStyle = '#71717a'
   ctx.font = '26px system-ui, sans-serif'
   ctx.fillText(`Path · ${pathName}`, titleX, iy + 112)
 

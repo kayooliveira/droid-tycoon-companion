@@ -32,8 +32,9 @@ export function SeoManager() {
 
   useEffect(() => {
     const path = location.pathname || '/'
+    const appName = t('app.name')
     const section = t(routeKeys[path] ?? 'app.name')
-    const title = `${section} · ${t('app.name')}`
+    const title = path === '/' ? t('seo.defaultTitle') : `${section} — ${appName}`
     document.title = title
 
     const isPt = i18n.language === 'pt-BR'
@@ -44,6 +45,7 @@ export function SeoManager() {
     const ogAltLocale = isPt ? 'en_US' : 'pt_BR'
 
     upsertMeta('description', desc)
+    upsertMeta('og:site_name', appName, 'property')
     upsertMeta('og:title', title, 'property')
     upsertMeta('og:description', desc, 'property')
     upsertMeta('og:url', url, 'property')
