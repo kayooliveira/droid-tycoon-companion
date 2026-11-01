@@ -4,7 +4,7 @@
 
 **Português:** Ferramenta feita por fãs para jogadores de Droid Tycoon. Acompanhe path, rebirths, inventário, vendas, droiddex e fusões. Não é oficial.
 
-**Live (after Pages deploy):** https://kayooliveira.github.io/droid-tycoon-companion/
+**Production:** https://dthelper.kayooliveira.com (self-hosted via Coolify)
 
 ## Features
 
@@ -46,7 +46,7 @@ See also `docs/screenshots/` for Progress, Sell Center, Droiddex, Fusion Lab, In
 
 ```bash
 npm install
-npm run dev          # local dev (base path /droid-tycoon-companion/)
+npm run dev          # Vite dev server (base path /)
 npm run typecheck
 npm test             # Vitest unit tests
 npm run test:e2e     # Playwright smoke (+ screenshot spec)
@@ -54,19 +54,33 @@ npm run build
 npm run preview      # test production build locally
 ```
 
+### Docker (local)
+
+```bash
+docker build -t droid-tycoon-companion .
+docker run --rm -p 8080:80 droid-tycoon-companion
+# open http://localhost:8080
+```
+
 ## Architecture
 
 - **UI:** React 19 + TypeScript + Vite + Tailwind CSS v4 + Motion + lucide-react
 - **State:** Zustand + persist (LocalStorage)
-- **Routing:** HashRouter (GitHub Pages friendly) + `public/404.html` fallback
+- **Routing:** HashRouter (deep links + refresh without server rewrites; nginx SPA fallback included for future BrowserRouter)
 - **Domain:** Pure functions in `src/domain/` (sell logic, tiers, requirements, progress)
 - **Adapters:** `src/storage/adapter.ts`, `src/data/dataSource.ts` (ready for future cloud/remote data)
 
-## Deployment (GitHub Pages)
+## Deployment (Coolify + GHCR)
 
-1. Repo **Settings → Pages → Build and deployment → Source: GitHub Actions**
-2. Push to `main` runs `.github/workflows/deploy-pages.yml` (test, build, deploy)
-3. PRs run `.github/workflows/ci.yml`
+Private repo — **no GitHub Pages**. CI builds and pushes a container image; Coolify pulls and runs it as a **dockerimage** app.
+
+1. **GitHub Actions** (`.github/workflows/image.yml`): on push to `current` (ignores `**.md` and `docs/**`) or `workflow_dispatch`:
+   - Runs typecheck, tests, and Vite build
+   - Builds Docker image and pushes to `ghcr.io/kayooliveira/droid-tycoon-companion`
+   - Tags: `sha-<full-commit-sha>` and `current` (on default branch)
+2. **Coolify:** configure app type **dockerimage**, image `ghcr.io/kayooliveira/droid-tycoon-companion:current` (or a specific `sha-…` tag), port **80**, domain **dthelper.kayooliveira.com**.
+
+PRs run `.github/workflows/ci.yml` (verify only, no image push).
 
 ## Disclaimer
 
