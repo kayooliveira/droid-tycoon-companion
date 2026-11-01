@@ -64,6 +64,6 @@ test('export sample PDFs (pt-BR)', async ({ page }) => {
     })
   }
 
-  rasterize('pdf-ciclo-guia-pt.pdf', 'pdf-ciclo-guia-pt-page', 7)
-  rasterize('pdf-progresso-pt.pdf', 'pdf-progresso-pt-page', 8)
+  rasterize('pdf-ciclo-guia-pt.pdf', 'pdf-ciclo-guia-pt-page', 4)
+  rasterize('pdf-progresso-pt.pdf', 'pdf-progresso-pt-page', 6)
 })
