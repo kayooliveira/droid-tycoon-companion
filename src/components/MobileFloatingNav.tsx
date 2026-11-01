@@ -2,11 +2,13 @@ import { useLayoutEffect, useRef, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { List, Package, SquaresFour, Storefront, TreeStructure } from '@phosphor-icons/react'
-import { motion, useReducedMotion } from 'motion/react'
 import { UI_ICON_WEIGHT } from './ui/iconStyle'
 import { Glass } from './ui/Glass'
 import { cn } from '../lib/utils'
 import { useNavMinimize } from '../hooks/useNavMinimize'
+
+const INDICATOR_INSET_X = 3
+const INDICATOR_INSET_Y = 4
 
 const tabs = [
   { to: '/', labelKey: 'nav.dashboard', icon: SquaresFour, end: true as const },
@@ -20,9 +22,8 @@ export function MobileFloatingNav({ onMore }: { onMore: () => void }) {
   const { t } = useTranslation()
   const location = useLocation()
   const minimized = useNavMinimize()
-  const reducedMotion = useReducedMotion() ?? false
-  const navRef = useRef<HTMLDivElement>(null)
-  const itemRefs = useRef<Array<HTMLAnchorElement | HTMLButtonElement | null>>([])
+  const gridRef = useRef<HTMLDivElement>(null)
+  const slotRefs = useRef<Array<HTMLDivElement | null>>([])
   const [indicator, setIndicator] = useState({ left: 0, width: 0 })
 
   const activeIndex = tabs.findIndex((tab) => {
@@ -35,12 +36,31 @@ export function MobileFloatingNav({ onMore }: { onMore: () => void }) {
   })
 
   useLayoutEffect(() => {
-    const el = itemRefs.current[activeIndex >= 0 ? activeIndex : 0]
-    const nav = navRef.current
-    if (!el || !nav) return
-    const navRect = nav.getBoundingClientRect()
-    const rect = el.getBoundingClientRect()
-    setIndicator({ left: rect.left - navRect.left, width: rect.width })
+    const grid = gridRef.current
+    const idx = activeIndex >= 0 ? activeIndex : 0
+    const slot = slotRefs.current[idx]
+    if (!grid || !slot) return
+
+    const measure = () => {
+      const gridRect = grid.getBoundingClientRect()
+      const slotRect = slot.getBoundingClientRect()
+      const fullWidth = slotRect.width
+      const fullLeft = slotRect.left - gridRect.left
+      setIndicator({
+        left: fullLeft + INDICATOR_INSET_X,
+        width: Math.max(0, fullWidth - INDICATOR_INSET_X * 2),
+      })
+    }
+
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(grid)
+    ro.observe(slot)
+    window.addEventListener('resize', measure)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', measure)
+    }
   }, [activeIndex, minimized, location.pathname])
 
   return (
@@ -51,72 +71,74 @@ export function MobileFloatingNav({ onMore }: { onMore: () => void }) {
       data-nav-minimized={minimized ? '1' : '0'}
     >
       <Glass
-        ref={navRef}
         as="div"
         variant="regular"
         className={cn(
-          'relative rounded-full shadow-2xl shadow-black/40 transition-[padding] duration-200',
+          'glass-nav relative rounded-full shadow-2xl shadow-black/40 transition-[padding] duration-200',
           minimized ? 'p-1' : 'p-1.5',
         )}
       >
-        {!reducedMotion ? (
-          <motion.span
-            className="absolute top-1 bottom-1 rounded-full pointer-events-none bg-holo-500/25 border border-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]"
-            layout={false}
-            animate={{ left: indicator.left, width: indicator.width }}
-            transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-            style={{ left: indicator.left, width: indicator.width }}
+        <div
+          ref={gridRef}
+          className={cn(
+            'relative grid grid-cols-5 gap-0.5',
+            minimized ? 'min-h-[2.75rem]' : 'min-h-[3.25rem]',
+          )}
+        >
+          <div
+            className="nav-tab-indicator pointer-events-none absolute rounded-full bg-holo-500/30 border border-white/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] transition-[left,width] duration-300 ease-out"
+            style={{
+              left: indicator.width > 0 ? indicator.left : 0,
+              width: indicator.width,
+              top: INDICATOR_INSET_Y,
+              bottom: INDICATOR_INSET_Y,
+            }}
             aria-hidden
           />
-        ) : (
-          <span
-            className="absolute top-1 bottom-1 rounded-full pointer-events-none bg-holo-500/25 border border-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]"
-            style={{ left: indicator.left, width: indicator.width }}
-            aria-hidden
-          />
-        )}
-        <div className={cn('relative grid grid-cols-5 gap-0.5', minimized ? 'min-h-[2.75rem]' : 'min-h-[3.25rem]')}>
           {tabs.map((tab, i) => {
             const isMore = 'isMore' in tab && tab.isMore
             const isActive = i === activeIndex
             const Icon = tab.icon
-            const common = cn(
-              'relative z-10 flex flex-col items-center justify-center w-full min-h-[2.75rem] rounded-full',
+            const slotClass = cn(
+              'relative z-10 flex flex-col items-center justify-center min-h-[2.75rem] rounded-full',
               'text-[10px] gap-0.5 transition-colors',
-              isActive ? 'text-holo-100' : 'text-zinc-400',
+              isActive ? 'text-white' : 'text-zinc-500',
               minimized ? 'py-1.5' : 'py-2',
             )
-            if (isMore) {
-              return (
-                <button
-                  key={tab.labelKey}
-                  type="button"
-                  ref={(node) => {
-                    itemRefs.current[i] = node
-                  }}
-                  data-testid="mobile-more-nav"
-                  aria-label={t('a11y.openMoreNav')}
-                  className={common}
-                  onClick={onMore}
-                >
-                  <Icon size={minimized ? 22 : 20} weight={isActive ? 'fill' : UI_ICON_WEIGHT} />
-                  {!minimized ? <span className="leading-tight px-0.5">{t(tab.labelKey)}</span> : null}
-                </button>
-              )
-            }
             return (
-              <NavLink
-                key={tab.to}
-                to={tab.to}
-                end={'end' in tab ? tab.end : false}
+              <div
+                key={tab.labelKey}
                 ref={(node) => {
-                  itemRefs.current[i] = node
+                  slotRefs.current[i] = node
                 }}
-                className={common}
+                className="min-w-0"
               >
-                <Icon size={minimized ? 22 : 20} weight={isActive ? 'fill' : UI_ICON_WEIGHT} />
-                {!minimized ? <span className="leading-tight px-0.5">{t(tab.labelKey)}</span> : null}
-              </NavLink>
+                {isMore ? (
+                  <button
+                    type="button"
+                    data-testid="mobile-more-nav"
+                    aria-label={t('a11y.openMoreNav')}
+                    className={cn(slotClass, 'w-full')}
+                    onClick={onMore}
+                  >
+                    <Icon size={minimized ? 22 : 20} weight={isActive ? 'fill' : UI_ICON_WEIGHT} />
+                    {!minimized ? (
+                      <span className="leading-tight px-0.5 truncate max-w-full">{t(tab.labelKey)}</span>
+                    ) : null}
+                  </button>
+                ) : (
+                  <NavLink
+                    to={tab.to}
+                    end={'end' in tab ? tab.end : false}
+                    className={cn(slotClass, 'w-full')}
+                  >
+                    <Icon size={minimized ? 22 : 20} weight={isActive ? 'fill' : UI_ICON_WEIGHT} />
+                    {!minimized ? (
+                      <span className="leading-tight px-0.5 truncate max-w-full">{t(tab.labelKey)}</span>
+                    ) : null}
+                  </NavLink>
+                )}
+              </div>
             )
           })}
         </div>

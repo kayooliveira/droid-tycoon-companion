@@ -41,7 +41,7 @@ export function DashboardPage() {
   const sellSamples = sellAnalysis.filter((i) => i.category === 'sellable').slice(0, 3)
 
   return (
-    <div className="space-y-4 shell-main-pad md:pb-8" data-testid="home-hub">
+    <div className="space-y-4 md:pb-8" data-testid="home-hub">
       <GlassCard className="space-y-3 p-4" data-testid="home-now">
         <div className="flex items-start justify-between gap-2 flex-wrap">
           <div>

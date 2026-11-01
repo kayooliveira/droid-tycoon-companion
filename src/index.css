@@ -29,9 +29,12 @@
 
   --radius-glass: 1.25rem;
   --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.35);
-  --glass-blur: blur(20px) saturate(180%);
+  --glass-blur: blur(24px) saturate(180%);
   --glass-bg-dark: rgba(255, 255, 255, 0.08);
   --glass-bg-light: rgba(255, 255, 255, 0.62);
+  --glass-nav-dark: rgba(14, 18, 28, 0.62);
+  --glass-nav-light: rgba(255, 255, 255, 0.68);
+  --mobile-nav-height: 5.25rem;
   --glass-solid-dark: #161f2e;
   --glass-solid-light: #ffffff;
 }
@@ -106,6 +109,14 @@
 
   .glass-regular {
     background: var(--glass-bg-dark);
+  }
+
+  .glass-nav.glass-regular {
+    background: var(--glass-nav-dark);
+  }
+
+  body.theme-light .glass-nav.glass-regular {
+    background: var(--glass-nav-light);
   }
 
   .glass-clear {
@@ -212,7 +223,7 @@
   }
 
   .shell-main-pad {
-    padding-bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px) + 12px);
+    padding-bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 24px);
   }
 
   html.e2e-safe-area {
@@ -220,7 +231,7 @@
   }
 
   html.e2e-safe-area .shell-main-pad {
-    padding-bottom: calc(5.75rem + var(--e2e-safe-bottom) + 12px);
+    padding-bottom: calc(var(--mobile-nav-height) + var(--e2e-safe-bottom) + 24px);
   }
 
   html.e2e-safe-area nav[data-testid='mobile-floating-nav'] {

@@ -74,7 +74,7 @@
     "statsReady": "Já tem",
     "statsKeep": "Guardar no ciclo",
     "statsSellable": "Pode vender",
-    "staleData": "Dados podem estar velhos . veja Ajustes",
+    "staleData": "Dados podem estar velhos; veja Ajustes.",
     "dataVersion": "Dados v{{version}}",
     "hero": "Próximo renascimento, inventário e o que dá pra vender no Droid Tycoon.",
     "ctaProgress": "Ver meu próximo renascimento",
@@ -84,9 +84,9 @@
     "nextStepProgress": "Abre Progresso e vê os três droids deste renascimento.",
     "nextStepInventory_one": "Falta 1 droid pro próximo renascimento.",
     "nextStepInventory_other": "Faltam {{count}} droids pro próximo renascimento.",
-    "nextStepSell_one": "Tem 1 droid que dá pra vender . dá uma olhada em Vender antes do renascimento.",
-    "nextStepSell_other": "Tem {{count}} droids que dá pra vender . dá uma olhada em Vender antes do renascimento.",
-    "nextStepComplete": "Deu certo . quando terminar no jogo, marca o renascimento aqui."
+    "nextStepSell_one": "Tem 1 droid que dá pra vender. Dá uma olhada em Vender antes do renascimento.",
+    "nextStepSell_other": "Tem {{count}} droids que dá pra vender. Dá uma olhada em Vender antes do renascimento.",
+    "nextStepComplete": "Deu certo. Quando terminar no jogo, marca o renascimento aqui."
   },
   "inventory": {
     "title": "Inventário",
@@ -113,7 +113,10 @@
   },
   "sell": {
     "title": "Central de venda",
-    "intro": "Olha renascimentos {{from}},40 no {{cycle}}. Depois do Super Renascimento quase tudo reseta . planeje o próximo ciclo na mão.",
+    "intro": "Renascimentos {{from}} a 40 do {{cycle}}. Depois do Super Renascimento quase tudo reseta, então planeje o próximo ciclo.",
+    "emptyStateTitle": "Adicione inventário para ver o que vender",
+    "emptyStateBody": "Informe quais droids você tem para comparar com os próximos renascimentos.",
+    "emptyStateCta": "Abrir Inventário",
     "keep": "Guardar",
     "sellable": "Vender",
     "upgrade": "Upgradar",
@@ -131,14 +134,14 @@
     "none": "Nenhum droid de requisito fica livre depois deste passo.",
     "fusionHold": "Guardar pra fusão",
     "fusionCaution": "Fusão?",
-    "fusionCautionHint": "Receita ainda não está 100% confirmada . confira no jogo antes de vender.",
+    "fusionCautionHint": "Receita ainda não está 100% confirmada. Confira no jogo antes de vender.",
     "fusionNote": "Alguns droids ficam marcados pra fusão mesmo quando os renascimentos não pedem mais.",
     "usedOnOtherPath": "Ainda entra no {{paths}}.",
     "returnsOnCycle": "Volta no {{name}}."
   },
   "exportCycle": {
     "title": "Baixar meu ciclo",
-    "hint": "PDF pra imprimir ou PNG em partes pro WhatsApp. Tudo no seu aparelho . nada sobe pra servidor.",
+    "hint": "PDF pra imprimir ou PNG em partes pro WhatsApp. Tudo no seu aparelho; nada sobe pra servidor.",
     "pdf": "PDF",
     "png": "Imagens PNG",
     "pdfDone": "PDF do ciclo pronto.",
@@ -148,7 +151,7 @@
   },
   "shareExport": {
     "title": "Compartilhar",
-    "hint": "PDF ou PNG do ciclo, link do app ou card de progresso . tudo gerado no aparelho.",
+    "hint": "PDF ou PNG do ciclo, link do app ou card de progresso, tudo gerado no aparelho.",
     "hintLabel": "Sobre export e compartilhar",
     "footer": "Nada é enviado ao servidor."
   },
@@ -160,7 +163,7 @@
   },
   "fusion": {
     "title": "Laboratório de fusão",
-    "partialBadge": "Fonte única . confira no jogo",
+    "partialBadge": "Fonte única; confira no jogo",
     "rulesTitle": "Regras gerais",
     "rulesFootnote": "Fusão libera no renascimento #3. Droids só de fusão não entram em renascimento (pelas fontes).",
     "helpsNext": "Ajuda no próximo renascimento",
@@ -187,7 +190,7 @@
     "welcomeHeadline": "Planeje o próximo renascimento",
     "welcomeHeadlineBefore": "Planeje o próximo ",
     "welcomeHeadlineAccent": "renascimento",
-    "welcomeSub": "Ciclo, inventário e o que vender . pensado pro celular enquanto você joga.",
+    "welcomeSub": "Ciclo, inventário e o que vender, pensado pro celular enquanto você joga.",
     "welcomeFootnote": "Feito por fãs. Sem vínculo com a Epic Games.",
     "stepProgress": "Passos da configuração",
     "choosePath": "Escolha o Ciclo",
@@ -248,7 +251,7 @@
     "completedRenascimentos": "Renascimentos concluídos ({{n}})",
     "gameData": "Dados do jogo",
     "dataFresh": "Dados recentes",
-    "dataStale": "Dados com mais de {{days}} dias . vale atualizar",
+    "dataStale": "Dados com mais de {{days}} dias; vale atualizar.",
     "updateHint": "Atualize com scripts/parse.py e troque src/data/gameData.json.",
     "backup": "Backup",
     "export": "Exportar progresso (JSON)",
@@ -282,12 +285,12 @@
     "linkCopied": "Link copiado.",
     "cardTitle": "Meu progresso no Droid Tycoon",
     "cardShared": "Card enviado.",
-    "cardDownloaded": "Card salvo . manda no chat.",
+    "cardDownloaded": "Card salvo. Manda no chat.",
     "cardFailed": "Não deu pra gerar o card. Tenta de novo."
   },
   "about": {
     "title": "Sobre",
-    "intro": "Companion feito por fãs do Star Wars Droid Tycoon. Os números vêm de guias da comunidade . não da Epic nem da FOAD.",
+    "intro": "Companion feito por fãs do Star Wars Droid Tycoon. Os números vêm de guias da comunidade, não da Epic nem da FOAD.",
     "dataTitle": "Fontes e atualização",
     "dataLine": "Pacote {{version}} · jogo {{game}} · dados de {{date}}",
     "disputedNote": "Renascimentos disputados aparecem com aviso quando os guias não batem.",
@@ -300,7 +303,7 @@
     "wikiCredits": "Imagens: Star Wars Droid Tycoon Wiki (Fandom), licença CC BY-SA 4.0."
   },
   "pwa": {
-    "updatedToast": "App atualizado . você está na versão mais recente.",
+    "updatedToast": "App atualizado. Você está na versão mais recente.",
     "update": "Tem versão nova.",
     "updateAction": "Atualizar",
     "installTitle": "Instalar no celular",
@@ -338,6 +341,7 @@
     "sellEmpty": "Nada seguro pra vender agora.",
     "timelineTitle": "Linha do ciclo",
     "superMarker": "Super",
+    "superAtRebirth": "Super Renascimento no #{{n}}",
     "newsTitle": "Novidades do jogo",
     "newsGameLine": "Jogo v{{game}} · dados {{date}}",
     "newsChangelog": "Ver mudanças do app",

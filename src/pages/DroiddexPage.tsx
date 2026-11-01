@@ -27,7 +27,7 @@ export function DroiddexPage() {
 
   return (
     <div className="space-y-5">
-      <h1 className="font-display text-2xl tracking-wide">{t('droiddex.title')}</h1>
+      <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('droiddex.title')}</h1>
       <div className="flex flex-wrap gap-2">
         <input
           className="flex-1 min-w-[200px] rounded-xl bg-surface-800 border border-white/10 px-4 py-2 text-sm"

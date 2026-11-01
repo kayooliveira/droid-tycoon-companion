@@ -35,7 +35,7 @@ export function FusionLabPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl tracking-wide">{t('fusion.title')}</h1>
+        <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('fusion.title')}</h1>
         <Badge tone="warn" className="mt-2">
           {t('fusion.partialBadge')}
         </Badge>

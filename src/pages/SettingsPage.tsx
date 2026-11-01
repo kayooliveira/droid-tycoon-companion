@@ -69,7 +69,7 @@ export function SettingsPage() {
 
   return (
     <div className="space-y-4 max-w-2xl pb-10">
-      <h1 className="font-display text-xl tracking-wide text-balance">{t('settings.title')}</h1>
+      <h1 className="hidden md:block font-display text-xl tracking-wide text-balance">{t('settings.title')}</h1>
 
       <GlassCard className="p-4">
         <SectionHeader icon={<Palette {...uiIconProps} />} title={t('settings.appearance')} />

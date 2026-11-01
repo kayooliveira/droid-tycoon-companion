@@ -1,5 +1,8 @@
+import { Gear } from '@phosphor-icons/react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
+import { Button } from '../components/ui/Button'
+import { uiIconProps } from '../components/ui/iconStyle'
 import { gameDataSource } from '../data/dataSource'
 import { gameData } from '../domain/gameData'
 import { APP_PUBLIC_URL } from '../lib/constants'
@@ -13,8 +16,8 @@ export function AboutPage() {
   const stale = gameDataSource.isStale()
 
   return (
-    <div className="space-y-5 max-w-2xl pb-10">
-      <h1 className="font-display text-2xl tracking-wide">{t('about.title')}</h1>
+    <div className="space-y-5 max-w-2xl pb-4">
+      <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('about.title')}</h1>
       <p className="text-sm text-zinc-400">{t('about.intro')}</p>
 
       <GlassCard className="space-y-2 text-sm">
@@ -40,11 +43,15 @@ export function AboutPage() {
         <FeedbackWhatsAppLink />
       </GlassCard>
 
-      <GlassCard className="text-sm">
-        <Link to="/settings" className="text-holo-300 hover:underline inline-block">
-          {t('nav.settings')} →
-        </Link>
-      </GlassCard>
+      <Link to="/settings" className="block">
+        <Button
+          variant="secondary"
+          className="w-full justify-start min-h-12"
+          icon={<Gear {...uiIconProps} weight="fill" />}
+        >
+          {t('nav.settings')}
+        </Button>
+      </Link>
 
       <footer
         className="pt-6 space-y-2 text-[10px] leading-relaxed text-zinc-500"

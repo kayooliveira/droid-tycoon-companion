@@ -12,9 +12,21 @@ async function enableE2eSafeArea(page: import('@playwright/test').Page) {
   })
 }
 
+type ProgressSeed = {
+  pathId?: string
+  nextRebirth?: number
+  completedOnPath?: number
+  inventory?: unknown[]
+}
+
 async function seedOnboarding(
   page: import('@playwright/test').Page,
-  opts: { locale: 'pt-BR' | 'en'; theme: 'dark' | 'light'; onboardingComplete?: boolean },
+  opts: {
+    locale: 'pt-BR' | 'en'
+    theme: 'dark' | 'light'
+    onboardingComplete?: boolean
+    progress?: ProgressSeed
+  },
 ) {
   await page.goto('/onboarding')
   await page.evaluate(
@@ -35,11 +47,11 @@ async function seedOnboarding(
             iosInstallHintDismissed: true,
           },
           progress: {
-            pathId: 'path-1',
-            nextRebirth: 3,
-            completedOnPath: 2,
+            pathId: opts.progress?.pathId ?? 'path-1',
+            nextRebirth: opts.progress?.nextRebirth ?? 3,
+            completedOnPath: opts.progress?.completedOnPath ?? 2,
           },
-          inventory: [],
+          inventory: opts.progress?.inventory ?? [],
           lastSavedAt: new Date().toISOString(),
         },
         version: 0,
@@ -126,9 +138,31 @@ test('DroidDeck UX artifacts at 390x844', async ({ page, browser }) => {
   await page.goto('/progress')
   await page.waitForTimeout(400)
   await page.screenshot({ path: path.join(ARTIFACTS, 'progresso.png') })
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+  await page.waitForTimeout(400)
+  await page.screenshot({ path: path.join(ARTIFACTS, 'progresso-scrolled-bottom.png') })
 
+  await seedOnboarding(page, {
+    locale: 'pt-BR',
+    theme: 'dark',
+    onboardingComplete: true,
+    progress: { pathId: 'path-1', nextRebirth: 13, completedOnPath: 12 },
+  })
+  await page.goto('/progress')
+  await page.waitForTimeout(500)
+  await expect(page.getByRole('button', { name: /Super Renascimento/i })).toBeVisible()
+  await page.screenshot({ path: path.join(ARTIFACTS, 'super-cta.png') })
+
+  await seedOnboarding(page, {
+    locale: 'pt-BR',
+    theme: 'dark',
+    onboardingComplete: true,
+    progress: { nextRebirth: 1, completedOnPath: 0 },
+  })
   await page.goto('/sell')
   await page.waitForTimeout(400)
+  await expect(page.getByTestId('sell-empty-state')).toBeVisible()
+  await page.screenshot({ path: path.join(ARTIFACTS, 'vender-empty.png') })
   await page.screenshot({ path: path.join(ARTIFACTS, 'vender.png') })
 
   await page.goto('/about')
@@ -137,6 +171,7 @@ test('DroidDeck UX artifacts at 390x844', async ({ page, browser }) => {
   await page.waitForTimeout(350)
   await expect(page.getByTestId('about-credits-footer')).toBeVisible()
   await page.screenshot({ path: path.join(ARTIFACTS, 'sobre.png') })
+  await page.screenshot({ path: path.join(ARTIFACTS, 'sobre-bottom.png') })
 
   await page.goto('/droiddex')
   await page.waitForTimeout(500)

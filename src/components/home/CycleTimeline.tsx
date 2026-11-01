@@ -19,7 +19,7 @@ export function CycleTimeline({ completed }: { completed: number }) {
               title={isSuper ? t('home.superMarker') : `#${n}`}
               className={cn(
                 'h-2 w-2 rounded-full shrink-0',
-                done ? 'bg-holo-400' : 'bg-white/10',
+                done ? 'bg-holo-400' : 'bg-zinc-500/40',
                 isSuper && 'ring-1 ring-amber-400/80 ring-offset-1 ring-offset-transparent scale-125',
               )}
             />
@@ -27,7 +27,7 @@ export function CycleTimeline({ completed }: { completed: number }) {
         })}
       </div>
       <p className="text-[10px] text-zinc-500">
-        {t('home.superMarker')} · #{SUPER_REBIRTH_UNLOCK_AFTER}
+        {t('home.superAtRebirth', { n: SUPER_REBIRTH_UNLOCK_AFTER })}
       </p>
     </div>
   )

@@ -85,7 +85,7 @@ export function AppShell() {
         <Glass
           as="header"
           variant="regular"
-          className="md:hidden sticky top-0 z-40 mx-3 mt-2 rounded-2xl px-4 py-3 flex items-center gap-3 min-h-[3.25rem]"
+          className="glass-nav md:hidden sticky top-0 z-40 mx-3 mt-2 rounded-2xl px-4 py-3 flex items-center gap-3 min-h-[3.25rem]"
         >
           <Logo className="h-8 w-8" />
           <div className="min-w-0 flex-1">

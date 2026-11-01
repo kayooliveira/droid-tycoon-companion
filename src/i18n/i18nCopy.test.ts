@@ -25,4 +25,19 @@ describe('i18n copy hygiene', () => {
     }
     expect(bad, bad.join('\n')).toEqual([])
   })
+
+  it('has no spaced-dot or spaced-comma em-dash replacements', () => {
+    const bad: string[] = []
+    for (const [locale, tree] of [
+      ['en', en],
+      ['pt-BR', pt],
+    ] as const) {
+      for (const [key, value] of walkStrings(tree)) {
+        if (/\s\.\s/.test(value) || /\s,\s/.test(value)) {
+          bad.push(`${locale}:${key} → ${value}`)
+        }
+      }
+    }
+    expect(bad, bad.join('\n')).toEqual([])
+  })
 })
