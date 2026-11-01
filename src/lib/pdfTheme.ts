@@ -1,14 +1,15 @@
-/** Light, print-friendly PDF palette */
+/** DroidDeck dark PDF palette (matches progress export styling). */
 export const pdfTheme = {
-  bg: '#f8fafc',
-  bgAlt: '#f1f5f9',
-  text: '#0f172a',
-  textMuted: '#475569',
-  textSoft: '#64748b',
-  accent: '#1d5ff5',
-  accentSoft: '#dbeafe',
-  border: '#cbd5e1',
-  cardBg: '#ffffff',
-  cardBorder: '#e2e8f0',
-  footer: '#64748b',
+  bg: '#09090b',
+  bgAlt: '#18181b',
+  text: '#fafafa',
+  textMuted: '#a1a1aa',
+  textSoft: '#71717a',
+  accent: '#22d3ee',
+  accentSoft: '#164e63',
+  border: '#3f3f46',
+  cardBg: '#18181b',
+  cardBorder: '#27272a',
+  footer: '#71717a',
+  warn: '#fbbf24',
 } as const

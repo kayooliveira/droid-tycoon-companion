@@ -64,9 +64,7 @@
     "moreActionsTitle": "Mais ações",
     "listRebirthHeading": "Renascimento #{{n}}",
     "superConfirmTitle": "Super Renascimento?",
-    "superConfirmBody": "Você sai do {{currentCycle}} e entra no {{nextCycle}}. O renascimento #{{currentStep}} fica fechado no app e o novo ciclo começa do #1. Não dá para desfazer.",
-    "completeConfirmTitle": "Concluir renascimento?",
-    "completeConfirmBody": "Marca o renascimento #{{n}} como feito e avança para o #{{next}}. Você pode desfazer em Mais ações."
+    "superConfirmBody": "Você sai do {{currentCycle}} e entra no {{nextCycle}}. O renascimento #{{currentStep}} fica fechado no app e o novo ciclo começa do #1. Não dá para desfazer."
   },
   "path": {
     "switch": "Trocar ciclo",
@@ -431,6 +429,7 @@
     "guideHowTo1": "Use a tabela abaixo para ver créditos e droids de cada renascimento.",
     "guideHowTo2": "Confira no jogo antes de vender ou fundir; os dados vêm da comunidade.",
     "guideHowTo3": "A linha destacada indica quando o Super Renascimento libera.",
+    "guideHowTo4": "A coluna Pode vender lista droids que ficam livres depois de cada passo, com o mesmo critério da aba Vender.",
     "guideSuperRow": "Libera Super",
     "guideContinued": "Renascimentos (continuação)",
     "coverFactRebirths": "Renascimentos",
@@ -447,6 +446,13 @@
     "rebirth": "Renascimento",
     "credits": "Créditos",
     "requirements": "Droids necessários",
+    "canSell": "Pode vender",
+    "sellSummaryTitle": "Pode vender no Ciclo",
+    "sellSummaryHint": "Depois de concluir cada renascimento, estes droids não entram nos passos seguintes deste Ciclo.",
+    "sellSummaryEmpty": "Nenhum droid fica livre para venda neste Ciclo.",
+    "sellStepNone": "Nada neste passo",
+    "fusionHoldShort": "Guardar pra fusão",
+    "fusionCautionShort": "Fusão não confirmada",
     "unconfirmed": "Não confirmado",
     "sellAfter": "Vender depois deste passo",
     "done": "Feito",

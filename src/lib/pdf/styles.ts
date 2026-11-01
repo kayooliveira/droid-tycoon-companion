@@ -23,7 +23,12 @@ export const pdfStyles = StyleSheet.create({
     paddingBottom: 40,
     paddingHorizontal: 32,
   },
-  guideFirstPagePullUp: { marginTop: -GUIDE_PAGE_TOP_BAND },
+  guideCover: {
+    marginBottom: 8,
+    paddingBottom: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: c.border,
+  },
   guideFixedTableHead: {
     position: 'absolute',
     top: 6,
@@ -94,7 +99,7 @@ export const pdfStyles = StyleSheet.create({
   headerRow: { flexDirection: 'row', marginBottom: 6, gap: 8 },
   logo: { width: 44, height: 44, objectFit: 'contain' },
   headerMain: { flex: 1 },
-  bullet: { fontSize: 8, color: c.textMuted, marginBottom: 2, paddingLeft: 4 },
+  bullet: { fontSize: 8, color: c.textMuted, marginBottom: 3, paddingLeft: 4, lineHeight: 1.3 },
   notesBlock: {
     marginTop: 12,
     paddingTop: 10,
@@ -120,7 +125,28 @@ export const pdfStyles = StyleSheet.create({
     padding: 4,
     marginBottom: 3,
     fontSize: 8,
+    color: c.text,
   },
+  sellCompactLine: {
+    fontSize: 8,
+    color: c.text,
+    marginBottom: 2,
+    lineHeight: 1.25,
+  },
+  sellSummaryStep: {
+    fontSize: 8,
+    fontWeight: 700,
+    color: c.accent,
+    marginBottom: 2,
+  },
+  unconfirmedBadge: {
+    fontSize: 6.5,
+    color: c.warn,
+    fontWeight: 700,
+    marginTop: 1,
+  },
+  colSell: { width: 92, paddingLeft: 4, justifyContent: 'center' },
+  colReq: { flex: 1, flexDirection: 'row', minWidth: 0 },
   rebirthCard: {
     width: '48%',
     backgroundColor: c.cardBg,

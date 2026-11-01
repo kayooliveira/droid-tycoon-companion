@@ -4,8 +4,10 @@ import { droidImageSrc, isMissingImageFlag } from '../images'
 import { cycleById, droidById, gameData, getRebirth } from '../../domain/gameData'
 import { pathProgressPercent, REBIRTHS_PER_PATH, SUPER_REBIRTH_UNLOCK_AFTER } from '../../domain/progress'
 import {
+  sellableUnitsByRebirth,
   unitsNewlySellableAfterRebirth,
   unitsSellableAfterRebirth,
+  type RebirthSellDisposition,
 } from '../../domain/rebirthSellPlan'
 import { formatTierName } from '../../domain/tiers'
 import { buildI18nTierLabelMapForLocale } from '../../i18n/tierLabels'
@@ -21,11 +23,23 @@ export interface PdfDroidReq {
   imageMissing?: boolean
 }
 
+export interface PdfSellLine {
+  label: string
+  disposition: RebirthSellDisposition
+}
+
 export interface PdfRebirthRow {
   rebirth: number
   credits: string
   requirements: PdfDroidReq[]
   confidence: string
+  unconfirmed: boolean
+  sellLines: PdfSellLine[]
+}
+
+export interface PdfGuideSellBlock {
+  rebirth: number
+  sellLines: PdfSellLine[]
 }
 
 export interface CyclePdfModel {
@@ -40,6 +54,7 @@ export interface CyclePdfModel {
   dataVersionLine: string
   origin: string
   rebirths: PdfRebirthRow[]
+  guideSellSummary?: PdfGuideSellBlock[]
   progress?: {
     completedOnPath: number
     nextRebirth: number
@@ -96,6 +111,8 @@ function mapRebirthRow(
     rebirth: n,
     credits: entry.credits,
     confidence: entry.confidence,
+    unconfirmed: entry.confidence === 'partial',
+    sellLines: [],
     requirements: entry.requirements.map((req) => {
       const droid = droidById.get(req.droidId)
       const missing = droid ? isMissingImageFlag(droid) || !droid.imageLocal : true
@@ -117,6 +134,23 @@ function droidLineLabel(droidId: string, tier: string, tierLabels: Map<string, s
   const name = droid?.name ?? droidId
   const t = formatTierName(tier as Parameters<typeof formatTierName>[0], tierLabels)
   return `${name} · ${t}`
+}
+
+function mapSellUnitsToLines(
+  units: ReturnType<typeof unitsNewlySellableAfterRebirth>,
+  tierLabels: Map<string, string>,
+): PdfSellLine[] {
+  return units
+    .filter(
+      (u) =>
+        u.disposition === 'sellable' ||
+        u.disposition === 'fusionHold' ||
+        u.disposition === 'fusionCaution',
+    )
+    .map((u) => ({
+      label: droidLineLabel(u.droidId, u.tier, tierLabels),
+      disposition: u.disposition,
+    }))
 }
 
 export function buildCyclePdfModel(input: ExportCycleInput): CyclePdfModel | null {
@@ -151,6 +185,18 @@ export function buildCyclePdfModel(input: ExportCycleInput): CyclePdfModel | nul
       .replace('{{game}}', gameData.gameVersion),
     origin,
     rebirths,
+  }
+
+  if ((input.mode ?? 'progress') === 'guide') {
+    const sellMap = sellableUnitsByRebirth(input.pathId)
+    model.rebirths = rebirths.map((row) => {
+      const units = sellMap.get(row.rebirth) ?? []
+      const sellLines = mapSellUnitsToLines(units, tierLabels)
+      return { ...row, sellLines }
+    })
+    model.guideSellSummary = model.rebirths
+      .filter((row) => row.sellLines.length > 0)
+      .map((row) => ({ rebirth: row.rebirth, sellLines: row.sellLines }))
   }
 
   if ((input.mode ?? 'progress') === 'progress') {
@@ -221,6 +267,7 @@ export function progressRebirthCards(
   status: 'done' | 'next' | 'pending'
   requirements: PdfDroidReq[]
   sellLabels: string[]
+  sellLines: PdfSellLine[]
 }> {
   const origin = resolveOrigin()
   const list: Array<{
@@ -229,15 +276,15 @@ export function progressRebirthCards(
     status: 'done' | 'next' | 'pending'
     requirements: PdfDroidReq[]
     sellLabels: string[]
+    sellLines: PdfSellLine[]
   }> = []
   for (let n = 1; n <= REBIRTHS_PER_PATH; n++) {
     const entry = getRebirth(input.pathId, n)
     if (!entry) continue
     const status: 'done' | 'next' | 'pending' =
       n < input.nextRebirth ? 'done' : n === input.nextRebirth ? 'next' : 'pending'
-    const sellUnits = unitsNewlySellableAfterRebirth(input.pathId, n).filter(
-      (u) => u.disposition === 'sellable',
-    )
+    const sellUnits = unitsNewlySellableAfterRebirth(input.pathId, n)
+    const sellLines = mapSellUnitsToLines(sellUnits, tierLabels)
     list.push({
       rebirth: n,
       credits: entry.credits,
@@ -255,9 +302,8 @@ export function progressRebirthCards(
             : resolveAsset(droidImageSrc(req.droidId, droid?.imageLocal), origin),
         }
       }),
-      sellLabels: sellUnits.slice(0, 6).map((u) =>
-        droidLineLabel(u.droidId, u.tier, tierLabels),
-      ),
+      sellLabels: sellLines.slice(0, 6).map((line) => line.label),
+      sellLines,
     })
   }
   return list

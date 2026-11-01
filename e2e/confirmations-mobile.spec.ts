@@ -82,16 +82,24 @@ test.describe('confirmation modals', () => {
     await expect(page.getByTestId('path-switcher-trigger')).toContainText(/Ciclo 2/i)
   })
 
-  test('complete rebirth confirmation screenshot', async ({ page }) => {
+  test('Concluir advances immediately when inventory is ready', async ({ page }) => {
     await seedProgress(page, {
       progress: { pathId: 'path-1', nextRebirth: 3, completedOnPath: 2 },
-      settings: { trackInventory: false },
+      inventory: [
+        { id: 'u1', droidId: 'a-lt', tier: 'default', quantity: 1 },
+        { id: 'u2', droidId: 'b-u4d', tier: 'default', quantity: 1 },
+        { id: 'u3', droidId: 'r9', tier: 'gold', quantity: 1 },
+      ],
     })
     await expect(page.getByRole('button', { name: /^Concluir$/ })).toBeEnabled({ timeout: 15000 })
     await page.getByRole('button', { name: /^Concluir$/ }).click()
-    await expect(page.getByTestId('progress-complete-confirm-modal')).toBeVisible()
-    await shot(page, 'progress-complete-confirm')
-    await page.getByTestId('progress-complete-cancel').click()
+    await expect(page.getByTestId('progress-complete-confirm-modal')).toHaveCount(0)
+    const nextRebirth = await page.evaluate(({ key }) => {
+      const raw = localStorage.getItem(key)
+      if (!raw) return null
+      return JSON.parse(raw).state.progress.nextRebirth as number
+    }, { key: STORE_KEY })
+    expect(nextRebirth).toBe(4)
   })
 
   test('inventory remove confirmation screenshot', async ({ page }) => {

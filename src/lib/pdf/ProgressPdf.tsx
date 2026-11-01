@@ -4,6 +4,8 @@ import type { CyclePdfModel } from './buildCyclePdfModel'
 import type { progressRebirthCards } from './buildCyclePdfModel'
 import { REBIRTHS_PER_PATH, SUPER_REBIRTH_UNLOCK_AFTER } from '../../domain/progress'
 import { PdfFooter } from './PdfFooter'
+import { PdfSellChipLine } from './PdfSellSection'
+import { pdfTheme as c } from '../pdfTheme'
 import { pdfStyles as s } from './styles'
 
 function ProgressHeader({ model }: { model: CyclePdfModel }) {
@@ -74,7 +76,7 @@ function RebirthCard({
     <View wrap={false} style={s.rebirthCard}>
       <Text style={{ fontWeight: 700, fontSize: 10 }}>
         {`${labels.rebirth} ${card.rebirth}`}{' '}
-        <Text style={{ fontSize: 8, color: '#475569' }}>({statusLabel})</Text>
+        <Text style={{ fontSize: 8, color: c.textMuted }}>({statusLabel})</Text>
       </Text>
       <Text style={s.muted}>{`${labels.credits}: ${card.credits}`}</Text>
       {card.requirements.map((req) => (
@@ -86,13 +88,11 @@ function RebirthCard({
           </View>
         </View>
       ))}
-      {card.sellLabels.length > 0 ? (
+      {card.sellLines.length > 0 ? (
         <View style={{ marginTop: 3 }}>
-          <Text style={{ fontSize: 8, color: '#1d5ff5', fontWeight: 700 }}>{labels.sellAfter}</Text>
-          {card.sellLabels.map((line) => (
-            <Text key={line} style={{ fontSize: 7, marginTop: 1 }}>
-              {line}
-            </Text>
+          <Text style={{ fontSize: 8, color: c.accent, fontWeight: 700 }}>{labels.sellAfter}</Text>
+          {card.sellLines.map((line) => (
+            <PdfSellChipLine key={`${line.label}-${line.disposition}`} line={line} labels={labels} />
           ))}
         </View>
       ) : null}
@@ -133,7 +133,7 @@ export function ProgressPdf({
               <Text style={[s.h2, { fontSize: 10, marginBottom: 4 }]}>{L.upcomingRebirths}</Text>
               {p.upcoming.map((block) => (
                 <View key={block.rebirth} style={{ marginBottom: 4 }} wrap={false}>
-                  <Text style={{ fontWeight: 700, fontSize: 8, color: '#475569' }}>
+                  <Text style={{ fontWeight: 700, fontSize: 8, color: c.textMuted }}>
                     {`${L.rebirth} ${block.rebirth} · ${block.credits}`}
                   </Text>
                   {block.droids.map((line) => (
