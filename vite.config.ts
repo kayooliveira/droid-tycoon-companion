@@ -24,10 +24,10 @@ export default defineConfig({
       ],
       manifest: {
         id: '/',
-        name: 'DT Helper',
-        short_name: 'DT Helper',
+        name: 'DroidDeck',
+        short_name: 'DroidDeck',
         description:
-          'Companion for Star Wars Droid Tycoon — rebirths, inventory, and sell tips.',
+          'Companion for Star Wars Droid Tycoon: rebirths, inventory, and sell tips.',
         theme_color: '#0c121c',
         background_color: '#070b12',
         display: 'standalone',
@@ -89,7 +89,7 @@ export default defineConfig({
             sizes: '844x390',
             type: 'image/png',
             form_factor: 'wide',
-            label: 'DT Helper dashboard',
+            label: 'DroidDeck home',
           },
         ],
       },

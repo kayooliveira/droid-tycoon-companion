@@ -1,5 +1,5 @@
 import { APP_BRAND_NAME } from './brand'
-import { APP_PUBLIC_URL, REPORT_FEEDBACK_URL } from './constants'
+import { APP_PUBLIC_URL } from './constants'
 import { formatCycleDisplayName } from './cycleLabel'
 import { droidImageSrc } from './images'
 import { cycleById, droidById, gameData, getRebirth } from '../domain/gameData'
@@ -54,36 +54,34 @@ const copy = {
     done: 'Done',
     next: 'Current',
     pending: 'Upcoming',
-    footer: 'Fan-made · not affiliated with Epic Games',
+    footer: 'Fan-made. Not affiliated with Epic Games.',
     superTitle: 'Super Rebirth',
     superBody: `Available after rebirth ${SUPER_REBIRTH_UNLOCK_AFTER}. Resets credits, base upgrades, and most droids (Iconics stay).`,
     fusionTitle: 'Fusion recipes on this cycle',
-    feedbackLink: 'Feedback on WhatsApp',
     noneSell: 'Nothing to sell yet',
     noneSellNow: 'Nothing to sell at this step yet',
   },
   'pt-BR': {
     myCycle: (name: string) => `Meu ${name}`,
     brand: APP_BRAND_NAME,
-    rebirthsDone: 'Rebirths concluídos',
+    rebirthsDone: 'Renascimentos concluídos',
     pathPct: '% do ciclo',
-    nextRebirth: 'Próximo rebirth',
+    nextRebirth: 'Próximo renascimento',
     inventory: 'Droids no inventário',
     sellNow: 'Pode vender agora',
-    upcomingRebirths: 'Próximos rebirths',
-    remainingRebirths: 'Rebirths restantes',
+    upcomingRebirths: 'Próximos renascimentos',
+    remainingRebirths: 'Renascimentos restantes',
     date: 'Gerado em',
-    rebirth: 'Rebirth',
+    rebirth: 'Renascimento',
     credits: 'Créditos',
     sellAfter: 'Vender depois:',
     done: 'Feito',
     next: 'Atual',
     pending: 'Próximos',
-    footer: 'Fan-made · não afiliado à Epic Games',
-    superTitle: 'Super Rebirth',
-    superBody: `Libera depois do rebirth ${SUPER_REBIRTH_UNLOCK_AFTER}. Zera créditos, upgrades da base e quase todos os droids (Iconics ficam).`,
+    footer: 'Feito por fãs. Sem vínculo com a Epic Games.',
+    superTitle: 'Super Renascimento',
+    superBody: `Libera depois do renascimento ${SUPER_REBIRTH_UNLOCK_AFTER}. Zera créditos, upgrades da base e quase todos os droids (Iconics ficam).`,
     fusionTitle: 'Receitas de fusão neste ciclo',
-    feedbackLink: 'Feedback no WhatsApp',
     noneSell: 'Nada pra vender ainda',
     noneSellNow: 'Nada pra vender neste passo',
   },
@@ -131,9 +129,6 @@ async function drawFooter(ctx: CanvasRenderingContext2D, locale: 'en' | 'pt-BR',
   ctx.fillStyle = '#64748b'
   ctx.font = '11px system-ui, sans-serif'
   ctx.fillText(copy[locale].footer, PAD, y + 44)
-  if (REPORT_FEEDBACK_URL) {
-    ctx.fillText(copy[locale].feedbackLink, PAD, y + 58)
-  }
 
   const logo = await loadImage('/pwa-192.png')
   if (logo) ctx.drawImage(logo, PAGE_W - PAD - 108, y + 12, 36, 36)

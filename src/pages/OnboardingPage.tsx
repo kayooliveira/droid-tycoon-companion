@@ -210,7 +210,6 @@ export function OnboardingPage() {
                     <p className="text-sm text-zinc-300 text-pretty leading-relaxed">
                       {t('onboarding.welcomeSub')}
                     </p>
-                    <p className="text-[10px] text-zinc-500 pt-1">{t('onboarding.welcomeFootnote')}</p>
                   </div>
                 </div>
               </>
@@ -387,7 +386,7 @@ export function OnboardingPage() {
           </div>
         </div>
 
-        <div className="relative z-10 flex gap-2 pt-4 mt-auto shrink-0">
+        <div className="relative z-10 flex gap-2 pt-4 mt-auto shrink-0 pb-[calc(env(safe-area-inset-bottom,0px)+12px)]">
           {step > 0 ? (
             <Button
               variant="secondary"

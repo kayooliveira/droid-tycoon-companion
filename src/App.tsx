@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AppShell } from './components/AppShell'
+import { GlassFilters } from './components/GlassFilters'
 import { PageSkeleton } from './components/PageSkeleton'
 import { SeoManager } from './components/SeoManager'
 import { ToastProvider, useToast } from './components/ToastProvider'
@@ -79,8 +80,13 @@ export default function App() {
     applyTheme(theme)
   }, [theme])
 
+  useEffect(() => {
+    document.documentElement.classList.add('glass-refraction-enabled')
+  }, [])
+
   return (
     <ToastProvider>
+      <GlassFilters />
       <BrowserRouter>
         <LocaleSync />
         <SeoManager />

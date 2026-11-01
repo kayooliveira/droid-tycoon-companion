@@ -19,6 +19,7 @@
   },
   "progress": {
     "completed": "Concluídos",
+    "nextRebirth": "Próximo renascimento",
     "nextRenascimento": "Próximo renascimento",
     "workingOn": "Renascimento #{{n}} agora",
     "completedCount": "{{done}} / {{total}} neste ciclo",
@@ -28,12 +29,14 @@
     "completeBlocked": "Ainda faltam droids neste renascimento. Atualize o inventário ou conclua mesmo assim se você não registra tudo aqui.",
     "undoOne": "Desfazer renascimento",
     "undoConfirm": "Voltar um renascimento neste ciclo? O inventário não muda.",
+    "superRebirth": "Super Renascimento → próximo ciclo",
     "superRenascimento": "Super Renascimento → próximo ciclo",
     "superHint": "Super Renascimento libera depois de {{n}} renascimentos concluídos.",
     "listDone": "Feito",
     "listCurrent": "Atual",
     "listCompletedState": "Concluído",
     "pathComplete": "Ciclo completo. Use Super Renascimento para seguir.",
+    "rebirthCompleted": "Renascimento marcado como concluído.",
     "renascimentoCompleted": "Renascimento marcado como concluído.",
     "focus": "Foco",
     "list": "Lista",
@@ -317,7 +320,7 @@
     "defaultTitle": "DroidDeck · Star Wars Droid Tycoon",
     "description": "Track Path, renascimentos, inventory, and sell advice for Star Wars Droid Tycoon (Fortnite UEFN).",
     "descriptionPt": "Acompanhe ciclo, renascimentos, inventário e o que vender no Star Wars Droid Tycoon (Fortnite UEFN).",
-    "ogImageAlt": "DT Helper . renascimentos, inventory, and sell tips",
+    "ogImageAlt": "DroidDeck renascimentos, inventário e dicas de venda",
     "ogImageAltPt": "DroidDeck · renascimentos, inventário e dicas de venda"
   },
   "a11y": {

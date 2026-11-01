@@ -319,7 +319,7 @@
     "description": "Track Path, rebirths, inventory, and sell advice for Star Wars Droid Tycoon (Fortnite UEFN).",
     "descriptionPt": "Acompanhe Path, rebirths, inventário e o que vender no Star Wars Droid Tycoon (Fortnite UEFN).",
     "ogImageAlt": "DroidDeck rebirths, inventory, and sell tips",
-    "ogImageAltPt": "DT Helper . rebirths, inventário e dicas de venda"
+    "ogImageAltPt": "DroidDeck renascimentos, inventário e dicas de venda"
   },
   "a11y": {
     "markOwned": "Mark {{name}} as owned",

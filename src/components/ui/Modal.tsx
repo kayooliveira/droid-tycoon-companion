@@ -3,6 +3,7 @@ import { X } from '@phosphor-icons/react'
 import { useScrollLock } from '../../hooks/useScrollLock'
 import { cn } from '../../lib/utils'
 import { IconButton } from './IconButton'
+import { Glass } from './Glass'
 import { uiIconProps } from './iconStyle'
 
 const FOCUSABLE =
@@ -65,36 +66,42 @@ export function Modal({
         if (e.target === e.currentTarget) onClose()
       }}
     >
-      <div
-        ref={dialogRef}
-        tabIndex={-1}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
+      <Glass
+        as="div"
+        variant="regular"
         className={cn(
-          'glass-panel w-full sm:max-w-md max-h-[88dvh] overflow-auto outline-none',
-          'rounded-t-2xl sm:rounded-2xl pb-[env(safe-area-inset-bottom)]',
+          'w-full sm:max-w-md max-h-[88dvh] overflow-auto',
+          'rounded-t-2xl sm:rounded-2xl pb-[calc(env(safe-area-inset-bottom,0px)+12px)]',
           className,
         )}
       >
-        <div className="flex justify-center pt-2 sm:hidden" aria-hidden>
-          <span className="h-1 w-10 rounded-full bg-white/20" />
-        </div>
-        <div className="flex items-center justify-between gap-2 px-4 pt-3 pb-2 sm:px-5 sm:pt-4 border-b border-white/10">
-          <h2 id={titleId} className="font-display text-base font-semibold tracking-wide text-balance">
-            {title}
-          </h2>
-          <IconButton label="Close" onClick={onClose}>
-            <X {...uiIconProps} />
-          </IconButton>
-        </div>
-        <div className="px-4 py-4 sm:px-5 text-sm">{children}</div>
-        {footer ? (
-          <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-0 flex flex-wrap gap-2 justify-end border-t border-white/5">
-            {footer}
+        <div
+          ref={dialogRef}
+          tabIndex={-1}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={titleId}
+          className="bg-surface-900/95 backdrop-saturate-150 min-h-full outline-none"
+        >
+          <div className="flex justify-center pt-2 sm:hidden" aria-hidden>
+            <span className="h-1 w-10 rounded-full bg-white/20" />
           </div>
-        ) : null}
-      </div>
+          <div className="flex items-center justify-between gap-2 px-4 pt-3 pb-2 sm:px-5 sm:pt-4 border-b border-white/10">
+            <h2 id={titleId} className="font-display text-base font-semibold tracking-wide text-balance">
+              {title}
+            </h2>
+            <IconButton label="Close" onClick={onClose}>
+              <X {...uiIconProps} />
+            </IconButton>
+          </div>
+          <div className="px-4 py-4 sm:px-5 text-sm">{children}</div>
+          {footer ? (
+            <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-0 flex flex-wrap gap-2 justify-end border-t border-white/5">
+              {footer}
+            </div>
+          ) : null}
+        </div>
+      </Glass>
     </div>
   )
 }

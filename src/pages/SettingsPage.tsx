@@ -196,7 +196,6 @@ export function SettingsPage() {
 
       <GlassCard className="p-4 space-y-3">
         <SectionHeader icon={<Info {...uiIconProps} />} title={t('settings.aboutSection')} />
-        <p className="text-xs text-zinc-500 text-pretty">{t('app.disclaimer')}</p>
         <div className="flex flex-wrap gap-2">
           <Button variant="secondary" size="sm" onClick={rerunOnboarding}>
             {t('settings.rerunOnboardingShort')}

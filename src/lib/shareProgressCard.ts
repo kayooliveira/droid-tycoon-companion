@@ -177,7 +177,7 @@ export async function renderShareProgressCard(data: ShareCardInput): Promise<Blo
     } else {
       ctx.fillStyle = '#52525b'
       ctx.font = '28px system-ui, sans-serif'
-      ctx.fillText('—', x + plan.droidTileW / 2 - 10, y + plan.droidsH / 2)
+      ctx.fillText('-', x + plan.droidTileW / 2 - 4, y + plan.droidsH / 2)
     }
   }
 
@@ -245,12 +245,6 @@ export async function renderShareProgressCard(data: ShareCardInput): Promise<Blo
   ctx.fillStyle = '#71717a'
   ctx.font = '22px system-ui, sans-serif'
   ctx.fillText('dthelper.kayooliveira.com', ix, plan.footerLine1Y)
-  ctx.fillStyle = '#52525b'
-  ctx.font = '20px system-ui, sans-serif'
-  const footer2 = isPt
-    ? 'Fan-made · não afiliado à Epic Games'
-    : 'Fan-made · not affiliated with Epic Games'
-  ctx.fillText(footer2, ix, plan.footerLine2Y)
 
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {

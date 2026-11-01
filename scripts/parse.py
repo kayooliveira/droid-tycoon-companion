@@ -1,6 +1,6 @@
 import re,json,html,os,urllib.request
 R='raw/'
-B='https://droidtycoonhelper.com'
+WIKI='https://star-wars-droid-tycoon.fandom.com'
 droids={}
 # droid catalog
 h=open(R+'droids.html').read()
@@ -28,12 +28,12 @@ for p in range(1,7):
         cells=[re.sub(r'<[^>]+>','',html.unescape(c)).strip() for c in tds]
         warn='check' in row.lower() and 'game' in row.lower()
         rbs.append({'rebirth':n,'credits':cells[-2] if len(cells)>=2 else None,'unlocks':cells[-1] or None,
-          'requirements':reqs,'sourceUrl':f'{B}/rebirth-requirements/path-{p}/#rebirth-{n}',
+          'requirements':reqs,'sourceUrl':f'{WIKI}/wiki/Rebirth_requirements',
           'lastVerified':'2026-10-31','confidence':'partial' if warn or len(reqs)!=3 else 'confirmed',
           **({'note':re.sub(r'\s+',' ',re.sub(r'<[^>]+>',' ',html.unescape(row))).strip()} if warn else {})})
     cycles.append({'id':f'path-{p}','name':f'Path {p}','aliases':[f'Cycle {p}',f'Ciclo {p}'],'order':p,
       'gameVersion':ver.group(1) if ver else None,'sourceCheckedDate':ver.group(2) if ver else None,
-      'sourceUrl':f'{B}/rebirth-requirements/path-{p}/','lastVerified':'2026-10-31',
+      'sourceUrl':f'{WIKI}/wiki/Rebirth_requirements','lastVerified':'2026-10-31',
       'confidence':'confirmed' if len(rbs)==40 else 'partial','rebirthCount':len(rbs),'rebirths':rbs})
 json.dump({'droids':droids,'cycles':cycles},open('parsed.json','w'),indent=1)
 for c in cycles: print(c['id'],c['rebirthCount'],c['gameVersion'],sum(r['confidence']!='confirmed' for r in c['rebirths']))

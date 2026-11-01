@@ -48,10 +48,8 @@ async function seedPtBr(page: import('@playwright/test').Page, progress: Progres
 
 async function openDashboardPt(page: import('@playwright/test').Page) {
   await page.goto('/')
-  await expect(page.getByTestId('dashboard-ready')).toBeVisible({ timeout: 15000 })
-  await expect(
-    page.getByTestId('next-step').or(page.getByText(/próximo rebirth, inventário/i)),
-  ).toBeVisible()
+  await expect(page.getByTestId('home-hub')).toBeVisible({ timeout: 15000 })
+  await expect(page.getByTestId('home-now')).toBeVisible()
 }
 
 test('dashboard mobile pt-BR', async ({ browser }) => {

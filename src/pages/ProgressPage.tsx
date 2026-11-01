@@ -126,26 +126,39 @@ export function ProgressPage() {
               <div className="flex items-center gap-2 pt-1">
                 <Button
                   size="sm"
-                  icon={<Check {...uiIconProps} />}
+                  icon={<Check {...uiIconProps} weight="fill" />}
                   onClick={handleCompleteClick}
                   disabled={trackInventory && !canComplete}
                   className="flex-1 min-w-0 sm:flex-none"
                 >
                   {t('progress.completeShort')}
                 </Button>
+                {canSuperRebirth(progress) ? (
+                  <Button
+                    size="sm"
+                    variant="accent"
+                    icon={<Sparkle {...uiIconProps} weight="fill" />}
+                    onClick={() => {
+                      hapticTap()
+                      superRebirthAdvance()
+                    }}
+                    className="flex-1 min-w-0 sm:flex-none"
+                  >
+                    {t('progress.superRebirth')}
+                  </Button>
+                ) : (
+                  <HelpHint
+                    label={t('progress.superShort')}
+                    text={t('progress.superHint', { n: SUPER_REBIRTH_UNLOCK_AFTER })}
+                  />
+                )}
                 <IconButton
                   variant="soft"
                   label={t('progress.moreActionsTitle')}
                   onClick={() => setMoreOpen(true)}
                 >
-                  <DotsThreeVertical {...uiIconProps} />
+                  <DotsThreeVertical {...uiIconProps} weight="fill" />
                 </IconButton>
-                {!canSuperRebirth(progress) ? (
-                  <HelpHint
-                    label={t('progress.superShort')}
-                    text={t('progress.superHint', { n: SUPER_REBIRTH_UNLOCK_AFTER })}
-                  />
-                ) : null}
               </div>
               <SellAfterRebirthList
                 pathId={progress.pathId}
@@ -157,7 +170,7 @@ export function ProgressPage() {
             </>
           ) : (
             <p className="text-sm text-zinc-400">
-              {isPathComplete(progress) ? t('progress.pathComplete') : '—'}
+              {isPathComplete(progress) ? t('progress.pathComplete') : t('progress.listCurrent')}
             </p>
           )}
         </GlassCard>
@@ -218,14 +231,15 @@ export function ProgressPage() {
           {canSuperRebirth(progress) ? (
             <Button
               size="sm"
-              variant="secondary"
-              icon={<Sparkle {...uiIconProps} />}
+              variant="accent"
+              icon={<Sparkle {...uiIconProps} weight="fill" />}
               onClick={() => {
+                hapticTap()
                 superRebirthAdvance()
                 setMoreOpen(false)
               }}
             >
-              {t('progress.superShort')}
+              {t('progress.superRebirth')}
             </Button>
           ) : null}
         </div>
