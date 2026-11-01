@@ -42,7 +42,7 @@ export function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-testid="dashboard-ready">
       <GlassCard className="space-y-3 border-holo-500/20 bg-holo-600/5">
         <p className="text-sm text-zinc-300 leading-relaxed">{t('dashboard.hero')}</p>
         <div className="flex flex-wrap gap-2">
@@ -67,19 +67,21 @@ export function DashboardPage() {
         </div>
       </GlassCard>
 
-      <GlassCard className="flex flex-wrap items-center justify-between gap-3" data-testid="next-step">
-        <div>
-          <p className="text-xs uppercase tracking-widest text-zinc-500">{t('dashboard.nextStepLabel')}</p>
-          <p className="text-sm font-medium mt-1">{t(nextStepKey, { missing, sellable: sell.sellable })}</p>
-        </div>
-        <Link
-          to={nextStepHref}
-          className="inline-flex items-center gap-1 text-sm text-holo-300 hover:text-holo-200 min-h-11 px-3"
-        >
-          {t('dashboard.nextStepGo')}
-          <ArrowRight size={16} />
-        </Link>
-      </GlassCard>
+      <div data-testid="next-step">
+        <GlassCard className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-xs uppercase tracking-widest text-zinc-500">{t('dashboard.nextStepLabel')}</p>
+            <p className="text-sm font-medium mt-1">{t(nextStepKey, { missing, sellable: sell.sellable })}</p>
+          </div>
+          <Link
+            to={nextStepHref}
+            className="inline-flex items-center gap-1 text-sm text-holo-300 hover:text-holo-200 min-h-11 px-3"
+          >
+            {t('dashboard.nextStepGo')}
+            <ArrowRight size={16} />
+          </Link>
+        </GlassCard>
+      </div>
 
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-2 min-w-0">

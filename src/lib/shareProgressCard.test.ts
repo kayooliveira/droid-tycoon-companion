@@ -27,6 +27,7 @@ describe('renderShareProgressCard', () => {
       restore: () => {},
       drawImage: () => {},
       fillText: () => {},
+      measureText: () => ({ width: 40 }),
       fillStyle: '',
       strokeStyle: '',
       lineWidth: 1,

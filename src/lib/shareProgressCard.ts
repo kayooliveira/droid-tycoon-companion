@@ -1,6 +1,7 @@
-import { cycleById, gameData } from '../domain/gameData'
+import { cycleById, droidById, getRebirth } from '../domain/gameData'
 import { pathProgressPercent } from '../domain/progress'
 import type { InventoryUnit } from '../domain/types'
+import { droidImageSrc } from './images'
 
 export interface ShareCardInput {
   pathId: string
@@ -10,18 +11,40 @@ export interface ShareCardInput {
   locale: 'en' | 'pt-BR'
 }
 
-function droiddexCollectionPercent(inventory: InventoryUnit[]): number {
-  const unique = new Set(inventory.map((u) => u.droidId)).size
-  return Math.round((unique / gameData.droids.length) * 100)
+function inventoryDroidCount(inventory: InventoryUnit[]): number {
+  return new Set(inventory.map((u) => u.droidId)).size
 }
 
-function loadImage(src: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
+function loadImage(src: string): Promise<HTMLImageElement | null> {
+  return new Promise((resolve) => {
     const img = new Image()
+    img.crossOrigin = 'anonymous'
     img.onload = () => resolve(img)
-    img.onerror = () => reject(new Error(`Failed to load ${src}`))
+    img.onerror = () => resolve(null)
     img.src = src
   })
+}
+
+function drawCoverImage(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  x: number,
+  y: number,
+  size: number,
+) {
+  const aspect = img.width / img.height
+  let sw = img.width
+  let sh = img.height
+  let sx = 0
+  let sy = 0
+  if (aspect > 1) {
+    sw = img.height
+    sx = (img.width - sw) / 2
+  } else if (aspect < 1) {
+    sh = img.width
+    sy = (img.height - sh) / 2
+  }
+  ctx.drawImage(img, sx, sy, sw, sh, x, y, size, size)
 }
 
 export async function renderShareProgressCard(data: ShareCardInput): Promise<Blob> {
@@ -33,92 +56,154 @@ export async function renderShareProgressCard(data: ShareCardInput): Promise<Blo
   const ctx = canvas.getContext('2d')
   if (!ctx) throw new Error('Canvas not supported')
 
+  const isPt = data.locale === 'pt-BR'
   const pathName = cycleById.get(data.pathId)?.name ?? data.pathId
   const pathPct = pathProgressPercent({
     pathId: data.pathId,
     nextRebirth: data.nextRebirth,
     completedOnPath: data.completedOnPath,
   })
-  const dexPct = droiddexCollectionPercent(data.inventory)
-  const isPt = data.locale === 'pt-BR'
+  const invCount = inventoryDroidCount(data.inventory)
+  const next = getRebirth(data.pathId, data.nextRebirth)
+  const reqDroids = next?.requirements.map((r) => droidById.get(r.droidId)).filter(Boolean) ?? []
 
-  const grad = ctx.createLinearGradient(0, 0, width, height)
-  grad.addColorStop(0, '#070b12')
-  grad.addColorStop(0.55, '#0c121c')
-  grad.addColorStop(1, '#111827')
-  ctx.fillStyle = grad
+  const bg = ctx.createLinearGradient(0, 0, width, height)
+  bg.addColorStop(0, '#070b12')
+  bg.addColorStop(0.5, '#0c121c')
+  bg.addColorStop(1, '#101827')
+  ctx.fillStyle = bg
   ctx.fillRect(0, 0, width, height)
 
-  ctx.fillStyle = 'rgba(255,255,255,0.04)'
-  roundRect(ctx, 56, 56, width - 112, height - 112, 36)
+  ctx.fillStyle = 'rgba(255,255,255,0.05)'
+  roundRect(ctx, 48, 48, width - 96, height - 96, 32)
   ctx.fill()
-  ctx.strokeStyle = 'rgba(89,163,255,0.35)'
-  ctx.lineWidth = 3
+  ctx.strokeStyle = 'rgba(89,163,255,0.4)'
+  ctx.lineWidth = 2
   ctx.stroke()
 
-  try {
-    const icon = await loadImage('/pwa-192.png')
+  const logoSize = 152
+  const logo = await loadImage('/pwa-512.png')
+  if (logo) {
     ctx.save()
-    roundRect(ctx, 88, 88, 96, 96, 22)
+    roundRect(ctx, 72, 72, logoSize, logoSize, 28)
     ctx.clip()
-    ctx.drawImage(icon, 88, 88, 96, 96)
+    drawCoverImage(ctx, logo, 72, 72, logoSize)
     ctx.restore()
-  } catch {
-    /* icon optional */
   }
 
   ctx.fillStyle = '#59a3ff'
-  ctx.font = '600 26px system-ui, sans-serif'
-  ctx.fillText('DROID TYCOON', 208, 130)
-  ctx.fillStyle = '#71717a'
-  ctx.font = '22px system-ui, sans-serif'
-  ctx.fillText(isPt ? 'Companion · fan tool' : 'Companion · fan tool', 208, 168)
-
+  ctx.font = '700 32px system-ui, sans-serif'
+  ctx.fillText('DROID TYCOON', 72 + logoSize + 28, 120)
   ctx.fillStyle = '#fafafa'
-  ctx.font = '700 48px system-ui, sans-serif'
-  ctx.fillText(isPt ? 'Meu progresso' : 'My progress', 88, 260)
-
-  ctx.fillStyle = '#d4d4d8'
-  ctx.font = '34px system-ui, sans-serif'
-  ctx.fillText(`${isPt ? 'Path' : 'Path'}: ${pathName}`, 88, 340)
-  ctx.fillText(
-    isPt
-      ? `Rebirths: ${data.completedOnPath}/40 · próximo #${Math.min(data.nextRebirth, 40)}`
-      : `Rebirths: ${data.completedOnPath}/40 · next #${Math.min(data.nextRebirth, 40)}`,
-    88,
-    400,
-  )
-  ctx.fillText(
-    isPt ? `Droiddex no inventário: ${dexPct}%` : `Droiddex in inventory: ${dexPct}%`,
-    88,
-    460,
-  )
-
-  const barX = 88
-  const barY = 520
-  const barW = width - 176
-  const barH = 28
-  ctx.fillStyle = 'rgba(255,255,255,0.08)'
-  roundRect(ctx, barX, barY, barW, barH, 14)
-  ctx.fill()
-  const fillW = Math.max(8, (barW * pathPct) / 100)
-  const barGrad = ctx.createLinearGradient(barX, 0, barX + barW, 0)
-  barGrad.addColorStop(0, '#3380ff')
-  barGrad.addColorStop(1, '#5eead4')
-  ctx.fillStyle = barGrad
-  roundRect(ctx, barX, barY, fillW, barH, 14)
-  ctx.fill()
-
-  ctx.fillStyle = '#5eead4'
-  ctx.font = '700 72px system-ui, sans-serif'
-  ctx.fillText(`${Math.round(pathPct)}%`, 88, 660)
+  ctx.font = '600 40px system-ui, sans-serif'
+  ctx.fillText('Companion', 72 + logoSize + 28, 168)
   ctx.fillStyle = '#a1a1aa'
   ctx.font = '28px system-ui, sans-serif'
-  ctx.fillText(isPt ? 'progresso do Path' : 'path progress', 88, 710)
+  ctx.fillText(`${isPt ? 'Path' : 'Path'} · ${pathName}`, 72 + logoSize + 28, 210)
 
+  const nextLabel = isPt
+    ? `Próximo rebirth #${Math.min(data.nextRebirth, 40)}`
+    : `Next rebirth #${Math.min(data.nextRebirth, 40)}`
+  ctx.fillStyle = '#e4e4e7'
+  ctx.font = '600 34px system-ui, sans-serif'
+  ctx.fillText(nextLabel, 72, 280)
+
+  const tileY = 330
+  const tileSize = 200
+  const gap = 36
+  const tilesX = 72
+  const droidImgs = await Promise.all(
+    reqDroids.slice(0, 3).map(async (d) => {
+      if (!d) return null
+      return loadImage(droidImageSrc(d.id, d.imageLocal))
+    }),
+  )
+
+  for (let i = 0; i < 3; i++) {
+    const x = tilesX + i * (tileSize + gap)
+    ctx.fillStyle = 'rgba(255,255,255,0.06)'
+    roundRect(ctx, x, tileY, tileSize, tileSize + 56, 20)
+    ctx.fill()
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)'
+    ctx.lineWidth = 1
+    ctx.stroke()
+
+    const img = droidImgs[i]
+    const d = reqDroids[i]
+    if (img && d) {
+      ctx.save()
+      roundRect(ctx, x + 12, tileY + 12, tileSize - 24, tileSize - 24, 16)
+      ctx.clip()
+      drawCoverImage(ctx, img, x + 12, tileY + 12, tileSize - 24)
+      ctx.restore()
+      ctx.fillStyle = '#d4d4d8'
+      ctx.font = '22px system-ui, sans-serif'
+      const name = d.name.length > 14 ? `${d.name.slice(0, 13)}…` : d.name
+      ctx.fillText(name, x + 16, tileY + tileSize + 36)
+    } else {
+      ctx.fillStyle = '#52525b'
+      ctx.font = '24px system-ui, sans-serif'
+      ctx.fillText('—', x + tileSize / 2 - 8, tileY + tileSize / 2)
+    }
+  }
+
+  const statY = 620
+  const statW = (width - 144) / 3
+  const stats = [
+    {
+      value: `${data.completedOnPath}`,
+      sub: isPt ? 'rebirths ok' : 'rebirths done',
+      suffix: '/40',
+    },
+    { value: `${Math.round(pathPct)}%`, sub: isPt ? 'do Path' : 'path' },
+    { value: `${invCount}`, sub: isPt ? 'droids no inv.' : 'droids tracked' },
+  ]
+
+  stats.forEach((s, i) => {
+    const x = 72 + i * statW
+    ctx.fillStyle = 'rgba(255,255,255,0.04)'
+    roundRect(ctx, x, statY, statW - 16, 140, 16)
+    ctx.fill()
+    ctx.fillStyle = '#5eead4'
+    ctx.font = '700 64px system-ui, sans-serif'
+    ctx.fillText(s.value, x + 20, statY + 72)
+    if (s.suffix) {
+      ctx.fillStyle = '#71717a'
+      ctx.font = '32px system-ui, sans-serif'
+      ctx.fillText(s.suffix, x + 20 + ctx.measureText(s.value).width + 4, statY + 72)
+    }
+    ctx.fillStyle = '#a1a1aa'
+    ctx.font = '24px system-ui, sans-serif'
+    ctx.fillText(s.sub, x + 20, statY + 110)
+  })
+
+  const barX = 72
+  const barY = 790
+  const barW = width - 144
+  const barH = 24
+  ctx.fillStyle = 'rgba(255,255,255,0.1)'
+  roundRect(ctx, barX, barY, barW, barH, 12)
+  ctx.fill()
+  if (pathPct > 0) {
+    const fillW = (barW * Math.min(100, pathPct)) / 100
+    const barGrad = ctx.createLinearGradient(barX, 0, barX + barW, 0)
+    barGrad.addColorStop(0, '#3380ff')
+    barGrad.addColorStop(1, '#5eead4')
+    ctx.fillStyle = barGrad
+    roundRect(ctx, barX, barY, fillW, barH, 12)
+    ctx.fill()
+  }
+
+  ctx.fillStyle = '#71717a'
+  ctx.font = '22px system-ui, sans-serif'
+  const footer1 = 'dthelper.kayooliveira.com'
+  ctx.fillText(footer1, 72, height - 120)
   ctx.fillStyle = '#52525b'
-  ctx.font = '24px system-ui, sans-serif'
-  ctx.fillText('dthelper.kayooliveira.com', 88, height - 88)
+  ctx.font = '20px system-ui, sans-serif'
+  const footer2 = isPt
+    ? 'Fan-made · não afiliado à Epic Games'
+    : 'Fan-made · not affiliated with Epic Games'
+  ctx.fillText(footer2, 72, height - 88)
 
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {

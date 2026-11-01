@@ -5,14 +5,12 @@ import { AppShell } from './components/AppShell'
 import { PageSkeleton } from './components/PageSkeleton'
 import { SeoManager } from './components/SeoManager'
 import { ToastProvider, useToast } from './components/ToastProvider'
+import { DashboardPage } from './pages/DashboardPage'
 import { OnboardingPage } from './pages/OnboardingPage'
 import { setDocumentLanguage } from './i18n'
 import { reloadForPwaUpdate } from './lib/pwaUpdate'
 import { applyTheme, useAppStore } from './store/useAppStore'
 
-const DashboardPage = lazy(() =>
-  import('./pages/DashboardPage').then((m) => ({ default: m.DashboardPage })),
-)
 const ProgressPage = lazy(() =>
   import('./pages/ProgressPage').then((m) => ({ default: m.ProgressPage })),
 )
@@ -91,14 +89,7 @@ export default function App() {
               </OnboardingGate>
             }
           >
-            <Route
-              index
-              element={
-                <LazyPage>
-                  <DashboardPage />
-                </LazyPage>
-              }
-            />
+            <Route index element={<DashboardPage />} />
             <Route
               path="progress"
               element={
