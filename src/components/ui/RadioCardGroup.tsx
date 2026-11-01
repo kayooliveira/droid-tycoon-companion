@@ -8,12 +8,14 @@ export function RadioCardGroup<T extends string>({
   options,
   ariaLabel,
   columns = 2,
+  optionTestIdPrefix,
 }: {
   value: T
   onChange: (v: T) => void
   options: Array<{ value: T; label: string; hint?: string }>
   ariaLabel: string
   columns?: 2 | 3
+  optionTestIdPrefix?: string
 }) {
   return (
     <div
@@ -29,6 +31,7 @@ export function RadioCardGroup<T extends string>({
             type="button"
             role="radio"
             aria-checked={selected}
+            data-testid={optionTestIdPrefix ? `${optionTestIdPrefix}-${opt.value}` : undefined}
             onClick={() => onChange(opt.value)}
             className={cn(
               'relative rounded-xl border px-3 py-3 text-left min-h-11 transition-colors',

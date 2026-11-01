@@ -70,7 +70,7 @@ export function Modal({
       <div
         data-overlay-root
         data-testid={testId}
-        className="fixed inset-0 z-overlay flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-4"
+        className="fixed inset-0 z-overlay flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-md p-0 sm:p-4"
         role="presentation"
         onMouseDown={(e) => {
           if (e.target === e.currentTarget) onClose()

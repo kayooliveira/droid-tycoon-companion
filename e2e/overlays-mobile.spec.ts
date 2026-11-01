@@ -61,7 +61,10 @@ async function assertTopmostTestId(page: Page, testId: string) {
 
 async function shot(page: Page, name: string) {
   fs.mkdirSync(ARTIFACTS, { recursive: true })
-  await page.screenshot({ path: path.join(ARTIFACTS, `${name}.png`), fullPage: true })
+  await page.screenshot({
+    path: path.join(ARTIFACTS, `${name}.png`),
+    fullPage: false,
+  })
 }
 
 test.describe('mobile overlay stacking', () => {
@@ -90,6 +93,8 @@ test.describe('mobile overlay stacking', () => {
     await page.getByTestId('droiddex-detail-modal-close').click()
 
     await page.goto('/inventory')
+    await expect(page.getByTestId('inventory-page')).toBeVisible()
+    await shot(page, 'inventory-page')
     await page.getByTestId('inventory-add-open').click()
     await expect(page.getByTestId('inventory-add-modal')).toBeVisible()
     await assertTopmostTestId(page, 'inventory-add-confirm')

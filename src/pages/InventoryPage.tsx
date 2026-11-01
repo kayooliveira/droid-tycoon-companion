@@ -11,8 +11,10 @@ import type { TierId } from '../domain/types'
 import { DroidImage } from '../components/DroidImage'
 import { Badge } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
+import { ChipRadioGroup } from '../components/ui/ChipRadioGroup'
 import { GlassCard } from '../components/ui/GlassCard'
 import { Modal } from '../components/ui/Modal'
+import { QuantityStepper } from '../components/ui/QuantityStepper'
 import { useToast } from '../components/ToastProvider'
 import {
   usePersistedInventoryFilters,
@@ -43,6 +45,46 @@ export function InventoryPage() {
   const [newDroidId, setNewDroidId] = useState(gameData.droids[0]?.id ?? '')
   const [newTier, setNewTier] = useState<TierId>('default')
   const [newQty, setNewQty] = useState(1)
+
+  const rarityOptions = useMemo(
+    () => [
+      { value: 'all', label: t('inventory.allRarities') },
+      ...gameData.baseRarities.map((r) => ({
+        value: r.id,
+        label: rarityLabel(t, r.id),
+      })),
+    ],
+    [t],
+  )
+
+  const tierOptions = useMemo(
+    () => [
+      { value: 'all', label: t('inventory.allTiers') },
+      ...gameData.rarities.map((tier) => ({
+        value: tier.id,
+        label: formatTierName(tier.id, tierLabels),
+      })),
+    ],
+    [t, tierLabels],
+  )
+
+  const tierPickOptions = useMemo(
+    () =>
+      gameData.rarities.map((tier) => ({
+        value: tier.id as TierId,
+        label: formatTierName(tier.id, tierLabels),
+      })),
+    [tierLabels],
+  )
+
+  const neededOptions = useMemo(
+    () => [
+      { value: 'all' as const, label: t('inventory.allNeeds') },
+      { value: 'needed' as const, label: t('inventory.neededFilter') },
+      { value: 'not-needed' as const, label: t('inventory.notNeededFilter') },
+    ],
+    [t],
+  )
 
   const filtered = useMemo(() => {
     return inventory
@@ -78,7 +120,7 @@ export function InventoryPage() {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5" data-testid="inventory-page">
       <div className="flex flex-wrap gap-3 items-center justify-between">
         <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('inventory.title')}</h1>
         <Button data-testid="inventory-add-open" onClick={() => setAddOpen(true)}>
@@ -86,45 +128,44 @@ export function InventoryPage() {
         </Button>
       </div>
       <input
-        className="w-full rounded-xl bg-surface-800 border border-white/10 px-4 py-3 text-sm min-h-11"
+        className="w-full rounded-xl bg-surface-800 border border-white/10 px-4 py-3 text-base min-h-11"
         placeholder={t('inventory.search')}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
-      <div className="flex flex-wrap gap-2">
-        <select
-          className="rounded-lg bg-surface-800 border border-white/10 px-3 py-2.5 text-sm min-h-11"
-          value={rarityFilter}
-          onChange={(e) => setRarityFilter(e.target.value)}
-        >
-          <option value="all">{t('inventory.allRarities')}</option>
-          {gameData.baseRarities.map((r) => (
-            <option key={r.id} value={r.id}>
-              {rarityLabel(t, r.id)}
-            </option>
-          ))}
-        </select>
-        <select
-          className="rounded-lg bg-surface-800 border border-white/10 px-3 py-2.5 text-sm min-h-11"
-          value={tierFilter}
-          onChange={(e) => setTierFilter(e.target.value)}
-        >
-          <option value="all">{t('inventory.allTiers')}</option>
-          {gameData.rarities.map((tier) => (
-            <option key={tier.id} value={tier.id}>
-              {formatTierName(tier.id, tierLabels)}
-            </option>
-          ))}
-        </select>
-        <select
-          className="rounded-lg bg-surface-800 border border-white/10 px-3 py-2.5 text-sm min-h-11"
-          value={neededFilter}
-          onChange={(e) => setNeededFilter(e.target.value as InventoryFilters['neededFilter'])}
-        >
-          <option value="all">{t('inventory.allNeeds')}</option>
-          <option value="needed">{t('inventory.neededFilter')}</option>
-          <option value="not-needed">{t('inventory.notNeededFilter')}</option>
-        </select>
+      <div className="space-y-3">
+        <div className="space-y-1.5">
+          <p className="text-base text-zinc-400">{t('inventory.filterRarity')}</p>
+          <ChipRadioGroup
+            ariaLabel={t('inventory.filterRarity')}
+            testId="inventory-rarity-chips"
+            scrollX
+            value={rarityFilter}
+            onChange={setRarityFilter}
+            options={rarityOptions}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <p className="text-base text-zinc-400">{t('inventory.filterTier')}</p>
+          <ChipRadioGroup
+            ariaLabel={t('inventory.filterTier')}
+            testId="inventory-tier-chips"
+            scrollX
+            value={tierFilter}
+            onChange={setTierFilter}
+            options={tierOptions}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <p className="text-base text-zinc-400">{t('inventory.filterNeed')}</p>
+          <ChipRadioGroup
+            ariaLabel={t('inventory.filterNeed')}
+            testId="inventory-needed-chips"
+            value={neededFilter}
+            onChange={(v) => setNeededFilter(v as InventoryFilters['neededFilter'])}
+            options={neededOptions}
+          />
+        </div>
       </div>
 
       <div className="grid gap-3">
@@ -146,14 +187,12 @@ export function InventoryPage() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <input
-                  type="number"
-                  min={1}
-                  className="w-16 rounded-lg bg-surface-800 border border-white/10 px-2 py-1 text-sm"
+                <QuantityStepper
+                  compact
                   value={unit.quantity}
-                  onChange={(e) =>
-                    updateInventoryUnit(unit.id, { quantity: Math.max(1, Number(e.target.value)) })
-                  }
+                  onChange={(quantity) => updateInventoryUnit(unit.id, { quantity })}
+                  decreaseLabel={t('inventory.decreaseQuantity')}
+                  increaseLabel={t('inventory.increaseQuantity')}
                 />
                 <Button
                   variant="ghost"
@@ -186,9 +225,9 @@ export function InventoryPage() {
         title={t('inventory.modalTitle')}
         testId="inventory-add-modal"
       >
-        <div className="space-y-3">
+        <div className="space-y-4">
           <input
-            className="w-full rounded-lg bg-surface-800 border border-white/10 px-3 py-2 text-sm"
+            className="w-full rounded-lg bg-surface-800 border border-white/10 px-3 py-2.5 text-base min-h-11"
             placeholder={t('inventory.searchDroids')}
             value={pickerSearch}
             onChange={(e) => setPickerSearch(e.target.value)}
@@ -199,7 +238,7 @@ export function InventoryPage() {
                 key={d.id}
                 type="button"
                 onClick={() => setNewDroidId(d.id)}
-                className={`flex items-center gap-2 rounded-lg border px-2 py-2 text-left text-xs ${
+                className={`flex items-center gap-2 rounded-lg border px-2 py-2 text-left text-sm ${
                   newDroidId === d.id ? 'border-holo-400/50 bg-holo-600/10' : 'border-white/10'
                 }`}
               >
@@ -208,34 +247,27 @@ export function InventoryPage() {
               </button>
             ))}
           </div>
-          <label className="block text-sm">
-            {t('inventory.allTiers')}
-            <select
-              className="mt-1 w-full rounded-lg bg-surface-800 border border-white/10 px-3 py-2"
+          <div className="space-y-1.5">
+            <p className="text-base text-zinc-300">{t('inventory.pickTier')}</p>
+            <ChipRadioGroup
+              ariaLabel={t('inventory.pickTier')}
+              testId="inventory-add-tier-chips"
+              scrollX
               value={newTier}
-              onChange={(e) => setNewTier(e.target.value as TierId)}
-            >
-              {gameData.rarities.map((tier) => (
-                <option key={tier.id} value={tier.id}>
-                  {tier.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="block text-sm">
-            {t('inventory.quantity')}
-            <input
-              type="number"
-              min={1}
-              max={999}
-              className="mt-1 w-full rounded-lg bg-surface-800 border border-white/10 px-3 py-2"
-              value={newQty}
-              onChange={(e) => setNewQty(Math.max(1, Number(e.target.value) || 1))}
-              data-testid="inventory-add-qty"
+              onChange={setNewTier}
+              options={tierPickOptions}
             />
-          </label>
+          </div>
+          <QuantityStepper
+            label={t('inventory.quantity')}
+            value={newQty}
+            onChange={setNewQty}
+            decreaseLabel={t('inventory.decreaseQuantity')}
+            increaseLabel={t('inventory.increaseQuantity')}
+            testId="inventory-add-qty"
+          />
           <Button
-            className="w-full"
+            className="w-full min-h-11"
             data-testid="inventory-add-confirm"
             onClick={() => {
               addInventoryUnit(newDroidId, newTier, newQty)

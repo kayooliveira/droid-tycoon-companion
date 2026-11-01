@@ -124,6 +124,12 @@
     "removed": "Removido do inventário.",
     "modalTitle": "Adicionar droid",
     "quantity": "Quantidade",
+    "decreaseQuantity": "Diminuir quantidade",
+    "increaseQuantity": "Aumentar quantidade",
+    "filterRarity": "Raridade",
+    "filterTier": "Nível",
+    "filterNeed": "Uso no ciclo",
+    "pickTier": "Nível deste droid",
     "searchDroids": "Buscar droids…",
     "add": "Adicionar",
     "inInventory": "{{owned}} / {{needed}} no inventário"
