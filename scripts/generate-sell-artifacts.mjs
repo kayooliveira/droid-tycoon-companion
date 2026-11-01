@@ -35,7 +35,7 @@ async function main() {
   await page.getByTestId('onboarding-skip').click()
 
   await page.goto('http://127.0.0.1:4173/settings')
-  await page.getByTestId('language-select').selectOption('pt-BR')
+  await page.getByTestId('language-select').getByRole('radio', { name: /PT/i }).click()
   await page.getByTestId('path-switcher-trigger').click()
   await page.getByTestId('path-switcher-select').selectOption('path-1')
   await page.getByTestId('path-switcher-confirm').click()

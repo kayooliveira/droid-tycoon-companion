@@ -36,7 +36,13 @@
     "pathComplete": "Ciclo completo. Use Super Rebirth para seguir.",
     "rebirthCompleted": "Rebirth marcado como concluído.",
     "focus": "Foco",
-    "list": "Lista"
+    "list": "Lista",
+    "viewMode": "Visão",
+    "completeShort": "Concluir",
+    "completeBlockedShort": "Faltam droids no inventário.",
+    "superShort": "Super",
+    "undoConfirmShort": "Desfazer",
+    "moreActionsTitle": "Mais ações"
   },
   "path": {
     "switch": "Trocar ciclo",
@@ -67,7 +73,7 @@
     "statsSellable": "Pode vender",
     "staleData": "Dados podem estar velhos — veja Ajustes",
     "dataVersion": "Dados v{{version}}",
-    "hero": "Acompanhe o ciclo, inventário e o que vale a pena vender no Star Wars Droid Tycoon.",
+    "hero": "Próximo rebirth, inventário e o que dá pra vender no Droid Tycoon.",
     "ctaProgress": "Ver meu próximo rebirth",
     "ctaInventory": "Ativar inventário",
     "nextStepLabel": "Próximo passo",
@@ -124,7 +130,8 @@
     "fusionCaution": "Fusão?",
     "fusionCautionHint": "Receita ainda não está 100% confirmada — confira no jogo antes de vender.",
     "fusionNote": "Alguns droids ficam marcados pra fusão mesmo quando os rebirths não pedem mais.",
-    "usedOnOtherPath": "Ainda entra no {{paths}}."
+    "usedOnOtherPath": "Ainda entra no {{paths}}.",
+    "returnsOnCycle": "Volta no {{name}}."
   },
   "exportCycle": {
     "title": "Baixar meu ciclo",
@@ -132,8 +139,15 @@
     "pdf": "PDF",
     "png": "Imagens PNG",
     "pdfDone": "PDF do ciclo pronto.",
-    "pngDone": "{{count}} arquivo(s) PNG pronto(s).",
+    "pngDone_one": "{{count}} arquivo PNG pronto.",
+    "pngDone_other": "{{count}} arquivos PNG prontos.",
     "failed": "Não deu pra gerar o export. Tenta de novo."
+  },
+  "shareExport": {
+    "title": "Compartilhar",
+    "hint": "PDF ou PNG do ciclo, link do app ou card de progresso — tudo gerado no aparelho.",
+    "hintLabel": "Sobre export e compartilhar",
+    "footer": "Nada é enviado ao servidor."
   },
   "feedback": {
     "whatsappCtaEn": "Send feedback / Join the group",
@@ -170,6 +184,7 @@
     "choosePath": "Escolha o ciclo",
     "progressTitle": "Onde você está neste ciclo?",
     "progressHint": "Quantos rebirths você já terminou?",
+    "progressHintShort": "Rebirths feitos",
     "progressNext": "Próximo rebirth: #{{n}}",
     "prefsTitle": "Preferências",
     "theme": "Tema",
@@ -190,6 +205,15 @@
     "themeDark": "Escuro",
     "themeLight": "Claro",
     "themeSystem": "Sistema",
+    "themeSystemShort": "Auto",
+    "dataSection": "Dados",
+    "dataHelp": "Sobre os dados",
+    "dataStaleShort": "Velho",
+    "exportShort": "Exportar",
+    "importShort": "Importar",
+    "aboutSection": "Sobre",
+    "rerunOnboardingShort": "Refazer setup",
+    "resetShort": "Apagar tudo",
     "animations": "Animações",
     "trackInventory": "Rastrear inventário",
     "language": "Idioma",

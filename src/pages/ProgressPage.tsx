@@ -1,6 +1,8 @@
 import { motion } from 'motion/react'
 import { useState } from 'react'
-import { ChevronDown, RotateCcw, Sparkles } from 'lucide-react'
+import { ArrowCounterClockwise, CaretDown, Check, DotsThreeVertical, Sparkle } from '@phosphor-icons/react'
+import { SegmentedControl } from '../components/ui/SegmentedControl'
+import { uiIconProps } from '../components/ui/iconStyle'
 import { useTranslation } from 'react-i18next'
 import {
   droidById,
@@ -27,7 +29,9 @@ import { ProgressBar } from '../components/ui/ProgressBar'
 import { useAppStore } from '../store/useAppStore'
 import { useToast } from '../components/ToastProvider'
 import { SellAfterRebirthList } from '../components/SellAfterRebirthList'
-import { DownloadCycleMenu } from '../components/DownloadCycleMenu'
+import { ShareExportCard } from '../components/ShareExportCard'
+import { HelpHint } from '../components/ui/HelpHint'
+import { IconButton } from '../components/ui/IconButton'
 
 const tierLabels = buildTierLabelMap(gameData.rarities)
 
@@ -36,6 +40,7 @@ export function ProgressPage() {
   const [mode, setMode] = useState<'list' | 'focus'>('focus')
   const [forceCompleteOpen, setForceCompleteOpen] = useState(false)
   const [undoOpen, setUndoOpen] = useState(false)
+  const [moreOpen, setMoreOpen] = useState(false)
   const progress = useAppStore((s) => s.progress)
   const inventory = useAppStore((s) => s.inventory)
   const trackInventory = useAppStore((s) => s.settings.trackInventory)
@@ -76,27 +81,22 @@ export function ProgressPage() {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 pb-6 md:pb-0">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-2">
-          <h1 className="font-display text-2xl tracking-wide">{t('nav.progress')}</h1>
+          <h1 className="font-display text-xl tracking-wide text-balance">{t('nav.progress')}</h1>
           <PathProgressSwitcher compact />
           <ProgressSummaryLine />
         </div>
-        <div className="flex rounded-xl border border-white/10 p-1">
-          {(['focus', 'list'] as const).map((m) => (
-            <button
-              key={m}
-              type="button"
-              onClick={() => setMode(m)}
-              className={`px-3 py-1.5 text-sm rounded-lg capitalize ${
-                mode === m ? 'bg-white/10' : 'text-zinc-400'
-              }`}
-            >
-              {t(`progress.${m}`)}
-            </button>
-          ))}
-        </div>
+        <SegmentedControl
+          ariaLabel={t('progress.viewMode')}
+          value={mode}
+          onChange={setMode}
+          options={[
+            { value: 'focus', label: t('progress.focus') },
+            { value: 'list', label: t('progress.list') },
+          ]}
+        />
       </div>
 
       {mode === 'focus' ? (
@@ -121,33 +121,30 @@ export function ProgressPage() {
                   ),
                 )}
               </div>
-              {!canComplete && trackInventory ? (
-                <p className="text-sm text-amber-200/90 border border-amber-400/20 rounded-lg p-3">
-                  {t('progress.completeBlocked')}
-                </p>
-              ) : null}
-              <div className="flex flex-wrap gap-2 pt-2">
-                <Button onClick={handleCompleteClick} disabled={trackInventory && !canComplete}>
-                  {t('progress.completeRebirth')}
+              <div className="flex items-center gap-2 pt-1">
+                <Button
+                  size="sm"
+                  icon={<Check {...uiIconProps} />}
+                  onClick={handleCompleteClick}
+                  disabled={trackInventory && !canComplete}
+                  className="flex-1 min-w-0 sm:flex-none"
+                >
+                  {t('progress.completeShort')}
                 </Button>
-                {trackInventory && !canComplete ? (
-                  <Button variant="secondary" onClick={() => setForceCompleteOpen(true)}>
-                    {t('progress.completeAnyway')}
-                  </Button>
+                <IconButton
+                  variant="soft"
+                  label={t('progress.moreActionsTitle')}
+                  onClick={() => setMoreOpen(true)}
+                >
+                  <DotsThreeVertical {...uiIconProps} />
+                </IconButton>
+                {!canSuperRebirth(progress) ? (
+                  <HelpHint
+                    label={t('progress.superShort')}
+                    text={t('progress.superHint', { n: SUPER_REBIRTH_UNLOCK_AFTER })}
+                  />
                 ) : null}
-                <Button variant="secondary" onClick={() => setUndoOpen(true)}>
-                  <RotateCcw size={16} /> {t('progress.undoOne')}
-                </Button>
               </div>
-              {canSuperRebirth(progress) ? (
-                <Button variant="secondary" onClick={() => superRebirthAdvance()}>
-                  <Sparkles size={16} /> {t('progress.superRebirth')}
-                </Button>
-              ) : (
-                <p className="text-xs text-zinc-500">
-                  {t('progress.superHint', { n: SUPER_REBIRTH_UNLOCK_AFTER })}
-                </p>
-              )}
               <SellAfterRebirthList
                 pathId={progress.pathId}
                 afterRebirth={current.rebirth}
@@ -180,30 +177,92 @@ export function ProgressPage() {
         </div>
       )}
 
-      <DownloadCycleMenu />
+      <ShareExportCard />
 
-      <Modal open={forceCompleteOpen} onClose={() => setForceCompleteOpen(false)} title={t('progress.completeAnyway')}>
-        <p className="text-sm text-zinc-400 mb-4">{t('progress.completeBlocked')}</p>
-        <div className="flex gap-2">
-          <Button variant="secondary" className="flex-1" onClick={() => setForceCompleteOpen(false)}>
+      <Modal
+        open={moreOpen}
+        onClose={() => setMoreOpen(false)}
+        title={t('progress.moreActionsTitle')}
+        footer={
+          <Button variant="secondary" size="sm" onClick={() => setMoreOpen(false)}>
             {t('path.cancel')}
           </Button>
-          <Button className="flex-1" onClick={confirmForceComplete}>
-            {t('progress.completeAnyway')}
+        }
+      >
+        <div className="flex flex-col gap-2">
+          {trackInventory && !canComplete ? (
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => {
+                setMoreOpen(false)
+                setForceCompleteOpen(true)
+              }}
+            >
+              {t('progress.completeAnyway')}
+            </Button>
+          ) : null}
+          <Button
+            size="sm"
+            variant="secondary"
+            icon={<ArrowCounterClockwise {...uiIconProps} />}
+            onClick={() => {
+              setMoreOpen(false)
+              setUndoOpen(true)
+            }}
+          >
+            {t('progress.undoOne')}
           </Button>
+          {canSuperRebirth(progress) ? (
+            <Button
+              size="sm"
+              variant="secondary"
+              icon={<Sparkle {...uiIconProps} />}
+              onClick={() => {
+                superRebirthAdvance()
+                setMoreOpen(false)
+              }}
+            >
+              {t('progress.superShort')}
+            </Button>
+          ) : null}
         </div>
       </Modal>
 
-      <Modal open={undoOpen} onClose={() => setUndoOpen(false)} title={t('progress.undoOne')}>
-        <p className="text-sm text-zinc-400 mb-4">{t('progress.undoConfirm')}</p>
-        <div className="flex gap-2">
-          <Button variant="secondary" className="flex-1" onClick={() => setUndoOpen(false)}>
-            {t('path.cancel')}
-          </Button>
-          <Button className="flex-1" onClick={confirmUndo}>
-            {t('progress.undoOne')}
-          </Button>
-        </div>
+      <Modal
+        open={forceCompleteOpen}
+        onClose={() => setForceCompleteOpen(false)}
+        title={t('progress.completeAnyway')}
+        footer={
+          <>
+            <Button variant="secondary" size="sm" onClick={() => setForceCompleteOpen(false)}>
+              {t('path.cancel')}
+            </Button>
+            <Button size="sm" onClick={confirmForceComplete}>
+              {t('progress.completeShort')}
+            </Button>
+          </>
+        }
+      >
+        <p className="text-xs text-zinc-400 text-pretty">{t('progress.completeBlockedShort')}</p>
+      </Modal>
+
+      <Modal
+        open={undoOpen}
+        onClose={() => setUndoOpen(false)}
+        title={t('progress.undoOne')}
+        footer={
+          <>
+            <Button variant="secondary" size="sm" onClick={() => setUndoOpen(false)}>
+              {t('path.cancel')}
+            </Button>
+            <Button size="sm" onClick={confirmUndo}>
+              {t('progress.undoConfirmShort')}
+            </Button>
+          </>
+        }
+      >
+        <p className="text-xs text-zinc-400 text-pretty">{t('progress.undoConfirm')}</p>
       </Modal>
     </div>
   )
@@ -266,7 +325,10 @@ function RebirthListItem({
         className="w-full flex items-center gap-3 text-left"
         onClick={() => setOpen((v) => !v)}
       >
-        <ChevronDown className={`transition-transform shrink-0 ${open ? 'rotate-180' : ''}`} size={16} />
+        <CaretDown
+          {...uiIconProps}
+          className={`transition-transform shrink-0 ${open ? 'rotate-180' : ''}`}
+        />
         <div className="flex-1 min-w-0">
           <p className="font-medium">
             Rebirth {rebirth}{' '}

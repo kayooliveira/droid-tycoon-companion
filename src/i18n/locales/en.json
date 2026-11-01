@@ -36,7 +36,13 @@
     "pathComplete": "Path finished. Use Super Rebirth to move on.",
     "rebirthCompleted": "Rebirth marked complete.",
     "focus": "Focus",
-    "list": "List"
+    "list": "List",
+    "viewMode": "View",
+    "completeShort": "Complete",
+    "completeBlockedShort": "Missing droids in inventory.",
+    "superShort": "Super",
+    "undoConfirmShort": "Undo",
+    "moreActionsTitle": "More actions"
   },
   "path": {
     "switch": "Change Path",
@@ -67,7 +73,7 @@
     "statsSellable": "Can sell",
     "staleData": "Game data may be stale — check Settings",
     "dataVersion": "Data v{{version}}",
-    "hero": "Plan your next rebirth on Star Wars Droid Tycoon — Path progress, inventory checks, and what you can safely sell.",
+    "hero": "Next rebirth, inventory, and safe sells for Droid Tycoon.",
     "ctaProgress": "See my next rebirth",
     "ctaInventory": "Turn on inventory tracking",
     "nextStepLabel": "Do this next",
@@ -118,13 +124,14 @@
     "safeNowLine": "In your inventory and clear to sell before the next rebirth."
   },
   "sellAfter": {
-    "heading": "After this rebirth you can sell:",
+    "heading": "Sell later:",
     "none": "No requirement droids become free after this step.",
     "fusionHold": "Keep for fusion",
     "fusionCaution": "Fusion?",
     "fusionCautionHint": "Recipe isn't fully verified — check in game before selling.",
     "fusionNote": "Some droids stay marked for fusion even when rebirths no longer need them.",
-    "usedOnOtherPath": "Still used on {{paths}}."
+    "usedOnOtherPath": "Still used on {{paths}}.",
+    "returnsOnCycle": "Needed again on {{name}}."
   },
   "exportCycle": {
     "title": "Download my cycle",
@@ -132,8 +139,15 @@
     "pdf": "PDF",
     "png": "PNG images",
     "pdfDone": "Cycle PDF ready.",
-    "pngDone": "{{count}} PNG file(s) ready.",
+    "pngDone_one": "{{count}} PNG file ready.",
+    "pngDone_other": "{{count}} PNG files ready.",
     "failed": "Couldn't build the export. Try again."
+  },
+  "shareExport": {
+    "title": "Share",
+    "hint": "Cycle PDF or PNG chunks, app link, or progress card — all generated on your device.",
+    "hintLabel": "About export and share",
+    "footer": "Nothing is uploaded to a server."
   },
   "feedback": {
     "whatsappCtaEn": "Send feedback / Join the group",
@@ -170,6 +184,7 @@
     "choosePath": "Pick your Path",
     "progressTitle": "Where are you on this Path?",
     "progressHint": "How many rebirths have you already finished?",
+    "progressHintShort": "Rebirths done",
     "progressNext": "Next rebirth to plan: #{{n}}",
     "prefsTitle": "Preferences",
     "theme": "Theme",
@@ -190,6 +205,15 @@
     "themeDark": "Dark",
     "themeLight": "Light",
     "themeSystem": "System",
+    "themeSystemShort": "Auto",
+    "dataSection": "Data",
+    "dataHelp": "About game data",
+    "dataStaleShort": "Stale",
+    "exportShort": "Export",
+    "importShort": "Import",
+    "aboutSection": "About",
+    "rerunOnboardingShort": "Redo setup",
+    "resetShort": "Erase all",
     "animations": "Animations",
     "trackInventory": "Track inventory",
     "language": "Language",

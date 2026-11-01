@@ -1,21 +1,36 @@
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
-import { ShareMenu } from '../components/ShareMenu'
-import { DownloadCycleMenu } from '../components/DownloadCycleMenu'
+import {
+  Database,
+  DownloadSimple,
+  GlobeHemisphereWest,
+  Info,
+  Moon,
+  Palette,
+  ArrowCounterClockwise,
+  Trash,
+  UploadSimple,
+} from '@phosphor-icons/react'
+import { ShareExportCard } from '../components/ShareExportCard'
 import { FeedbackWhatsAppLink } from '../components/FeedbackWhatsAppLink'
-import { gameDataSource } from '../data/dataSource'
-import { gameData } from '../domain/gameData'
-import type { AppLocale } from '../i18n/detectLocale'
 import { PathProgressSwitcher, ProgressSummaryLine } from '../components/PathProgressSwitcher'
 import { Button } from '../components/ui/Button'
 import { Badge } from '../components/ui/Badge'
 import { GlassCard } from '../components/ui/GlassCard'
+import { SectionHeader } from '../components/ui/SectionHeader'
+import { SegmentedControl } from '../components/ui/SegmentedControl'
+import { Switch } from '../components/ui/Switch'
+import { HelpHint } from '../components/ui/HelpHint'
+import { gameDataSource } from '../data/dataSource'
+import type { AppLocale } from '../i18n/detectLocale'
 import { useAppStore, applyTheme } from '../store/useAppStore'
+import type { ThemeMode } from '../storage/types'
 import { downloadJson, exportProgress, parseImportJson } from '../storage/exportImport'
 import { useToast } from '../components/ToastProvider'
 import { setDocumentLanguage } from '../i18n'
 import { initI18n } from '../i18n/index'
+import { uiIconProps } from '../components/ui/iconStyle'
 
 export function SettingsPage() {
   const { t, i18n } = useTranslation()
@@ -29,7 +44,6 @@ export function SettingsPage() {
   const updateSettings = useAppStore((s) => s.updateSettings)
   const setProgress = useAppStore((s) => s.setProgress)
   const setLocale = useAppStore((s) => s.setLocale)
-  const setOnboardingComplete = useAppStore((s) => s.setOnboardingComplete)
   const resetAll = useAppStore((s) => s.resetAll)
   const importState = useAppStore((s) => s.importState)
   const toPersisted = useAppStore((s) => s.toPersisted)
@@ -44,73 +58,78 @@ export function SettingsPage() {
     void i18n.changeLanguage(locale)
   }
 
-  return (
-    <div className="space-y-5 max-w-2xl pb-8">
-      <h1 className="font-display text-2xl tracking-wide">{t('settings.title')}</h1>
+  const setTheme = (theme: ThemeMode) => {
+    updateSettings({ theme })
+    applyTheme(theme)
+  }
 
-      <GlassCard className="space-y-4">
-        <h2 className="font-medium">{t('settings.appearance')}</h2>
-        <label className="flex justify-between text-sm items-center gap-4">
-          {t('settings.language')}
-          <select
-            className="rounded-lg bg-surface-800 border border-white/10 px-2 py-1"
-            value={settings.locale}
-            onChange={(e) => changeLanguage(e.target.value as AppLocale)}
-            data-testid="language-select"
-          >
-            <option value="en">{t('settings.langEn')}</option>
-            <option value="pt-BR">{t('settings.langPt')}</option>
-          </select>
-        </label>
-        <label className="flex justify-between text-sm items-center gap-4">
-          {t('settings.theme')}
-          <select
-            className="rounded-lg bg-surface-800 border border-white/10 px-2 py-1"
-            value={settings.theme}
-            onChange={(e) => {
-              const theme = e.target.value as typeof settings.theme
-              updateSettings({ theme })
-              applyTheme(theme)
-            }}
-          >
-            <option value="dark">{t('settings.themeDark')}</option>
-            <option value="light">{t('settings.themeLight')}</option>
-            <option value="system">{t('settings.themeSystem')}</option>
-          </select>
-        </label>
-        <label className="flex justify-between text-sm items-center">
-          {t('settings.animations')}
-          <input
-            type="checkbox"
+  const rerunOnboarding = () => {
+    navigate('/onboarding?rerun=1')
+  }
+
+  return (
+    <div className="space-y-4 max-w-2xl pb-10">
+      <h1 className="font-display text-xl tracking-wide text-balance">{t('settings.title')}</h1>
+
+      <GlassCard className="p-4">
+        <SectionHeader icon={<Palette {...uiIconProps} />} title={t('settings.appearance')} />
+        <div className="space-y-4">
+          <div>
+            <p className="text-xs text-zinc-500 mb-2">{t('settings.theme')}</p>
+            <SegmentedControl
+              ariaLabel={t('settings.theme')}
+              value={settings.theme}
+              onChange={setTheme}
+              options={[
+                { value: 'dark', label: t('settings.themeDark'), icon: <Moon {...uiIconProps} /> },
+                { value: 'light', label: t('settings.themeLight') },
+                { value: 'system', label: t('settings.themeSystemShort') },
+              ]}
+            />
+          </div>
+          <Switch
+            label={t('settings.animations')}
             checked={settings.animationsEnabled}
-            onChange={(e) => updateSettings({ animationsEnabled: e.target.checked })}
+            onChange={(v) => updateSettings({ animationsEnabled: v })}
           />
-        </label>
-        <label className="flex justify-between text-sm items-center">
-          {t('settings.trackInventory')}
-          <input
-            type="checkbox"
+          <Switch
+            label={t('settings.trackInventory')}
             checked={settings.trackInventory}
-            onChange={(e) => updateSettings({ trackInventory: e.target.checked })}
+            onChange={(v) => updateSettings({ trackInventory: v })}
           />
-        </label>
-        <Button variant="secondary" onClick={() => navigate('/onboarding')}>
-          {t('settings.rerunOnboarding')}
-        </Button>
+        </div>
       </GlassCard>
 
-      <GlassCard className="space-y-3">
-        <h2 className="font-medium">{t('settings.progress')}</h2>
-        <PathProgressSwitcher />
+      <GlassCard className="p-4">
+        <SectionHeader
+          icon={<GlobeHemisphereWest {...uiIconProps} />}
+          title={t('settings.language')}
+        />
+        <div data-testid="language-select">
+          <SegmentedControl
+            ariaLabel={t('settings.language')}
+            value={settings.locale}
+            onChange={changeLanguage}
+            options={[
+              { value: 'pt-BR', label: '🇧🇷 PT' },
+              { value: 'en', label: '🇺🇸 EN' },
+            ]}
+          />
+        </div>
+      </GlassCard>
+
+      <GlassCard className="p-4 space-y-3">
+        <SectionHeader icon={<ArrowCounterClockwise {...uiIconProps} />} title={t('settings.progress')} />
+        <PathProgressSwitcher compact />
         <ProgressSummaryLine />
-        <label className="block text-sm">
+        <label className="block text-xs text-zinc-500">
           {t('settings.completedRebirths', { n: progress.completedOnPath })}
           <input
             type="range"
             min={0}
             max={40}
             value={progress.completedOnPath}
-            className="w-full mt-2"
+            className="w-full mt-2 accent-holo-500"
             onChange={(e) => {
               const completed = Number(e.target.value)
               setProgress(completed + 1, completed)
@@ -119,92 +138,103 @@ export function SettingsPage() {
         </label>
       </GlassCard>
 
-      <GlassCard className="space-y-2 text-sm">
-        <h2 className="font-medium">{t('settings.gameData')}</h2>
-        <p>
-          v{meta.dataVersion} · {meta.gameVersion} · {meta.lastUpdated}
-        </p>
-        {stale ? (
-          <Badge tone="warn">{t('settings.dataStale', { days: gameData.staleAfterDays })}</Badge>
-        ) : (
-          <Badge tone="success">{t('settings.dataFresh')}</Badge>
-        )}
-        <p className="text-xs text-zinc-500">{t('settings.updateHint')}</p>
-      </GlassCard>
-
-      <GlassCard className="space-y-3">
-        <h2 className="font-medium">{t('settings.backup')}</h2>
-        <Button
-          variant="secondary"
-          onClick={() => downloadJson('droid-tycoon-progress.json', exportProgress(toPersisted()))}
-        >
-          {t('settings.export')}
-        </Button>
-        <Button variant="secondary" onClick={() => fileRef.current?.click()}>
-          {t('settings.import')}
-        </Button>
-        <input
-          ref={fileRef}
-          type="file"
-          accept="application/json"
-          className="hidden"
-          onChange={async (e) => {
-            const file = e.target.files?.[0]
-            if (!file) return
-            const text = await file.text()
-            const result = parseImportJson(text)
-            if (!result.ok) {
-              push(t('settings.importFail'))
-              return
-            }
-            importState(result.state)
-            push(t('settings.importOk'))
-          }}
+      <GlassCard className="p-4">
+        <SectionHeader
+          icon={<Database {...uiIconProps} />}
+          title={t('settings.dataSection')}
+          action={<HelpHint label={t('settings.dataHelp')} text={t('settings.updateHint')} />}
         />
+        <p className="text-xs text-zinc-500 mb-3">
+          v{meta.dataVersion} · {meta.gameVersion}
+          {stale ? (
+            <Badge tone="warn" className="ml-2">
+              {t('settings.dataStaleShort')}
+            </Badge>
+          ) : (
+            <Badge tone="success" className="ml-2">
+              {t('settings.dataFresh')}
+            </Badge>
+          )}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="secondary"
+            size="sm"
+            icon={<DownloadSimple {...uiIconProps} />}
+            onClick={() => downloadJson('droid-tycoon-progress.json', exportProgress(toPersisted()))}
+          >
+            {t('settings.exportShort')}
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            icon={<UploadSimple {...uiIconProps} />}
+            onClick={() => fileRef.current?.click()}
+          >
+            {t('settings.importShort')}
+          </Button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="application/json"
+            className="hidden"
+            onChange={async (e) => {
+              const file = e.target.files?.[0]
+              if (!file) return
+              const text = await file.text()
+              const result = parseImportJson(text)
+              if (!result.ok) {
+                push(t('settings.importFail'))
+                return
+              }
+              importState(result.state)
+              push(t('settings.importOk'))
+            }}
+          />
+        </div>
       </GlassCard>
 
-      <GlassCard className="text-xs text-zinc-500 space-y-2">
-        <h2 className="font-medium text-zinc-300 text-sm">{t('settings.credits')}</h2>
-        <p>{t('settings.creditsBody')}</p>
-        <p className="pt-2 border-t border-white/10">{t('app.disclaimer')}</p>
-      </GlassCard>
-
-      <GlassCard className="space-y-3">
-        <h2 className="font-medium text-sm">{t('feedback.settingsTitle')}</h2>
-        <p className="text-xs text-zinc-400">{t('feedback.settingsHint')}</p>
+      <GlassCard className="p-4 space-y-3">
+        <SectionHeader icon={<Info {...uiIconProps} />} title={t('settings.aboutSection')} />
+        <p className="text-xs text-zinc-500 text-pretty">{t('app.disclaimer')}</p>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="secondary" size="sm" onClick={rerunOnboarding}>
+            {t('settings.rerunOnboardingShort')}
+          </Button>
+          <Link to="/about">
+            <Button variant="ghost" size="sm">
+              {t('nav.about')}
+            </Button>
+          </Link>
+        </div>
         <FeedbackWhatsAppLink />
       </GlassCard>
 
-      <DownloadCycleMenu />
-      <ShareMenu compact />
+      <ShareExportCard />
 
-      <GlassCard className="space-y-2 text-sm">
-        <Link to="/about" className="text-holo-300 hover:underline inline-flex min-h-11 items-center">
-          {t('nav.about')} →
-        </Link>
-      </GlassCard>
-
-      <GlassCard className="space-y-3 border border-red-500/30 bg-red-950/20 mt-8">
-        <h2 className="font-medium text-red-300">{t('settings.danger')}</h2>
-        <p className="text-xs text-zinc-400">{t('settings.reset')} — removes all local progress.</p>
+      <GlassCard className="p-4 border border-red-500/25 bg-red-950/15">
+        <SectionHeader
+          icon={<Trash {...uiIconProps} />}
+          title={t('settings.danger')}
+        />
         {!confirmReset ? (
-          <Button variant="danger" onClick={() => setConfirmReset(true)}>
-            {t('settings.reset')}
+          <Button variant="danger" size="sm" onClick={() => setConfirmReset(true)}>
+            {t('settings.resetShort')}
           </Button>
         ) : (
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button
               variant="danger"
+              size="sm"
               onClick={() => {
                 resetAll()
-                setOnboardingComplete(false)
                 push(t('settings.resetDone'))
                 navigate('/onboarding')
               }}
             >
               {t('settings.resetConfirm')}
             </Button>
-            <Button variant="secondary" onClick={() => setConfirmReset(false)}>
+            <Button variant="secondary" size="sm" onClick={() => setConfirmReset(false)}>
               {t('path.cancel')}
             </Button>
           </div>

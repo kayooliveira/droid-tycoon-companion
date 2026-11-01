@@ -7,9 +7,11 @@ test.beforeEach(async ({ page }) => {
 
 test('share menu visible on dashboard', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
+  await page.evaluate(() => localStorage.setItem('dt-helper-dashboard-seen', '1'))
   await page.goto('/')
-  await page.getByTestId('share-menu').scrollIntoViewIfNeeded()
-  await expect(page.getByTestId('share-menu')).toBeVisible()
+  await expect(page.getByTestId('dashboard-ready')).toBeVisible()
+  await page.getByTestId('share-export-card').scrollIntoViewIfNeeded()
+  await expect(page.getByTestId('share-export-card')).toBeVisible()
   await expect(page.getByTestId('share-app')).toBeVisible()
   await expect(page.getByTestId('share-progress-card')).toBeVisible()
 })

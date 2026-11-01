@@ -19,9 +19,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const push = useCallback(
     (message: string, options?: { action?: ToastAction; sticky?: boolean }) => {
       const id = crypto.randomUUID()
-      setToasts((t) => [...t, { id, message, action: options?.action, sticky: options?.sticky }])
+      setToasts((prev) => {
+        const next = [...prev, { id, message, action: options?.action, sticky: options?.sticky }]
+        return next.slice(-2)
+      })
       if (!options?.sticky) {
-        window.setTimeout(() => dismiss(id), 4200)
+        window.setTimeout(() => dismiss(id), 3800)
       }
     },
     [dismiss],
@@ -33,7 +36,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={value}>
       {children}
       <div
-        className="fixed bottom-20 md:bottom-6 right-4 left-4 md:left-auto z-[60] flex flex-col gap-2 max-w-sm md:ml-auto pointer-events-none"
+        className="fixed bottom-[calc(4.85rem+env(safe-area-inset-bottom))] md:bottom-6 right-3 left-3 md:left-auto z-[60] flex flex-col-reverse gap-2 max-w-sm md:ml-auto pointer-events-none"
         aria-live="polite"
       >
         {toasts.map((t) => (
