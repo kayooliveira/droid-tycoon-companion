@@ -124,7 +124,7 @@
     "fusionCaution": "Fusão?",
     "fusionCautionHint": "Receita ainda não está 100% confirmada — confira no jogo antes de vender.",
     "fusionNote": "Alguns droids ficam marcados pra fusão mesmo quando os rebirths não pedem mais.",
-    "usedOnOtherPath": "Também entra em {{paths}}."
+    "usedOnOtherPath": "Ainda entra no {{paths}}."
   },
   "exportCycle": {
     "title": "Baixar meu ciclo",
@@ -268,11 +268,7 @@
   "seo": {
     "defaultTitle": "DT Helper — Star Wars Droid Tycoon",
     "description": "Track Path, rebirths, inventory, and sell advice for Star Wars Droid Tycoon (Fortnite UEFN).",
-<<<<<<< HEAD
-    "descriptionPt": "Acompanhe Path, rebirths, inventário e o que vender no Star Wars Droid Tycoon (Fortnite UEFN).",
-=======
     "descriptionPt": "Acompanhe ciclo, rebirths, inventário e o que vender no Star Wars Droid Tycoon (Fortnite UEFN).",
->>>>>>> 150f484 (fix: DT Helper branding, Ciclo pt-BR, feedback WhatsApp, static SEO)
     "ogImageAlt": "DT Helper — rebirths, inventory, and sell tips",
     "ogImageAltPt": "DT Helper — rebirths, inventário e dicas de venda"
   },

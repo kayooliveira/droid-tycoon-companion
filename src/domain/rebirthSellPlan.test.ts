@@ -4,6 +4,8 @@ import { gameData } from './gameData'
 import {
   lastRebirthNeedingUnit,
   resultDroidStillNeededAfter,
+  sellableUnitsByRebirth,
+  unitsNewlySellableAfterRebirth,
   unitsSellableAfterRebirth,
 } from './rebirthSellPlan'
 import { tierMeetsRequired } from './tiers'
@@ -81,6 +83,30 @@ describe('rebirth sell plan', () => {
     const ing = units.find((u) => u.droidId === ingredientId)
     if (ing) {
       expect(['fusionHold', 'fusionCaution', 'sellable']).toContain(ing.disposition)
+    }
+  })
+
+  it('delta sell lists do not repeat the same unit across rebirths', () => {
+    const map = sellableUnitsByRebirth('path-1')
+    const seen = new Set<string>()
+    for (let n = 1; n <= 40; n++) {
+      for (const u of map.get(n) ?? []) {
+        if (u.disposition !== 'sellable') continue
+        expect(seen.has(u.unitKey)).toBe(false)
+        seen.add(u.unitKey)
+      }
+    }
+    expect(seen.size).toBeGreaterThan(0)
+  })
+
+  it('newly sellable is subset of cumulative at same rebirth', () => {
+    for (let n = 1; n <= 40; n++) {
+      const delta = unitsNewlySellableAfterRebirth('path-1', n)
+      const cumulative = unitsSellableAfterRebirth('path-1', n)
+      const cumKeys = new Set(cumulative.map((u) => u.unitKey))
+      for (const u of delta) {
+        expect(cumKeys.has(u.unitKey)).toBe(true)
+      }
     }
   })
 

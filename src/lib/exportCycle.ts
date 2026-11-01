@@ -2,9 +2,9 @@ import { APP_BRAND_NAME } from './brand'
 import { APP_PUBLIC_URL, REPORT_FEEDBACK_URL } from './constants'
 import { formatCycleDisplayName } from './cycleLabel'
 import { droidImageSrc } from './images'
-import { cycleById, droidById, gameData } from '../domain/gameData'
+import { cycleById, droidById, gameData, getRebirth } from '../domain/gameData'
 import { pathProgressPercent, REBIRTHS_PER_PATH, SUPER_REBIRTH_UNLOCK_AFTER } from '../domain/progress'
-import { unitsSellableAfterRebirth, fusionsRelevantToPath } from '../domain/rebirthSellPlan'
+import { fusionsRelevantToPath, unitsNewlySellableAfterRebirth } from '../domain/rebirthSellPlan'
 import { buildTierLabelMap, formatTierName } from '../domain/tiers'
 import type { InventoryUnit, RebirthEntry } from '../domain/types'
 
@@ -18,55 +18,62 @@ export interface ExportCycleInput {
 
 const PAGE_W = 794
 const PAGE_H = 1123
-const PAD = 48
-const FOOTER_H = 88
+const PAD = 40
+const FOOTER_H = 72
+const COL_GAP = 14
+const ROW_GAP = 14
+const COLS = 2
+const ROWS_PER_PAGE = 4
+const REBIRTHS_PER_PAGE = COLS * ROWS_PER_PAGE
+const CARD_W = (PAGE_W - PAD * 2 - COL_GAP) / 2
+const CARD_H = 228
 
 const tierLabels = buildTierLabelMap(gameData.rarities)
 
 const copy = {
   en: {
-    title: 'My Droid Tycoon cycle',
-    cycle: 'Path',
+    myCycle: (name: string) => `My ${name}`,
     brand: APP_BRAND_NAME,
-    progress: 'Progress',
-    rebirthsDone: 'Rebirths completed',
-    pathPct: 'Path progress',
-    date: 'Generated on',
+    rebirthsDone: 'Rebirths done',
+    pathPct: 'Cycle progress',
+    nextRebirth: 'Next rebirth',
+    inventory: 'Units in inventory',
+    nextReqs: 'Next rebirth needs',
+    date: 'Generated',
     rebirth: 'Rebirth',
     credits: 'Credits',
-    requirements: 'Requirements',
-    sellAfter: 'Safe to sell after this rebirth',
+    sellAfter: 'Sell after:',
     done: 'Done',
-    next: 'Next up',
+    next: 'Current',
     pending: 'Upcoming',
     footer: 'Fan-made · not affiliated with Epic Games',
     superTitle: 'Super Rebirth',
     superBody: `Available after rebirth ${SUPER_REBIRTH_UNLOCK_AFTER}. Resets credits, base upgrades, and most droids (Iconics stay).`,
-    fusionTitle: 'Fusion recipes on this Path',
+    fusionTitle: 'Fusion recipes on this cycle',
     feedbackLink: 'Feedback on WhatsApp',
-    noneSell: 'Nothing to free up from requirements here.',
+    noneSell: '—',
   },
   'pt-BR': {
-    title: 'Meu ciclo no Droid Tycoon',
-    cycle: 'Ciclo',
+    myCycle: (name: string) => `Meu ${name}`,
     brand: APP_BRAND_NAME,
-    progress: 'Progresso',
     rebirthsDone: 'Rebirths concluídos',
-    pathPct: 'Progresso do ciclo',
+    pathPct: '% do ciclo',
+    nextRebirth: 'Próximo rebirth',
+    inventory: 'Droids no inventário',
+    nextReqs: 'Requisitos do próximo rebirth',
     date: 'Gerado em',
     rebirth: 'Rebirth',
     credits: 'Créditos',
-    requirements: 'Requisitos',
-    sellAfter: 'Depois desse rebirth dá pra vender',
+    sellAfter: 'Vende depois:',
     done: 'Feito',
     next: 'Atual',
-    pending: 'Por vir',
+    pending: 'Próximos',
     footer: 'Fan-made · não afiliado à Epic Games',
     superTitle: 'Super Rebirth',
     superBody: `Libera depois do rebirth ${SUPER_REBIRTH_UNLOCK_AFTER}. Zera créditos, upgrades da base e quase todos os droids (Iconics ficam).`,
     fusionTitle: 'Receitas de fusão neste ciclo',
     feedbackLink: 'Feedback no WhatsApp',
-    noneSell: 'Nada pra liberar dos requisitos aqui.',
+    noneSell: '—',
   },
 } as const
 
@@ -97,25 +104,30 @@ function fillBackground(ctx: CanvasRenderingContext2D) {
   ctx.fillRect(0, 0, PAGE_W, PAGE_H)
 }
 
+function inventoryUnitCount(inventory: InventoryUnit[]): number {
+  return inventory.reduce((sum, u) => sum + (u.quantity ?? 1), 0)
+}
+
 async function drawFooter(ctx: CanvasRenderingContext2D, locale: 'en' | 'pt-BR', qrDataUrl: string) {
   const y = PAGE_H - FOOTER_H
   ctx.fillStyle = 'rgba(255,255,255,0.06)'
   ctx.fillRect(0, y, PAGE_W, FOOTER_H)
+
   ctx.fillStyle = '#94a3b8'
-  ctx.font = '14px system-ui, sans-serif'
-  ctx.fillText(APP_PUBLIC_URL.replace('https://', ''), PAD, y + 28)
-  ctx.fillText(copy[locale].footer, PAD, y + 48)
+  ctx.font = '13px system-ui, sans-serif'
+  ctx.fillText(APP_PUBLIC_URL.replace('https://', ''), PAD, y + 26)
+  ctx.fillStyle = '#64748b'
+  ctx.font = '11px system-ui, sans-serif'
+  ctx.fillText(copy[locale].footer, PAD, y + 44)
   if (REPORT_FEEDBACK_URL) {
-    ctx.fillStyle = '#64748b'
-    ctx.font = '11px system-ui, sans-serif'
-    ctx.fillText(copy[locale].feedbackLink, PAD, y + 64)
+    ctx.fillText(copy[locale].feedbackLink, PAD, y + 58)
   }
 
   const logo = await loadImage('/pwa-192.png')
-  if (logo) ctx.drawImage(logo, PAGE_W - PAD - 120, y + 10, 40, 40)
+  if (logo) ctx.drawImage(logo, PAGE_W - PAD - 108, y + 12, 36, 36)
 
   const qrImg = await loadImage(qrDataUrl)
-  if (qrImg) ctx.drawImage(qrImg, PAGE_W - PAD - 56, y + 8, 48, 48)
+  if (qrImg) ctx.drawImage(qrImg, PAGE_W - PAD - 52, y + 10, 44, 44)
 }
 
 async function makeQr(): Promise<string> {
@@ -125,6 +137,50 @@ async function makeQr(): Promise<string> {
     width: 128,
     color: { dark: '#e2e8f0', light: '#0c121c' },
   })
+}
+
+function drawStatBlock(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  label: string,
+  value: string,
+) {
+  ctx.fillStyle = 'rgba(255,255,255,0.06)'
+  ctx.strokeStyle = 'rgba(255,255,255,0.12)'
+  ctx.lineWidth = 1
+  roundRect(ctx, x, y, w, h, 10)
+  ctx.fill()
+  ctx.stroke()
+  ctx.fillStyle = '#64748b'
+  ctx.font = '12px system-ui, sans-serif'
+  ctx.fillText(label, x + 14, y + 28)
+  ctx.fillStyle = '#f1f5f9'
+  ctx.font = 'bold 28px system-ui, sans-serif'
+  ctx.fillText(value, x + 14, y + 62)
+}
+
+function roundRect(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+) {
+  ctx.beginPath()
+  ctx.moveTo(x + r, y)
+  ctx.lineTo(x + w - r, y)
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r)
+  ctx.lineTo(x + w, y + h - r)
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h)
+  ctx.lineTo(x + r, y + h)
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r)
+  ctx.lineTo(x, y + r)
+  ctx.quadraticCurveTo(x, y, x + r, y)
+  ctx.closePath()
 }
 
 async function drawCover(ctx: CanvasRenderingContext2D, input: ExportCycleInput, qr: string) {
@@ -139,27 +195,84 @@ async function drawCover(ctx: CanvasRenderingContext2D, input: ExportCycleInput,
     nextRebirth: input.nextRebirth,
     completedOnPath: input.completedOnPath,
   })
+  const invCount = inventoryUnitCount(input.inventory)
 
   const logo = await loadImage('/pwa-512.png')
-  if (logo) ctx.drawImage(logo, PAD, PAD, 96, 96)
+  const headerY = PAD
+  if (logo) ctx.drawImage(logo, PAD, headerY, 112, 112)
 
-  ctx.fillStyle = '#f1f5f9'
-  ctx.font = 'bold 40px system-ui, sans-serif'
-  ctx.fillText(L.brand, PAD, PAD + 140)
+  ctx.fillStyle = '#f8fafc'
+  ctx.font = 'bold 36px system-ui, sans-serif'
+  ctx.fillText(L.brand, PAD + 128, headerY + 44)
+  ctx.font = 'bold 32px system-ui, sans-serif'
+  ctx.fillStyle = '#a5b4fc'
+  ctx.fillText(L.myCycle(pathName), PAD + 128, headerY + 88)
 
-  ctx.font = '22px system-ui, sans-serif'
+  const gridY = headerY + 132
+  const blockW = (PAGE_W - PAD * 2 - COL_GAP) / 2
+  const blockH = 78
+  drawStatBlock(
+    ctx,
+    PAD,
+    gridY,
+    blockW,
+    blockH,
+    L.rebirthsDone,
+    `${input.completedOnPath}/${REBIRTHS_PER_PATH}`,
+  )
+  drawStatBlock(ctx, PAD + blockW + COL_GAP, gridY, blockW, blockH, L.pathPct, `${pct.toFixed(0)}%`)
+  drawStatBlock(
+    ctx,
+    PAD,
+    gridY + blockH + COL_GAP,
+    blockW,
+    blockH,
+    L.nextRebirth,
+    `#${Math.min(input.nextRebirth, REBIRTHS_PER_PATH)}`,
+  )
+  drawStatBlock(
+    ctx,
+    PAD + blockW + COL_GAP,
+    gridY + blockH + COL_GAP,
+    blockW,
+    blockH,
+    L.inventory,
+    String(invCount),
+  )
+
+  const stripY = gridY + (blockH + COL_GAP) * 2 + 20
   ctx.fillStyle = '#cbd5e1'
-  ctx.fillText(L.title, PAD, PAD + 178)
-  ctx.fillText(`${L.cycle}: ${pathName}`, PAD, PAD + 210)
-  ctx.fillText(`${L.rebirthsDone}: ${input.completedOnPath} / ${REBIRTHS_PER_PATH}`, PAD, PAD + 250)
-  ctx.fillText(`${L.pathPct}: ${pct.toFixed(0)}%`, PAD, PAD + 290)
+  ctx.font = 'bold 15px system-ui, sans-serif'
+  ctx.fillText(L.nextReqs, PAD, stripY)
+
+  const nextEntry = getRebirth(input.pathId, input.nextRebirth)
+  let sx = PAD
+  const stripRowY = stripY + 16
+  if (nextEntry) {
+    for (const req of nextEntry.requirements.slice(0, 3)) {
+      const droid = droidById.get(req.droidId)
+      const img = droid ? await loadImage(droidImageSrc(droid.id, droid.imageLocal)) : null
+      if (img) ctx.drawImage(img, sx, stripRowY, 56, 56)
+      ctx.fillStyle = '#e2e8f0'
+      ctx.font = '13px system-ui, sans-serif'
+      const name = droid?.name ?? req.droidId
+      const tier = formatTierName(req.rarity, tierLabels)
+      ctx.fillText(name.length > 14 ? `${name.slice(0, 13)}…` : name, sx, stripRowY + 72)
+      ctx.fillStyle = '#818cf8'
+      ctx.font = '11px system-ui, sans-serif'
+      ctx.fillText(tier, sx, stripRowY + 88)
+      sx += 120
+    }
+  }
 
   const dateStr = new Date().toLocaleDateString(input.locale === 'pt-BR' ? 'pt-BR' : 'en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   })
-  ctx.fillText(`${L.date}: ${dateStr}`, PAD, PAD + 330)
+  ctx.fillStyle = '#94a3b8'
+  ctx.font = '14px system-ui, sans-serif'
+  ctx.fillText(`${L.date}: ${dateStr}`, PAD, PAGE_H - FOOTER_H - 24)
 
   await drawFooter(ctx, input.locale, qr)
 }
@@ -173,80 +286,104 @@ function rebirthStatus(
   return 'pending'
 }
 
-async function drawRebirthRow(
+function drawStatusChip(
   ctx: CanvasRenderingContext2D,
   x: number,
   y: number,
-  width: number,
+  label: string,
+  status: 'done' | 'next' | 'pending',
+) {
+  const colors = {
+    done: { bg: 'rgba(34,197,94,0.2)', fg: '#86efac' },
+    next: { bg: 'rgba(129,140,248,0.25)', fg: '#c7d2fe' },
+    pending: { bg: 'rgba(148,163,184,0.15)', fg: '#94a3b8' },
+  }[status]
+  ctx.font = '10px system-ui, sans-serif'
+  const tw = ctx.measureText(label).width
+  const pw = tw + 14
+  ctx.fillStyle = colors.bg
+  roundRect(ctx, x, y - 11, pw, 18, 6)
+  ctx.fill()
+  ctx.fillStyle = colors.fg
+  ctx.fillText(label, x + 7, y + 2)
+  return pw
+}
+
+async function drawCompactRebirthCard(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
   entry: RebirthEntry,
   input: ExportCycleInput,
-): Promise<number> {
+) {
   const L = copy[input.locale]
   const status = rebirthStatus(entry.rebirth, input)
   const statusLabel =
     status === 'done' ? L.done : status === 'next' ? L.next : L.pending
 
-  ctx.fillStyle = '#f8fafc'
-  ctx.font = 'bold 18px system-ui, sans-serif'
-  ctx.fillText(`${L.rebirth} ${entry.rebirth} · ${statusLabel}`, x, y)
-  y += 8
-  ctx.fillStyle = '#94a3b8'
-  ctx.font = '14px system-ui, sans-serif'
-  ctx.fillText(`${L.credits}: ${entry.credits}`, x, y + 18)
+  ctx.fillStyle = 'rgba(255,255,255,0.04)'
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)'
+  roundRect(ctx, x, y, CARD_W, CARD_H, 10)
+  ctx.fill()
+  ctx.stroke()
 
-  let rowY = y + 36
-  for (const req of entry.requirements) {
+  const innerX = x + 10
+  let cy = y + 22
+  ctx.fillStyle = '#f1f5f9'
+  ctx.font = 'bold 14px system-ui, sans-serif'
+  const title = `${L.rebirth} ${entry.rebirth}`
+  ctx.fillText(title, innerX, cy)
+  const chipX = innerX + ctx.measureText(title).width + 8
+  drawStatusChip(ctx, chipX, cy, statusLabel, status)
+
+  cy += 18
+  ctx.fillStyle = '#94a3b8'
+  ctx.font = '11px system-ui, sans-serif'
+  ctx.fillText(`${L.credits}: ${entry.credits}`, innerX, cy)
+
+  cy += 10
+  for (const req of entry.requirements.slice(0, 3)) {
+    cy += 22
     const droid = droidById.get(req.droidId)
     const img = droid ? await loadImage(droidImageSrc(droid.id, droid.imageLocal)) : null
-    if (img) ctx.drawImage(img, x, rowY, 40, 40)
+    if (img) ctx.drawImage(img, innerX, cy - 16, 28, 28)
     ctx.fillStyle = '#e2e8f0'
-    ctx.font = '15px system-ui, sans-serif'
+    ctx.font = '10px system-ui, sans-serif'
     const name = droid?.name ?? req.droidId
-    const tier = formatTierName(req.rarity, tierLabels)
-    ctx.fillText(`${name} (${tier})`, x + 48, rowY + 26)
-    rowY += 48
+    const shortName = name.length > 16 ? `${name.slice(0, 15)}…` : name
+    ctx.fillText(shortName, innerX + 34, cy)
+    ctx.fillStyle = '#818cf8'
+    ctx.font = '9px system-ui, sans-serif'
+    ctx.fillText(formatTierName(req.rarity, tierLabels), innerX + 34, cy + 11)
   }
 
-  const sellUnits = unitsSellableAfterRebirth(input.pathId, entry.rebirth).filter(
+  cy += 28
+  ctx.fillStyle = '#a5b4fc'
+  ctx.font = 'bold 10px system-ui, sans-serif'
+  ctx.fillText(L.sellAfter, innerX, cy)
+
+  const sellUnits = unitsNewlySellableAfterRebirth(input.pathId, entry.rebirth).filter(
     (u) => u.disposition === 'sellable',
   )
-  rowY += 8
-  ctx.fillStyle = '#a5b4fc'
-  ctx.font = 'bold 14px system-ui, sans-serif'
-  ctx.fillText(L.sellAfter, x, rowY + 14)
-  rowY += 28
+  let sellX = innerX + ctx.measureText(L.sellAfter).width + 4
   if (sellUnits.length === 0) {
     ctx.fillStyle = '#64748b'
-    ctx.font = '13px system-ui, sans-serif'
-    ctx.fillText(L.noneSell, x, rowY + 12)
-    rowY += 24
+    ctx.font = '10px system-ui, sans-serif'
+    ctx.fillText(L.noneSell, sellX, cy)
   } else {
-    let col = 0
-    for (const unit of sellUnits.slice(0, 8)) {
+    for (const unit of sellUnits.slice(0, 4)) {
       const droid = droidById.get(unit.droidId)
       if (!droid) continue
       const img = await loadImage(droidImageSrc(droid.id, droid.imageLocal))
-      const cx = x + col * 88
-      if (img) ctx.drawImage(img, cx, rowY, 36, 36)
+      if (img) ctx.drawImage(img, sellX, cy - 14, 24, 24)
       ctx.fillStyle = '#cbd5e1'
-      ctx.font = '11px system-ui, sans-serif'
-      ctx.fillText(formatTierName(unit.tier, tierLabels), cx, rowY + 50)
-      col++
-      if (col >= 4) {
-        col = 0
-        rowY += 58
-      }
+      ctx.font = '8px system-ui, sans-serif'
+      const tier = formatTierName(unit.tier, tierLabels)
+      const label = tier.length > 8 ? tier.slice(0, 7) : tier
+      ctx.fillText(label, sellX, cy + 16)
+      sellX += 36
     }
-    if (col > 0) rowY += 58
   }
-
-  ctx.strokeStyle = 'rgba(255,255,255,0.08)'
-  ctx.beginPath()
-  ctx.moveTo(x, rowY + 12)
-  ctx.lineTo(x + width, rowY + 12)
-  ctx.stroke()
-
-  return rowY + 28
 }
 
 async function renderRebirthPages(input: ExportCycleInput, qr: string): Promise<HTMLCanvasElement[]> {
@@ -256,31 +393,50 @@ async function renderRebirthPages(input: ExportCycleInput, qr: string): Promise<
   const pages: HTMLCanvasElement[] = []
   let { canvas, ctx } = createPageCanvas()
   fillBackground(ctx)
-  let y = PAD
+  let indexOnPage = 0
+  let row = 0
+  let col = 0
+  const contentTop = PAD
+  const contentBottom = PAGE_H - FOOTER_H - PAD
 
-  for (const entry of cycle.rebirths) {
-    const needed = await measureRebirthBlock(entry, input)
-    if (y + needed > PAGE_H - FOOTER_H - PAD) {
+  const placeCard = async (entry: RebirthEntry) => {
+    if (indexOnPage >= REBIRTHS_PER_PAGE) {
       await drawFooter(ctx, input.locale, qr)
       pages.push(canvas)
       ;({ canvas, ctx } = createPageCanvas())
       fillBackground(ctx)
-      y = PAD
+      indexOnPage = 0
+      row = 0
+      col = 0
     }
-    y = await drawRebirthRow(ctx, PAD, y, PAGE_W - PAD * 2, entry, input)
+    const x = PAD + col * (CARD_W + COL_GAP)
+    const y = contentTop + row * (CARD_H + ROW_GAP)
+    if (y + CARD_H > contentBottom) {
+      await drawFooter(ctx, input.locale, qr)
+      pages.push(canvas)
+      ;({ canvas, ctx } = createPageCanvas())
+      fillBackground(ctx)
+      indexOnPage = 0
+      row = 0
+      col = 0
+      return placeCard(entry)
+    }
+    await drawCompactRebirthCard(ctx, x, y, entry, input)
+    col++
+    if (col >= COLS) {
+      col = 0
+      row++
+    }
+    indexOnPage++
+  }
+
+  for (const entry of cycle.rebirths) {
+    await placeCard(entry)
   }
 
   await drawFooter(ctx, input.locale, qr)
   pages.push(canvas)
   return pages
-}
-
-async function measureRebirthBlock(entry: RebirthEntry, input: ExportCycleInput): Promise<number> {
-  const sellCount = unitsSellableAfterRebirth(input.pathId, entry.rebirth).filter(
-    (u) => u.disposition === 'sellable',
-  ).length
-  const sellRows = sellCount === 0 ? 1 : Math.ceil(Math.min(sellCount, 8) / 4)
-  return 36 + entry.requirements.length * 48 + 28 + sellRows * 58 + 40
 }
 
 async function renderAppendix(input: ExportCycleInput, qr: string): Promise<HTMLCanvasElement> {
@@ -372,31 +528,9 @@ export async function exportCyclePngChunks(input: ExportCycleInput): Promise<Blo
   const cycle = cycleById.get(input.pathId)
   if (!cycle) return []
 
+  const pages = await renderRebirthPages(input, qr)
   const chunks: Blob[] = []
-  const chunkSize = 10
-
-  for (let start = 0; start < cycle.rebirths.length; start += chunkSize) {
-    const slice = cycle.rebirths.slice(start, start + chunkSize)
-    const height = PAD * 2 + FOOTER_H + slice.length * 220
-    const canvas = document.createElement('canvas')
-    canvas.width = 780
-    canvas.height = Math.max(height, 400)
-    const ctx = canvas.getContext('2d')!
-    fillBackground(ctx)
-    let y = PAD
-    const pathName = formatCycleDisplayName(
-      cycleById.get(input.pathId)?.name ?? input.pathId,
-      input.locale,
-    )
-    ctx.fillStyle = '#f1f5f9'
-    ctx.font = 'bold 22px system-ui, sans-serif'
-    ctx.fillText(`${copy[input.locale].brand} · ${pathName}`, PAD, y)
-    y += 40
-
-    for (const entry of slice) {
-      y = await drawRebirthRow(ctx, PAD, y, canvas.width - PAD * 2, entry, input)
-    }
-    await drawFooter(ctx, input.locale, qr)
+  for (const canvas of pages) {
     chunks.push(
       await new Promise<Blob>((resolve, reject) => {
         canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('PNG failed'))), 'image/png')

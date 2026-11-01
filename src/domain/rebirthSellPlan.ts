@@ -155,13 +155,12 @@ export function buildPathUnitUsage(pathId: string): RebirthUnitUsage[] {
   })
 }
 
-/** Units safe to sell after completing rebirth `afterRebirth` (not needed from N+1 onward). */
-export function unitsSellableAfterRebirth(
+function enrichSellableUnits(
   pathId: string,
   afterRebirth: number,
+  units: RebirthUnitUsage[],
 ): RebirthUnitUsage[] {
-  const all = buildPathUnitUsage(pathId)
-  return all
+  return units
     .filter((u) => u.lastNeededRebirth !== null && u.lastNeededRebirth <= afterRebirth)
     .map((u) => {
       const otherPathIds = pathsNeedingDroidAfter(u.droidId, afterRebirth, pathId)
@@ -177,11 +176,32 @@ export function unitsSellableAfterRebirth(
     .sort((a, b) => a.droidId.localeCompare(b.droidId))
 }
 
+/** Cumulative: all units no longer needed from rebirth N+1 onward (after completing N). */
+export function unitsSellableAfterRebirth(
+  pathId: string,
+  afterRebirth: number,
+): RebirthUnitUsage[] {
+  return enrichSellableUnits(pathId, afterRebirth, buildPathUnitUsage(pathId))
+}
+
+/** Delta: units whose last required rebirth is exactly N (newly free after completing rebirth N). */
+export function unitsNewlySellableAfterRebirth(
+  pathId: string,
+  afterRebirth: number,
+): RebirthUnitUsage[] {
+  if (afterRebirth <= 0) return []
+  return enrichSellableUnits(
+    pathId,
+    afterRebirth,
+    buildPathUnitUsage(pathId).filter((u) => u.lastNeededRebirth === afterRebirth),
+  )
+}
+
 /** Map rebirth index → units newly sellable after that rebirth completes. */
 export function sellableUnitsByRebirth(pathId: string): Map<number, RebirthUnitUsage[]> {
   const map = new Map<number, RebirthUnitUsage[]>()
   for (let n = 0; n <= 40; n++) {
-    map.set(n, unitsSellableAfterRebirth(pathId, n))
+    map.set(n, unitsNewlySellableAfterRebirth(pathId, n))
   }
   return map
 }

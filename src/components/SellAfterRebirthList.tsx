@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { droidById, cycleById } from '../domain/gameData'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
-import { unitsSellableAfterRebirth, type RebirthUnitUsage } from '../domain/rebirthSellPlan'
+import { unitsNewlySellableAfterRebirth, type RebirthUnitUsage } from '../domain/rebirthSellPlan'
 import { buildTierLabelMap, formatTierName } from '../domain/tiers'
 import { gameData } from '../domain/gameData'
 import { DroidImage } from './DroidImage'
@@ -60,7 +60,7 @@ export function SellAfterRebirthList({
   compact?: boolean
 }) {
   const { t } = useTranslation()
-  const units = unitsSellableAfterRebirth(pathId, afterRebirth).filter(
+  const units = unitsNewlySellableAfterRebirth(pathId, afterRebirth).filter(
     (u) => u.disposition === 'sellable' || u.disposition === 'fusionHold' || u.disposition === 'fusionCaution',
   )
   const sellableOnly = units.filter((u) => u.disposition === 'sellable')
