@@ -102,12 +102,13 @@ test('ux round screenshots (pt-BR artifacts)', async ({ page, browser }) => {
   }
 
   await page.goto('/progress')
-  const moreBtn = page.getByRole('button', { name: /Mais ações/i })
-  if (await moreBtn.isVisible().catch(() => false)) {
-    await moreBtn.click()
-    await page.waitForTimeout(250)
-    await page.screenshot({ path: path.join(ARTIFACTS, 'bottom-sheet.png') })
-  }
+  await page.getByRole('heading', { name: /Rebirth #/i }).first().waitFor({ timeout: 10000 })
+  const moreBtn = page.getByRole('button', { name: 'Mais ações' })
+  await moreBtn.waitFor({ state: 'visible', timeout: 10000 })
+  await moreBtn.click()
+  await page.getByRole('dialog').waitFor({ state: 'visible', timeout: 5000 })
+  await page.waitForTimeout(200)
+  await page.screenshot({ path: path.join(ARTIFACTS, 'bottom-sheet.png') })
 
   const desktop = await browser.newPage()
   await desktop.setViewportSize({ width: 1280, height: 800 })
