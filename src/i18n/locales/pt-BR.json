@@ -118,7 +118,7 @@
     "safeNowLine": "Está no seu inventário e pode vender antes do próximo rebirth."
   },
   "sellAfter": {
-    "heading": "Depois desse rebirth dá pra vender:",
+    "heading": "Vender depois:",
     "none": "Nenhum droid de requisito fica livre depois deste passo.",
     "fusionHold": "Guardar pra fusão",
     "fusionCaution": "Fusão?",

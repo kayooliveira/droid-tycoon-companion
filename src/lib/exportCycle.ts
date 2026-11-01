@@ -4,7 +4,12 @@ import { formatCycleDisplayName } from './cycleLabel'
 import { droidImageSrc } from './images'
 import { cycleById, droidById, gameData, getRebirth } from '../domain/gameData'
 import { pathProgressPercent, REBIRTHS_PER_PATH, SUPER_REBIRTH_UNLOCK_AFTER } from '../domain/progress'
-import { fusionsRelevantToPath, unitsNewlySellableAfterRebirth } from '../domain/rebirthSellPlan'
+import {
+  fusionsRelevantToPath,
+  unitsNewlySellableAfterRebirth,
+  unitsSellableAfterRebirth,
+  type RebirthUnitUsage,
+} from '../domain/rebirthSellPlan'
 import { buildTierLabelMap, formatTierName } from '../domain/tiers'
 import type { InventoryUnit, RebirthEntry } from '../domain/types'
 
@@ -18,15 +23,16 @@ export interface ExportCycleInput {
 
 const PAGE_W = 794
 const PAGE_H = 1123
-const PAD = 40
+const PAD = 36
 const FOOTER_H = 72
-const COL_GAP = 14
-const ROW_GAP = 14
+const COL_GAP = 12
+const ROW_GAP = 10
 const COLS = 2
-const ROWS_PER_PAGE = 4
+const ROWS_PER_PAGE = 5
 const REBIRTHS_PER_PAGE = COLS * ROWS_PER_PAGE
 const CARD_W = (PAGE_W - PAD * 2 - COL_GAP) / 2
-const CARD_H = 228
+const DROID_ROW_H = 32
+const CARD_H = 52 + DROID_ROW_H * 3 + 44
 
 const tierLabels = buildTierLabelMap(gameData.rarities)
 
@@ -38,11 +44,12 @@ const copy = {
     pathPct: 'Cycle progress',
     nextRebirth: 'Next rebirth',
     inventory: 'Units in inventory',
-    nextReqs: 'Next rebirth needs',
+    sellNow: 'Safe to sell now',
+    upcomingRebirths: 'Upcoming rebirths',
     date: 'Generated',
     rebirth: 'Rebirth',
     credits: 'Credits',
-    sellAfter: 'Sell after:',
+    sellAfter: 'Sell later:',
     done: 'Done',
     next: 'Current',
     pending: 'Upcoming',
@@ -51,7 +58,8 @@ const copy = {
     superBody: `Available after rebirth ${SUPER_REBIRTH_UNLOCK_AFTER}. Resets credits, base upgrades, and most droids (Iconics stay).`,
     fusionTitle: 'Fusion recipes on this cycle',
     feedbackLink: 'Feedback on WhatsApp',
-    noneSell: '—',
+    noneSell: 'Nothing to sell yet',
+    noneSellNow: 'Nothing to sell at this step yet',
   },
   'pt-BR': {
     myCycle: (name: string) => `Meu ${name}`,
@@ -60,11 +68,12 @@ const copy = {
     pathPct: '% do ciclo',
     nextRebirth: 'Próximo rebirth',
     inventory: 'Droids no inventário',
-    nextReqs: 'Requisitos do próximo rebirth',
+    sellNow: 'Pode vender agora',
+    upcomingRebirths: 'Próximos rebirths',
     date: 'Gerado em',
     rebirth: 'Rebirth',
     credits: 'Créditos',
-    sellAfter: 'Vende depois:',
+    sellAfter: 'Vender depois:',
     done: 'Feito',
     next: 'Atual',
     pending: 'Próximos',
@@ -73,7 +82,8 @@ const copy = {
     superBody: `Libera depois do rebirth ${SUPER_REBIRTH_UNLOCK_AFTER}. Zera créditos, upgrades da base e quase todos os droids (Iconics ficam).`,
     fusionTitle: 'Receitas de fusão neste ciclo',
     feedbackLink: 'Feedback no WhatsApp',
-    noneSell: '—',
+    noneSell: 'Nada pra vender ainda',
+    noneSellNow: 'Nada pra vender neste passo',
   },
 } as const
 
@@ -139,29 +149,6 @@ async function makeQr(): Promise<string> {
   })
 }
 
-function drawStatBlock(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  label: string,
-  value: string,
-) {
-  ctx.fillStyle = 'rgba(255,255,255,0.06)'
-  ctx.strokeStyle = 'rgba(255,255,255,0.12)'
-  ctx.lineWidth = 1
-  roundRect(ctx, x, y, w, h, 10)
-  ctx.fill()
-  ctx.stroke()
-  ctx.fillStyle = '#64748b'
-  ctx.font = '12px system-ui, sans-serif'
-  ctx.fillText(label, x + 14, y + 28)
-  ctx.fillStyle = '#f1f5f9'
-  ctx.font = 'bold 28px system-ui, sans-serif'
-  ctx.fillText(value, x + 14, y + 62)
-}
-
 function roundRect(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -183,6 +170,113 @@ function roundRect(
   ctx.closePath()
 }
 
+function drawStatBlock(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  label: string,
+  value: string,
+) {
+  ctx.fillStyle = 'rgba(255,255,255,0.06)'
+  ctx.strokeStyle = 'rgba(255,255,255,0.12)'
+  ctx.lineWidth = 1
+  roundRect(ctx, x, y, w, h, 10)
+  ctx.fill()
+  ctx.stroke()
+  ctx.fillStyle = '#64748b'
+  ctx.font = '11px system-ui, sans-serif'
+  ctx.fillText(label, x + 12, y + 24)
+  ctx.fillStyle = '#f1f5f9'
+  ctx.font = 'bold 24px system-ui, sans-serif'
+  ctx.fillText(value, x + 12, y + 52)
+}
+
+function unitChipLabel(droidId: string, tier: string): string {
+  const droid = droidById.get(droidId)
+  const name = droid?.name ?? droidId
+  const short = name.length > 10 ? `${name.slice(0, 9)}…` : name
+  const tierShort = tier.length > 12 ? `${tier.slice(0, 11)}…` : tier
+  return `${short} · ${tierShort}`
+}
+
+function drawTextChip(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  text: string,
+  maxWidth: number,
+): number {
+  ctx.font = '9px system-ui, sans-serif'
+  let label = text
+  while (label.length > 3 && ctx.measureText(label).width > maxWidth) {
+    label = `${label.slice(0, -2)}…`
+  }
+  const tw = ctx.measureText(label).width
+  const pw = tw + 10
+  const ph = 16
+  ctx.fillStyle = 'rgba(129,140,248,0.18)'
+  roundRect(ctx, x, y, pw, ph, 5)
+  ctx.fill()
+  ctx.fillStyle = '#e2e8f0'
+  ctx.fillText(label, x + 5, y + 11)
+  return pw + 4
+}
+
+async function drawDroidRow(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  maxW: number,
+  droidId: string,
+  tierId: string,
+) {
+  const droid = droidById.get(droidId)
+  const img = droid ? await loadImage(droidImageSrc(droid.id, droid.imageLocal)) : null
+  if (img) ctx.drawImage(img, x, y, 28, 28)
+  const name = droid?.name ?? droidId
+  const tier = formatTierName(tierId as RebirthUnitUsage['tier'], tierLabels)
+  ctx.fillStyle = '#e2e8f0'
+  ctx.font = '10px system-ui, sans-serif'
+  const nameMax = maxW - 38 - 70
+  let displayName = name
+  while (displayName.length > 2 && ctx.measureText(displayName).width > nameMax) {
+    displayName = `${displayName.slice(0, -2)}…`
+  }
+  ctx.fillText(displayName, x + 34, y + 18)
+  drawTextChip(ctx, x + 34 + ctx.measureText(displayName).width + 6, y + 4, tier, 68)
+}
+
+async function drawSellUnitChips(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  maxW: number,
+  units: RebirthUnitUsage[],
+  emptyLabel: string,
+) {
+  if (units.length === 0) {
+    ctx.fillStyle = '#64748b'
+    ctx.font = '9px system-ui, sans-serif'
+    ctx.fillText(emptyLabel, x, y + 10)
+    return
+  }
+  let cx = x
+  let cy = y
+  for (const unit of units.slice(0, 6)) {
+    const tier = formatTierName(unit.tier, tierLabels)
+    const chip = unitChipLabel(unit.droidId, tier)
+    const chipW = Math.min(maxW, 120)
+    if (cx + chipW > x + maxW && cx > x) {
+      cx = x
+      cy += 20
+    }
+    const used = drawTextChip(ctx, cx, cy, chip, chipW)
+    cx += used
+  }
+}
+
 async function drawCover(ctx: CanvasRenderingContext2D, input: ExportCycleInput, qr: string) {
   fillBackground(ctx)
   const L = copy[input.locale]
@@ -199,18 +293,18 @@ async function drawCover(ctx: CanvasRenderingContext2D, input: ExportCycleInput,
 
   const logo = await loadImage('/pwa-512.png')
   const headerY = PAD
-  if (logo) ctx.drawImage(logo, PAD, headerY, 112, 112)
+  if (logo) ctx.drawImage(logo, PAD, headerY, 96, 96)
 
   ctx.fillStyle = '#f8fafc'
-  ctx.font = 'bold 36px system-ui, sans-serif'
-  ctx.fillText(L.brand, PAD + 128, headerY + 44)
   ctx.font = 'bold 32px system-ui, sans-serif'
+  ctx.fillText(L.brand, PAD + 112, headerY + 38)
+  ctx.font = 'bold 28px system-ui, sans-serif'
   ctx.fillStyle = '#a5b4fc'
-  ctx.fillText(L.myCycle(pathName), PAD + 128, headerY + 88)
+  ctx.fillText(L.myCycle(pathName), PAD + 112, headerY + 76)
 
-  const gridY = headerY + 132
+  const gridY = headerY + 108
   const blockW = (PAGE_W - PAD * 2 - COL_GAP) / 2
-  const blockH = 78
+  const blockH = 68
   drawStatBlock(
     ctx,
     PAD,
@@ -240,28 +334,60 @@ async function drawCover(ctx: CanvasRenderingContext2D, input: ExportCycleInput,
     String(invCount),
   )
 
-  const stripY = gridY + (blockH + COL_GAP) * 2 + 20
-  ctx.fillStyle = '#cbd5e1'
-  ctx.font = 'bold 15px system-ui, sans-serif'
-  ctx.fillText(L.nextReqs, PAD, stripY)
+  const panelY = gridY + (blockH + COL_GAP) * 2 + 12
+  const panelW = (PAGE_W - PAD * 2 - COL_GAP) / 2
+  const panelH = PAGE_H - FOOTER_H - panelY - 36
 
-  const nextEntry = getRebirth(input.pathId, input.nextRebirth)
-  let sx = PAD
-  const stripRowY = stripY + 16
-  if (nextEntry) {
-    for (const req of nextEntry.requirements.slice(0, 3)) {
-      const droid = droidById.get(req.droidId)
-      const img = droid ? await loadImage(droidImageSrc(droid.id, droid.imageLocal)) : null
-      if (img) ctx.drawImage(img, sx, stripRowY, 56, 56)
+  const sellNowUnits = unitsSellableAfterRebirth(input.pathId, input.completedOnPath).filter(
+    (u) => u.disposition === 'sellable',
+  )
+
+  ctx.fillStyle = 'rgba(255,255,255,0.05)'
+  roundRect(ctx, PAD, panelY, panelW, panelH, 10)
+  ctx.fill()
+  ctx.fillStyle = '#cbd5e1'
+  ctx.font = 'bold 13px system-ui, sans-serif'
+  ctx.fillText(L.sellNow, PAD + 12, panelY + 22)
+  await drawSellUnitChips(
+    ctx,
+    PAD + 12,
+    panelY + 28,
+    panelW - 24,
+    sellNowUnits,
+    L.noneSellNow,
+  )
+
+  const rightX = PAD + panelW + COL_GAP
+  ctx.fillStyle = 'rgba(255,255,255,0.05)'
+  roundRect(ctx, rightX, panelY, panelW, panelH, 10)
+  ctx.fill()
+  ctx.fillStyle = '#cbd5e1'
+  ctx.font = 'bold 13px system-ui, sans-serif'
+  ctx.fillText(L.upcomingRebirths, rightX + 12, panelY + 22)
+
+  let uy = panelY + 34
+  const cycle = cycleById.get(input.pathId)
+  if (cycle) {
+    const start = input.nextRebirth
+    const end = Math.min(start + 3, REBIRTHS_PER_PATH)
+    for (let r = start; r <= end; r++) {
+      const entry = getRebirth(input.pathId, r)
+      if (!entry) continue
+      ctx.fillStyle = '#94a3b8'
+      ctx.font = 'bold 10px system-ui, sans-serif'
+      ctx.fillText(`${L.rebirth} ${r} · ${entry.credits}`, rightX + 12, uy)
+      uy += 14
+      const names = entry.requirements
+        .map((req) => {
+          const d = droidById.get(req.droidId)
+          return `${d?.name ?? req.droidId} (${formatTierName(req.rarity, tierLabels)})`
+        })
+        .join(', ')
       ctx.fillStyle = '#e2e8f0'
-      ctx.font = '13px system-ui, sans-serif'
-      const name = droid?.name ?? req.droidId
-      const tier = formatTierName(req.rarity, tierLabels)
-      ctx.fillText(name.length > 14 ? `${name.slice(0, 13)}…` : name, sx, stripRowY + 72)
-      ctx.fillStyle = '#818cf8'
-      ctx.font = '11px system-ui, sans-serif'
-      ctx.fillText(tier, sx, stripRowY + 88)
-      sx += 120
+      ctx.font = '9px system-ui, sans-serif'
+      wrapText(ctx, names, rightX + 12, uy, panelW - 24, 12)
+      uy += 28
+      if (uy > panelY + panelH - 16) break
     }
   }
 
@@ -271,8 +397,8 @@ async function drawCover(ctx: CanvasRenderingContext2D, input: ExportCycleInput,
     day: 'numeric',
   })
   ctx.fillStyle = '#94a3b8'
-  ctx.font = '14px system-ui, sans-serif'
-  ctx.fillText(`${L.date}: ${dateStr}`, PAD, PAGE_H - FOOTER_H - 24)
+  ctx.font = '12px system-ui, sans-serif'
+  ctx.fillText(`${L.date}: ${dateStr}`, PAD, PAGE_H - FOOTER_H - 14)
 
   await drawFooter(ctx, input.locale, qr)
 }
@@ -298,15 +424,14 @@ function drawStatusChip(
     next: { bg: 'rgba(129,140,248,0.25)', fg: '#c7d2fe' },
     pending: { bg: 'rgba(148,163,184,0.15)', fg: '#94a3b8' },
   }[status]
-  ctx.font = '10px system-ui, sans-serif'
+  ctx.font = '9px system-ui, sans-serif'
   const tw = ctx.measureText(label).width
-  const pw = tw + 14
+  const pw = tw + 12
   ctx.fillStyle = colors.bg
-  roundRect(ctx, x, y - 11, pw, 18, 6)
+  roundRect(ctx, x, y - 10, pw, 16, 5)
   ctx.fill()
   ctx.fillStyle = colors.fg
-  ctx.fillText(label, x + 7, y + 2)
-  return pw
+  ctx.fillText(label, x + 6, y + 2)
 }
 
 async function drawCompactRebirthCard(
@@ -327,63 +452,35 @@ async function drawCompactRebirthCard(
   ctx.fill()
   ctx.stroke()
 
-  const innerX = x + 10
-  let cy = y + 22
+  const innerX = x + 8
+  const innerW = CARD_W - 16
+  let cy = y + 18
   ctx.fillStyle = '#f1f5f9'
-  ctx.font = 'bold 14px system-ui, sans-serif'
+  ctx.font = 'bold 13px system-ui, sans-serif'
   const title = `${L.rebirth} ${entry.rebirth}`
   ctx.fillText(title, innerX, cy)
-  const chipX = innerX + ctx.measureText(title).width + 8
-  drawStatusChip(ctx, chipX, cy, statusLabel, status)
+  drawStatusChip(ctx, innerX + ctx.measureText(title).width + 6, cy, statusLabel, status)
 
-  cy += 18
+  cy += 16
   ctx.fillStyle = '#94a3b8'
-  ctx.font = '11px system-ui, sans-serif'
+  ctx.font = '10px system-ui, sans-serif'
   ctx.fillText(`${L.credits}: ${entry.credits}`, innerX, cy)
 
-  cy += 10
+  cy += 8
   for (const req of entry.requirements.slice(0, 3)) {
-    cy += 22
-    const droid = droidById.get(req.droidId)
-    const img = droid ? await loadImage(droidImageSrc(droid.id, droid.imageLocal)) : null
-    if (img) ctx.drawImage(img, innerX, cy - 16, 28, 28)
-    ctx.fillStyle = '#e2e8f0'
-    ctx.font = '10px system-ui, sans-serif'
-    const name = droid?.name ?? req.droidId
-    const shortName = name.length > 16 ? `${name.slice(0, 15)}…` : name
-    ctx.fillText(shortName, innerX + 34, cy)
-    ctx.fillStyle = '#818cf8'
-    ctx.font = '9px system-ui, sans-serif'
-    ctx.fillText(formatTierName(req.rarity, tierLabels), innerX + 34, cy + 11)
+    cy += DROID_ROW_H
+    await drawDroidRow(ctx, innerX, cy - DROID_ROW_H + 2, innerW, req.droidId, req.rarity)
   }
 
-  cy += 28
+  cy += 6
   ctx.fillStyle = '#a5b4fc'
-  ctx.font = 'bold 10px system-ui, sans-serif'
-  ctx.fillText(L.sellAfter, innerX, cy)
+  ctx.font = 'bold 9px system-ui, sans-serif'
+  ctx.fillText(L.sellAfter, innerX, cy + 10)
 
   const sellUnits = unitsNewlySellableAfterRebirth(input.pathId, entry.rebirth).filter(
     (u) => u.disposition === 'sellable',
   )
-  let sellX = innerX + ctx.measureText(L.sellAfter).width + 4
-  if (sellUnits.length === 0) {
-    ctx.fillStyle = '#64748b'
-    ctx.font = '10px system-ui, sans-serif'
-    ctx.fillText(L.noneSell, sellX, cy)
-  } else {
-    for (const unit of sellUnits.slice(0, 4)) {
-      const droid = droidById.get(unit.droidId)
-      if (!droid) continue
-      const img = await loadImage(droidImageSrc(droid.id, droid.imageLocal))
-      if (img) ctx.drawImage(img, sellX, cy - 14, 24, 24)
-      ctx.fillStyle = '#cbd5e1'
-      ctx.font = '8px system-ui, sans-serif'
-      const tier = formatTierName(unit.tier, tierLabels)
-      const label = tier.length > 8 ? tier.slice(0, 7) : tier
-      ctx.fillText(label, sellX, cy + 16)
-      sellX += 36
-    }
-  }
+  await drawSellUnitChips(ctx, innerX, cy + 14, innerW, sellUnits, L.noneSell)
 }
 
 async function renderRebirthPages(input: ExportCycleInput, qr: string): Promise<HTMLCanvasElement[]> {
@@ -524,10 +621,10 @@ export async function exportCyclePdf(input: ExportCycleInput): Promise<Blob> {
 }
 
 export async function exportCyclePngChunks(input: ExportCycleInput): Promise<Blob[]> {
-  const qr = await makeQr()
   const cycle = cycleById.get(input.pathId)
   if (!cycle) return []
 
+  const qr = await makeQr()
   const pages = await renderRebirthPages(input, qr)
   const chunks: Blob[] = []
   for (const canvas of pages) {
@@ -540,7 +637,6 @@ export async function exportCyclePngChunks(input: ExportCycleInput): Promise<Blo
   return chunks
 }
 
-/** Test hook: render cover only. */
 export async function exportCycleCoverBlob(input: ExportCycleInput): Promise<Blob> {
   const qr = await makeQr()
   const { canvas, ctx } = createPageCanvas()
