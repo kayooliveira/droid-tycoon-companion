@@ -71,7 +71,13 @@ export function DashboardPage() {
         <GlassCard className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-xs uppercase tracking-widest text-zinc-500">{t('dashboard.nextStepLabel')}</p>
-            <p className="text-sm font-medium mt-1">{t(nextStepKey, { missing, sellable: sell.sellable })}</p>
+            <p className="text-sm font-medium mt-1">
+              {nextStepKey === 'dashboard.nextStepInventory'
+                ? t('dashboard.nextStepInventory', { count: missing })
+                : nextStepKey === 'dashboard.nextStepSell'
+                  ? t('dashboard.nextStepSell', { count: sell.sellable })
+                  : t(nextStepKey)}
+            </p>
           </div>
           <Link
             to={nextStepHref}
@@ -85,7 +91,6 @@ export function DashboardPage() {
 
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-2 min-w-0">
-          <h1 className="text-xs uppercase tracking-widest text-zinc-500 font-display">{t('dashboard.title')}</h1>
           <div className="flex flex-wrap items-center gap-2">
             <PathProgressSwitcher />
           </div>

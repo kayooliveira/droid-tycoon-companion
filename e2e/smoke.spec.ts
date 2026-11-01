@@ -35,6 +35,6 @@ test('pt-BR locale via browser language', async ({ browser }) => {
   await page.evaluate(() => localStorage.clear())
   await page.reload()
   await page.getByTestId('onboarding-skip').click()
-  await expect(page.getByRole('heading', { name: 'Início' }).first()).toBeVisible({ timeout: 15000 })
+  await expect(page.getByText('Próximo passo')).toBeVisible({ timeout: 15000 })
   await context.close()
 })

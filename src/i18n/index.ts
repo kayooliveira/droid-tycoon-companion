@@ -20,6 +20,7 @@ export function initI18n(locale: AppLocale): typeof i18n {
     lng: locale,
     fallbackLng: 'en',
     interpolation: { escapeValue: false },
+    pluralSeparator: '_',
   })
 
   return i18n

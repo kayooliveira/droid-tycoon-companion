@@ -147,40 +147,66 @@ export async function renderShareProgressCard(data: ShareCardInput): Promise<Blo
     }
   }
 
-  const statY = 620
+  const statY = 600
   const statW = (width - 144) / 3
-  const stats = [
+  const statBaseline = statY + 78
+  const valueFont = '700 64px system-ui, sans-serif'
+  const suffixFont = '500 34px system-ui, sans-serif'
+  const subFont = '24px system-ui, sans-serif'
+
+  const statDefs = [
     {
-      value: `${data.completedOnPath}`,
-      sub: isPt ? 'rebirths ok' : 'rebirths done',
-      suffix: '/40',
+      kind: 'rebirth' as const,
+      sub: isPt ? 'rebirths feitos' : 'rebirths done',
     },
-    { value: `${Math.round(pathPct)}%`, sub: isPt ? 'do Path' : 'path' },
-    { value: `${invCount}`, sub: isPt ? 'droids no inv.' : 'droids tracked' },
+    {
+      kind: 'pct' as const,
+      value: `${Math.round(pathPct)}%`,
+      sub: isPt ? 'progresso do Path' : 'path progress',
+    },
+    {
+      kind: 'inv' as const,
+      value: `${invCount}`,
+      sub: isPt ? 'droids no inventário' : 'droids in inventory',
+    },
   ]
 
-  stats.forEach((s, i) => {
+  statDefs.forEach((s, i) => {
     const x = 72 + i * statW
     ctx.fillStyle = 'rgba(255,255,255,0.04)'
-    roundRect(ctx, x, statY, statW - 16, 140, 16)
+    roundRect(ctx, x, statY, statW - 16, 150, 16)
     ctx.fill()
-    ctx.fillStyle = '#5eead4'
-    ctx.font = '700 64px system-ui, sans-serif'
-    ctx.fillText(s.value, x + 20, statY + 72)
-    if (s.suffix) {
+
+    const padX = x + 20
+    if (s.kind === 'rebirth') {
+      const value = String(data.completedOnPath)
+      const suffix = '/40'
+      ctx.font = valueFont
+      const valueW = ctx.measureText(value).width
+      ctx.fillStyle = '#5eead4'
+      ctx.fillText(value, padX, statBaseline)
+      ctx.font = suffixFont
       ctx.fillStyle = '#71717a'
-      ctx.font = '32px system-ui, sans-serif'
-      ctx.fillText(s.suffix, x + 20 + ctx.measureText(s.value).width + 4, statY + 72)
+      ctx.fillText(suffix, padX + valueW + 10, statBaseline - 4)
+    } else {
+      ctx.font = valueFont
+      ctx.fillStyle = '#5eead4'
+      ctx.fillText(s.value!, padX, statBaseline)
     }
+
     ctx.fillStyle = '#a1a1aa'
-    ctx.font = '24px system-ui, sans-serif'
-    ctx.fillText(s.sub, x + 20, statY + 110)
+    ctx.font = subFont
+    ctx.fillText(s.sub, padX, statY + 128)
   })
 
   const barX = 72
-  const barY = 790
+  const barY = statY + 178
   const barW = width - 144
-  const barH = 24
+  const barH = 32
+  ctx.fillStyle = '#a1a1aa'
+  ctx.font = '26px system-ui, sans-serif'
+  const barLabel = isPt ? 'Progresso neste Path' : 'Progress on this Path'
+  ctx.fillText(barLabel, barX, barY - 14)
   ctx.fillStyle = 'rgba(255,255,255,0.1)'
   roundRect(ctx, barX, barY, barW, barH, 12)
   ctx.fill()
@@ -195,15 +221,14 @@ export async function renderShareProgressCard(data: ShareCardInput): Promise<Blo
   }
 
   ctx.fillStyle = '#71717a'
-  ctx.font = '22px system-ui, sans-serif'
-  const footer1 = 'dthelper.kayooliveira.com'
-  ctx.fillText(footer1, 72, height - 120)
+  ctx.font = '24px system-ui, sans-serif'
+  ctx.fillText('dthelper.kayooliveira.com', 72, height - 72)
   ctx.fillStyle = '#52525b'
-  ctx.font = '20px system-ui, sans-serif'
+  ctx.font = '22px system-ui, sans-serif'
   const footer2 = isPt
     ? 'Fan-made · não afiliado à Epic Games'
     : 'Fan-made · not affiliated with Epic Games'
-  ctx.fillText(footer2, 72, height - 88)
+  ctx.fillText(footer2, 72, height - 40)
 
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {

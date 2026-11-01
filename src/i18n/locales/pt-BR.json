@@ -59,27 +59,29 @@
     "nextSection": "Próximo rebirth",
     "credits": "Créditos {{credits}}",
     "unlocks": "Libera {{item}}",
-    "requirementsReady": "Requisitos ok",
-    "statsRequired": "Pedidos (próximo)",
-    "statsReady": "Prontos",
-    "statsKeep": "Guardar (path)",
-    "statsSellable": "Vender",
+    "requirementsReady": "Tudo certo pro rebirth",
+    "statsRequired": "Precisa agora",
+    "statsReady": "Já tem",
+    "statsKeep": "Guardar no path",
+    "statsSellable": "Pode vender",
     "staleData": "Dados podem estar velhos — veja Ajustes",
     "dataVersion": "Dados v{{version}}",
-    "hero": "Organize o próximo rebirth no Star Wars Droid Tycoon — Path, inventário e o que dá pra vender sem medo.",
+    "hero": "Acompanhe Path, inventário e o que vale a pena vender no Star Wars Droid Tycoon.",
     "ctaProgress": "Ver meu próximo rebirth",
     "ctaInventory": "Ativar inventário",
     "nextStepLabel": "Próximo passo",
     "nextStepGo": "Ir",
-    "nextStepProgress": "Abra Progresso e confira os três droids deste rebirth.",
-    "nextStepInventory": "Faltam {{missing}} requisito(s) — ajuste o inventário.",
-    "nextStepSell": "Tem {{sellable}} droid(s) que dá pra vender — veja Vender antes do rebirth.",
-    "nextStepComplete": "Requisitos ok — quando terminar no jogo, conclua o rebirth aqui."
+    "nextStepProgress": "Abre Progresso e vê os três droids deste rebirth.",
+    "nextStepInventory_one": "Falta 1 droid pro próximo rebirth.",
+    "nextStepInventory_other": "Faltam {{count}} droids pro próximo rebirth.",
+    "nextStepSell_one": "Tem 1 droid que dá pra vender — dá uma olhada em Vender antes do rebirth.",
+    "nextStepSell_other": "Tem {{count}} droids que dá pra vender — dá uma olhada em Vender antes do rebirth.",
+    "nextStepComplete": "Deu certo — quando terminar no jogo, marca o rebirth aqui."
   },
   "inventory": {
     "title": "Inventário",
     "trackingOff": "Inventário desligado",
-    "trackingOffHint": "Ative em Ajustes para o app checar requisitos.",
+    "trackingOffHint": "Liga em Ajustes se quiser que o app compare com os rebirths.",
     "addDroid": "Adicionar droid",
     "search": "Buscar por nome…",
     "allRarities": "Todas raridades",
@@ -101,7 +103,7 @@
   },
   "sell": {
     "title": "Central de venda",
-    "intro": "Analisa rebirths {{from}}–40 no {{path}}. Depois do Super Rebirth quase tudo reseta — planeje o próximo Path na mão.",
+    "intro": "Olha rebirths {{from}}–40 no {{path}}. Depois do Super Rebirth quase tudo reseta — planeje o próximo Path na mão.",
     "keep": "Guardar",
     "sellable": "Vender",
     "upgrade": "Upgradar",
@@ -127,7 +129,7 @@
     "allClasses": "Todas classes",
     "fusionOnly": "Só fusão",
     "tiers": "Tiers",
-    "requiredIn": "Pedido nos rebirths",
+    "requiredIn": "Aparece nos rebirths",
     "notRequired": "Não aparece nos rebirths catalogados.",
     "source": "Fonte (verificado {{date}})",
     "moreRequirements": "+ {{n}} a mais"
@@ -150,7 +152,7 @@
     "back": "Voltar",
     "finish": "Concluir",
     "doneTitle": "Pronto",
-    "doneBody": "Abra o início quando quiser.",
+    "doneBody": "Volta pro painel quando quiser.",
     "openDashboard": "Abrir início"
   },
   "settings": {
@@ -243,7 +245,7 @@
     "ogImageAltPt": "Droid Tycoon Companion — rebirths, inventário e dicas de venda"
   },
   "a11y": {
-    "markOwned": "Marcar {{name}} como owned",
+    "markOwned": "Marcar {{name}} como tendo",
     "removeUnit": "Remover do inventário",
     "openMoreNav": "Abrir mais seções"
   }
