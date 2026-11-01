@@ -38,7 +38,7 @@ export interface SellAnalysisItem {
   upgradeTargetTier: TierId | null
 }
 
-function collectFutureNeeds(
+export function collectFutureNeeds(
   pathId: string,
   fromRebirth: number,
 ): FutureNeed[] {

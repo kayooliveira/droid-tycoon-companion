@@ -112,7 +112,28 @@
     "sellableNotNeeded": "Safe to sell {{name}} (×{{qty}}). Not used in any remaining rebirth on this Path.",
     "sellableExtra": "Sell {{qty}} extra {{name}}. You only need one for what's left on this Path.",
     "keepRebirth": "Keep {{name}}. Needed again at rebirth #{{rebirth}}.",
-    "upgradeRebirth": "Bring {{name}} up to at least {{tier}} before rebirth #{{rebirth}}."
+    "upgradeRebirth": "Bring {{name}} up to at least {{tier}} before rebirth #{{rebirth}}.",
+    "safeNowTitle": "Safe to sell right now",
+    "safeNowHint": "Based on rebirths you've finished through #{{rebirth}} and what's left on this Path.",
+    "safeNowLine": "In your inventory and clear to sell before the next rebirth."
+  },
+  "sellAfter": {
+    "heading": "After this rebirth you can sell:",
+    "none": "No requirement droids become free after this step.",
+    "fusionHold": "Keep for fusion",
+    "fusionCaution": "Fusion?",
+    "fusionCautionHint": "Recipe isn't fully verified — check in game before selling.",
+    "fusionNote": "Some droids stay marked for fusion even when rebirths no longer need them.",
+    "usedOnOtherPath": "Still used on {{paths}}."
+  },
+  "exportCycle": {
+    "title": "Download my cycle",
+    "hint": "PDF for printing or PNG chunks for WhatsApp. Generated on your device — nothing is uploaded.",
+    "pdf": "PDF",
+    "png": "PNG images",
+    "pdfDone": "Cycle PDF ready.",
+    "pngDone": "{{count}} PNG file(s) ready.",
+    "failed": "Couldn't build the export. Try again."
   },
   "fusion": {
     "title": "Fusion Lab",

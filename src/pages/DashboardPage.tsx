@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { PathProgressSwitcher, ProgressSummaryLine } from '../components/PathProgressSwitcher'
 import { RequirementCard } from '../components/RequirementCard'
 import { ShareMenu } from '../components/ShareMenu'
+import { DownloadCycleMenu } from '../components/DownloadCycleMenu'
 import { Badge } from '../components/ui/Badge'
 import { GlassCard } from '../components/ui/GlassCard'
 import { cn } from '../lib/utils'
@@ -176,6 +177,7 @@ export function DashboardPage() {
         </div>
       ) : null}
 
+      <DownloadCycleMenu />
       <ShareMenu />
     </div>
   )

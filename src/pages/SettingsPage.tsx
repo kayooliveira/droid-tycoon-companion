@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
 import { ShareMenu } from '../components/ShareMenu'
+import { DownloadCycleMenu } from '../components/DownloadCycleMenu'
 import { gameDataSource } from '../data/dataSource'
 import { gameData } from '../domain/gameData'
 import type { AppLocale } from '../i18n/detectLocale'
@@ -167,6 +168,7 @@ export function SettingsPage() {
         <p className="pt-2 border-t border-white/10">{t('app.disclaimer')}</p>
       </GlassCard>
 
+      <DownloadCycleMenu />
       <ShareMenu compact />
 
       <GlassCard className="space-y-2 text-sm">

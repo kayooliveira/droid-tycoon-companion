@@ -112,7 +112,28 @@
     "sellableNotNeeded": "Pode vender {{name}} (×{{qty}}). Não entra em nenhum rebirth que falta neste Path.",
     "sellableExtra": "Venda {{qty}} {{name}} extra. Só precisa de um pro que falta neste Path.",
     "keepRebirth": "Guarde {{name}}. Precisa de novo no rebirth #{{rebirth}}.",
-    "upgradeRebirth": "Suba {{name}} para pelo menos {{tier}} antes do rebirth #{{rebirth}}."
+    "upgradeRebirth": "Suba {{name}} para pelo menos {{tier}} antes do rebirth #{{rebirth}}.",
+    "safeNowTitle": "Pode vender agora",
+    "safeNowHint": "Com base nos rebirths concluídos até o #{{rebirth}} e no que ainda falta neste Path.",
+    "safeNowLine": "Está no seu inventário e pode vender antes do próximo rebirth."
+  },
+  "sellAfter": {
+    "heading": "Depois desse rebirth dá pra vender:",
+    "none": "Nenhum droid de requisito fica livre depois deste passo.",
+    "fusionHold": "Guardar pra fusão",
+    "fusionCaution": "Fusão?",
+    "fusionCautionHint": "Receita ainda não está 100% confirmada — confira no jogo antes de vender.",
+    "fusionNote": "Alguns droids ficam marcados pra fusão mesmo quando os rebirths não pedem mais.",
+    "usedOnOtherPath": "Ainda entra no {{paths}}."
+  },
+  "exportCycle": {
+    "title": "Baixar meu ciclo",
+    "hint": "PDF pra imprimir ou PNG em partes pro WhatsApp. Tudo no seu aparelho — nada sobe pra servidor.",
+    "pdf": "PDF",
+    "png": "Imagens PNG",
+    "pdfDone": "PDF do ciclo pronto.",
+    "pngDone": "{{count}} arquivo(s) PNG pronto(s).",
+    "failed": "Não deu pra gerar o export. Tenta de novo."
   },
   "fusion": {
     "title": "Laboratório de fusão",
