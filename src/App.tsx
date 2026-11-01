@@ -41,14 +41,19 @@ function PwaRefreshListener() {
   const { push } = useToast()
   const { t } = useTranslation()
   useEffect(() => {
-    const handler = () => {
+    const promptRefresh = () => {
       push(t('pwa.update'), {
         sticky: true,
         action: { label: t('pwa.updateAction'), onClick: reloadForPwaUpdate },
       })
     }
-    window.addEventListener('pwa-need-refresh', handler)
-    return () => window.removeEventListener('pwa-need-refresh', handler)
+    const autoUpdated = () => push(t('pwa.updatedToast'))
+    window.addEventListener('pwa-need-refresh', promptRefresh)
+    window.addEventListener('pwa-updated', autoUpdated)
+    return () => {
+      window.removeEventListener('pwa-need-refresh', promptRefresh)
+      window.removeEventListener('pwa-updated', autoUpdated)
+    }
   }, [push, t])
   return null
 }

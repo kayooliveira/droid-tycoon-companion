@@ -21,6 +21,6 @@ test('PWA manifest is valid JSON with icons and DT Helper name', async ({ reques
   await page.goto('/')
   await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute(
     'href',
-    /apple-touch-icon\.png\?v=3/,
+    /apple-touch-icon\.png\?v=4/,
   )
 })

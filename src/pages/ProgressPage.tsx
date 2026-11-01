@@ -32,6 +32,7 @@ import { SellAfterRebirthList } from '../components/SellAfterRebirthList'
 import { ShareExportCard } from '../components/ShareExportCard'
 import { HelpHint } from '../components/ui/HelpHint'
 import { IconButton } from '../components/ui/IconButton'
+import { hapticTap } from '../lib/haptics'
 
 const tierLabels = buildTierLabelMap(gameData.rarities)
 
@@ -57,6 +58,7 @@ export function ProgressPage() {
 
   const advanceWithToast = () => {
     completeRebirthAdvance()
+    hapticTap()
     push(t('progress.rebirthCompleted'))
   }
 

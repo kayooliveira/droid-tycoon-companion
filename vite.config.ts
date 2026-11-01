@@ -4,7 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 import { defineConfig } from 'vitest/config'
 
 /** Bump when PWA icon assets change (manifest + HTML cache bust). */
-const PWA_ICON_VERSION = '3'
+const PWA_ICON_VERSION = '4'
 
 export default defineConfig({
   base: '/',
@@ -12,7 +12,7 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      registerType: 'prompt',
+      registerType: 'autoUpdate',
       includeAssets: [
         'favicon.svg',
         'favicon.ico',
@@ -20,10 +20,6 @@ export default defineConfig({
         'favicon-32.png',
         'og-image.png',
         'og-image.svg',
-        'pwa-192.png',
-        'pwa-512.png',
-        'pwa-512-maskable.png',
-        'apple-touch-icon.png',
         'robots.txt',
       ],
       manifest: {
@@ -35,6 +31,8 @@ export default defineConfig({
         theme_color: '#0c121c',
         background_color: '#070b12',
         display: 'standalone',
+        display_override: ['standalone'],
+        orientation: 'portrait',
         start_url: '/',
         scope: '/',
         lang: 'en',
@@ -57,11 +55,59 @@ export default defineConfig({
             type: 'image/png',
             purpose: 'maskable',
           },
+          {
+            src: `/pwa-monochrome.png?v=${PWA_ICON_VERSION}`,
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'monochrome',
+          },
+        ],
+        shortcuts: [
+          {
+            name: 'Progresso',
+            short_name: 'Progresso',
+            url: '/progress',
+            icons: [{ src: `/pwa-192.png?v=${PWA_ICON_VERSION}`, sizes: '192x192' }],
+          },
+          {
+            name: 'Vender',
+            short_name: 'Vender',
+            url: '/sell',
+            icons: [{ src: `/pwa-192.png?v=${PWA_ICON_VERSION}`, sizes: '192x192' }],
+          },
+        ],
+        screenshots: [
+          {
+            src: `/screenshots/mobile-narrow.png?v=${PWA_ICON_VERSION}`,
+            sizes: '390x844',
+            type: 'image/png',
+            form_factor: 'narrow',
+            label: 'Progresso no ciclo',
+          },
+          {
+            src: `/screenshots/mobile-wide.png?v=${PWA_ICON_VERSION}`,
+            sizes: '844x390',
+            type: 'image/png',
+            form_factor: 'wide',
+            label: 'DT Helper dashboard',
+          },
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,webp,svg,png,json,woff2}'],
+        globPatterns: ['**/*.{js,css,html,webp,json,woff2,svg}'],
+        globIgnores: [
+          '**/manifest.webmanifest',
+          '**/pwa-*.png',
+          '**/pwa-monochrome.png',
+          '**/apple-touch-icon.png',
+          '**/favicon*.png',
+          '**/og-image.png',
+          '**/screenshots/**',
+        ],
         navigateFallback: '/index.html',
+        cleanupOutdatedCaches: true,
+        skipWaiting: true,
+        clientsClaim: true,
       },
     }),
   ],
