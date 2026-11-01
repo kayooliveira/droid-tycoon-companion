@@ -1,19 +1,21 @@
 import { useMemo, useState } from 'react'
 import { Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { droidById, gameData } from '../domain/gameData'
 import { droidHasFutureNeedOnPath } from '../domain/sellCenter'
 import { buildTierLabelMap, formatTierName } from '../domain/tiers'
+import type { TierId } from '../domain/types'
 import { DroidImage } from '../components/DroidImage'
 import { Badge } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
 import { GlassCard } from '../components/ui/GlassCard'
 import { Modal } from '../components/ui/Modal'
 import { useAppStore } from '../store/useAppStore'
-import type { TierId } from '../domain/types'
 
 const tierLabels = buildTierLabelMap(gameData.rarities)
 
 export function InventoryPage() {
+  const { t } = useTranslation()
   const inventory = useAppStore((s) => s.inventory)
   const progress = useAppStore((s) => s.progress)
   const addInventoryUnit = useAppStore((s) => s.addInventoryUnit)
@@ -26,8 +28,10 @@ export function InventoryPage() {
   const [tierFilter, setTierFilter] = useState('all')
   const [neededFilter, setNeededFilter] = useState<'all' | 'needed' | 'not-needed'>('all')
   const [addOpen, setAddOpen] = useState(false)
+  const [pickerSearch, setPickerSearch] = useState('')
   const [newDroidId, setNewDroidId] = useState(gameData.droids[0]?.id ?? '')
   const [newTier, setNewTier] = useState<TierId>('default')
+  const [newQty, setNewQty] = useState(1)
 
   const filtered = useMemo(() => {
     return inventory
@@ -41,16 +45,23 @@ export function InventoryPage() {
         if (neededFilter === 'not-needed' && needed) return false
         return true
       })
-      .sort((a, b) => (droidById.get(a.droidId)?.name ?? '').localeCompare(droidById.get(b.droidId)?.name ?? ''))
+      .sort((a, b) =>
+        (droidById.get(a.droidId)?.name ?? '').localeCompare(droidById.get(b.droidId)?.name ?? ''),
+      )
   }, [inventory, search, rarityFilter, tierFilter, neededFilter, progress.pathId, progress.nextRebirth])
+
+  const pickerDroids = useMemo(() => {
+    const q = pickerSearch.toLowerCase()
+    return gameData.droids
+      .filter((d) => !q || d.name.toLowerCase().includes(q))
+      .slice(0, 40)
+  }, [pickerSearch])
 
   if (!trackInventory) {
     return (
       <GlassCard>
-        <h1 className="font-display text-xl mb-2">Inventory tracking off</h1>
-        <p className="text-sm text-zinc-400">
-          Enable inventory tracking in Settings to manage owned droids.
-        </p>
+        <h1 className="font-display text-xl mb-2">{t('inventory.trackingOff')}</h1>
+        <p className="text-sm text-zinc-400">{t('inventory.trackingOffHint')}</p>
       </GlassCard>
     )
   }
@@ -58,12 +69,12 @@ export function InventoryPage() {
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap gap-3 items-center justify-between">
-        <h1 className="font-display text-2xl tracking-wide">Inventory</h1>
-        <Button onClick={() => setAddOpen(true)}>Add droid</Button>
+        <h1 className="font-display text-2xl tracking-wide">{t('inventory.title')}</h1>
+        <Button onClick={() => setAddOpen(true)}>{t('inventory.addDroid')}</Button>
       </div>
       <input
         className="w-full rounded-xl bg-surface-800 border border-white/10 px-4 py-2.5 text-sm"
-        placeholder="Search by name…"
+        placeholder={t('inventory.search')}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
@@ -73,7 +84,7 @@ export function InventoryPage() {
           value={rarityFilter}
           onChange={(e) => setRarityFilter(e.target.value)}
         >
-          <option value="all">All rarities</option>
+          <option value="all">{t('inventory.allRarities')}</option>
           {gameData.baseRarities.map((r) => (
             <option key={r.id} value={r.id}>
               {r.name}
@@ -85,10 +96,10 @@ export function InventoryPage() {
           value={tierFilter}
           onChange={(e) => setTierFilter(e.target.value)}
         >
-          <option value="all">All tiers</option>
-          {gameData.rarities.map((t) => (
-            <option key={t.id} value={t.id}>
-              {t.name}
+          <option value="all">{t('inventory.allTiers')}</option>
+          {gameData.rarities.map((tier) => (
+            <option key={tier.id} value={tier.id}>
+              {tier.name}
             </option>
           ))}
         </select>
@@ -97,9 +108,9 @@ export function InventoryPage() {
           value={neededFilter}
           onChange={(e) => setNeededFilter(e.target.value as typeof neededFilter)}
         >
-          <option value="all">All needs</option>
-          <option value="needed">Needed on path</option>
-          <option value="not-needed">Not needed</option>
+          <option value="all">{t('inventory.allNeeds')}</option>
+          <option value="needed">{t('inventory.neededFilter')}</option>
+          <option value="not-needed">{t('inventory.notNeededFilter')}</option>
         </select>
       </div>
 
@@ -117,7 +128,7 @@ export function InventoryPage() {
                   <Badge>{droid.baseRarity}</Badge>
                   <Badge tone="info">{formatTierName(unit.tier, tierLabels)}</Badge>
                   <Badge tone={needed ? 'warn' : 'success'}>
-                    {needed ? 'Needed later' : 'Not needed on path'}
+                    {needed ? t('inventory.neededLater') : t('inventory.notNeeded')}
                   </Badge>
                 </div>
               </div>
@@ -131,7 +142,11 @@ export function InventoryPage() {
                     updateInventoryUnit(unit.id, { quantity: Math.max(1, Number(e.target.value)) })
                   }
                 />
-                <Button variant="ghost" aria-label="Remove" onClick={() => removeInventoryUnit(unit.id)}>
+                <Button
+                  variant="ghost"
+                  aria-label={t('a11y.removeUnit')}
+                  onClick={() => removeInventoryUnit(unit.id)}
+                >
                   <Trash2 size={16} />
                 </Button>
               </div>
@@ -139,48 +154,68 @@ export function InventoryPage() {
           )
         })}
         {filtered.length === 0 ? (
-          <p className="text-sm text-zinc-500 text-center py-8">No droids yet — add your first unit.</p>
+          <p className="text-sm text-zinc-500 text-center py-8">{t('inventory.empty')}</p>
         ) : null}
       </div>
 
-      <Modal open={addOpen} onClose={() => setAddOpen(false)} title="Add droid">
+      <Modal open={addOpen} onClose={() => setAddOpen(false)} title={t('inventory.modalTitle')}>
         <div className="space-y-3">
+          <input
+            className="w-full rounded-lg bg-surface-800 border border-white/10 px-3 py-2 text-sm"
+            placeholder={t('inventory.searchDroids')}
+            value={pickerSearch}
+            onChange={(e) => setPickerSearch(e.target.value)}
+          />
+          <div className="max-h-48 overflow-auto grid grid-cols-2 gap-2">
+            {pickerDroids.map((d) => (
+              <button
+                key={d.id}
+                type="button"
+                onClick={() => setNewDroidId(d.id)}
+                className={`flex items-center gap-2 rounded-lg border px-2 py-2 text-left text-xs ${
+                  newDroidId === d.id ? 'border-holo-400/50 bg-holo-600/10' : 'border-white/10'
+                }`}
+              >
+                <DroidImage droid={d} size="sm" className="!h-8 !w-8" />
+                <span className="truncate">{d.name}</span>
+              </button>
+            ))}
+          </div>
           <label className="block text-sm">
-            Droid
-            <select
-              className="mt-1 w-full rounded-lg bg-surface-800 border border-white/10 px-3 py-2"
-              value={newDroidId}
-              onChange={(e) => setNewDroidId(e.target.value)}
-            >
-              {gameData.droids.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="block text-sm">
-            Tier
+            {t('inventory.allTiers')}
             <select
               className="mt-1 w-full rounded-lg bg-surface-800 border border-white/10 px-3 py-2"
               value={newTier}
               onChange={(e) => setNewTier(e.target.value as TierId)}
             >
-              {gameData.rarities.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.name}
+              {gameData.rarities.map((tier) => (
+                <option key={tier.id} value={tier.id}>
+                  {tier.name}
                 </option>
               ))}
             </select>
           </label>
+          <label className="block text-sm">
+            {t('inventory.quantity')}
+            <input
+              type="number"
+              min={1}
+              max={999}
+              className="mt-1 w-full rounded-lg bg-surface-800 border border-white/10 px-3 py-2"
+              value={newQty}
+              onChange={(e) => setNewQty(Math.max(1, Number(e.target.value) || 1))}
+              data-testid="inventory-add-qty"
+            />
+          </label>
           <Button
             className="w-full"
             onClick={() => {
-              addInventoryUnit(newDroidId, newTier, 1)
+              addInventoryUnit(newDroidId, newTier, newQty)
               setAddOpen(false)
+              setNewQty(1)
             }}
           >
-            Add to inventory
+            {t('inventory.add')}
           </Button>
         </div>
       </Modal>

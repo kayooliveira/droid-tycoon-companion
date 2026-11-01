@@ -1,6 +1,8 @@
 import type { InventoryUnit } from '../domain/types'
+import type { AppLocale } from '../i18n/detectLocale'
+import { detectBrowserLocale } from '../i18n/detectLocale'
 
-export const PERSIST_SCHEMA_VERSION = 1
+export const PERSIST_SCHEMA_VERSION = 2
 
 export type ThemeMode = 'dark' | 'light' | 'system'
 
@@ -9,6 +11,10 @@ export interface UserSettings {
   animationsEnabled: boolean
   trackInventory: boolean
   disputedPreference: Record<string, number>
+  locale: AppLocale
+  localeSource: 'auto' | 'user'
+  installBannerDismissed: boolean
+  iosInstallHintDismissed: boolean
 }
 
 export interface PersistedProgress {
@@ -26,12 +32,16 @@ export interface PersistedState {
   lastSavedAt: string
 }
 
-export const defaultSettings: UserSettings = {
+export const defaultSettings = (): UserSettings => ({
   theme: 'dark',
   animationsEnabled: true,
   trackInventory: true,
   disputedPreference: {},
-}
+  locale: typeof navigator !== 'undefined' ? detectBrowserLocale() : 'en',
+  localeSource: 'auto',
+  installBannerDismissed: false,
+  iosInstallHintDismissed: false,
+})
 
 export function defaultPersistedState(): PersistedState {
   return {
@@ -39,7 +49,7 @@ export function defaultPersistedState(): PersistedState {
     onboardingComplete: false,
     progress: { pathId: 'path-1', nextRebirth: 1, completedOnPath: 0 },
     inventory: [],
-    settings: { ...defaultSettings },
+    settings: defaultSettings(),
     lastSavedAt: new Date().toISOString(),
   }
 }

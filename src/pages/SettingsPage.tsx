@@ -1,15 +1,21 @@
 import { useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { gameDataSource } from '../data/dataSource'
 import { gameData } from '../domain/gameData'
+import type { AppLocale } from '../i18n/detectLocale'
+import { PathProgressSwitcher, ProgressSummaryLine } from '../components/PathProgressSwitcher'
 import { Button } from '../components/ui/Button'
 import { Badge } from '../components/ui/Badge'
 import { GlassCard } from '../components/ui/GlassCard'
 import { useAppStore, applyTheme } from '../store/useAppStore'
 import { downloadJson, exportProgress, parseImportJson } from '../storage/exportImport'
 import { useToast } from '../components/ToastProvider'
+import { setDocumentLanguage } from '../i18n'
+import { initI18n } from '../i18n/index'
 
 export function SettingsPage() {
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const { push } = useToast()
   const fileRef = useRef<HTMLInputElement>(null)
@@ -18,8 +24,8 @@ export function SettingsPage() {
   const settings = useAppStore((s) => s.settings)
   const progress = useAppStore((s) => s.progress)
   const updateSettings = useAppStore((s) => s.updateSettings)
-  const setPath = useAppStore((s) => s.setPath)
   const setProgress = useAppStore((s) => s.setProgress)
+  const setLocale = useAppStore((s) => s.setLocale)
   const setOnboardingComplete = useAppStore((s) => s.setOnboardingComplete)
   const resetAll = useAppStore((s) => s.resetAll)
   const importState = useAppStore((s) => s.importState)
@@ -28,14 +34,33 @@ export function SettingsPage() {
   const meta = gameDataSource.getMeta()
   const stale = gameDataSource.isStale()
 
+  const changeLanguage = (locale: AppLocale) => {
+    setLocale(locale, 'user')
+    void initI18n(locale)
+    setDocumentLanguage(locale)
+    void i18n.changeLanguage(locale)
+  }
+
   return (
-    <div className="space-y-5 max-w-2xl">
-      <h1 className="font-display text-2xl tracking-wide">Settings</h1>
+    <div className="space-y-5 max-w-2xl pb-8">
+      <h1 className="font-display text-2xl tracking-wide">{t('settings.title')}</h1>
 
       <GlassCard className="space-y-4">
-        <h2 className="font-medium">Appearance & behavior</h2>
-        <label className="flex justify-between text-sm items-center">
-          Theme
+        <h2 className="font-medium">{t('settings.appearance')}</h2>
+        <label className="flex justify-between text-sm items-center gap-4">
+          {t('settings.language')}
+          <select
+            className="rounded-lg bg-surface-800 border border-white/10 px-2 py-1"
+            value={settings.locale}
+            onChange={(e) => changeLanguage(e.target.value as AppLocale)}
+            data-testid="language-select"
+          >
+            <option value="en">{t('settings.langEn')}</option>
+            <option value="pt-BR">{t('settings.langPt')}</option>
+          </select>
+        </label>
+        <label className="flex justify-between text-sm items-center gap-4">
+          {t('settings.theme')}
           <select
             className="rounded-lg bg-surface-800 border border-white/10 px-2 py-1"
             value={settings.theme}
@@ -45,13 +70,13 @@ export function SettingsPage() {
               applyTheme(theme)
             }}
           >
-            <option value="dark">Dark</option>
-            <option value="light">Light</option>
-            <option value="system">System</option>
+            <option value="dark">{t('settings.themeDark')}</option>
+            <option value="light">{t('settings.themeLight')}</option>
+            <option value="system">{t('settings.themeSystem')}</option>
           </select>
         </label>
         <label className="flex justify-between text-sm items-center">
-          Animations
+          {t('settings.animations')}
           <input
             type="checkbox"
             checked={settings.animationsEnabled}
@@ -59,7 +84,7 @@ export function SettingsPage() {
           />
         </label>
         <label className="flex justify-between text-sm items-center">
-          Track inventory
+          {t('settings.trackInventory')}
           <input
             type="checkbox"
             checked={settings.trackInventory}
@@ -67,28 +92,16 @@ export function SettingsPage() {
           />
         </label>
         <Button variant="secondary" onClick={() => navigate('/onboarding')}>
-          Re-run onboarding
+          {t('settings.rerunOnboarding')}
         </Button>
       </GlassCard>
 
       <GlassCard className="space-y-3">
-        <h2 className="font-medium">Progress</h2>
+        <h2 className="font-medium">{t('settings.progress')}</h2>
+        <PathProgressSwitcher />
+        <ProgressSummaryLine />
         <label className="block text-sm">
-          Path
-          <select
-            className="mt-1 w-full rounded-lg bg-surface-800 border border-white/10 px-3 py-2"
-            value={progress.pathId}
-            onChange={(e) => setPath(e.target.value)}
-          >
-            {gameData.cycles.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="block text-sm">
-          Completed rebirths on path ({progress.completedOnPath})
+          {t('settings.completedRebirths', { n: progress.completedOnPath })}
           <input
             type="range"
             min={0}
@@ -104,41 +117,28 @@ export function SettingsPage() {
       </GlassCard>
 
       <GlassCard className="space-y-2 text-sm">
-        <h2 className="font-medium">Game data</h2>
+        <h2 className="font-medium">{t('settings.gameData')}</h2>
         <p>
-          Version <span className="text-zinc-200">{meta.dataVersion}</span> · Game{' '}
-          {meta.gameVersion} · Updated {meta.lastUpdated}
+          v{meta.dataVersion} · {meta.gameVersion} · {meta.lastUpdated}
         </p>
         {stale ? (
-          <Badge tone="warn">Data older than {gameData.staleAfterDays} days — consider refreshing</Badge>
+          <Badge tone="warn">{t('settings.dataStale', { days: gameData.staleAfterDays })}</Badge>
         ) : (
-          <Badge tone="success">Data fresh</Badge>
+          <Badge tone="success">{t('settings.dataFresh')}</Badge>
         )}
-        <p className="text-xs text-zinc-500">
-          Update with <code className="text-zinc-300">scripts/parse.py</code> and replace{' '}
-          <code className="text-zinc-300">src/data/gameData.json</code>.
-        </p>
-        <ul className="text-xs text-zinc-500 list-disc pl-4">
-          {(gameData.sources as Array<{ url?: string; name?: string }>).slice(0, 4).map((s, i) => (
-            <li key={i}>
-              <a className="text-holo-300 hover:underline" href={s.url} target="_blank" rel="noreferrer">
-                {s.name ?? s.url}
-              </a>
-            </li>
-          ))}
-        </ul>
+        <p className="text-xs text-zinc-500">{t('settings.updateHint')}</p>
       </GlassCard>
 
       <GlassCard className="space-y-3">
-        <h2 className="font-medium">Backup</h2>
+        <h2 className="font-medium">{t('settings.backup')}</h2>
         <Button
           variant="secondary"
           onClick={() => downloadJson('droid-tycoon-progress.json', exportProgress(toPersisted()))}
         >
-          Export progress (JSON)
+          {t('settings.export')}
         </Button>
         <Button variant="secondary" onClick={() => fileRef.current?.click()}>
-          Import progress
+          {t('settings.import')}
         </Button>
         <input
           ref={fileRef}
@@ -151,20 +151,27 @@ export function SettingsPage() {
             const text = await file.text()
             const result = parseImportJson(text)
             if (!result.ok) {
-              push(result.error)
+              push(t('settings.importFail'))
               return
             }
             importState(result.state)
-            push('Progress imported')
+            push(t('settings.importOk'))
           }}
         />
       </GlassCard>
 
-      <GlassCard className="space-y-3">
-        <h2 className="font-medium text-red-300">Danger zone</h2>
+      <GlassCard className="text-xs text-zinc-500 space-y-2">
+        <h2 className="font-medium text-zinc-300 text-sm">{t('settings.credits')}</h2>
+        <p>{t('settings.creditsBody')}</p>
+        <p className="pt-2 border-t border-white/10">{t('app.disclaimer')}</p>
+      </GlassCard>
+
+      <GlassCard className="space-y-3 border border-red-500/30 bg-red-950/20 mt-8">
+        <h2 className="font-medium text-red-300">{t('settings.danger')}</h2>
+        <p className="text-xs text-zinc-400">{t('settings.reset')} — removes all local progress.</p>
         {!confirmReset ? (
           <Button variant="danger" onClick={() => setConfirmReset(true)}>
-            Reset all data
+            {t('settings.reset')}
           </Button>
         ) : (
           <div className="flex gap-2">
@@ -173,28 +180,17 @@ export function SettingsPage() {
               onClick={() => {
                 resetAll()
                 setOnboardingComplete(false)
-                push('All data reset')
+                push(t('settings.resetDone'))
                 navigate('/onboarding')
               }}
             >
-              Confirm reset
+              {t('settings.resetConfirm')}
             </Button>
             <Button variant="secondary" onClick={() => setConfirmReset(false)}>
-              Cancel
+              {t('path.cancel')}
             </Button>
           </div>
         )}
-      </GlassCard>
-
-      <GlassCard className="text-xs text-zinc-500 space-y-2">
-        <h2 className="font-medium text-zinc-300">Credits & attribution</h2>
-        <p>
-          Droid images from Droid Tycoon Helper / Star Wars Droid Tycoon Wiki (CC BY-SA). See{' '}
-          public/assets/droids/ATTRIBUTION.md.
-        </p>
-        <p>
-          Fan-made companion tool. Not affiliated with Epic Games, Lucasfilm, Disney, or FOAD.
-        </p>
       </GlassCard>
     </div>
   )

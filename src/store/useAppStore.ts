@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { createInitialProgress } from '../domain/progress'
 import type { InventoryUnit, TierId } from '../domain/types'
+import type { AppLocale } from '../i18n/detectLocale'
 import { migratePersistedState } from '../storage/migrations'
 import {
   defaultPersistedState,
@@ -13,13 +14,19 @@ import {
 import { uid } from '../lib/utils'
 
 interface AppStore extends PersistedState {
+  _hydrated: boolean
+  setHydrated: (v: boolean) => void
   setOnboardingComplete: (value: boolean) => void
-  setPath: (pathId: string) => void
+  /** Onboarding: new path resets rebirth progress */
+  setPathFresh: (pathId: string) => void
+  /** Switch path; keeps rebirth unless resetProgress */
+  switchPath: (pathId: string, options?: { resetProgress?: boolean }) => void
   setProgress: (nextRebirth: number, completedOnPath: number) => void
   completeRebirthAdvance: () => void
   undoRebirthStep: () => void
   superRebirthAdvance: () => void
   updateSettings: (partial: Partial<UserSettings>) => void
+  setLocale: (locale: AppLocale, source?: 'auto' | 'user') => void
   addInventoryUnit: (droidId: string, tier: TierId, quantity?: number) => void
   updateInventoryUnit: (id: string, patch: Partial<Pick<InventoryUnit, 'tier' | 'quantity'>>) => void
   removeInventoryUnit: (id: string) => void
@@ -35,12 +42,28 @@ export const useAppStore = create<AppStore>()(
   persist(
     (set, get) => ({
       ...defaultPersistedState(),
+      _hydrated: false,
+      setHydrated: (v) => set({ _hydrated: v }),
 
       setOnboardingComplete: (value) => set({ onboardingComplete: value }),
 
-      setPath: (pathId) =>
+      setPathFresh: (pathId) =>
         set({
           progress: createInitialProgress(pathId),
+        }),
+
+      switchPath: (pathId, options) =>
+        set((s) => {
+          if (pathId === s.progress.pathId) return s
+          if (options?.resetProgress) {
+            return { progress: createInitialProgress(pathId) }
+          }
+          return {
+            progress: {
+              ...s.progress,
+              pathId,
+            },
+          }
         }),
 
       setProgress: (nextRebirth, completedOnPath) =>
@@ -83,6 +106,11 @@ export const useAppStore = create<AppStore>()(
       updateSettings: (partial) =>
         set((s) => ({ settings: { ...s.settings, ...partial } })),
 
+      setLocale: (locale, source = 'user') =>
+        set((s) => ({
+          settings: { ...s.settings, locale, localeSource: source },
+        })),
+
       addInventoryUnit: (droidId, tier, quantity = 1) =>
         set((s) => {
           const existing = s.inventory.find((u) => u.droidId === droidId && u.tier === tier)
@@ -94,10 +122,7 @@ export const useAppStore = create<AppStore>()(
             }
           }
           return {
-            inventory: [
-              ...s.inventory,
-              { id: uid(), droidId, tier, quantity },
-            ],
+            inventory: [...s.inventory, { id: uid(), droidId, tier, quantity }],
           }
         }),
 
@@ -113,9 +138,9 @@ export const useAppStore = create<AppStore>()(
         get().addInventoryUnit(droidId, tier, 1)
       },
 
-      resetAll: () => set(defaultPersistedState()),
+      resetAll: () => set({ ...defaultPersistedState(), _hydrated: true }),
 
-      importState: (state) => set(migratePersistedState(state)),
+      importState: (state) => set({ ...migratePersistedState(state), _hydrated: true }),
 
       toPersisted: () => {
         const s = get()
@@ -135,6 +160,7 @@ export const useAppStore = create<AppStore>()(
       merge: (persisted, current) => ({
         ...current,
         ...migratePersistedState(persisted),
+        _hydrated: true,
       }),
       partialize: (state) => ({
         schemaVersion: PERSIST_SCHEMA_VERSION,
@@ -144,6 +170,9 @@ export const useAppStore = create<AppStore>()(
         settings: state.settings,
         lastSavedAt: new Date().toISOString(),
       }),
+      onRehydrateStorage: () => () => {
+        useAppStore.setState({ _hydrated: true })
+      },
     },
   ),
 )
@@ -151,7 +180,6 @@ export const useAppStore = create<AppStore>()(
 export function applyTheme(theme: ThemeMode): void {
   const root = document.body
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-  const isLight =
-    theme === 'light' || (theme === 'system' && !prefersDark)
+  const isLight = theme === 'light' || (theme === 'system' && !prefersDark)
   root.classList.toggle('theme-light', isLight)
 }

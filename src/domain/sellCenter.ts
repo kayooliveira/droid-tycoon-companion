@@ -20,13 +20,20 @@ export interface FutureNeed {
   quantity: number
 }
 
+export type SellReasonKey =
+  | 'sell.sellableNotNeeded'
+  | 'sell.sellableExtra'
+  | 'sell.keepRebirth'
+  | 'sell.upgradeRebirth'
+
 export interface SellAnalysisItem {
   unitId: string
   droidId: string
   tier: TierId
   quantity: number
   category: SellCategory
-  reason: string
+  reasonKey: SellReasonKey
+  reasonParams: Record<string, string | number>
   nextNeededAtRebirth: number | null
   upgradeTargetTier: TierId | null
 }
@@ -135,7 +142,8 @@ export function analyzeSellCenter(
         tier: unit.tier,
         quantity: unit.quantity,
         category: 'sellable',
-        reason: `You can sell ${name} (${unit.quantity}×). It isn't needed in any future rebirth of this path.`,
+        reasonKey: 'sell.sellableNotNeeded',
+        reasonParams: { name, qty: unit.quantity },
         nextNeededAtRebirth: null,
         upgradeTargetTier: null,
       })
@@ -152,7 +160,8 @@ export function analyzeSellCenter(
         tier: unit.tier,
         quantity: unit.quantity,
         category: 'upgrade',
-        reason: `Upgrade ${name} to at least ${maxNeed.tier} before rebirth ${maxNeed.rebirth} on this path.`,
+        reasonKey: 'sell.upgradeRebirth',
+        reasonParams: { name, tier: maxNeed.tier, rebirth: maxNeed.rebirth },
         nextNeededAtRebirth: maxNeed.rebirth,
         upgradeTargetTier: maxNeed.tier,
       })
@@ -166,7 +175,8 @@ export function analyzeSellCenter(
         tier: unit.tier,
         quantity: surplusQty,
         category: 'sellable',
-        reason: `You can sell ${surplusQty}× ${name}. Extra copies aren't needed for remaining rebirths on this path.`,
+        reasonKey: 'sell.sellableExtra',
+        reasonParams: { name, qty: surplusQty },
         nextNeededAtRebirth: null,
         upgradeTargetTier: null,
       })
@@ -177,7 +187,8 @@ export function analyzeSellCenter(
           tier: unit.tier,
           quantity: unit.quantity - surplusQty,
           category: 'keep',
-          reason: `Keep ${name}. Needed again at rebirth ${nextRebirthNeed ?? maxNeed.rebirth} on this path.`,
+          reasonKey: 'sell.keepRebirth',
+          reasonParams: { name, rebirth: nextRebirthNeed ?? maxNeed.rebirth },
           nextNeededAtRebirth: nextRebirthNeed ?? maxNeed.rebirth,
           upgradeTargetTier: null,
         })
@@ -191,7 +202,8 @@ export function analyzeSellCenter(
       tier: unit.tier,
       quantity: unit.quantity,
       category: 'keep',
-      reason: `Keep ${name}. You'll need it again at rebirth ${nextRebirthNeed ?? maxNeed.rebirth} on this path.`,
+      reasonKey: 'sell.keepRebirth',
+      reasonParams: { name, rebirth: nextRebirthNeed ?? maxNeed.rebirth },
       nextNeededAtRebirth: nextRebirthNeed ?? maxNeed.rebirth,
       upgradeTargetTier: null,
     })

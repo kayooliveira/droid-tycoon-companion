@@ -14,10 +14,12 @@
     "preview": "vite preview --host"
   },
   "dependencies": {
+    "i18next": "^26.6.0",
     "lucide-react": "^1.66.0",
     "motion": "^14.9.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
+    "react-i18next": "^17.1.9",
     "react-router-dom": "^7.18.5",
     "zustand": "^5.0.16"
   },
@@ -36,6 +38,7 @@
     "tailwindcss": "^4.3.3",
     "typescript": "~7.0.2",
     "vite": "^8.3.5",
+    "vite-plugin-pwa": "^2.0.0",
     "vitest": "^5.0.5"
   }
 }

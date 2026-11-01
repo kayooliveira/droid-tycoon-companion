@@ -1,4 +1,5 @@
 import { Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { droidById, gameData } from '../domain/gameData'
 import { buildTierLabelMap, formatTierName } from '../domain/tiers'
 import type { RequirementCheck } from '../domain/requirements'
@@ -20,6 +21,7 @@ const statusTone: Record<string, 'success' | 'warn' | 'danger' | 'info' | 'defau
 }
 
 export function RequirementCard({ check }: { check: RequirementCheck }) {
+  const { t } = useTranslation()
   const markOwned = useAppStore((s) => s.markDroidOwned)
   const trackInventory = useAppStore((s) => s.settings.trackInventory)
   const droid = droidById.get(check.requirement.droidId)
@@ -33,12 +35,15 @@ export function RequirementCard({ check }: { check: RequirementCheck }) {
           <p className="font-medium truncate">{droid.name}</p>
           <Badge tone="info">{formatTierName(check.requirement.rarity, tierLabels)}</Badge>
           {trackInventory ? (
-            <Badge tone={statusTone[check.status] ?? 'default'}>{check.status}</Badge>
+            <Badge tone={statusTone[check.status] ?? 'default'}>{t(`status.${check.status}`)}</Badge>
           ) : null}
         </div>
         {trackInventory ? (
           <p className="text-xs text-zinc-400 mt-1">
-            {check.ownedCount}/{check.neededCount} in inventory
+            {t('inventory.inInventory', {
+              owned: check.ownedCount,
+              needed: check.neededCount,
+            })}
           </p>
         ) : null}
       </div>
@@ -47,7 +52,7 @@ export function RequirementCard({ check }: { check: RequirementCheck }) {
           variant="secondary"
           className="shrink-0 px-3"
           onClick={() => markOwned(check.requirement.droidId, check.requirement.rarity)}
-          aria-label={`Mark ${droid.name} owned`}
+          aria-label={t('a11y.markOwned', { name: droid.name })}
         >
           <Plus size={16} />
         </Button>
