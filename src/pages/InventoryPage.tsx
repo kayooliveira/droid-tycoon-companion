@@ -119,7 +119,7 @@ export function InventoryPage() {
     return (
       <GlassCard>
         <h1 className="font-display text-xl mb-2">{t('inventory.trackingOff')}</h1>
-        <p className="text-sm text-zinc-400">{t('inventory.trackingOffHint')}</p>
+        <p className="text-sm text-ui-muted">{t('inventory.trackingOffHint')}</p>
       </GlassCard>
     )
   }
@@ -133,14 +133,14 @@ export function InventoryPage() {
         </Button>
       </div>
       <input
-        className="w-full rounded-xl bg-surface-800 border border-white/10 px-4 py-3 text-base min-h-11"
+        className="w-full rounded-xl bg-ui-field border border-ui px-4 py-3 text-base min-h-11"
         placeholder={t('inventory.search')}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
       <div className="space-y-3">
         <div className="space-y-1.5">
-          <p className="text-base text-zinc-400">{t('inventory.filterRarity')}</p>
+          <p className="text-base text-ui-muted">{t('inventory.filterRarity')}</p>
           <ChipRadioGroup
             ariaLabel={t('inventory.filterRarity')}
             testId="inventory-rarity-chips"
@@ -151,7 +151,7 @@ export function InventoryPage() {
           />
         </div>
         <div className="space-y-1.5">
-          <p className="text-base text-zinc-400">{t('inventory.filterTier')}</p>
+          <p className="text-base text-ui-muted">{t('inventory.filterTier')}</p>
           <ChipRadioGroup
             ariaLabel={t('inventory.filterTier')}
             testId="inventory-tier-chips"
@@ -162,7 +162,7 @@ export function InventoryPage() {
           />
         </div>
         <div className="space-y-1.5">
-          <p className="text-base text-zinc-400">{t('inventory.filterNeed')}</p>
+          <p className="text-base text-ui-muted">{t('inventory.filterNeed')}</p>
           <ChipRadioGroup
             ariaLabel={t('inventory.filterNeed')}
             testId="inventory-needed-chips"
@@ -220,7 +220,7 @@ export function InventoryPage() {
         })}
         {filtered.length === 0 ? (
           <GlassCard className="text-center py-8 space-y-3">
-            <p className="text-sm text-zinc-400">{t('inventory.emptyHint')}</p>
+            <p className="text-sm text-ui-muted">{t('inventory.emptyHint')}</p>
             <Button className="min-h-11" onClick={() => setAddOpen(true)}>
               {t('inventory.addDroid')}
             </Button>
@@ -236,7 +236,7 @@ export function InventoryPage() {
       >
         <div className="space-y-4">
           <input
-            className="w-full rounded-lg bg-surface-800 border border-white/10 px-3 py-2.5 text-base min-h-11"
+            className="w-full rounded-lg bg-ui-field border border-ui px-3 py-2.5 text-base min-h-11"
             placeholder={t('inventory.searchDroids')}
             value={pickerSearch}
             onChange={(e) => setPickerSearch(e.target.value)}
@@ -248,7 +248,7 @@ export function InventoryPage() {
                 type="button"
                 onClick={() => setNewDroidId(d.id)}
                 className={`flex items-center gap-2 rounded-lg border px-2 py-2 text-left text-sm ${
-                  newDroidId === d.id ? 'border-holo-400/50 bg-holo-600/10' : 'border-white/10'
+                  newDroidId === d.id ? 'border-holo-400/50 bg-holo-600/10' : 'border-ui'
                 }`}
               >
                 <DroidImage droid={d} size="sm" className="!h-8 !w-8" />
@@ -257,7 +257,7 @@ export function InventoryPage() {
             ))}
           </div>
           <div className="space-y-1.5">
-            <p className="text-base text-zinc-300">{t('inventory.pickTier')}</p>
+            <p className="text-base text-ui-secondary">{t('inventory.pickTier')}</p>
             <ChipRadioGroup
               ariaLabel={t('inventory.pickTier')}
               testId="inventory-add-tier-chips"
@@ -322,7 +322,7 @@ export function InventoryPage() {
         }
       >
         {removeTarget ? (
-          <p className="text-sm text-zinc-300 text-pretty">
+          <p className="text-sm text-ui-secondary text-pretty">
             {t('inventory.removeConfirmBody', {
               name: removeTarget.name,
               tier: removeTarget.tier,

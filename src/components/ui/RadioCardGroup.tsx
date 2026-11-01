@@ -37,14 +37,14 @@ export function RadioCardGroup<T extends string>({
               'relative rounded-xl border px-3 py-3 text-left min-h-11 transition-colors',
               selected
                 ? 'border-holo-400/50 bg-holo-600/15 ring-1 ring-holo-400/30'
-                : 'border-white/10 hover:bg-white/5',
+                : 'border-ui hover:bg-ui-hover',
             )}
           >
             {selected ? (
-              <Check {...uiIconProps} className="absolute top-2 right-2 text-holo-300" />
+              <Check {...uiIconProps} className="absolute top-2 right-2 text-ui-accent" />
             ) : null}
             <p className="font-medium text-sm text-pretty pr-6">{opt.label}</p>
-            {opt.hint ? <p className="text-[11px] text-zinc-500 mt-0.5 text-pretty">{opt.hint}</p> : null}
+            {opt.hint ? <p className="text-[11px] text-ui-soft mt-0.5 text-pretty">{opt.hint}</p> : null}
           </button>
         )
       })}

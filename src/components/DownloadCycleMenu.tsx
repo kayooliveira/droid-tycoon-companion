@@ -79,7 +79,7 @@ export function DownloadCycleMenu({ compact }: { compact?: boolean }) {
   if (compact) {
     return (
       <div className="flex flex-wrap gap-2 items-center" data-testid="download-cycle-menu">
-        <DownloadSimple {...uiIconProps} className="text-holo-300 shrink-0" />
+        <DownloadSimple {...uiIconProps} className="text-ui-accent shrink-0" />
         {body}
       </div>
     )
@@ -88,10 +88,10 @@ export function DownloadCycleMenu({ compact }: { compact?: boolean }) {
   return (
     <GlassCard className="space-y-3" data-testid="download-cycle-menu">
       <div className="flex items-center gap-2">
-        <DownloadSimple {...uiIconProps} className="text-holo-300" />
+        <DownloadSimple {...uiIconProps} className="text-ui-accent" />
         <h2 className="font-medium text-sm">{t('exportCycle.title')}</h2>
       </div>
-      <p className="text-xs text-zinc-400">{t('exportCycle.hint')}</p>
+      <p className="text-xs text-ui-muted">{t('exportCycle.hint')}</p>
       {body}
     </GlassCard>
   )

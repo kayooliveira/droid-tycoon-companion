@@ -33,7 +33,7 @@ export function DroiddexPage() {
     <div className="space-y-5">
       <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('droiddex.title')}</h1>
       <input
-        className="w-full rounded-xl bg-surface-800 border border-white/10 px-4 py-3 min-h-11"
+        className="w-full rounded-xl bg-ui-field border border-ui px-4 py-3 min-h-11"
         placeholder={t('droiddex.search')}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
@@ -56,8 +56,8 @@ export function DroiddexPage() {
               className={cn(
                 'rounded-full px-3 py-2 text-sm min-h-11 border font-medium',
                 active
-                  ? 'border-holo-400/70 bg-holo-600/25 text-white'
-                  : 'border-white/10 bg-white/5 text-zinc-400 hover:text-zinc-200',
+                  ? 'border-holo-400/70 bg-holo-600/25 text-on-accent'
+                  : 'border-ui bg-ui-hover text-ui-muted hover:text-ui-fg',
               )}
               onClick={() => setClassFilter(c)}
             >
@@ -73,11 +73,11 @@ export function DroiddexPage() {
             key={d.id}
             type="button"
             onClick={() => setSelected(d)}
-            className="glass-panel rounded-2xl p-3 text-left hover:bg-white/10 transition-colors flex flex-col items-stretch"
+            className="glass-panel rounded-2xl p-3 text-left hover:bg-ui-hover-strong transition-colors flex flex-col items-stretch"
           >
             <DroidImage droid={d} className="self-center mb-2" />
             <p className="text-sm font-medium truncate w-full">{d.name}</p>
-            <p className="text-[10px] text-zinc-500">{formatBaseRarity(d.baseRarity, t)}</p>
+            <p className="text-[10px] text-ui-soft">{formatBaseRarity(d.baseRarity, t)}</p>
           </button>
         ))}
       </div>
@@ -102,14 +102,14 @@ export function DroiddexPage() {
               </div>
             </div>
             <div>
-              <p className="text-xs text-zinc-500 mb-1">{t('droiddex.tiers')}</p>
+              <p className="text-xs text-ui-soft mb-1">{t('droiddex.tiers')}</p>
               <p className="text-sm">
                 {selected.tiersAvailable.map((tier) => formatTierName(tier, tierLabels)).join(' · ')}
               </p>
             </div>
             {selected.requiredIn?.length ? (
               <div>
-                <p className="text-xs text-zinc-500 mb-1">{t('droiddex.requiredIn')}</p>
+                <p className="text-xs text-ui-soft mb-1">{t('droiddex.requiredIn')}</p>
                 <ul className="text-xs space-y-1 max-h-40 overflow-auto">
                   {selected.requiredIn.slice(0, 12).map((r) => (
                     <li key={`${r.cycle}-${r.rebirth}-${r.rarity}`}>
@@ -117,20 +117,20 @@ export function DroiddexPage() {
                     </li>
                   ))}
                   {(selected.requiredIn.length ?? 0) > 12 ? (
-                    <li className="text-zinc-500">
+                    <li className="text-ui-soft">
                       {t('droiddex.moreRequirements', { n: selected.requiredIn.length - 12 })}
                     </li>
                   ) : null}
                 </ul>
               </div>
             ) : (
-              <p className="text-sm text-zinc-500">{t('droiddex.notRequired')}</p>
+              <p className="text-sm text-ui-soft">{t('droiddex.notRequired')}</p>
             )}
             <a
               href={selected.sourceUrl}
               target="_blank"
               rel="noreferrer"
-              className="text-sm text-holo-300 hover:underline"
+              className="text-sm text-ui-accent hover:underline"
             >
               {t('droiddex.source', { date: selected.lastVerified })}
             </a>

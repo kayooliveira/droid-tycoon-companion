@@ -40,7 +40,7 @@ export function RequirementCard({ check }: { check: RequirementCheck }) {
           ) : null}
         </div>
         {trackInventory ? (
-          <p className="text-xs text-zinc-400 mt-1">
+          <p className="text-xs text-ui-muted mt-1">
             {t('inventory.inInventory', {
               owned: check.ownedCount,
               needed: check.neededCount,

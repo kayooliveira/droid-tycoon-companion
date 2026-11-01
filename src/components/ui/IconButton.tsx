@@ -4,8 +4,8 @@ import { cn } from '../../lib/utils'
 type Variant = 'ghost' | 'soft' | 'solid'
 
 const variants: Record<Variant, string> = {
-  ghost: 'hover:bg-white/10 text-zinc-300',
-  soft: 'ui-btn-secondary bg-white/10 hover:bg-white/15 border border-white/10 text-zinc-100',
+  ghost: 'hover:bg-ui-hover-strong text-ui-secondary',
+  soft: 'ui-btn-secondary bg-ui-hover-strong hover:bg-ui-hover-strong border border-ui text-ui-fg',
   solid: 'bg-holo-600 hover:bg-holo-500 text-white',
 }
 

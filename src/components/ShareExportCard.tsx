@@ -116,7 +116,7 @@ export function ShareExportCard() {
           {busy === 'card' ? '…' : <ShareNetwork {...uiIconProps} />}
         </IconButton>
       </div>
-      <p className="text-[11px] text-zinc-500 mt-2 text-pretty">{t('shareExport.footer')}</p>
+      <p className="text-[11px] text-ui-soft mt-2 text-pretty">{t('shareExport.footer')}</p>
     </GlassCard>
   )
 }

@@ -45,11 +45,11 @@ export function DashboardPage() {
       <GlassCard className="space-y-3 p-4" data-testid="home-now">
         <div className="flex items-start justify-between gap-2 flex-wrap">
           <div>
-            <p className="text-[10px] uppercase tracking-widest text-zinc-500">{t('home.nowTitle')}</p>
+            <p className="text-[10px] uppercase tracking-widest text-ui-soft">{t('home.nowTitle')}</p>
             <p className="font-display text-lg font-semibold mt-0.5">
               {cycle ? formatCycleDisplayName(cycle.name, i18n.language) : progress.pathId}
             </p>
-            <p className="text-sm text-zinc-400">
+            <p className="text-sm text-ui-muted">
               {t('home.nextRenascimento', { n: progress.nextRebirth })}
             </p>
           </div>
@@ -100,7 +100,7 @@ export function DashboardPage() {
               return (
                 <span
                   key={row.droidId}
-                  className="inline-flex items-center gap-1 rounded-full bg-white/5 border border-white/10 px-2 py-1 text-[11px]"
+                  className="inline-flex items-center gap-1 rounded-full bg-ui-hover border border-ui px-2 py-1 text-[11px]"
                 >
                   {d ? <DroidImage droid={d} size="sm" className="!h-6 !w-6" /> : null}
                   {d?.name ?? row.droidId}
@@ -109,7 +109,7 @@ export function DashboardPage() {
             })}
           </div>
         ) : (
-          <p className="text-xs text-zinc-500">{t('home.sellEmpty')}</p>
+          <p className="text-xs text-ui-soft">{t('home.sellEmpty')}</p>
         )}
         <Link to="/sell" className="inline-block pt-1">
           <Button size="sm" variant="secondary" icon={<Storefront {...uiIconProps} weight="fill" />}>
@@ -124,10 +124,10 @@ export function DashboardPage() {
 
       <GlassCard className="p-4 space-y-2" data-testid="home-news">
         <h2 className="text-sm font-semibold">{t('home.newsTitle')}</h2>
-        <p className="text-xs text-zinc-400">
+        <p className="text-xs text-ui-muted">
           {t('home.newsGameLine', { game: meta.gameVersion, date: meta.lastUpdated })}
         </p>
-        <Link to="/about#app-changelog" className="text-xs text-holo-300 hover:underline">
+        <Link to="/about#app-changelog" className="text-xs text-ui-accent hover:underline">
           {t('home.newsChangelog')}
         </Link>
       </GlassCard>
@@ -143,9 +143,9 @@ export function DashboardPage() {
             <Link
               key={label}
               to={to}
-              className="surface-card p-3 flex flex-col items-center gap-2 text-center min-h-[5.5rem] justify-center hover:bg-white/5 transition-colors"
+              className="surface-card p-3 flex flex-col items-center gap-2 text-center min-h-[5.5rem] justify-center hover:bg-ui-hover transition-colors"
             >
-              <Icon {...uiIconProps} className="text-holo-300" weight="fill" />
+              <Icon {...uiIconProps} className="text-ui-accent" weight="fill" />
               <span className="text-[11px] font-medium leading-tight">{label}</span>
             </Link>
           ))}

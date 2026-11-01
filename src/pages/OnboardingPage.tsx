@@ -37,11 +37,11 @@ function StepHeader({ title, subtitle }: { title: string; subtitle: string }) {
     <header className="space-y-1 shrink-0">
       <h2
         data-testid="onboarding-heading"
-        className="font-display text-xl sm:text-2xl font-semibold text-white text-balance tracking-wide"
+        className="font-display text-xl sm:text-2xl font-semibold text-ui-fg text-balance tracking-wide"
       >
         {title}
       </h2>
-      <p className="text-sm text-zinc-400 text-pretty">{subtitle}</p>
+      <p className="text-sm text-ui-muted text-pretty">{subtitle}</p>
     </header>
   )
 }
@@ -120,7 +120,7 @@ export function OnboardingPage() {
   return (
     <div
       data-testid="onboarding-shell"
-      className="min-h-dvh relative flex flex-col bg-surface-950 text-zinc-100 overflow-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
+      className="min-h-dvh relative flex flex-col bg-ui-bg text-ui-fg overflow-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
@@ -136,7 +136,7 @@ export function OnboardingPage() {
       <div className="relative z-10 mx-auto w-full max-w-lg flex-1 flex flex-col px-4 sm:px-6 py-4 sm:py-6 min-h-0">
         <div className="flex items-center justify-between gap-2 mb-3 shrink-0">
           <div
-            className="flex rounded-full border border-white/15 bg-white/5 p-0.5 text-[11px] shrink-0"
+            className="flex rounded-full border border-ui bg-ui-hover p-0.5 text-[11px] shrink-0"
             data-testid="onboarding-lang-pill"
           >
             {(['pt-BR', 'en'] as const).map((loc) => (
@@ -145,7 +145,7 @@ export function OnboardingPage() {
                 type="button"
                 className={cn(
                   'px-2.5 py-1 rounded-full min-h-8 min-w-[2.75rem]',
-                  settings.locale === loc ? 'bg-holo-600 text-white' : 'text-zinc-400',
+                  settings.locale === loc ? 'bg-holo-600 text-on-accent' : 'text-ui-muted',
                 )}
                 onClick={() => changeLanguage(loc)}
               >
@@ -155,7 +155,7 @@ export function OnboardingPage() {
           </div>
           <button
             type="button"
-            className="text-xs font-medium text-zinc-400 hover:text-zinc-200 min-h-11 px-3"
+            className="text-xs font-medium text-ui-muted hover:text-ui-fg min-h-11 px-3"
             data-testid="onboarding-skip"
             onClick={skip}
           >
@@ -173,7 +173,7 @@ export function OnboardingPage() {
               key={STEPS[i]}
               className={cn(
                 'h-1 flex-1 rounded-full transition-colors',
-                i <= step ? 'bg-holo-500' : 'bg-white/10',
+                i <= step ? 'bg-holo-500' : 'bg-ui-hover-strong',
               )}
             />
           ))}
@@ -203,12 +203,12 @@ export function OnboardingPage() {
                   <div className="space-y-2 max-w-sm">
                     <h1
                       data-testid="onboarding-heading"
-                      className="font-display text-2xl sm:text-[1.75rem] font-bold leading-tight text-balance text-white"
+                      className="font-display text-2xl sm:text-[1.75rem] font-bold leading-tight text-balance text-ui-fg"
                     >
                       {t('onboarding.welcomeHeadlineBefore')}
-                      <span className="text-holo-300">{t('onboarding.welcomeHeadlineAccent')}</span>
+                      <span className="text-ui-accent">{t('onboarding.welcomeHeadlineAccent')}</span>
                     </h1>
-                    <p className="text-sm text-zinc-300 text-pretty leading-relaxed">
+                    <p className="text-sm text-ui-secondary text-pretty leading-relaxed">
                       {t('onboarding.welcomeSub')}
                     </p>
                   </div>
@@ -235,22 +235,22 @@ export function OnboardingPage() {
                           'flex w-full items-center gap-3 rounded-2xl border p-3.5 text-left min-h-[5rem] transition-all',
                           selected
                             ? 'border-holo-400 ring-2 ring-holo-500/50 bg-holo-600/15 shadow-lg shadow-holo-900/20'
-                            : 'border-white/10 bg-white/5 hover:bg-white/8',
+                            : 'border-ui bg-ui-hover hover:bg-white/8',
                         )}
                       >
                         {hero ? (
-                          <DroidImage droid={hero} size="md" className="shrink-0 ring-1 ring-white/10" />
+                          <DroidImage droid={hero} size="md" className="shrink-0 ring-1 ring-ui" />
                         ) : null}
                         <div className="flex-1 min-w-0">
                           <p className="font-semibold text-base">
                             {formatCycleDisplayName(c.name, i18n.language)}
                           </p>
-                          <p className="text-xs text-zinc-500 mt-0.5">
+                          <p className="text-xs text-ui-soft mt-0.5">
                             {t('onboarding.rebirthCount', { count: rebirthCount })}
                           </p>
                         </div>
                         {selected ? (
-                          <CheckCircle {...uiIconProps} className="text-holo-300 shrink-0" weight="fill" />
+                          <CheckCircle {...uiIconProps} className="text-ui-accent shrink-0" weight="fill" />
                         ) : null}
                       </button>
                     )
@@ -274,7 +274,7 @@ export function OnboardingPage() {
                         'rounded-full px-4 py-2 text-sm min-h-11 border font-medium',
                         completed === chip.value
                           ? 'border-holo-400 bg-holo-600/25 text-holo-100'
-                          : 'border-white/15 bg-white/5 text-zinc-300',
+                          : 'border-ui bg-ui-hover text-ui-secondary',
                       )}
                       onClick={() => setCompleted(chip.value)}
                     >
@@ -282,7 +282,7 @@ export function OnboardingPage() {
                     </button>
                   ))}
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-5 space-y-4 shrink-0">
+                <div className="rounded-2xl border border-ui bg-ui-hover p-5 space-y-4 shrink-0">
                   <div className="flex items-center justify-center gap-5">
                     <Button
                       variant="secondary"
@@ -295,13 +295,13 @@ export function OnboardingPage() {
                       onClick={() => setCompleted((v) => Math.max(0, v - 1))}
                     />
                     <div className="text-center min-w-[5rem]">
-                      <p className="text-[10px] uppercase tracking-widest text-zinc-500">
+                      <p className="text-[10px] uppercase tracking-widest text-ui-soft">
                         {t('onboarding.progressHintShort')}
                       </p>
-                      <p className="font-sans text-[56px] font-bold tabular-nums text-white leading-none py-1">
+                      <p className="font-sans text-[56px] font-bold tabular-nums text-ui-fg leading-none py-1">
                         {completed}
                       </p>
-                      <p className="text-xs text-zinc-400">
+                      <p className="text-xs text-ui-muted">
                         {t('onboarding.progressNext', { n: nextRebirth })}
                       </p>
                     </div>
@@ -328,10 +328,10 @@ export function OnboardingPage() {
                 </div>
                 {preview && cycle ? (
                   <div
-                    className="rounded-xl border border-white/10 bg-white/5 p-3 space-y-2 shrink-0"
+                    className="rounded-xl border border-ui bg-ui-hover p-3 space-y-2 shrink-0"
                     data-testid="onboarding-rebirth-preview"
                   >
-                    <p className="text-xs font-semibold text-zinc-300">
+                    <p className="text-xs font-semibold text-ui-secondary">
                       {t('onboarding.nextReqPreview', { n: nextRebirth })}
                     </p>
                     <div className="flex flex-wrap gap-3">
@@ -341,10 +341,10 @@ export function OnboardingPage() {
                         return (
                           <div
                             key={req.droidId}
-                            className="flex items-center gap-2 text-xs bg-black/20 rounded-lg px-2 py-1.5"
+                            className="flex items-center gap-2 text-xs bg-ui-sunken rounded-lg px-2 py-1.5"
                           >
                             <DroidImage droid={d} size="sm" />
-                            <span className="font-medium text-zinc-200">{d.name}</span>
+                            <span className="font-medium text-ui-fg">{d.name}</span>
                           </div>
                         )
                       })}
@@ -369,11 +369,11 @@ export function OnboardingPage() {
                   ].map(({ icon: Icon, label, desc }) => (
                     <div
                       key={label}
-                      className="rounded-2xl border border-white/10 bg-white/5 p-3.5 flex flex-col items-center gap-2 text-center min-h-[7.5rem] justify-center"
+                      className="rounded-2xl border border-ui bg-ui-hover p-3.5 flex flex-col items-center gap-2 text-center min-h-[7.5rem] justify-center"
                     >
-                      <Icon {...uiIconProps} className="text-holo-300" size={28} />
-                      <span className="text-xs font-semibold leading-tight text-zinc-100">{label}</span>
-                      <span className="text-[10px] leading-snug text-zinc-500 text-pretty">{desc}</span>
+                      <Icon {...uiIconProps} className="text-ui-accent" size={28} />
+                      <span className="text-xs font-semibold leading-tight text-ui-fg">{label}</span>
+                      <span className="text-[10px] leading-snug text-ui-soft text-pretty">{desc}</span>
                     </div>
                   ))}
                 </div>

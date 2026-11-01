@@ -94,7 +94,7 @@ export function SettingsPage() {
         <SectionHeader icon={<Palette {...uiIconProps} />} title={t('settings.appearance')} />
         <div className="space-y-4">
           <div>
-            <p className="text-xs text-zinc-500 mb-2">{t('settings.theme')}</p>
+            <p className="text-xs text-ui-soft mb-2">{t('settings.theme')}</p>
             <SegmentedControl
               ariaLabel={t('settings.theme')}
               value={settings.theme}
@@ -141,7 +141,7 @@ export function SettingsPage() {
         <SectionHeader icon={<ArrowCounterClockwise {...uiIconProps} />} title={t('settings.progress')} />
         <PathProgressSwitcher compact />
         <ProgressSummaryLine />
-        <label className="block text-xs text-zinc-500">
+        <label className="block text-xs text-ui-soft">
           {t('settings.completedRebirths', { n: progress.completedOnPath })}
           <input
             type="range"
@@ -169,7 +169,7 @@ export function SettingsPage() {
             />
           }
         />
-        <p className="text-xs text-zinc-500 mb-3">
+        <p className="text-xs text-ui-soft mb-3">
           {`v${meta.dataVersion} · ${meta.gameVersion}`}
           {stale ? (
             <Badge tone="warn" className="ml-2">
@@ -272,7 +272,7 @@ export function SettingsPage() {
           </>
         }
       >
-        <p className="text-sm text-zinc-300 text-pretty">{t('settings.importConfirmBody')}</p>
+        <p className="text-sm text-ui-secondary text-pretty">{t('settings.importConfirmBody')}</p>
       </Modal>
 
       <Modal
@@ -296,7 +296,7 @@ export function SettingsPage() {
           </>
         }
       >
-        <p className="text-sm text-zinc-300 text-pretty">{t('settings.resetConfirmBody')}</p>
+        <p className="text-sm text-ui-secondary text-pretty">{t('settings.resetConfirmBody')}</p>
       </Modal>
     </div>
   )

@@ -30,7 +30,7 @@ export function FeedbackWhatsAppLink({
   const baseClass =
     variant === 'button'
       ? 'inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium min-h-11 bg-emerald-600/90 hover:bg-emerald-500 text-white border border-emerald-400/30'
-      : 'inline-flex items-center gap-1.5 text-xs text-emerald-300 hover:text-emerald-200 hover:underline'
+      : 'inline-flex items-center gap-1.5 text-xs text-ui-success hover:text-emerald-200 hover:underline'
 
   return (
     <a

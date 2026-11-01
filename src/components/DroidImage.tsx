@@ -29,7 +29,7 @@ export function DroidImage({
     return (
       <div
         className={cn(
-          'relative shrink-0 overflow-hidden rounded-xl ring-1 ring-white/10',
+          'relative shrink-0 overflow-hidden rounded-xl ring-1 ring-ui',
           'bg-gradient-to-br from-surface-800 via-holo-900/40 to-cyan-900/30',
           'flex items-center justify-center',
           sizes[size],
@@ -59,7 +59,7 @@ export function DroidImage({
   return (
     <div
       className={cn(
-        'relative shrink-0 overflow-hidden rounded-xl bg-surface-800 ring-1 ring-white/10',
+        'relative shrink-0 overflow-hidden rounded-xl bg-ui-field ring-1 ring-ui',
         sizes[size],
         className,
       )}
@@ -69,7 +69,7 @@ export function DroidImage({
         alt={droid.name}
         width={size === 'lg' ? 96 : size === 'md' ? 56 : 40}
         height={size === 'lg' ? 96 : size === 'md' ? 56 : 40}
-        className="h-full w-full object-cover bg-surface-800"
+        className="h-full w-full object-cover bg-ui-field"
         loading={priority ? 'eager' : 'lazy'}
         decoding="async"
         fetchPriority={priority ? 'high' : 'auto'}

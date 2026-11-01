@@ -48,14 +48,14 @@ export function FusionLabPage() {
       </div>
 
       <GlassCard className="space-y-3 text-sm">
-        <p className="font-medium text-zinc-100">{t('fusion.rulesTitle')}</p>
+        <p className="font-medium text-ui-fg">{t('fusion.rulesTitle')}</p>
         <ul className="space-y-3">
           {gameData.fusionRules.map((rule) => {
             const key = fusionRuleKey(rule)
             const text = key ? t(key) : (rule.description ?? rule.summary ?? rule.text ?? '')
             return (
-              <li key={rule.id} className="border-b border-white/5 pb-3 last:border-0 last:pb-0">
-                <p className="text-zinc-300">{text}</p>
+              <li key={rule.id} className="border-b border-ui-subtle pb-3 last:border-0 last:pb-0">
+                <p className="text-ui-secondary">{text}</p>
                 <div className="flex flex-wrap gap-2 mt-2">
                   <Badge tone={rule.confidence === 'confirmed' ? 'success' : 'warn'}>
                     {t(`confidence.${rule.confidence ?? 'partial'}`)}
@@ -65,7 +65,7 @@ export function FusionLabPage() {
                       href={rule.sourceUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-xs text-holo-300 hover:underline"
+                      className="text-xs text-ui-accent hover:underline"
                     >
                       {t('fusion.sourceLink')}
                     </a>
@@ -76,9 +76,9 @@ export function FusionLabPage() {
           })}
         </ul>
         {showResultTierRule ? (
-          <p className="text-xs text-zinc-400 border-t border-white/10 pt-3">{t('fusion.resultTierRule')}</p>
+          <p className="text-xs text-ui-muted border-t border-ui pt-3">{t('fusion.resultTierRule')}</p>
         ) : null}
-        <p className="text-xs text-zinc-500">{t('fusion.rulesFootnote')}</p>
+        <p className="text-xs text-ui-soft">{t('fusion.rulesFootnote')}</p>
       </GlassCard>
 
       <section className="space-y-2">
@@ -86,7 +86,7 @@ export function FusionLabPage() {
         {helpful.length > 0 ? (
           helpful.map((f) => <RecipeCard key={f.id} fusion={f} />)
         ) : (
-          <GlassCard className="text-sm text-zinc-400 py-4 px-4">{t('fusion.helpsNextEmpty')}</GlassCard>
+          <GlassCard className="text-sm text-ui-muted py-4 px-4">{t('fusion.helpsNextEmpty')}</GlassCard>
         )}
       </section>
 
@@ -94,7 +94,7 @@ export function FusionLabPage() {
         <div className="flex gap-2 items-center flex-wrap">
           <h2 className="font-display text-lg">{t('fusion.recipes')}</h2>
           <input
-            className="ml-auto rounded-lg bg-surface-800 border border-white/10 px-3 py-1.5 text-sm min-w-[8rem]"
+            className="ml-auto rounded-lg bg-ui-field border border-ui px-3 py-1.5 text-sm min-w-[8rem]"
             placeholder={t('fusion.search')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -102,7 +102,7 @@ export function FusionLabPage() {
           />
         </div>
         {recipes.length === 0 ? (
-          <GlassCard className="text-sm text-zinc-400 py-6 px-4 text-center">{t('fusion.emptySearch')}</GlassCard>
+          <GlassCard className="text-sm text-ui-muted py-6 px-4 text-center">{t('fusion.emptySearch')}</GlassCard>
         ) : (
           recipes.map((f) => <RecipeCard key={f.id} fusion={f} />)
         )}
@@ -131,7 +131,7 @@ function RecipeCard({ fusion }: { fusion: FusionRecipe }) {
           return (
             <span
               key={ing.droidId}
-              className="inline-flex items-center gap-2 rounded-lg bg-white/5 px-2 py-1 text-xs"
+              className="inline-flex items-center gap-2 rounded-lg bg-ui-hover px-2 py-1 text-xs"
             >
               {d ? <DroidImage droid={d} size="sm" className="!h-8 !w-8" /> : null}
               {d?.name ?? ing.droidId} {t('common.quantity', { n: ing.quantity })}

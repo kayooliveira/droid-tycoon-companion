@@ -14,7 +14,7 @@ export function Switch({
   const inputId = id ?? label.replace(/\s+/g, '-').toLowerCase()
   return (
     <label htmlFor={inputId} className="flex items-center justify-between gap-3 min-h-11 cursor-pointer">
-      <span className="text-sm text-zinc-200 text-pretty">{label}</span>
+      <span className="text-sm text-ui-fg text-pretty">{label}</span>
       <button
         id={inputId}
         type="button"
@@ -24,7 +24,7 @@ export function Switch({
         onClick={() => onChange(!checked)}
         className={cn(
           'relative h-7 w-12 shrink-0 rounded-full border transition-colors',
-          checked ? 'bg-holo-600 border-holo-400/40' : 'bg-surface-700 border-white/15',
+          checked ? 'bg-holo-600 border-holo-400/40' : 'bg-ui-field-muted border-ui',
         )}
       >
         <span

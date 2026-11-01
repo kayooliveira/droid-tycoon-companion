@@ -13,12 +13,12 @@ export function ProgressBar({
   return (
     <div className={cn('space-y-1', className)}>
       {label ? (
-        <div className="flex justify-between text-xs text-zinc-400">
+        <div className="flex justify-between text-xs text-ui-muted">
           <span>{label}</span>
           <span>{Math.round(pct)}%</span>
         </div>
       ) : null}
-      <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+      <div className="h-2 rounded-full bg-ui-hover-strong overflow-hidden">
         <div
           className="h-full rounded-full bg-gradient-to-r from-holo-600 via-accent-cyan to-holo-400 transition-all duration-500"
           style={{ width: `${pct}%` }}

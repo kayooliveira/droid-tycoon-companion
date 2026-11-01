@@ -359,6 +359,11 @@
     "dismiss": "Agora não",
     "iosHint": "Toque em Compartilhar e \"Adicionar à Tela de Início\"."
   },
+  "notFound": {
+    "title": "Página não encontrada",
+    "body": "Esse endereço não existe no app. Volte ao início para continuar.",
+    "home": "Ir ao início"
+  },
   "common": {
     "confirm": "Confirmar",
     "close": "Fechar",

@@ -1,0 +1,248 @@
+/**
+ * Semantic UI tokens (dark default on :root, light on html.theme-light).
+ * Components should prefer text-ui-fg, bg-ui-raised, border-ui, etc.
+ */
+
+:root {
+  color-scheme: dark;
+
+  --ui-bg: #070b12;
+  --ui-raised: #111827;
+  --ui-elevated: #0c121c;
+  --ui-sunken: rgb(0 0 0 / 0.22);
+  --ui-modal: rgb(12 18 28 / 0.97);
+  --ui-fg: #f4f4f5;
+  --ui-secondary: #d4d4d8;
+  --ui-muted: #a1a1aa;
+  --ui-soft: #71717a;
+  --ui-border: rgb(255 255 255 / 0.1);
+  --ui-border-subtle: rgb(255 255 255 / 0.06);
+  --ui-hover: rgb(255 255 255 / 0.06);
+  --ui-hover-strong: rgb(255 255 255 / 0.1);
+  --ui-scrim: rgb(0 0 0 / 0.72);
+  --ui-input-bg: rgb(255 255 255 / 0.06);
+  --ui-field: #161f2e;
+  --ui-field-muted: #1f2937;
+  --ui-chart-track: rgb(255 255 255 / 0.08);
+  --ui-nav-lens: rgb(255 255 255 / 0.12);
+  --ui-nav-lens-border: rgb(255 255 255 / 0.28);
+  --ui-handle: rgb(255 255 255 / 0.2);
+  --color-ui-handle: var(--ui-handle);
+  --ui-danger-fg: #fecaca;
+  --ui-success-fg: #6ee7b7;
+  --ui-accent-fg: #7dd3fc;
+  --ui-warn-fg: #fde68a;
+
+  --ui-badge-default-bg: rgb(255 255 255 / 0.1);
+  --ui-badge-default-fg: var(--ui-secondary);
+  --ui-badge-default-border: var(--ui-border);
+  --ui-badge-success-bg: rgb(16 185 129 / 0.15);
+  --ui-badge-success-fg: #6ee7b7;
+  --ui-badge-success-border: rgb(52 211 153 / 0.25);
+  --ui-badge-warn-bg: rgb(245 158 11 / 0.15);
+  --ui-badge-warn-fg: #fde68a;
+  --ui-badge-warn-border: rgb(251 191 36 / 0.25);
+  --ui-badge-danger-bg: rgb(239 68 68 / 0.15);
+  --ui-badge-danger-fg: #fecaca;
+  --ui-badge-danger-border: rgb(248 113 113 / 0.25);
+  --ui-badge-info-bg: rgb(51 128 255 / 0.15);
+  --ui-badge-info-fg: #93c5fd;
+  --ui-badge-info-border: rgb(96 165 250 / 0.25);
+
+  --ui-btn-secondary-bg: rgb(255 255 255 / 0.1);
+  --ui-btn-secondary-fg: var(--ui-fg);
+  --ui-btn-secondary-border: rgb(255 255 255 / 0.15);
+  --ui-btn-secondary-hover: rgb(255 255 255 / 0.15);
+  --ui-btn-ghost-hover: rgb(255 255 255 / 0.1);
+  --ui-btn-ghost-fg: var(--ui-secondary);
+
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-nav-bg: rgba(14, 18, 28, 0.62);
+  --glass-solid: #161f2e;
+}
+
+html.theme-light {
+  color-scheme: light;
+
+  --ui-bg: #f4f4f5;
+  --ui-raised: #ffffff;
+  --ui-elevated: #ffffff;
+  --ui-sunken: rgb(24 24 27 / 0.05);
+  --ui-modal: rgb(255 255 255 / 0.98);
+  --ui-fg: #18181b;
+  --ui-secondary: #3f3f46;
+  --ui-muted: #52525b;
+  --ui-soft: #71717a;
+  --ui-border: rgb(24 24 27 / 0.12);
+  --ui-border-subtle: rgb(24 24 27 / 0.08);
+  --ui-hover: rgb(24 24 27 / 0.05);
+  --ui-hover-strong: rgb(24 24 27 / 0.08);
+  --ui-scrim: rgb(15 23 42 / 0.48);
+  --ui-input-bg: rgb(255 255 255 / 0.9);
+  --ui-field: #ffffff;
+  --ui-field-muted: #f4f4f5;
+  --ui-chart-track: rgb(24 24 27 / 0.08);
+  --ui-nav-lens: rgb(255 255 255 / 0.85);
+  --ui-nav-lens-border: rgb(255 255 255 / 0.95);
+  --ui-handle: rgb(24 24 27 / 0.15);
+  --ui-danger-fg: #b91c1c;
+  --ui-success-fg: #047857;
+  --ui-accent-fg: #1d4ed8;
+  --ui-warn-fg: #b45309;
+
+  --ui-badge-default-bg: rgb(244 244 245 / 0.95);
+  --ui-badge-default-fg: #27272a;
+  --ui-badge-default-border: rgb(161 161 170 / 0.45);
+  --ui-badge-success-bg: rgb(209 250 229 / 0.95);
+  --ui-badge-success-fg: #065f46;
+  --ui-badge-success-border: rgb(110 231 183 / 0.8);
+  --ui-badge-warn-bg: rgb(254 243 199 / 0.95);
+  --ui-badge-warn-fg: #78350f;
+  --ui-badge-warn-border: rgb(252 211 77 / 0.85);
+  --ui-badge-danger-bg: rgb(254 226 226 / 0.95);
+  --ui-badge-danger-fg: #991b1b;
+  --ui-badge-danger-border: rgb(252 165 165 / 0.85);
+  --ui-badge-info-bg: rgb(224 242 254 / 0.95);
+  --ui-badge-info-fg: #1e3a8a;
+  --ui-badge-info-border: rgb(147 197 253 / 0.85);
+
+  --ui-btn-secondary-bg: rgb(244 244 245 / 0.95);
+  --ui-btn-secondary-fg: #27272a;
+  --ui-btn-secondary-border: rgb(161 161 170 / 0.45);
+  --ui-btn-secondary-hover: rgb(228 228 231 / 0.95);
+  --ui-btn-ghost-hover: rgb(24 24 27 / 0.06);
+  --ui-btn-ghost-fg: #3f3f46;
+
+  --glass-bg: rgba(255, 255, 255, 0.62);
+  --glass-nav-bg: rgba(255, 255, 255, 0.72);
+  --glass-solid: #ffffff;
+}
+
+@theme inline {
+  --color-ui-bg: var(--ui-bg);
+  --color-ui-raised: var(--ui-raised);
+  --color-ui-elevated: var(--ui-elevated);
+  --color-ui-sunken: var(--ui-sunken);
+  --color-ui-fg: var(--ui-fg);
+  --color-ui-secondary: var(--ui-secondary);
+  --color-ui-muted: var(--ui-muted);
+  --color-ui-soft: var(--ui-soft);
+  --color-ui-border: var(--ui-border);
+  --color-ui-scrim: var(--ui-scrim);
+  --color-ui-success: var(--ui-success-fg);
+  --color-ui-accent: var(--ui-accent-fg);
+  --color-ui-warn: var(--ui-warn-fg);
+  --color-ui-danger: var(--ui-danger-fg);
+  --color-ui-field: var(--ui-field);
+  --color-ui-field-muted: var(--ui-field-muted);
+}
+
+@layer utilities {
+  .border-ui {
+    border-color: var(--ui-border);
+  }
+
+  .border-ui-subtle {
+    border-color: var(--ui-border-subtle);
+  }
+
+  .bg-ui-hover {
+    background-color: var(--ui-hover);
+  }
+
+  .bg-ui-hover-strong {
+    background-color: var(--ui-hover-strong);
+  }
+
+  .bg-ui-modal {
+    background-color: var(--ui-modal);
+  }
+
+  .bg-ui-input {
+    background-color: var(--ui-input-bg);
+  }
+
+  .bg-ui-field {
+    background-color: var(--ui-field);
+  }
+
+  .ring-ui {
+    --tw-ring-color: var(--ui-border);
+  }
+
+  .text-ui-success {
+    color: var(--ui-success-fg);
+  }
+
+  .text-ui-accent {
+    color: var(--ui-accent-fg);
+  }
+
+  .text-on-accent {
+    color: #ffffff;
+  }
+
+  .text-ui-warn {
+    color: var(--ui-warn-fg);
+  }
+
+  .overlay-scrim {
+    background-color: var(--ui-scrim);
+  }
+
+  .bg-ui-handle {
+    background-color: var(--ui-handle);
+  }
+
+  .ui-badge {
+    @apply inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium;
+  }
+
+  .ui-badge-default {
+    background: var(--ui-badge-default-bg);
+    color: var(--ui-badge-default-fg);
+    border-color: var(--ui-badge-default-border);
+  }
+
+  .ui-badge-success {
+    background: var(--ui-badge-success-bg);
+    color: var(--ui-badge-success-fg);
+    border-color: var(--ui-badge-success-border);
+  }
+
+  .ui-badge-warn {
+    background: var(--ui-badge-warn-bg);
+    color: var(--ui-badge-warn-fg);
+    border-color: var(--ui-badge-warn-border);
+  }
+
+  .ui-badge-danger {
+    background: var(--ui-badge-danger-bg);
+    color: var(--ui-badge-danger-fg);
+    border-color: var(--ui-badge-danger-border);
+  }
+
+  .ui-badge-info {
+    background: var(--ui-badge-info-bg);
+    color: var(--ui-badge-info-fg);
+    border-color: var(--ui-badge-info-border);
+  }
+
+  .ui-btn-secondary {
+    background: var(--ui-btn-secondary-bg);
+    color: var(--ui-btn-secondary-fg);
+    border-color: var(--ui-btn-secondary-border);
+  }
+
+  .ui-btn-secondary:hover {
+    background: var(--ui-btn-secondary-hover);
+  }
+
+  .ui-btn-ghost {
+    color: var(--ui-btn-ghost-fg);
+  }
+
+  .ui-btn-ghost:hover {
+    background: var(--ui-btn-ghost-hover);
+  }
+}

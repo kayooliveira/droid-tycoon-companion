@@ -9,9 +9,8 @@ const variants: Record<Variant, string> = {
     'bg-gradient-to-r from-holo-600 to-cyan-600 hover:from-holo-500 hover:to-cyan-500 text-white shadow-lg shadow-holo-900/25 border border-white/10 disabled:!bg-zinc-700/90 disabled:!from-zinc-700 disabled:!to-zinc-700 disabled:!text-zinc-400/90 disabled:!shadow-none disabled:!border-zinc-600/40',
   accent:
     'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-zinc-950 font-semibold shadow-lg shadow-amber-900/30 border border-amber-200/20',
-  secondary:
-    'ui-btn-secondary bg-white/10 hover:bg-white/15 border border-white/15 text-zinc-100 backdrop-blur-md',
-  ghost: 'hover:bg-white/10 text-zinc-200',
+  secondary: 'ui-btn-secondary border backdrop-blur-md',
+  ghost: 'ui-btn-ghost',
   danger: 'bg-red-600/90 hover:bg-red-500 text-white',
 }
 

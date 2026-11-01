@@ -37,11 +37,11 @@ export function CyclesPage() {
     <div className="space-y-5 pb-6">
       <div className="space-y-2">
         <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('cycles.title')}</h1>
-        <p className="text-sm text-zinc-400 text-pretty">{t('cycles.referenceNote')}</p>
+        <p className="text-sm text-ui-muted text-pretty">{t('cycles.referenceNote')}</p>
       </div>
 
       <GlassCard className="p-4 space-y-3">
-        <p className="text-sm font-medium text-zinc-200">{t('cycles.pickCycle')}</p>
+        <p className="text-sm font-medium text-ui-fg">{t('cycles.pickCycle')}</p>
         <div
           className="flex flex-wrap gap-2"
           role="radiogroup"
@@ -61,8 +61,8 @@ export function CyclesPage() {
                 className={cn(
                   'rounded-full px-3.5 py-2 text-sm min-h-11 border font-medium transition-colors',
                   selected
-                    ? 'border-holo-400/70 bg-holo-600/25 text-white'
-                    : 'border-white/10 bg-white/5 text-zinc-400 hover:text-zinc-200',
+                    ? 'border-holo-400/70 bg-holo-600/25 text-on-accent'
+                    : 'border-ui bg-ui-hover text-ui-muted hover:text-ui-fg',
                 )}
                 onClick={() => {
                   setPathId(c.id)
@@ -94,16 +94,16 @@ export function CyclesPage() {
                 />
                 <div className="flex-1 min-w-0">
                   <p className="font-medium">{t('cycles.rebirthN', { n: entry.rebirth })}</p>
-                  <p className="text-xs text-zinc-500">{entry.credits}</p>
+                  <p className="text-xs text-ui-soft">{entry.credits}</p>
                 </div>
                 <Badge tone={entry.confidence === 'confirmed' ? 'success' : 'warn'}>
                   {t(`confidence.${entry.confidence}`)}
                 </Badge>
               </button>
               {open ? (
-                <div className="px-4 pb-4 space-y-2 border-t border-white/10 pt-3">
+                <div className="px-4 pb-4 space-y-2 border-t border-ui pt-3">
                   {entry.note ? (
-                    <p className="text-xs text-amber-200/90 text-pretty">{entry.note}</p>
+                    <p className="text-xs text-ui-warn/90 text-pretty">{entry.note}</p>
                   ) : null}
                   {entry.requirements.map((req) => {
                     const droid = droidById.get(req.droidId)
@@ -112,7 +112,7 @@ export function CyclesPage() {
                         {droid ? <DroidImage droid={droid} size="sm" /> : null}
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium truncate">{droid?.name ?? req.droidId}</p>
-                          <p className="text-xs text-zinc-500">
+                          <p className="text-xs text-ui-soft">
                             {formatTierName(req.rarity, tierLabels)}
                             {req.quantity > 1 ? ` ×${req.quantity}` : ''}
                           </p>
@@ -129,7 +129,7 @@ export function CyclesPage() {
 
       <GlassCard className="p-4 space-y-2">
         <h2 className="font-display text-lg">{t('cycles.superSection')}</h2>
-        <p className="text-sm text-zinc-300 text-pretty">
+        <p className="text-sm text-ui-secondary text-pretty">
           {t('cycles.superBody', { n: SUPER_REBIRTH_UNLOCK_AFTER })}
         </p>
         <Badge tone="info">{t('common.unconfirmed')}</Badge>
