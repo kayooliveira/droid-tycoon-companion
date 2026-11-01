@@ -74,21 +74,16 @@ async function main() {
   await page.screenshot({ path: path.join(outDir, 'sell-center-mobile.png'), fullPage: true })
 
   try {
-    const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs')
-    const data = new Uint8Array(fs.readFileSync(pdfPath))
-    const doc = await pdfjs.getDocument({ data }).promise
-    const { default: sharp } = await import('sharp')
-
-    const { createCanvas } = require('canvas')
+    const { execFileSync } = await import('node:child_process')
+    execFileSync(
+      'pdftoppm',
+      ['-png', '-f', '1', '-l', '2', '-r', '144', pdfPath, path.join(outDir, 'page')],
+      { stdio: 'pipe' },
+    )
     for (const pageNum of [1, 2]) {
-      if (pageNum > doc.numPages) break
-      const pdfPage = await doc.getPage(pageNum)
-      const viewport = pdfPage.getViewport({ scale: 2 })
-      const canvas = createCanvas(viewport.width, viewport.height)
-      const context = canvas.getContext('2d')
-      await pdfPage.render({ canvasContext: context, viewport, canvas }).promise
-      const buf = canvas.toBuffer('image/png')
-      await sharp(buf).png().toFile(path.join(outDir, `page${pageNum}.png`))
+      const generated = path.join(outDir, `page-${pageNum}.png`)
+      const target = path.join(outDir, `page${pageNum}.png`)
+      if (fs.existsSync(generated)) fs.renameSync(generated, target)
     }
   } catch (e) {
     console.warn('PDF page raster skipped:', e.message)
