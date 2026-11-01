@@ -1,45 +1,73 @@
+import { useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import {
   FlaskConical,
+  Info,
   LayoutDashboard,
   ListTree,
+  Menu,
   Package,
   Settings,
   Sparkles,
   Store,
 } from 'lucide-react'
+import { useScrollRestoration } from '../hooks/useScrollRestoration'
 import { cn } from '../lib/utils'
 import { Logo } from './Logo'
+import { InstallBanner } from './InstallBanner'
+import { Modal } from './ui/Modal'
 
-const nav = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/progress', label: 'Progress', icon: ListTree },
-  { to: '/inventory', label: 'Inventory', icon: Package },
-  { to: '/sell', label: 'Sell', icon: Store },
-  { to: '/droiddex', label: 'Droiddex', icon: Sparkles },
-  { to: '/fusion', label: 'Fusion', icon: FlaskConical },
-  { to: '/settings', label: 'Settings', icon: Settings },
-]
+const primaryMobile = [
+  { to: '/', labelKey: 'nav.dashboard', icon: LayoutDashboard, end: true },
+  { to: '/progress', labelKey: 'nav.progress', icon: ListTree },
+  { to: '/inventory', labelKey: 'nav.inventory', icon: Package },
+  { to: '/sell', labelKey: 'nav.sell', icon: Store },
+] as const
+
+const moreMobile = [
+  { to: '/droiddex', labelKey: 'nav.droiddex', icon: Sparkles },
+  { to: '/fusion', labelKey: 'nav.fusion', icon: FlaskConical },
+  { to: '/about', labelKey: 'nav.about', icon: Info },
+  { to: '/settings', labelKey: 'nav.settings', icon: Settings },
+] as const
+
+const desktopNav = [...primaryMobile, ...moreMobile]
+
+const routeTitleKeys: Record<string, string> = {
+  '/': 'nav.dashboard',
+  '/progress': 'nav.progress',
+  '/inventory': 'nav.inventory',
+  '/sell': 'nav.sell',
+  '/droiddex': 'nav.droiddex',
+  '/fusion': 'nav.fusion',
+  '/settings': 'nav.settings',
+  '/about': 'about.title',
+}
 
 export function AppShell() {
+  const { t } = useTranslation()
   const location = useLocation()
+  useScrollRestoration()
+  const [moreOpen, setMoreOpen] = useState(false)
+  const titleKey = routeTitleKeys[location.pathname] ?? 'app.name'
 
   return (
     <div className="min-h-dvh flex flex-col md:flex-row">
       <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 border-r border-white/10 bg-surface-900/80 backdrop-blur-xl">
         <div className="p-5 flex items-center gap-3 border-b border-white/10">
-          <Logo className="h-10 w-10" />
-          <div>
-            <p className="font-display text-sm tracking-wider text-gradient-holo">DROID TYCOON</p>
+          <Logo className="h-8 w-8" />
+          <div className="min-w-0">
+            <p className="font-display text-sm tracking-wider text-gradient-holo truncate">DROID TYCOON</p>
             <p className="text-xs text-zinc-400">Companion</p>
           </div>
         </div>
         <nav className="p-3 space-y-1 flex-1">
-          {nav.map((item) => (
+          {desktopNav.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
-              end={item.end}
+              end={'end' in item && item.end === true}
               className={({ isActive }) =>
                 cn(
                   'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors',
@@ -48,48 +76,87 @@ export function AppShell() {
               }
             >
               <item.icon size={18} />
-              {item.label}
+              {t(item.labelKey)}
             </NavLink>
           ))}
         </nav>
         <footer className="p-4 text-[10px] leading-relaxed text-zinc-500 border-t border-white/10">
-          Fan-made companion tool. Not affiliated with Epic Games, Lucasfilm, Disney, or FOAD.
+          {t('app.disclaimer')}
         </footer>
       </aside>
 
-      <main className="flex-1 md:ml-64 pb-20 md:pb-6">
-        <header className="md:hidden sticky top-0 z-40 border-b border-white/10 bg-surface-950/80 backdrop-blur-xl px-4 py-3 flex items-center gap-3">
-          <Logo className="h-9 w-9" />
-          <div>
-            <p className="font-display text-xs tracking-wider">Droid Tycoon Companion</p>
-            <p className="text-[10px] text-zinc-500 truncate">{location.pathname || '/'}</p>
+      <main className="flex-1 md:ml-64 pb-[4.75rem] md:pb-6">
+        <header className="md:hidden sticky top-0 z-40 border-b border-white/10 bg-surface-950/90 backdrop-blur-xl px-4 py-3 flex items-center gap-3 min-h-[3.25rem]">
+          <Logo className="h-8 w-8" />
+          <div className="min-w-0 flex-1">
+            <h1 className="font-display text-sm tracking-wide truncate">{t(titleKey)}</h1>
+            <p className="text-[10px] text-zinc-500 truncate">{t('app.shortName')}</p>
           </div>
         </header>
-        <div className="mx-auto max-w-6xl px-4 py-5 md:py-8">
+        <div className="mx-auto max-w-6xl px-4 py-5 md:py-8 pt-[max(1.25rem,env(safe-area-inset-top))]">
           <Outlet />
         </div>
       </main>
 
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-white/10 bg-surface-900/95 backdrop-blur-xl">
-        <div className="flex overflow-x-auto no-scrollbar px-1 py-1 gap-0.5">
-          {nav.map((item) => (
+      <nav
+        className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-white/10 bg-surface-900/98 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]"
+        aria-label="Main"
+      >
+        <div className="grid grid-cols-5 gap-0.5 px-1 py-1">
+          {primaryMobile.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
-              end={item.end}
+              end={'end' in item ? item.end : false}
               className={({ isActive }) =>
                 cn(
-                  'flex flex-col items-center min-w-[4.5rem] px-2 py-2 rounded-xl text-[10px] gap-1',
+                  'flex flex-col items-center justify-center py-2 rounded-xl text-[10px] gap-0.5 min-h-[3rem]',
                   isActive ? 'text-holo-300 bg-white/5' : 'text-zinc-400',
                 )
               }
             >
+              <item.icon size={20} />
+              <span className="leading-tight text-center px-0.5">{t(item.labelKey)}</span>
+            </NavLink>
+          ))}
+          <button
+            type="button"
+            data-testid="mobile-more-nav"
+            aria-label={t('a11y.openMoreNav')}
+            onClick={() => setMoreOpen(true)}
+            className={cn(
+              'flex flex-col items-center justify-center py-2 rounded-xl text-[10px] gap-0.5 min-h-[3rem] text-zinc-400',
+              moreMobile.some((m) => location.pathname === m.to) && 'text-holo-300 bg-white/5',
+            )}
+          >
+            <Menu size={20} />
+            <span>{t('nav.more')}</span>
+          </button>
+        </div>
+      </nav>
+
+      <Modal open={moreOpen} onClose={() => setMoreOpen(false)} title={t('nav.more')}>
+        <div className="grid gap-1">
+          {moreMobile.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              onClick={() => setMoreOpen(false)}
+              className={({ isActive }) =>
+                cn(
+                  'flex items-center gap-3 rounded-xl px-3 py-3 text-sm',
+                  isActive ? 'bg-holo-600/20 text-holo-200' : 'hover:bg-white/5',
+                )
+              }
+            >
               <item.icon size={18} />
-              {item.label}
+              {t(item.labelKey)}
             </NavLink>
           ))}
         </div>
-      </nav>
+      </Modal>
+
+      <InstallBanner />
     </div>
   )
 }

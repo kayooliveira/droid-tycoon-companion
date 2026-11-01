@@ -1,5 +1,6 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 import { X } from 'lucide-react'
+import { useScrollLock } from '../../hooks/useScrollLock'
 import { cn } from '../../lib/utils'
 import { Button } from './Button'
 
@@ -17,6 +18,7 @@ export function Modal({
   className?: string
 }) {
   const dialogRef = useRef<HTMLDivElement>(null)
+  useScrollLock(open)
 
   useEffect(() => {
     if (!open) return

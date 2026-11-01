@@ -101,7 +101,15 @@ export interface GameData {
   rarities: Array<{ id: TierId; name: string; order: number }>
   baseRarities: Array<{ id: BaseRarityId; name: string; order: number }>
   fusions: FusionRecipe[]
-  fusionRules: Array<{ summary?: string; text?: string }>
+  fusionRules: Array<{
+    id: string
+    type?: string
+    description?: string
+    summary?: string
+    text?: string
+    confidence?: Confidence
+    sourceUrl?: string
+  }>
   rules: Record<string, unknown>
   sources: Array<{ url?: string; name?: string }>
 }

@@ -1,4 +1,5 @@
-import { defaultPersistedState, PERSIST_SCHEMA_VERSION, type PersistedState } from './types'
+import { detectBrowserLocale } from '../i18n/detectLocale'
+import { defaultPersistedState, PERSIST_SCHEMA_VERSION, type PersistedState, type UserSettings } from './types'
 
 export function migratePersistedState(raw: unknown): PersistedState {
   if (!raw || typeof raw !== 'object') {
@@ -6,19 +7,32 @@ export function migratePersistedState(raw: unknown): PersistedState {
   }
 
   const state = raw as Partial<PersistedState>
-  const version = state.schemaVersion ?? 0
+  const version = state.schemaVersion ?? 1
 
-  if (version === PERSIST_SCHEMA_VERSION) {
-    return sanitize(state)
+  let base = sanitize({ ...defaultPersistedState(), ...state })
+
+  if (version < 2) {
+    const settings = base.settings as UserSettings & { locale?: string }
+    base = {
+      ...base,
+      schemaVersion: PERSIST_SCHEMA_VERSION,
+      settings: {
+        ...base.settings,
+        locale: settings.locale === 'pt-BR' ? 'pt-BR' : detectBrowserLocale(),
+        localeSource: 'auto',
+        installBannerDismissed: false,
+        iosInstallHintDismissed: false,
+      },
+    }
   }
 
-  // Future migrations by version
-  return sanitize({ ...defaultPersistedState(), ...state, schemaVersion: PERSIST_SCHEMA_VERSION })
+  return { ...base, schemaVersion: PERSIST_SCHEMA_VERSION }
 }
 
 function sanitize(partial: Partial<PersistedState>): PersistedState {
   const base = defaultPersistedState()
   const progress = partial.progress ?? base.progress
+  const settingsIn = partial.settings ?? base.settings
   return {
     schemaVersion: PERSIST_SCHEMA_VERSION,
     onboardingComplete: Boolean(partial.onboardingComplete),
@@ -30,7 +44,9 @@ function sanitize(partial: Partial<PersistedState>): PersistedState {
     inventory: Array.isArray(partial.inventory) ? partial.inventory.filter(isValidUnit) : [],
     settings: {
       ...base.settings,
-      ...(partial.settings ?? {}),
+      ...settingsIn,
+      locale: settingsIn.locale === 'pt-BR' ? 'pt-BR' : 'en',
+      localeSource: settingsIn.localeSource === 'user' ? 'user' : 'auto',
     },
     lastSavedAt: partial.lastSavedAt ?? new Date().toISOString(),
   }

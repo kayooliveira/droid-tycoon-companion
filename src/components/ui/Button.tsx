@@ -16,6 +16,7 @@ export function Button({
   children,
   className,
   variant = 'primary',
+  disabled,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactNode
@@ -28,6 +29,7 @@ export function Button({
         variants[variant],
         className,
       )}
+      disabled={disabled}
       {...props}
     >
       {children}
