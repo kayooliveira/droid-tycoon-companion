@@ -130,7 +130,8 @@
     "fusionCaution": "Fusão?",
     "fusionCautionHint": "Receita ainda não está 100% confirmada — confira no jogo antes de vender.",
     "fusionNote": "Alguns droids ficam marcados pra fusão mesmo quando os rebirths não pedem mais.",
-    "usedOnOtherPath": "Ainda entra no {{paths}}."
+    "usedOnOtherPath": "Ainda entra no {{paths}}.",
+    "returnsOnCycle": "Volta no {{name}}."
   },
   "exportCycle": {
     "title": "Baixar meu ciclo",

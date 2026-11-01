@@ -53,6 +53,13 @@ async function main() {
   for (const [name, path] of routes) {
     await page.goto(`${base}${path}`)
     await page.waitForTimeout(400)
+    if (name === 'progress') {
+      await page
+        .getByTestId('sell-after-list')
+        .or(page.getByTestId('sell-after-empty'))
+        .scrollIntoViewIfNeeded()
+      await page.waitForTimeout(250)
+    }
     await page.screenshot({ path: `${outDir}/uiux-${name}.png`, fullPage: true })
   }
 

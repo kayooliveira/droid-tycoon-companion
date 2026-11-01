@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { droidById, cycleById } from '../domain/gameData'
+import { cycleById, droidById, getPathIds } from '../domain/gameData'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { unitsNewlySellableAfterRebirth, type RebirthUnitUsage } from '../domain/rebirthSellPlan'
 import { buildTierLabelMap, formatTierName } from '../domain/tiers'
@@ -9,6 +9,19 @@ import { Badge } from './ui/Badge'
 
 const tierLabels = buildTierLabelMap(gameData.rarities)
 
+function earliestOtherPathId(pathIds: string[]): string | null {
+  const order = getPathIds()
+  let best: string | null = null
+  let bestIdx = Number.POSITIVE_INFINITY
+  for (const id of pathIds) {
+    const idx = order.indexOf(id)
+    if (idx >= 0 && idx < bestIdx) {
+      bestIdx = idx
+      best = id
+    }
+  }
+  return best
+}
 
 function UnitRow({ unit }: { unit: RebirthUnitUsage }) {
   const { t, i18n } = useTranslation()
@@ -37,9 +50,12 @@ function UnitRow({ unit }: { unit: RebirthUnitUsage }) {
         </div>
         {unit.otherPathIds.length > 0 ? (
           <p className="text-[11px] text-zinc-500 mt-0.5">
-            {t('sellAfter.usedOnOtherPath', {
-              paths: unit.otherPathIds.map(pathLabel).join(', '),
-            })}
+            {(() => {
+              const nextPath = earliestOtherPathId(unit.otherPathIds)
+              return nextPath
+                ? t('sellAfter.returnsOnCycle', { name: pathLabel(nextPath) })
+                : null
+            })()}
           </p>
         ) : null}
         {unit.disposition === 'fusionCaution' ? (

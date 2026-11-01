@@ -86,7 +86,7 @@ export function AppShell() {
         </footer>
       </aside>
 
-      <main className="flex-1 md:ml-64 pb-[4.75rem] md:pb-6">
+      <main className="flex-1 md:ml-64 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pb-6">
         <header className="sticky-mobile-header md:hidden sticky top-0 z-40 border-b border-white/10 bg-surface-950/90 backdrop-blur-xl px-4 py-3 flex items-center gap-3 min-h-[3.25rem]">
           <Logo className="h-8 w-8" />
           <div className="min-w-0 flex-1">

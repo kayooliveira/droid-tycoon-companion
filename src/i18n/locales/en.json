@@ -124,13 +124,14 @@
     "safeNowLine": "In your inventory and clear to sell before the next rebirth."
   },
   "sellAfter": {
-    "heading": "After this rebirth you can sell:",
+    "heading": "Sell later:",
     "none": "No requirement droids become free after this step.",
     "fusionHold": "Keep for fusion",
     "fusionCaution": "Fusion?",
     "fusionCautionHint": "Recipe isn't fully verified — check in game before selling.",
     "fusionNote": "Some droids stay marked for fusion even when rebirths no longer need them.",
-    "usedOnOtherPath": "Still used on {{paths}}."
+    "usedOnOtherPath": "Still used on {{paths}}.",
+    "returnsOnCycle": "Needed again on {{name}}."
   },
   "exportCycle": {
     "title": "Download my cycle",

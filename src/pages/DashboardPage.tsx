@@ -3,14 +3,14 @@ import { uiIconProps } from '../components/ui/iconStyle'
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { PathProgressSwitcher, ProgressSummaryLine } from '../components/PathProgressSwitcher'
+import { PathProgressSwitcher } from '../components/PathProgressSwitcher'
 import { RequirementCard } from '../components/RequirementCard'
 import { ShareExportCard } from '../components/ShareExportCard'
 import { Badge } from '../components/ui/Badge'
 import { GlassCard } from '../components/ui/GlassCard'
 import { cn } from '../lib/utils'
 import { ProgressBar } from '../components/ui/ProgressBar'
-import { gameData, getRebirth } from '../domain/gameData'
+import { getRebirth } from '../domain/gameData'
 import { pathProgressPercent, REBIRTHS_PER_PATH } from '../domain/progress'
 import { evaluateRequirements, metRequirementCount } from '../domain/requirements'
 import { analyzeSellCenter, summarizeSellCenter } from '../domain/sellCenter'
@@ -89,16 +89,9 @@ export function DashboardPage() {
         </GlassCard>
       )}
 
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <div className="space-y-1 min-w-0">
-          <PathProgressSwitcher />
-          <ProgressSummaryLine />
-        </div>
-        {isDataStale() ? (
-          <Badge tone="warn">{t('dashboard.staleData')}</Badge>
-        ) : (
-          <Badge tone="info">{t('dashboard.dataVersion', { version: gameData.dataVersion })}</Badge>
-        )}
+      <div className="flex flex-wrap items-center gap-2">
+        <PathProgressSwitcher />
+        {isDataStale() ? <Badge tone="warn">{t('dashboard.staleData')}</Badge> : null}
       </div>
 
       <GlassCard className="space-y-2 p-3">
