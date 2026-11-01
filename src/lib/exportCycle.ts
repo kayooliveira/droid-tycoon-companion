@@ -39,6 +39,9 @@ const REBIRTHS_PER_PAGE = COLS * ROWS_PER_PAGE
 const CARD_W = (PAGE_W - PAD * 2 - COL_GAP) / 2
 const DROID_ROW_H = 32
 const CARD_H = 52 + DROID_ROW_H * 3 + 44
+const GUIDE_ROW_H = 62
+const GUIDE_NUM_W = 36
+const GUIDE_CRED_W = 92
 
 let exportTierLabels = buildI18nTierLabelMapForLocale('en')
 
@@ -188,35 +191,63 @@ function drawStatBlock(
   ctx.fillText(value, x + 12, y + 52)
 }
 
-function unitChipLabel(droidId: string, tier: string): string {
+function unitChipLabelFull(droidId: string, tier: string): string {
   const droid = droidById.get(droidId)
   const name = droid?.name ?? droidId
-  const short = name.length > 10 ? `${name.slice(0, 9)}…` : name
-  const tierShort = tier.length > 12 ? `${tier.slice(0, 11)}…` : tier
-  return `${short} · ${tierShort}`
+  return `${name} · ${tier}`
 }
 
-function drawTextChip(
+function splitTextLines(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number,
+): string[] {
+  const words = text.split(' ')
+  const lines: string[] = []
+  let line = ''
+  for (const word of words) {
+    const test = line ? `${line} ${word}` : word
+    if (ctx.measureText(test).width > maxWidth && line) {
+      lines.push(line)
+      line = word
+    } else {
+      line = test
+    }
+  }
+  if (line) lines.push(line)
+  return lines.length ? lines : ['']
+}
+
+function drawTierPill(ctx: CanvasRenderingContext2D, x: number, y: number, tier: string): number {
+  ctx.font = '8px system-ui, sans-serif'
+  const tw = ctx.measureText(tier).width
+  const pw = tw + 8
+  const ph = 14
+  ctx.fillStyle = T.accentSoft
+  roundRect(ctx, x, y, pw, ph, 4)
+  ctx.fill()
+  ctx.fillStyle = T.textMuted
+  ctx.fillText(tier, x + 4, y + 10)
+  return ph
+}
+
+function drawFullUnitChip(
   ctx: CanvasRenderingContext2D,
   x: number,
   y: number,
-  text: string,
-  maxWidth: number,
+  maxW: number,
+  label: string,
 ): number {
   ctx.font = '9px system-ui, sans-serif'
-  let label = text
-  while (label.length > 3 && ctx.measureText(label).width > maxWidth) {
-    label = `${label.slice(0, -2)}…`
-  }
-  const tw = ctx.measureText(label).width
-  const pw = tw + 10
-  const ph = 16
+  const lines = splitTextLines(ctx, label, maxW)
+  const lineH = 11
+  const ph = lines.length * lineH + 8
   ctx.fillStyle = T.accentSoft
-  roundRect(ctx, x, y, pw, ph, 5)
+  roundRect(ctx, x, y, maxW, ph, 5)
   ctx.fill()
-  ctx.fillStyle = T.textMuted
-  ctx.fillText(label, x + 5, y + 11)
-  return pw + 4
+  ctx.fillStyle = T.text
+  lines.forEach((ln, i) => ctx.fillText(ln, x + 5, y + 10 + i * lineH))
+  return ph
 }
 
 async function drawDroidRow(
@@ -234,13 +265,10 @@ async function drawDroidRow(
   const tier = formatTierName(tierId as RebirthUnitUsage['tier'], exportTierLabels)
   ctx.fillStyle = T.text
   ctx.font = '10px system-ui, sans-serif'
-  const nameMax = maxW - 38 - 70
-  let displayName = name
-  while (displayName.length > 2 && ctx.measureText(displayName).width > nameMax) {
-    displayName = `${displayName.slice(0, -2)}…`
-  }
-  ctx.fillText(displayName, x + 34, y + 18)
-  drawTextChip(ctx, x + 34 + ctx.measureText(displayName).width + 6, y + 4, tier, 68)
+  const nameMax = maxW - 38
+  const nameLines = splitTextLines(ctx, name, nameMax).slice(0, 2)
+  nameLines.forEach((ln, i) => ctx.fillText(ln, x + 34, y + 12 + i * 12))
+  drawTierPill(ctx, x + 34, y + 12 + nameLines.length * 12, tier)
 }
 
 async function drawSellUnitChips(
@@ -257,35 +285,51 @@ async function drawSellUnitChips(
     ctx.fillText(emptyLabel, x, y + 10)
     return 14
   }
-  let cx = x
   let cy = y
-  for (const unit of units.slice(0, 8)) {
+  for (const unit of units.slice(0, 12)) {
     const tier = formatTierName(unit.tier, exportTierLabels)
-    const chip = unitChipLabel(unit.droidId, tier)
-    const chipW = Math.min(maxW, 120)
-    if (cx + chipW > x + maxW && cx > x) {
-      cx = x
-      cy += 20
-    }
-    const used = drawTextChip(ctx, cx, cy, chip, chipW)
-    cx += used
+    const chip = unitChipLabelFull(unit.droidId, tier)
+    const h = drawFullUnitChip(ctx, x, cy, maxW, chip)
+    cy += h + 4
   }
-  return cy - y + 18
+  return cy - y
 }
 
-async function drawMiniDroidChip(
+async function drawCompactDroidLine(
   ctx: CanvasRenderingContext2D,
   x: number,
   y: number,
+  maxW: number,
   droidId: string,
   tierId: string,
 ): Promise<number> {
   const droid = droidById.get(droidId)
   const img = droid ? await loadImage(droidImageSrc(droid.id, droid.imageLocal)) : null
-  if (img) ctx.drawImage(img, x, y, 20, 20)
+  if (img) ctx.drawImage(img, x, y, 18, 18)
   const tier = formatTierName(tierId as RebirthUnitUsage['tier'], exportTierLabels)
-  const chip = unitChipLabel(droidId, tier)
-  return drawTextChip(ctx, x + 24, y + 2, chip, 96) + 24
+  const name = droid?.name ?? droidId
+  ctx.fillStyle = T.text
+  ctx.font = '9px system-ui, sans-serif'
+  const lines = splitTextLines(ctx, `${name} · ${tier}`, maxW - 22).slice(0, 2)
+  lines.forEach((ln, i) => ctx.fillText(ln, x + 22, y + 10 + i * 10))
+  return Math.max(18, 10 + lines.length * 10) + 4
+}
+
+function estimateChipBlockHeight(
+  ctx: CanvasRenderingContext2D,
+  units: RebirthUnitUsage[],
+  maxW: number,
+): number {
+  if (units.length === 0) return 14
+  ctx.font = '9px system-ui, sans-serif'
+  let h = 0
+  for (const unit of units.slice(0, 12)) {
+    const tier = formatTierName(unit.tier, exportTierLabels)
+    const label = unitChipLabelFull(unit.droidId, tier)
+    const lines = splitTextLines(ctx, label, maxW).length
+    h += lines * 11 + 8 + 4
+  }
+  return h
 }
 
 async function measureUpcomingHeight(
@@ -297,7 +341,7 @@ async function measureUpcomingHeight(
   for (let r = fromRebirth; r <= toRebirth; r++) {
     const entry = getRebirth(pathId, r)
     if (!entry) continue
-    h += 14 + entry.requirements.length * 22 + 6
+    h += 14 + entry.requirements.length * 18 + 6
   }
   return h + 8
 }
@@ -320,20 +364,13 @@ async function drawUpcomingRebirths(
     ctx.font = 'bold 10px system-ui, sans-serif'
     ctx.fillText(`${L.rebirth} ${r} · ${entry.credits}`, x, uy + 10)
     uy += 14
-    let cx = x
     for (const req of entry.requirements) {
-      if (cx + 120 > x + w) {
-        cx = x
-        uy += 22
-      }
-      const used = await drawMiniDroidChip(ctx, cx, uy, req.droidId, req.rarity)
-      cx += used + 2
+      const used = await drawCompactDroidLine(ctx, x, uy, w, req.droidId, req.rarity)
+      uy += used
     }
-    uy += 26
+    uy += 6
   }
 }
-
-const TABLE_ROW_H = 26
 
 async function drawRemainingTable(
   ctx: CanvasRenderingContext2D,
@@ -347,15 +384,18 @@ async function drawRemainingTable(
   ctx.font = 'bold 13px system-ui, sans-serif'
   ctx.fillText(L.remainingRebirths, PAD + 12, y + 16)
   let ry = y + 28
-  const innerW = PAGE_W - PAD * 2 - 24
+
+  const droidColX = PAD + 108
+  const droidColW = PAGE_W - PAD - droidColX - 12
 
   for (let r = tableStartRebirth; r <= REBIRTHS_PER_PATH; r++) {
-    if (ry + TABLE_ROW_H > maxY) break
     const entry = getRebirth(input.pathId, r)
     if (!entry) continue
+    const rowH = Math.max(28, 10 + entry.requirements.length * 18)
+    if (ry + rowH > maxY) break
 
     ctx.fillStyle = T.bgAlt
-    roundRect(ctx, PAD, ry - 2, PAGE_W - PAD * 2, TABLE_ROW_H - 4, 6)
+    roundRect(ctx, PAD, ry - 2, PAGE_W - PAD * 2, rowH - 2, 6)
     ctx.fill()
 
     ctx.fillStyle = T.text
@@ -365,13 +405,12 @@ async function drawRemainingTable(
     ctx.font = '9px system-ui, sans-serif'
     ctx.fillText(entry.credits, PAD + 44, ry + 14)
 
-    let cx = PAD + 118
+    let dy = ry + 4
     for (const req of entry.requirements) {
-      if (cx + 100 > PAD + innerW) break
-      const used = await drawMiniDroidChip(ctx, cx, ry + 2, req.droidId, req.rarity)
-      cx += used + 2
+      const used = await drawCompactDroidLine(ctx, droidColX, dy, droidColW, req.droidId, req.rarity)
+      dy += used
     }
-    ry += TABLE_ROW_H
+    ry += rowH
   }
   return ry
 }
@@ -441,22 +480,19 @@ async function drawCover(ctx: CanvasRenderingContext2D, input: ExportCycleInput)
   const sellNowUnits = unitsSellableAfterRebirth(input.pathId, input.completedOnPath).filter(
     (u) => u.disposition === 'sellable',
   )
-  const sellInnerH =
-    sellNowUnits.length === 0
-      ? 14
-      : Math.ceil(Math.min(sellNowUnits.length, 8) / 2) * 20 + 8
+  const sellInnerH = estimateChipBlockHeight(ctx, sellNowUnits, panelW - 24)
   const upcomingInnerH = await measureUpcomingHeight(
     input.pathId,
     input.nextRebirth,
     upcomingEnd,
   )
-  const panelInnerH = Math.max(sellInnerH, upcomingInnerH)
-  const panelH = 22 + panelInnerH + 14
+  const sellPanelH = 22 + sellInnerH + 12
+  const upcomingPanelH = 22 + upcomingInnerH + 12
 
   ctx.fillStyle = T.cardBg
   ctx.strokeStyle = T.cardBorder
   ctx.lineWidth = 1
-  roundRect(ctx, PAD, panelY, panelW, panelH, 10)
+  roundRect(ctx, PAD, panelY, panelW, sellPanelH, 10)
   ctx.fill()
   ctx.stroke()
   ctx.fillStyle = T.text
@@ -474,7 +510,7 @@ async function drawCover(ctx: CanvasRenderingContext2D, input: ExportCycleInput)
   const rightX = PAD + panelW + COL_GAP
   ctx.fillStyle = T.cardBg
   ctx.strokeStyle = T.cardBorder
-  roundRect(ctx, rightX, panelY, panelW, panelH, 10)
+  roundRect(ctx, rightX, panelY, panelW, upcomingPanelH, 10)
   ctx.fill()
   ctx.stroke()
   ctx.fillStyle = T.text
@@ -482,7 +518,7 @@ async function drawCover(ctx: CanvasRenderingContext2D, input: ExportCycleInput)
   ctx.fillText(L.upcomingRebirths, rightX + 12, panelY + 20)
   await drawUpcomingRebirths(ctx, rightX + 12, panelY + 26, panelW - 24, input, L)
 
-  const tableY = panelY + panelH + 14
+  const tableY = panelY + Math.max(sellPanelH, upcomingPanelH) + 14
   const maxTableY = PAGE_H - FOOTER_H - 30
   if (tableStart <= REBIRTHS_PER_PATH && tableY + 40 < maxTableY) {
     await drawRemainingTable(ctx, tableY, input, L, tableStart, maxTableY)
@@ -640,152 +676,215 @@ async function renderRebirthPages(input: ExportCycleInput): Promise<HTMLCanvasEl
   return pages
 }
 
-async function drawGuideCover(ctx: CanvasRenderingContext2D, input: ExportCycleInput) {
+function drawGuideTableHeaders(ctx: CanvasRenderingContext2D, input: ExportCycleInput, y: number): number {
+  const L = labels(input)
+  ctx.fillStyle = T.textMuted
+  ctx.font = 'bold 10px system-ui, sans-serif'
+  ctx.fillText('#', PAD + 4, y)
+  ctx.fillText(L.credits, PAD + GUIDE_NUM_W, y)
+  ctx.fillText(L.requirements, PAD + GUIDE_NUM_W + GUIDE_CRED_W + 8, y)
+  return y + 14
+}
+
+async function drawGuideDroidCell(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  droidId: string,
+  tierId: string,
+) {
+  const droid = droidById.get(droidId)
+  const img = droid ? await loadImage(droidImageSrc(droid.id, droid.imageLocal)) : null
+  const cx = x + (w - 22) / 2
+  if (img) ctx.drawImage(img, cx, y, 22, 22)
+  const name = droid?.name ?? droidId
+  const tier = formatTierName(tierId as RebirthUnitUsage['tier'], exportTierLabels)
+  ctx.fillStyle = T.text
+  ctx.font = '10px system-ui, sans-serif'
+  const nameLines = splitTextLines(ctx, name, w).slice(0, 2)
+  nameLines.forEach((ln, i) => {
+    const tw = ctx.measureText(ln).width
+    ctx.fillText(ln, x + (w - tw) / 2, y + 28 + i * 11)
+  })
+  const tierY = y + 28 + nameLines.length * 11 + 2
+  const tw = ctx.measureText(tier).width
+  drawTierPill(ctx, x + (w - tw - 8) / 2, tierY, tier)
+}
+
+async function drawGuideRebirthRow(
+  ctx: CanvasRenderingContext2D,
+  input: ExportCycleInput,
+  y: number,
+  rebirth: number,
+  zebra: boolean,
+) {
+  const L = labels(input)
+  const entry = getRebirth(input.pathId, rebirth)
+  if (!entry) return
+  const rowW = PAGE_W - PAD * 2
+  const isSuper = rebirth === SUPER_REBIRTH_UNLOCK_AFTER
+  ctx.fillStyle = isSuper ? T.accentSoft : zebra ? T.bgAlt : T.cardBg
+  roundRect(ctx, PAD, y, rowW, GUIDE_ROW_H - 4, 6)
+  ctx.fill()
+  if (isSuper) {
+    ctx.strokeStyle = T.accent
+    ctx.lineWidth = 1
+    roundRect(ctx, PAD, y, rowW, GUIDE_ROW_H - 4, 6)
+    ctx.stroke()
+  }
+
+  ctx.fillStyle = T.text
+  ctx.font = 'bold 10px system-ui, sans-serif'
+  ctx.fillText(String(rebirth), PAD + 8, y + 38)
+  if (isSuper) {
+    ctx.fillStyle = T.accent
+    ctx.font = 'bold 8px system-ui, sans-serif'
+    ctx.fillText(L.guideSuperRow, PAD + 4, y + 52)
+  }
+  ctx.fillStyle = T.textMuted
+  ctx.font = '10px system-ui, sans-serif'
+  const credLines = splitTextLines(ctx, entry.credits, GUIDE_CRED_W - 8)
+  credLines.slice(0, 2).forEach((ln, i) => ctx.fillText(ln, PAD + GUIDE_NUM_W, y + 34 + i * 11))
+
+  const droidsX = PAD + GUIDE_NUM_W + GUIDE_CRED_W + 8
+  const droidsW = PAGE_W - PAD - droidsX
+  const cellW = droidsW / 3
+  for (let i = 0; i < entry.requirements.length; i++) {
+    const req = entry.requirements[i]!
+    await drawGuideDroidCell(ctx, droidsX + i * cellW, y + 6, cellW - 4, req.droidId, req.rarity)
+  }
+}
+
+async function drawGuideCompactHeader(
+  ctx: CanvasRenderingContext2D,
+  input: ExportCycleInput,
+  startY: number,
+): Promise<number> {
   const L = labels(input)
   const pathName = formatCycleDisplayName(
     cycleById.get(input.pathId)?.name ?? input.pathId,
     input.locale,
   )
+  let y = startY
   const logo = await loadImage('/pwa-512.png')
-  const top = PAD + 8
-  if (logo) ctx.drawImage(logo, PAD, top, 72, 72)
-
+  if (logo) ctx.drawImage(logo, PAD, y, 48, 48)
   ctx.fillStyle = T.text
-  ctx.font = 'bold 28px system-ui, sans-serif'
-  ctx.fillText(L.brand, PAD + 88, top + 32)
+  ctx.font = 'bold 20px system-ui, sans-serif'
+  ctx.fillText(L.brand, PAD + 56, y + 22)
   ctx.fillStyle = T.accent
-  ctx.font = 'bold 24px system-ui, sans-serif'
-  ctx.fillText(L.guideCoverHeading.replace('{{cycle}}', pathName), PAD + 88, top + 64)
+  ctx.font = 'bold 17px system-ui, sans-serif'
+  ctx.fillText(L.guideCoverHeading.replace('{{cycle}}', pathName), PAD + 56, y + 42)
+  y += 54
 
   ctx.fillStyle = T.textMuted
-  ctx.font = '14px system-ui, sans-serif'
-  wrapText(ctx, L.guideIntro, PAD, top + 108, PAGE_W - PAD * 2, 20)
-
-  const factsY = top + 168
-  const factW = (PAGE_W - PAD * 2 - COL_GAP * 2) / 3
-  const factH = 64
-  drawStatBlock(
-    ctx,
-    PAD,
-    factsY,
-    factW,
-    factH,
-    L.coverFactRebirths,
-    String(REBIRTHS_PER_PATH),
-  )
-  drawStatBlock(
-    ctx,
-    PAD + factW + COL_GAP,
-    factsY,
-    factW,
-    factH,
-    L.coverFactSuper,
-    `#${SUPER_REBIRTH_UNLOCK_AFTER}`,
-  )
-  drawStatBlock(
-    ctx,
-    PAD + (factW + COL_GAP) * 2,
-    factsY,
-    factW,
-    factH,
-    L.coverFactDroids,
-    String(distinctDroidsOnPath(input.pathId)),
-  )
-
-  ctx.fillStyle = T.textSoft
-  ctx.font = '13px system-ui, sans-serif'
-  ctx.fillText(L.date, PAD, factsY + factH + 28)
+  ctx.font = '10px system-ui, sans-serif'
+  const facts = `${L.coverFactRebirths}: ${REBIRTHS_PER_PATH} · ${L.coverFactSuper}: #${SUPER_REBIRTH_UNLOCK_AFTER} · ${L.coverFactDroids}: ${distinctDroidsOnPath(input.pathId)}`
+  ctx.fillText(facts, PAD, y)
+  y += 14
   ctx.fillText(
     L.dataVersion
       .replace('{{version}}', gameData.dataVersion)
       .replace('{{game}}', gameData.gameVersion),
     PAD,
-    factsY + factH + 48,
+    y,
   )
+  y += 14
+  wrapText(ctx, L.guideIntro, PAD, y, PAGE_W - PAD * 2, 11)
+  y += 22
 
+  ctx.fillStyle = T.text
+  ctx.font = 'bold 10px system-ui, sans-serif'
+  ctx.fillText(L.guideHowToTitle, PAD, y)
+  y += 12
+  ctx.fillStyle = T.textMuted
+  ctx.font = '9px system-ui, sans-serif'
+  for (const key of ['guideHowTo1', 'guideHowTo2', 'guideHowTo3'] as const) {
+    wrapText(ctx, `• ${L[key]}`, PAD + 4, y, PAGE_W - PAD * 2 - 4, 11)
+    y += 20
+  }
+  ctx.fillStyle = T.textSoft
+  ctx.font = '9px system-ui, sans-serif'
+  ctx.fillText(L.date, PAD, y)
+  return y + 12
+}
+
+function drawGuideClosingNotes(
+  ctx: CanvasRenderingContext2D,
+  input: ExportCycleInput,
+  startY: number,
+): number {
+  const L = labels(input)
+  let y = startY
   ctx.strokeStyle = T.border
   ctx.beginPath()
-  ctx.moveTo(PAD, PAGE_H - PAD - 56)
-  ctx.lineTo(PAGE_W - PAD, PAGE_H - PAD - 56)
+  ctx.moveTo(PAD, y)
+  ctx.lineTo(PAGE_W - PAD, y)
   ctx.stroke()
-  ctx.fillStyle = T.textSoft
-  ctx.font = '11px system-ui, sans-serif'
-  wrapText(ctx, L.disclaimer, PAD, PAGE_H - PAD - 44, PAGE_W - PAD * 2, 14)
-}
-
-function reqBrief(droidId: string, tierId: string): string {
-  const name = droidById.get(droidId)?.name ?? droidId
-  const short = name.length > 8 ? `${name.slice(0, 7)}…` : name
-  const tier = formatTierName(tierId as RebirthUnitUsage['tier'], exportTierLabels)
-  const tShort = tier.length > 6 ? `${tier.slice(0, 5)}…` : tier
-  return `${short} (${tShort})`
-}
-
-function drawOverviewRow(
-  ctx: CanvasRenderingContext2D,
-  input: ExportCycleInput,
-  x: number,
-  y: number,
-  n: number,
-) {
-  const entry = getRebirth(input.pathId, n)
-  if (!entry) return
+  y += 16
   ctx.fillStyle = T.text
-  ctx.font = '9px system-ui, sans-serif'
-  ctx.fillText(String(n), x, y)
+  ctx.font = 'bold 12px system-ui, sans-serif'
+  ctx.fillText(L.closingTitle, PAD, y)
+  y += 18
   ctx.fillStyle = T.textMuted
-  const cred = entry.credits.length > 9 ? `${entry.credits.slice(0, 8)}…` : entry.credits
-  ctx.fillText(cred, x + 24, y)
-  const reqs = entry.requirements.map((r) => reqBrief(r.droidId, r.rarity)).join(', ')
-  const reqShort = reqs.length > 38 ? `${reqs.slice(0, 37)}…` : reqs
-  ctx.fillStyle = T.textSoft
-  ctx.fillText(reqShort, x + 92, y)
-}
-
-function drawOverviewTablePage(
-  ctx: CanvasRenderingContext2D,
-  input: ExportCycleInput,
-  pageIndex: 0 | 1,
-) {
-  const L = labels(input)
-  ctx.fillStyle = T.text
-  ctx.font = 'bold 22px system-ui, sans-serif'
-  ctx.fillText(
-    pageIndex === 0 ? L.overviewTitle : `${L.overviewTitle} (21-40)`,
+  ctx.font = 'bold 11px system-ui, sans-serif'
+  ctx.fillText(L.superTitle, PAD, y)
+  y += 14
+  ctx.font = '10px system-ui, sans-serif'
+  wrapText(
+    ctx,
+    L.superBody.replace('{{n}}', String(SUPER_REBIRTH_UNLOCK_AFTER)),
     PAD,
-    PAD + 28,
+    y,
+    PAGE_W - PAD * 2,
+    13,
   )
-
-  const colW = (PAGE_W - PAD * 2 - COL_GAP) / 2
-  const leftX = PAD
-  const rightX = PAD + colW + COL_GAP
-  const rowH = 18
-  const headerY = PAD + 48
-
-  for (const x of [leftX, rightX]) {
-    ctx.fillStyle = T.textMuted
-    ctx.font = 'bold 9px system-ui, sans-serif'
-    ctx.fillText('#', x, headerY)
-    ctx.fillText(L.credits, x + 24, headerY)
-    ctx.fillText(L.requirements, x + 92, headerY)
-  }
-
-  const base = pageIndex === 0 ? 1 : 21
-  for (let i = 0; i < 10; i++) {
-    const y = headerY + 12 + i * rowH
-    drawOverviewRow(ctx, input, leftX, y, base + i)
-    drawOverviewRow(ctx, input, rightX, y, base + 10 + i)
-  }
+  y += 36
+  ctx.fillStyle = T.textSoft
+  ctx.font = '9px system-ui, sans-serif'
+  wrapText(ctx, L.disclaimer, PAD, y, PAGE_W - PAD * 2, 12)
+  y += 28
+  wrapText(ctx, L.sources, PAD, y, PAGE_W - PAD * 2, 12)
+  return y + 20
 }
 
-async function renderOverviewPages(input: ExportCycleInput): Promise<HTMLCanvasElement[]> {
+async function renderGuidePages(input: ExportCycleInput): Promise<HTMLCanvasElement[]> {
   const pages: HTMLCanvasElement[] = []
-  for (const idx of [0, 1] as const) {
+  let rebirth = 1
+  let pageIndex = 0
+  const bottom = PAGE_H - FOOTER_H - PAD
+
+  while (rebirth <= REBIRTHS_PER_PATH) {
     const { canvas, ctx } = createPageCanvas()
     fillBackground(ctx)
-    drawOverviewTablePage(ctx, input, idx)
+    let y = PAD
+    if (pageIndex === 0) {
+      y = await drawGuideCompactHeader(ctx, input, y)
+    } else {
+      const L = labels(input)
+      ctx.fillStyle = T.textMuted
+      ctx.font = 'bold 11px system-ui, sans-serif'
+      ctx.fillText(L.guideContinued, PAD, y + 12)
+      y += 24
+    }
+    y = drawGuideTableHeaders(ctx, input, y)
+
+    while (rebirth <= REBIRTHS_PER_PATH && y + GUIDE_ROW_H <= bottom) {
+      await drawGuideRebirthRow(ctx, input, y, rebirth, rebirth % 2 === 0)
+      y += GUIDE_ROW_H
+      rebirth++
+    }
+
     pages.push(canvas)
+    if (rebirth > REBIRTHS_PER_PATH) {
+      const notesBlockH = 148
+      const notesY = Math.max(y + 10, PAGE_H - FOOTER_H - notesBlockH - PAD)
+      drawGuideClosingNotes(ctx, input, notesY)
+      return pages
+    }
+    pageIndex++
   }
+
   return pages
 }
 
@@ -827,11 +926,24 @@ export async function buildCyclePdfCanvases(input: ExportCycleInput): Promise<HT
   const cycle = cycleById.get(input.pathId)
   if (!cycle) return []
 
-  const rebirthSheets = mode === 'guide' ? 0 : countRebirthSheetPages(cycle.rebirths.length)
-  const overviewCount = mode === 'guide' ? 2 : 0
-  const totalPages = (mode === 'guide' ? 1 + overviewCount : 1 + rebirthSheets) + 1
-  let pageNum = 0
   const out: HTMLCanvasElement[] = []
+
+  if (mode === 'guide') {
+    const guidePages = await renderGuidePages(input)
+    const totalPages = guidePages.length
+    guidePages.forEach((canvas, i) => {
+      const ctx = canvas.getContext('2d')
+      if (ctx) {
+        drawPageFooter(ctx, input, i + 1, totalPages)
+        out.push(canvas)
+      }
+    })
+    return out
+  }
+
+  const rebirthSheets = countRebirthSheetPages(cycle.rebirths.length)
+  const totalPages = 1 + rebirthSheets + 1
+  let pageNum = 0
 
   const stamp = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
     pageNum++
@@ -839,18 +951,7 @@ export async function buildCyclePdfCanvases(input: ExportCycleInput): Promise<HT
     out.push(canvas)
   }
 
-  if (mode === 'guide') {
-    const g1 = createPageCanvas()
-    fillBackground(g1.ctx)
-    await drawGuideCover(g1.ctx, input)
-    stamp(g1.canvas, g1.ctx)
-
-    const overviewPages = await renderOverviewPages(input)
-    for (const canvas of overviewPages) {
-      const ctx = canvas.getContext('2d')
-      if (ctx) stamp(canvas, ctx)
-    }
-  } else {
+  {
     const cover = createPageCanvas()
     fillBackground(cover.ctx)
     await drawCover(cover.ctx, input)

@@ -58,11 +58,11 @@ test('export sample PDFs (pt-BR)', async ({ page }) => {
   const rasterize = (pdfFile: string, outPrefix: string, maxPages: number) => {
     const pdfPath = path.join(ARTIFACTS, pdfFile)
     const prefix = path.join(ARTIFACTS, outPrefix)
-    execSync(`pdftoppm -png -r 144 -f 1 -l ${maxPages} "${pdfPath}" "${prefix}"`, {
+    execSync(`pdftoppm -png -r 110 -f 1 -l ${maxPages} "${pdfPath}" "${prefix}"`, {
       stdio: 'pipe',
     })
   }
 
-  rasterize('pdf-ciclo-guia-pt.pdf', 'pdf-ciclo-guia-pt-page', 4)
-  rasterize('pdf-progresso-pt.pdf', 'pdf-progresso-pt-page', 3)
+  rasterize('pdf-ciclo-guia-pt.pdf', 'pdf-ciclo-guia-pt-page', 3)
+  rasterize('pdf-progresso-pt.pdf', 'pdf-progresso-pt-page', 5)
 })

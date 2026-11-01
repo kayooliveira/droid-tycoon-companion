@@ -11,7 +11,9 @@ function canvasSupported(): boolean {
 }
 
 describe('exportCycle PDF page renders', () => {
-  it('writes sample guide and progress PNG pages when UX_ARTIFACTS_DIR is set', async () => {
+  it(
+    'writes sample guide and progress PNG pages when UX_ARTIFACTS_DIR is set',
+    async () => {
     if (!process.env.UX_ARTIFACTS_DIR || !canvasSupported()) return
 
     fs.mkdirSync(ARTIFACTS, { recursive: true })
@@ -25,7 +27,7 @@ describe('exportCycle PDF page renders', () => {
       inventory: [],
     })
     expect(guidePages.length).toBeGreaterThan(2)
-    guidePages.slice(0, 4).forEach((canvas, i) => {
+    guidePages.forEach((canvas, i) => {
       const data = canvas.toDataURL('image/png').split(',')[1]
       fs.writeFileSync(
         path.join(ARTIFACTS, `pdf-ciclo-guia-pt-${i + 1}.png`),
@@ -42,12 +44,14 @@ describe('exportCycle PDF page renders', () => {
       inventory: [],
     })
     expect(progressPages.length).toBeGreaterThan(2)
-    progressPages.slice(0, 4).forEach((canvas, i) => {
+    progressPages.slice(0, 5).forEach((canvas, i) => {
       const data = canvas.toDataURL('image/png').split(',')[1]
       fs.writeFileSync(
         path.join(ARTIFACTS, `pdf-progresso-pt-${i + 1}.png`),
         Buffer.from(data!, 'base64'),
       )
     })
-  })
+  },
+  60_000,
+  )
 })

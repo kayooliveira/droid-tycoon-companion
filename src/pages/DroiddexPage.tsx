@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { gameData } from '../domain/gameData'
 import { formatTierName } from '../domain/tiers'
+import { formatBaseRarity } from '../i18n/tierLabels'
 import { useTierLabels } from '../i18n/useTierLabels'
 import { DroidImage } from '../components/DroidImage'
 import { Badge } from '../components/ui/Badge'
@@ -76,7 +77,7 @@ export function DroiddexPage() {
           >
             <DroidImage droid={d} className="self-center mb-2" />
             <p className="text-sm font-medium truncate w-full">{d.name}</p>
-            <p className="text-[10px] text-zinc-500">{d.baseRarity}</p>
+            <p className="text-[10px] text-zinc-500">{formatBaseRarity(d.baseRarity, t)}</p>
           </button>
         ))}
       </div>
@@ -92,7 +93,7 @@ export function DroiddexPage() {
               <DroidImage droid={selected} size="lg" />
               <div className="space-y-2 text-sm">
                 <Badge>{selected.class}</Badge>
-                <Badge tone="info">{selected.baseRarity}</Badge>
+                <Badge tone="info">{formatBaseRarity(selected.baseRarity, t)}</Badge>
                 {selected.fusionOnly ? <Badge tone="warn">{t('droiddex.fusionOnly')}</Badge> : null}
                 <Badge tone={selected.confidence === 'confirmed' ? 'success' : 'warn'}>
                   {t(`confidence.${selected.confidence}`)}

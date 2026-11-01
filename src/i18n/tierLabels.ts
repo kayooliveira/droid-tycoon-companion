@@ -29,6 +29,26 @@ export function rarityLabel(t: TFunction, rarityId: string): string {
   return t(`rarity.${rarityId}`, { defaultValue: rarityId })
 }
 
+/** Game JSON uses title-case (`Common`); i18n keys are lowercase ids. */
+export function baseRarityIdFromGameValue(value: string): string {
+  return value.trim().toLowerCase()
+}
+
+export function formatBaseRarity(value: string, t: TFunction): string {
+  return rarityLabel(t, baseRarityIdFromGameValue(value))
+}
+
+export function buildI18nRarityLabelMapForLocale(locale: 'en' | 'pt-BR'): Map<string, string> {
+  const tree = locale === 'pt-BR' ? pt : en
+  const rarities = (tree as { rarity?: Record<string, string> }).rarity ?? {}
+  return new Map(RARITY_IDS.map((id) => [id, rarities[id] ?? id]))
+}
+
+export function formatBaseRarityWithMap(value: string, labels: Map<string, string>): string {
+  const id = baseRarityIdFromGameValue(value)
+  return labels.get(id) ?? value
+}
+
 export function buildI18nTierLabelMapForLocale(locale: 'en' | 'pt-BR'): Map<string, string> {
   const tree = locale === 'pt-BR' ? pt : en
   const tiers = (tree as { tier?: Record<string, string> }).tier ?? {}

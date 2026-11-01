@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { droidById, gameData } from '../domain/gameData'
 import { droidHasFutureNeedOnPath } from '../domain/sellCenter'
 import { formatTierName } from '../domain/tiers'
-import { rarityLabel } from '../i18n/tierLabels'
+import { formatBaseRarity, rarityLabel } from '../i18n/tierLabels'
 import { useTierLabels } from '../i18n/useTierLabels'
 import type { TierId } from '../domain/types'
 import { DroidImage } from '../components/DroidImage'
@@ -136,7 +136,7 @@ export function InventoryPage() {
               <div className="flex-1 min-w-0">
                 <p className="font-medium truncate">{droid.name}</p>
                 <div className="flex flex-wrap gap-2 mt-1">
-                  <Badge>{droid.baseRarity}</Badge>
+                  <Badge>{formatBaseRarity(droid.baseRarity, t)}</Badge>
                   <Badge tone="info">{formatTierName(unit.tier, tierLabels)}</Badge>
                   <Badge tone={needed ? 'warn' : 'success'}>
                     {needed ? t('inventory.neededLater') : t('inventory.notNeeded')}
