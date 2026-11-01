@@ -7,6 +7,8 @@ import {
   Check,
   CheckCircle,
   Export,
+  Minus,
+  Plus,
   Storefront,
   TreeStructure,
 } from '@phosphor-icons/react'
@@ -285,17 +287,18 @@ export function OnboardingPage() {
                     <Button
                       variant="secondary"
                       size="icon"
+                      iconOnly
+                      icon={<Minus {...uiIconProps} size={22} />}
                       aria-label={t('onboarding.decrease')}
-                      className="min-h-12 min-w-12 text-xl"
+                      className="min-h-12 min-w-12 [&_svg]:size-[22px]"
+                      disabled={completed <= 0}
                       onClick={() => setCompleted((v) => Math.max(0, v - 1))}
-                    >
-                      −
-                    </Button>
+                    />
                     <div className="text-center min-w-[5rem]">
                       <p className="text-[10px] uppercase tracking-widest text-zinc-500">
                         {t('onboarding.progressHintShort')}
                       </p>
-                      <p className="font-display text-6xl font-bold tabular-nums text-white leading-none py-1">
+                      <p className="font-sans text-[56px] font-bold tabular-nums text-white leading-none py-1">
                         {completed}
                       </p>
                       <p className="text-xs text-zinc-400">
@@ -305,12 +308,13 @@ export function OnboardingPage() {
                     <Button
                       variant="secondary"
                       size="icon"
+                      iconOnly
+                      icon={<Plus {...uiIconProps} size={22} />}
                       aria-label={t('onboarding.increase')}
-                      className="min-h-12 min-w-12 text-xl"
+                      className="min-h-12 min-w-12 [&_svg]:size-[22px]"
+                      disabled={completed >= REBIRTHS_PER_PATH}
                       onClick={() => setCompleted((v) => Math.min(REBIRTHS_PER_PATH, v + 1))}
-                    >
-                      +
-                    </Button>
+                    />
                   </div>
                   <input
                     type="range"
@@ -351,20 +355,25 @@ export function OnboardingPage() {
             ) : null}
 
             {current === 'features' ? (
-              <>
+              <div className="flex-1 flex flex-col justify-center gap-5 min-h-0 py-2">
                 <StepHeader title={t('onboarding.featuresTitle')} subtitle={t('onboarding.featuresHint')} />
-                <div className="grid grid-cols-3 gap-2.5 shrink-0">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 shrink-0">
                   {[
-                    { icon: TreeStructure, label: t('nav.progress') },
-                    { icon: Storefront, label: t('nav.sell') },
-                    { icon: Export, label: t('onboarding.featureExport') },
-                  ].map(({ icon: Icon, label }) => (
+                    {
+                      icon: TreeStructure,
+                      label: t('nav.progress'),
+                      desc: t('onboarding.featureProgressDesc'),
+                    },
+                    { icon: Storefront, label: t('nav.sell'), desc: t('onboarding.featureSellDesc') },
+                    { icon: Export, label: t('onboarding.featureExport'), desc: t('onboarding.featureExportDesc') },
+                  ].map(({ icon: Icon, label, desc }) => (
                     <div
                       key={label}
-                      className="rounded-2xl border border-white/10 bg-white/5 p-3 flex flex-col items-center gap-2.5 text-center min-h-[6rem] justify-center"
+                      className="rounded-2xl border border-white/10 bg-white/5 p-3.5 flex flex-col items-center gap-2 text-center min-h-[7.5rem] justify-center"
                     >
                       <Icon {...uiIconProps} className="text-holo-300" size={28} />
-                      <span className="text-[11px] font-semibold leading-tight text-zinc-200">{label}</span>
+                      <span className="text-xs font-semibold leading-tight text-zinc-100">{label}</span>
+                      <span className="text-[10px] leading-snug text-zinc-500 text-pretty">{desc}</span>
                     </div>
                   ))}
                 </div>
@@ -373,7 +382,7 @@ export function OnboardingPage() {
                   checked={settings.trackInventory}
                   onChange={(v) => updateSettings({ trackInventory: v })}
                 />
-              </>
+              </div>
             ) : null}
           </div>
         </div>
