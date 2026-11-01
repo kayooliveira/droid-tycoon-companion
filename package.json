@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "preview": "vite preview --host",
-    "generate:icons": "node scripts/generate-icons.mjs"
+    "generate:icons": "node scripts/generate-icons.mjs",
+    "test:docker-nginx": "bash scripts/docker-nginx-mime-smoke.sh"
   },
   "dependencies": {
     "i18next": "^26.6.0",
