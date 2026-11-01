@@ -1,6 +1,8 @@
 import { motion } from 'motion/react'
 import { useState } from 'react'
-import { ChevronDown, RotateCcw, Sparkles } from 'lucide-react'
+import { Check, ChevronDown, RotateCcw, Sparkles } from 'lucide-react'
+import { SegmentedControl } from '../components/ui/SegmentedControl'
+import { UI_ICON_SIZE, UI_ICON_STROKE } from '../components/ui/iconStyle'
 import { useTranslation } from 'react-i18next'
 import {
   droidById,
@@ -79,24 +81,19 @@ export function ProgressPage() {
     <div className="space-y-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-2">
-          <h1 className="font-display text-2xl tracking-wide">{t('nav.progress')}</h1>
+          <h1 className="font-display text-xl tracking-wide text-balance">{t('nav.progress')}</h1>
           <PathProgressSwitcher compact />
           <ProgressSummaryLine />
         </div>
-        <div className="flex rounded-xl border border-white/10 p-1">
-          {(['focus', 'list'] as const).map((m) => (
-            <button
-              key={m}
-              type="button"
-              onClick={() => setMode(m)}
-              className={`px-3 py-1.5 text-sm rounded-lg capitalize ${
-                mode === m ? 'bg-white/10' : 'text-zinc-400'
-              }`}
-            >
-              {t(`progress.${m}`)}
-            </button>
-          ))}
-        </div>
+        <SegmentedControl
+          ariaLabel={t('progress.viewMode')}
+          value={mode}
+          onChange={setMode}
+          options={[
+            { value: 'focus', label: t('progress.focus') },
+            { value: 'list', label: t('progress.list') },
+          ]}
+        />
       </div>
 
       {mode === 'focus' ? (
@@ -122,32 +119,42 @@ export function ProgressPage() {
                 )}
               </div>
               {!canComplete && trackInventory ? (
-                <p className="text-sm text-amber-200/90 border border-amber-400/20 rounded-lg p-3">
-                  {t('progress.completeBlocked')}
-                </p>
+                <p className="text-xs text-amber-200/90 text-pretty">{t('progress.completeBlockedShort')}</p>
               ) : null}
-              <div className="flex flex-wrap gap-2 pt-2">
-                <Button onClick={handleCompleteClick} disabled={trackInventory && !canComplete}>
-                  {t('progress.completeRebirth')}
+              <div className="flex flex-wrap gap-2 pt-1">
+                <Button
+                  size="sm"
+                  icon={<Check size={UI_ICON_SIZE} strokeWidth={UI_ICON_STROKE} />}
+                  onClick={handleCompleteClick}
+                  disabled={trackInventory && !canComplete}
+                >
+                  {t('progress.completeShort')}
                 </Button>
-                {trackInventory && !canComplete ? (
-                  <Button variant="secondary" onClick={() => setForceCompleteOpen(true)}>
-                    {t('progress.completeAnyway')}
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  iconOnly
+                  aria-label={t('progress.undoOne')}
+                  onClick={() => setUndoOpen(true)}
+                >
+                  <RotateCcw size={UI_ICON_SIZE} strokeWidth={UI_ICON_STROKE} />
+                </Button>
+                {canSuperRebirth(progress) ? (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    icon={<Sparkles size={UI_ICON_SIZE} strokeWidth={UI_ICON_STROKE} />}
+                    onClick={() => superRebirthAdvance()}
+                  >
+                    {t('progress.superShort')}
                   </Button>
                 ) : null}
-                <Button variant="secondary" onClick={() => setUndoOpen(true)}>
-                  <RotateCcw size={16} /> {t('progress.undoOne')}
-                </Button>
               </div>
-              {canSuperRebirth(progress) ? (
-                <Button variant="secondary" onClick={() => superRebirthAdvance()}>
-                  <Sparkles size={16} /> {t('progress.superRebirth')}
-                </Button>
-              ) : (
-                <p className="text-xs text-zinc-500">
+              {!canSuperRebirth(progress) ? (
+                <p className="text-[11px] text-zinc-500 text-pretty">
                   {t('progress.superHint', { n: SUPER_REBIRTH_UNLOCK_AFTER })}
                 </p>
-              )}
+              ) : null}
               <SellAfterRebirthList
                 pathId={progress.pathId}
                 afterRebirth={current.rebirth}
@@ -182,28 +189,40 @@ export function ProgressPage() {
 
       <DownloadCycleMenu />
 
-      <Modal open={forceCompleteOpen} onClose={() => setForceCompleteOpen(false)} title={t('progress.completeAnyway')}>
-        <p className="text-sm text-zinc-400 mb-4">{t('progress.completeBlocked')}</p>
-        <div className="flex gap-2">
-          <Button variant="secondary" className="flex-1" onClick={() => setForceCompleteOpen(false)}>
-            {t('path.cancel')}
-          </Button>
-          <Button className="flex-1" onClick={confirmForceComplete}>
-            {t('progress.completeAnyway')}
-          </Button>
-        </div>
+      <Modal
+        open={forceCompleteOpen}
+        onClose={() => setForceCompleteOpen(false)}
+        title={t('progress.completeAnyway')}
+        footer={
+          <>
+            <Button variant="secondary" size="sm" onClick={() => setForceCompleteOpen(false)}>
+              {t('path.cancel')}
+            </Button>
+            <Button size="sm" onClick={confirmForceComplete}>
+              {t('progress.completeShort')}
+            </Button>
+          </>
+        }
+      >
+        <p className="text-xs text-zinc-400 text-pretty">{t('progress.completeBlockedShort')}</p>
       </Modal>
 
-      <Modal open={undoOpen} onClose={() => setUndoOpen(false)} title={t('progress.undoOne')}>
-        <p className="text-sm text-zinc-400 mb-4">{t('progress.undoConfirm')}</p>
-        <div className="flex gap-2">
-          <Button variant="secondary" className="flex-1" onClick={() => setUndoOpen(false)}>
-            {t('path.cancel')}
-          </Button>
-          <Button className="flex-1" onClick={confirmUndo}>
-            {t('progress.undoOne')}
-          </Button>
-        </div>
+      <Modal
+        open={undoOpen}
+        onClose={() => setUndoOpen(false)}
+        title={t('progress.undoOne')}
+        footer={
+          <>
+            <Button variant="secondary" size="sm" onClick={() => setUndoOpen(false)}>
+              {t('path.cancel')}
+            </Button>
+            <Button size="sm" onClick={confirmUndo}>
+              {t('progress.undoConfirmShort')}
+            </Button>
+          </>
+        }
+      >
+        <p className="text-xs text-zinc-400 text-pretty">{t('progress.undoConfirm')}</p>
       </Modal>
     </div>
   )

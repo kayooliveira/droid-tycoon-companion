@@ -41,7 +41,40 @@
   }
 
   body.theme-light {
-    @apply bg-zinc-100 text-zinc-900;
+    @apply bg-zinc-50 text-zinc-900;
+  }
+
+  body.theme-light .text-zinc-100,
+  body.theme-light .text-zinc-200 {
+    @apply text-zinc-900;
+  }
+
+  body.theme-light .text-zinc-300,
+  body.theme-light .text-zinc-400 {
+    @apply text-zinc-600;
+  }
+
+  body.theme-light .text-zinc-500 {
+    @apply text-zinc-500;
+  }
+
+  body.theme-light .border-white\/10 {
+    border-color: rgb(24 24 27 / 0.12);
+  }
+
+  body.theme-light .bg-black\/20,
+  body.theme-light .bg-white\/5 {
+    @apply bg-zinc-900/5;
+  }
+
+  body.theme-light .bg-white\/10,
+  body.theme-light .bg-white\/12 {
+    @apply bg-zinc-900/8;
+  }
+
+  body.theme-light .bg-surface-900\/80,
+  body.theme-light .bg-surface-950\/90 {
+    @apply bg-white/90;
   }
 
   :focus-visible {
@@ -55,7 +88,7 @@
   }
 
   body.theme-light .glass-panel {
-    @apply border-zinc-900/10 bg-white/70;
+    @apply border-zinc-300/60 bg-white/85 shadow-md;
   }
 
   .font-display {
@@ -64,6 +97,10 @@
 
   .text-gradient-holo {
     @apply bg-gradient-to-r from-holo-300 via-accent-cyan to-holo-400 bg-clip-text text-transparent;
+  }
+
+  body.theme-light .text-gradient-holo {
+    @apply from-holo-700 via-teal-600 to-holo-600;
   }
 }
 

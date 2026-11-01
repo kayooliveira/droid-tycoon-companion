@@ -45,7 +45,7 @@ export function DashboardPage() {
   return (
     <div className="space-y-6" data-testid="dashboard-ready">
       <GlassCard className="space-y-3 border-holo-500/20 bg-holo-600/5">
-        <p className="text-sm text-zinc-300 leading-relaxed">{t('dashboard.hero')}</p>
+        <p className="text-sm text-zinc-400 text-pretty leading-snug">{t('dashboard.hero')}</p>
         <div className="flex flex-wrap gap-2">
           <Link
             to="/progress"

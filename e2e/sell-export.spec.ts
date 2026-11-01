@@ -11,7 +11,7 @@ test.describe('sell list and cycle export', () => {
 
   test('progress shows sell-after list', async ({ page }) => {
     await page.goto('/settings')
-    await page.getByTestId('language-select').selectOption('pt-BR')
+    await page.getByTestId('language-select').getByRole('radio', { name: /PT/i }).click()
     await page.goto('/progress')
     await expect(page.getByTestId('sell-after-list').or(page.getByTestId('sell-after-empty'))).toBeVisible({
       timeout: 15000,

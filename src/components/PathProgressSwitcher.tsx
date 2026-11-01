@@ -7,6 +7,8 @@ import { useAppStore } from '../store/useAppStore'
 import { useToast } from './ToastProvider'
 import { Button } from './ui/Button'
 import { Modal } from './ui/Modal'
+import { RadioCardGroup } from './ui/RadioCardGroup'
+import { Switch } from './ui/Switch'
 
 export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
   const { t, i18n } = useTranslation()
@@ -53,41 +55,51 @@ export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
         <ChevronDown size={14} className="opacity-60 shrink-0" />
       </button>
 
-      <Modal open={open} onClose={() => setOpen(false)} title={t('path.switchTitle')}>
-        <div className="space-y-4 text-sm">
-          <p className="text-zinc-400">{t('path.switchBody', { name: cycleLabel(targetPath) })}</p>
-          <label className="block">
-            <span className="text-zinc-300 mb-1 block">{t('settings.path')}</span>
-            <select
-              className="w-full rounded-lg bg-surface-800 border border-white/10 px-3 py-2"
-              value={targetPath}
-              onChange={(e) => setTargetPath(e.target.value)}
-              data-testid="path-switcher-select"
-            >
-              {gameData.cycles.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {formatCycleDisplayName(c.name, i18n.language)}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="flex items-start gap-2 text-zinc-300">
-            <input
-              type="checkbox"
-              className="mt-1"
-              checked={resetProgress}
-              onChange={(e) => setResetProgress(e.target.checked)}
-            />
-            <span>{t('path.resetRebirthOnSwitch')}</span>
-          </label>
-          <div className="flex gap-2 pt-2">
-            <Button variant="secondary" className="flex-1" onClick={() => setOpen(false)}>
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        title={t('path.switchTitle')}
+        footer={
+          <>
+            <Button variant="secondary" size="sm" onClick={() => setOpen(false)}>
               {t('path.cancel')}
             </Button>
-            <Button className="flex-1" data-testid="path-switcher-confirm" onClick={confirm}>
+            <Button size="sm" data-testid="path-switcher-confirm" onClick={confirm}>
               {t('path.confirmSwitch')}
             </Button>
-          </div>
+          </>
+        }
+      >
+        <div className="space-y-3">
+          <RadioCardGroup
+            ariaLabel={t('settings.path')}
+            value={targetPath}
+            onChange={setTargetPath}
+            columns={3}
+            options={gameData.cycles.map((c) => ({
+              value: c.id,
+              label: formatCycleDisplayName(c.name, i18n.language),
+            }))}
+          />
+          <select
+            className="sr-only"
+            value={targetPath}
+            onChange={(e) => setTargetPath(e.target.value)}
+            data-testid="path-switcher-select"
+            tabIndex={-1}
+            aria-hidden
+          >
+            {gameData.cycles.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+          <Switch
+            label={t('path.resetRebirthOnSwitch')}
+            checked={resetProgress}
+            onChange={setResetProgress}
+          />
         </div>
       </Modal>
     </>

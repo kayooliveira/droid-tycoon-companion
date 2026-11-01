@@ -21,7 +21,7 @@ test('path switcher updates path', async ({ page }) => {
   await page.getByTestId('path-switcher-select').selectOption('path-3')
   await page.getByTestId('path-switcher-confirm').click()
   await page.goto('/settings')
-  await expect(page.getByTestId('path-switcher-trigger')).toContainText(/Path 3|path-3/i)
+  await expect(page.getByTestId('path-switcher-trigger')).toContainText(/Path 3|Ciclo 3|path-3/i)
 })
 
 test('pt-BR locale via browser language', async ({ browser }) => {
