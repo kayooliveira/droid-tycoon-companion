@@ -156,6 +156,7 @@ export function ProgressPage() {
                     <IconButton
                       variant="soft"
                       className="shrink-0"
+                      data-testid="progress-more-trigger"
                       label={t('progress.moreActionsTitle')}
                       onClick={() => setMoreOpen(true)}
                     >
@@ -175,12 +176,14 @@ export function ProgressPage() {
                     {t('progress.completeShort')}
                   </Button>
                   <HelpHint
+                    testId="progress-super-hint"
                     label={t('progress.superShort')}
                     text={t('progress.superHint', { n: SUPER_REBIRTH_UNLOCK_AFTER })}
                   />
                   <IconButton
                     variant="soft"
                     className="shrink-0"
+                    data-testid="progress-more-trigger"
                     label={t('progress.moreActionsTitle')}
                     onClick={() => setMoreOpen(true)}
                   >
@@ -226,8 +229,14 @@ export function ProgressPage() {
         open={moreOpen}
         onClose={() => setMoreOpen(false)}
         title={t('progress.moreActionsTitle')}
+        testId="progress-more-modal"
         footer={
-          <Button variant="secondary" size="sm" onClick={() => setMoreOpen(false)}>
+          <Button
+            variant="secondary"
+            size="sm"
+            data-testid="progress-more-cancel"
+            onClick={() => setMoreOpen(false)}
+          >
             {t('path.cancel')}
           </Button>
         }
@@ -237,6 +246,7 @@ export function ProgressPage() {
             <Button
               size="sm"
               variant="secondary"
+              data-testid="progress-more-force-complete"
               onClick={() => {
                 setMoreOpen(false)
                 setForceCompleteOpen(true)
@@ -248,6 +258,7 @@ export function ProgressPage() {
           <Button
             size="sm"
             variant="secondary"
+            data-testid="progress-more-undo"
             icon={<ArrowCounterClockwise {...uiIconProps} />}
             onClick={() => {
               setMoreOpen(false)
@@ -277,12 +288,18 @@ export function ProgressPage() {
         open={forceCompleteOpen}
         onClose={() => setForceCompleteOpen(false)}
         title={t('progress.completeAnyway')}
+        testId="progress-force-complete-modal"
         footer={
           <>
-            <Button variant="secondary" size="sm" onClick={() => setForceCompleteOpen(false)}>
+            <Button
+              variant="secondary"
+              size="sm"
+              data-testid="progress-force-cancel"
+              onClick={() => setForceCompleteOpen(false)}
+            >
               {t('path.cancel')}
             </Button>
-            <Button size="sm" onClick={confirmForceComplete}>
+            <Button size="sm" data-testid="progress-force-confirm" onClick={confirmForceComplete}>
               {t('progress.completeShort')}
             </Button>
           </>
@@ -295,12 +312,13 @@ export function ProgressPage() {
         open={undoOpen}
         onClose={() => setUndoOpen(false)}
         title={t('progress.undoOne')}
+        testId="progress-undo-modal"
         footer={
           <>
-            <Button variant="secondary" size="sm" onClick={() => setUndoOpen(false)}>
+            <Button variant="secondary" size="sm" data-testid="progress-undo-cancel" onClick={() => setUndoOpen(false)}>
               {t('path.cancel')}
             </Button>
-            <Button size="sm" onClick={confirmUndo}>
+            <Button size="sm" data-testid="progress-undo-confirm" onClick={confirmUndo}>
               {t('progress.undoConfirmShort')}
             </Button>
           </>

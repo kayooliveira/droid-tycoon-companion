@@ -142,7 +142,13 @@ export function SettingsPage() {
         <SectionHeader
           icon={<Database {...uiIconProps} />}
           title={t('settings.dataSection')}
-          action={<HelpHint label={t('settings.dataHelp')} text={t('settings.updateHint')} />}
+          action={
+            <HelpHint
+              testId="settings-data-help"
+              label={t('settings.dataHelp')}
+              text={t('settings.updateHint')}
+            />
+          }
         />
         <p className="text-xs text-zinc-500 mb-3">
           {`v${meta.dataVersion} · ${meta.gameVersion}`}

@@ -81,7 +81,9 @@ export function InventoryPage() {
     <div className="space-y-5">
       <div className="flex flex-wrap gap-3 items-center justify-between">
         <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('inventory.title')}</h1>
-        <Button onClick={() => setAddOpen(true)}>{t('inventory.addDroid')}</Button>
+        <Button data-testid="inventory-add-open" onClick={() => setAddOpen(true)}>
+          {t('inventory.addDroid')}
+        </Button>
       </div>
       <input
         className="w-full rounded-xl bg-surface-800 border border-white/10 px-4 py-3 text-sm min-h-11"
@@ -178,7 +180,12 @@ export function InventoryPage() {
         ) : null}
       </div>
 
-      <Modal open={addOpen} onClose={() => setAddOpen(false)} title={t('inventory.modalTitle')}>
+      <Modal
+        open={addOpen}
+        onClose={() => setAddOpen(false)}
+        title={t('inventory.modalTitle')}
+        testId="inventory-add-modal"
+      >
         <div className="space-y-3">
           <input
             className="w-full rounded-lg bg-surface-800 border border-white/10 px-3 py-2 text-sm"
@@ -229,6 +236,7 @@ export function InventoryPage() {
           </label>
           <Button
             className="w-full"
+            data-testid="inventory-add-confirm"
             onClick={() => {
               addInventoryUnit(newDroidId, newTier, newQty)
               const name = droidById.get(newDroidId)?.name ?? newDroidId

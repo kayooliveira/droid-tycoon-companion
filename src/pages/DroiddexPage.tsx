@@ -86,6 +86,7 @@ export function DroiddexPage() {
         open={Boolean(selected)}
         onClose={() => setSelected(null)}
         title={selected?.name ?? t('droiddex.title')}
+        testId="droiddex-detail-modal"
       >
         {selected ? (
           <div className="space-y-4">

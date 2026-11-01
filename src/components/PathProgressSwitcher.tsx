@@ -60,6 +60,7 @@ export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
         open={open}
         onClose={() => setOpen(false)}
         title={t('path.switchTitle')}
+        testId="path-switch-modal"
         footer={
           <>
             <Button variant="secondary" size="sm" onClick={() => setOpen(false)}>

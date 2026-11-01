@@ -63,7 +63,7 @@ export function MobileFloatingNav({ onMore }: { onMore: () => void }) {
 
   return (
     <nav
-      className="md:hidden fixed z-50 inset-x-3 bottom-[calc(env(safe-area-inset-bottom,0px)+12px)]"
+      className="md:hidden fixed z-nav inset-x-3 bottom-[calc(env(safe-area-inset-bottom,0px)+12px)]"
       aria-label={t('a11y.mainNav')}
       data-testid="mobile-floating-nav"
     >

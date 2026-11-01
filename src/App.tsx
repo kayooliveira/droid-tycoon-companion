@@ -5,6 +5,7 @@ import { AppShell } from './components/AppShell'
 import { GlassFilters } from './components/GlassFilters'
 import { PageSkeleton } from './components/PageSkeleton'
 import { SeoManager } from './components/SeoManager'
+import { OverlayStackProvider } from './components/OverlayStackProvider'
 import { ToastProvider, useToast } from './components/ToastProvider'
 import { DashboardPage } from './pages/DashboardPage'
 import { OnboardingPage } from './pages/OnboardingPage'
@@ -99,9 +100,10 @@ export default function App() {
   }, [])
 
   return (
-    <ToastProvider>
-      <GlassFilters />
-      <BrowserRouter>
+    <OverlayStackProvider>
+      <ToastProvider>
+        <GlassFilters />
+        <BrowserRouter>
         <LocaleSync />
         <SeoManager />
         <PwaRefreshListener />
@@ -182,7 +184,8 @@ export default function App() {
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </BrowserRouter>
-    </ToastProvider>
+        </BrowserRouter>
+      </ToastProvider>
+    </OverlayStackProvider>
   )
 }

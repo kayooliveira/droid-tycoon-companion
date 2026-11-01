@@ -37,6 +37,16 @@
   --mobile-nav-height: 5.25rem;
   --glass-solid-dark: #161f2e;
   --glass-solid-light: #ffffff;
+
+  /* Stacking: content < nav < banner < overlay backdrop < modal < popover < toast */
+  --z-index-content: 1;
+  --z-index-sticky: 40;
+  --z-index-nav: 45;
+  --z-index-banner: 46;
+  --z-index-overlay: 100;
+  --z-index-modal: 101;
+  --z-index-popover: 102;
+  --z-index-toast: 110;
 }
 
 @layer base {
@@ -332,6 +342,11 @@
 
   html.e2e-safe-area nav[data-testid='mobile-floating-nav'] {
     bottom: calc(var(--e2e-safe-bottom) + 12px);
+  }
+
+  html[data-overlay-open] nav[data-testid='mobile-floating-nav'] {
+    visibility: hidden;
+    pointer-events: none;
   }
 
   html {
