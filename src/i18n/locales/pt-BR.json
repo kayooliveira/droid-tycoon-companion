@@ -1,7 +1,8 @@
 {
   "app": {
-    "name": "Droid Tycoon Companion",
+    "name": "DT Helper",
     "shortName": "DT Helper",
+    "subtitle": "Companion para Star Wars Droid Tycoon",
     "tagline": "Rebirths, inventário e o que vender no Droid Tycoon.",
     "disclaimer": "Ferramenta de fã. Sem vínculo com Epic Games, Lucasfilm, Disney ou FOAD."
   },
@@ -137,7 +138,7 @@
   "onboarding": {
     "start": "Começar",
     "skip": "Pular",
-    "welcomeTitle": "Droid Tycoon Companion",
+    "welcomeTitle": "DT Helper",
     "welcomeBody": "Path, rebirths e o que guardar ou vender. Ilha 7865-8305-9184. Fan-made, não oficial.",
     "choosePath": "Escolha o Path",
     "progressTitle": "Onde você está neste Path?",
@@ -203,7 +204,7 @@
     "shareApp": "Compartilhar app",
     "whatsapp": "WhatsApp",
     "progressCard": "Card de progresso",
-    "message": "Droid Tycoon Companion — planner de rebirth da ilha: {{url}}",
+    "message": "DT Helper — planner de rebirth da ilha: {{url}}",
     "linkCopied": "Link copiado.",
     "cardTitle": "Meu progresso no Droid Tycoon",
     "cardShared": "Card enviado.",
@@ -239,10 +240,11 @@
     "quantity": "×{{n}}"
   },
   "seo": {
+    "defaultTitle": "DT Helper — Star Wars Droid Tycoon",
     "description": "Track Path, rebirths, inventory, and sell advice for Star Wars Droid Tycoon (Fortnite UEFN).",
     "descriptionPt": "Acompanhe Path, rebirths, inventário e o que vender no Star Wars Droid Tycoon (Fortnite UEFN).",
-    "ogImageAlt": "Droid Tycoon Companion — rebirths, inventory, and sell tips",
-    "ogImageAltPt": "Droid Tycoon Companion — rebirths, inventário e dicas de venda"
+    "ogImageAlt": "DT Helper — rebirths, inventory, and sell tips",
+    "ogImageAltPt": "DT Helper — rebirths, inventário e dicas de venda"
   },
   "a11y": {
     "markOwned": "Marcar {{name}} como tendo",

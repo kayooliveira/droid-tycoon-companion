@@ -58,8 +58,8 @@ export function AppShell() {
         <div className="p-5 flex items-center gap-3 border-b border-white/10">
           <Logo className="h-8 w-8" />
           <div className="min-w-0">
-            <p className="font-display text-sm tracking-wider text-gradient-holo truncate">DROID TYCOON</p>
-            <p className="text-xs text-zinc-400">Companion</p>
+            <p className="font-display text-sm tracking-wider text-gradient-holo truncate">{t('app.name')}</p>
+            <p className="text-xs text-zinc-400 truncate">{t('app.subtitle')}</p>
           </div>
         </div>
         <nav className="p-3 space-y-1 flex-1">
