@@ -8,7 +8,8 @@ import {
   consumeFromPool,
   poolRemainingUnits,
 } from './inventory'
-import { compareTiers, tierMeetsRequired } from './tiers'
+import { earliestUpgradeRequirement, maxFutureRequirementForDroid } from './sellTierRules'
+import { tierMeetsRequired } from './tiers'
 import type { InventoryUnit, TierId } from './types'
 
 export type SellCategory = 'keep' | 'sellable' | 'upgrade'
@@ -60,26 +61,6 @@ export function collectFutureNeeds(
   return needs
 }
 
-function maxRequiredTierForDroid(
-  needs: FutureNeed[],
-  droidId: string,
-): { tier: TierId; rebirth: number } | null {
-  const filtered = needs.filter((n) => n.droidId === droidId)
-  if (filtered.length === 0) return null
-  let best = filtered[0]!
-  for (const n of filtered) {
-    if (compareTiers(n.minTier, best.minTier) > 0) {
-      best = n
-    } else if (
-      compareTiers(n.minTier, best.minTier) === 0 &&
-      n.rebirth < best.rebirth
-    ) {
-      best = n
-    }
-  }
-  return { tier: best.minTier, rebirth: best.rebirth }
-}
-
 function earliestRebirthNeed(
   needs: FutureNeed[],
   droidId: string,
@@ -129,7 +110,7 @@ export function analyzeSellCenter(
     const droid = droidById.get(unit.droidId)
     const name = droid?.name ?? unit.droidId
 
-    const maxNeed = maxRequiredTierForDroid(futureNeeds, unit.droidId)
+    const maxNeed = maxFutureRequirementForDroid(pathId, unit.droidId, nextRebirth)
     const leftover = remaining.find(
       (r) => r.id === unit.id || (r.droidId === unit.droidId && r.tier === unit.tier),
     )
@@ -154,6 +135,15 @@ export function analyzeSellCenter(
     const nextRebirthNeed = earliestRebirthNeed(futureNeeds, unit.droidId, unit.tier)
 
     if (needsUpgrade) {
+      const completedRebirth = Math.max(0, nextRebirth - 1)
+      const nextStep = earliestUpgradeRequirement(
+        pathId,
+        unit.droidId,
+        unit.tier,
+        completedRebirth,
+      )
+      const hintTier = nextStep?.targetTier ?? maxNeed.tier
+      const hintRebirth = nextStep?.rebirth ?? maxNeed.rebirth
       items.push({
         unitId: unit.id,
         droidId: unit.droidId,
@@ -161,9 +151,9 @@ export function analyzeSellCenter(
         quantity: unit.quantity,
         category: 'upgrade',
         reasonKey: 'sell.upgradeRebirth',
-        reasonParams: { name, tier: maxNeed.tier, rebirth: maxNeed.rebirth },
-        nextNeededAtRebirth: maxNeed.rebirth,
-        upgradeTargetTier: maxNeed.tier,
+        reasonParams: { name, tier: hintTier, rebirth: hintRebirth },
+        nextNeededAtRebirth: hintRebirth,
+        upgradeTargetTier: hintTier,
       })
       continue
     }

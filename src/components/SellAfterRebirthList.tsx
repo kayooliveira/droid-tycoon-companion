@@ -43,6 +43,7 @@ function UnitRow({ unit }: { unit: RebirthUnitUsage }) {
         <div className="flex flex-wrap gap-1.5 items-center">
           <span className="text-sm font-medium truncate">{droid.name}</span>
           <Badge tone="info">{formatTierName(unit.tier, tierLabels)}</Badge>
+          {unit.quantity > 1 ? <Badge>×{unit.quantity}</Badge> : null}
           {unit.disposition !== 'sellable' ? (
             <Badge tone={tone}>{t(`sellAfter.${unit.disposition}`)}</Badge>
           ) : null}
@@ -59,6 +60,14 @@ function UnitRow({ unit }: { unit: RebirthUnitUsage }) {
         ) : null}
         {unit.disposition === 'fusionCaution' ? (
           <p className="text-[11px] text-ui-warn/80 mt-0.5">{t('sellAfter.fusionCautionHint')}</p>
+        ) : null}
+        {unit.upgradeHint ? (
+          <p className="text-[11px] text-ui-soft mt-0.5">
+            {t('sell.keepForUpgrade', {
+              tier: formatTierName(unit.upgradeHint.targetTier, tierLabels),
+              rebirth: unit.upgradeHint.rebirth,
+            })}
+          </p>
         ) : null}
       </div>
     </li>

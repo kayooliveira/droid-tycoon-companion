@@ -119,14 +119,21 @@ export function ProgressPdf({
           <View style={s.twoCol}>
             <View style={[s.halfCol, s.card]}>
               <Text style={[s.h2, { fontSize: 10, marginBottom: 4 }]}>{L.sellNow}</Text>
-              {p.sellNowLabels.length === 0 ? (
+              {p.sellNowLabels.length === 0 && p.keepUpgradeLabels.length === 0 ? (
                 <Text style={s.soft}>{L.noneSellNow}</Text>
               ) : (
-                p.sellNowLabels.map((line) => (
-                  <Text key={line} style={s.chipLine}>
-                    {line}
-                  </Text>
-                ))
+                <>
+                  {p.sellNowLabels.map((line) => (
+                    <Text key={line} style={s.chipLine}>
+                      {line}
+                    </Text>
+                  ))}
+                  {p.keepUpgradeLabels.map((line) => (
+                    <Text key={line} style={[s.chipLine, { color: c.textMuted }]}>
+                      {line}
+                    </Text>
+                  ))}
+                </>
               )}
             </View>
             <View style={[s.halfCol, s.card]}>

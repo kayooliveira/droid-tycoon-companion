@@ -118,11 +118,20 @@ export function SellCenterPage() {
                       const droid = droidById.get(item.droidId)
                       if (!droid) return null
                       const name = droid.name
-                      const reason = t(item.reasonKey, {
-                        ...item.reasonParams,
-                        name,
-                        defaultValue: item.reasonKey,
-                      })
+                      const reason =
+                        item.category === 'upgrade' && item.upgradeTargetTier && item.nextNeededAtRebirth
+                          ? t('sell.keepForUpgrade', {
+                              tier: formatTierName(item.upgradeTargetTier, tierLabels),
+                              rebirth: item.nextNeededAtRebirth,
+                            })
+                          : t(item.reasonKey, {
+                              ...item.reasonParams,
+                              name,
+                              tier: item.upgradeTargetTier
+                                ? formatTierName(item.upgradeTargetTier, tierLabels)
+                                : item.reasonParams.tier,
+                              defaultValue: item.reasonKey,
+                            })
                       const plan = inventorySafeToSellNow(
                         progress.pathId,
                         completedRebirth,

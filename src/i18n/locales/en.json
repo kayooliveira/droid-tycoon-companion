@@ -153,6 +153,7 @@
     "sellableExtra": "Sell {{qty}} extra {{name}}. You only need one for what's left on this Path.",
     "keepRebirth": "Keep {{name}}. Needed again at rebirth #{{rebirth}}.",
     "upgradeRebirth": "Bring {{name}} up to at least {{tier}} before rebirth #{{rebirth}}.",
+    "keepForUpgrade": "Keep: upgrade to {{tier}} at #{{rebirth}}",
     "safeNowTitle": "Safe to sell right now",
     "safeNowHint": "Based on rebirths you've finished through #{{rebirth}} and what's left on this Path.",
     "safeNowLine": "In your inventory and clear to sell before the next rebirth."
@@ -448,6 +449,7 @@
     "nextRebirth": "Next rebirth",
     "inventory": "Units tracked",
     "sellNow": "Safe to sell now",
+    "keepForUpgrade": "Keep: upgrade to {{tier}} at #{{rebirth}}",
     "rebirth": "Rebirth",
     "credits": "Credits",
     "requirements": "Required droids",

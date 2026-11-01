@@ -29,15 +29,26 @@ export function PdfSellCompactLines({
   if (lines.length === 0) {
     return <Text style={s.soft}>{emptyLabel}</Text>
   }
-  return (
-    <View>
-      {lines.map((line) => (
-        <Text key={`${line.label}-${line.disposition}`} style={s.sellCompactLine}>
-          {sellLineText(line, labels)}
-        </Text>
-      ))}
-    </View>
+
+  const renderLine = (line: PdfSellLine) => (
+    <Text key={`${line.label}-${line.disposition}`} style={s.sellCompactLine}>
+      {sellLineText(line, labels)}
+    </Text>
   )
+
+  if (lines.length >= 4) {
+    const split = Math.ceil(lines.length / 2)
+    const left = lines.slice(0, split)
+    const right = lines.slice(split)
+    return (
+      <View style={s.sellCompactTwoCol}>
+        <View style={s.sellCompactCol}>{left.map(renderLine)}</View>
+        <View style={s.sellCompactCol}>{right.map(renderLine)}</View>
+      </View>
+    )
+  }
+
+  return <View>{lines.map(renderLine)}</View>
 }
 
 export function PdfSellSummarySection({

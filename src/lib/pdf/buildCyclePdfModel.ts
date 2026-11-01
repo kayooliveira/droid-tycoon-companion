@@ -3,6 +3,7 @@ import { formatCycleDisplayName } from '../cycleLabel'
 import { droidImageSrc, isMissingImageFlag } from '../images'
 import { cycleById, droidById, gameData, getRebirth } from '../../domain/gameData'
 import { pathProgressPercent, REBIRTHS_PER_PATH, SUPER_REBIRTH_UNLOCK_AFTER } from '../../domain/progress'
+import { analyzeSellCenter } from '../../domain/sellCenter'
 import {
   sellableUnitsByRebirth,
   unitsNewlySellableAfterRebirth,
@@ -61,6 +62,7 @@ export interface CyclePdfModel {
     pct: number
     invCount: number
     sellNowLabels: string[]
+    keepUpgradeLabels: string[]
     upcoming: Array<{ rebirth: number; credits: string; droids: string[] }>
     remaining: Array<{ rebirth: number; credits: string; droids: string[] }>
   }
@@ -129,11 +131,17 @@ function mapRebirthRow(
   }
 }
 
-function droidLineLabel(droidId: string, tier: string, tierLabels: Map<string, string>): string {
+function droidLineLabel(
+  droidId: string,
+  tier: string,
+  tierLabels: Map<string, string>,
+  quantity = 1,
+): string {
   const droid = droidById.get(droidId)
   const name = droid?.name ?? droidId
   const t = formatTierName(tier as Parameters<typeof formatTierName>[0], tierLabels)
-  return `${name} · ${t}`
+  const qty = quantity > 1 ? ` ×${quantity}` : ''
+  return `${name} · ${t}${qty}`
 }
 
 function mapSellUnitsToLines(
@@ -148,7 +156,7 @@ function mapSellUnitsToLines(
         u.disposition === 'fusionCaution',
     )
     .map((u) => ({
-      label: droidLineLabel(u.droidId, u.tier, tierLabels),
+      label: droidLineLabel(u.droidId, u.tier, tierLabels, u.quantity),
       disposition: u.disposition,
     }))
 }
@@ -208,6 +216,19 @@ export function buildCyclePdfModel(input: ExportCycleInput): CyclePdfModel | nul
     const sellNowUnits = unitsSellableAfterRebirth(input.pathId, input.completedOnPath).filter(
       (u) => u.disposition === 'sellable',
     )
+    const sellAnalysis = analyzeSellCenter(
+      input.pathId,
+      input.nextRebirth,
+      input.inventory ?? [],
+    )
+    const keepUpgradeLabels = sellAnalysis
+      .filter((i) => i.category === 'upgrade' && i.upgradeTargetTier && i.nextNeededAtRebirth)
+      .slice(0, 8)
+      .map((i) =>
+        labels.keepForUpgrade
+          .replace('{{tier}}', formatTierName(i.upgradeTargetTier!, tierLabels))
+          .replace('{{rebirth}}', String(i.nextNeededAtRebirth)),
+      )
     const upcomingEnd = Math.min(input.nextRebirth + 3, REBIRTHS_PER_PATH)
     const tableStart = Math.min(upcomingEnd + 1, REBIRTHS_PER_PATH + 1)
 
@@ -243,8 +264,9 @@ export function buildCyclePdfModel(input: ExportCycleInput): CyclePdfModel | nul
       pct,
       invCount: inventoryUnitCount(input.inventory),
       sellNowLabels: sellNowUnits.slice(0, 14).map((u) =>
-        droidLineLabel(u.droidId, u.tier, tierLabels),
+        droidLineLabel(u.droidId, u.tier, tierLabels, u.quantity),
       ),
+      keepUpgradeLabels,
       upcoming,
       remaining,
     }
