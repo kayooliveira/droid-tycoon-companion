@@ -19,7 +19,7 @@ import { useAppStore } from '../store/useAppStore'
 function SectionCard({ title, children }: { title: string; children: ReactNode }) {
   return (
     <GlassCard className="space-y-3 p-4">
-      <h2 className="text-sm font-semibold text-zinc-200">{title}</h2>
+      <h2 className="text-sm font-semibold text-ui-fg">{title}</h2>
       {children}
     </GlassCard>
   )
@@ -61,18 +61,18 @@ export function SellCenterPage() {
     groups.upgrade.length === 0
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5" data-testid="sell-page">
       <div className="space-y-2">
         <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('sell.title')}</h1>
         <PathProgressSwitcher compact />
-        <p className="text-sm text-zinc-400">{t('sell.intro', { from: progress.nextRebirth, cycle: cycleName })}</p>
+        <p className="text-sm text-ui-muted">{t('sell.intro', { from: progress.nextRebirth, cycle: cycleName })}</p>
       </div>
 
       {allEmpty ? (
         <GlassCard className="p-6 flex flex-col items-center text-center gap-3" data-testid="sell-empty-state">
-          <Package {...uiIconProps} weight="fill" className="size-10 text-holo-300" />
+          <Package {...uiIconProps} weight="fill" className="size-10 text-ui-accent" />
           <p className="text-sm font-medium">{t('sell.emptyStateTitle')}</p>
-          <p className="text-xs text-zinc-500 max-w-xs">{t('sell.emptyStateBody')}</p>
+          <p className="text-xs text-ui-soft max-w-xs">{t('sell.emptyStateBody')}</p>
           <Link to="/inventory">
             <Button size="sm" icon={<Package {...uiIconProps} weight="fill" />}>
               {t('sell.emptyStateCta')}
@@ -84,13 +84,13 @@ export function SellCenterPage() {
           {safeNow.length > 0 ? (
             <section className="space-y-3" data-testid="sell-center-safe-now">
               <SectionCard title={t('sell.safeNowTitle')}>
-                <p className="text-xs text-zinc-500 -mt-1">{t('sell.safeNowHint', { rebirth: completedRebirth })}</p>
+                <p className="text-xs text-ui-soft -mt-1">{t('sell.safeNowHint', { rebirth: completedRebirth })}</p>
                 <div className="space-y-2">
                   {safeNow.map(({ item }, idx) => {
                     const droid = droidById.get(item.droidId)
                     if (!droid) return null
                     return (
-                      <div key={`safe-${item.unitId}-${idx}`} className="flex gap-3 rounded-xl bg-white/5 p-3">
+                      <div key={`safe-${item.unitId}-${idx}`} className="flex gap-3 rounded-xl bg-ui-hover p-3">
                         <DroidImage droid={droid} size="sm" />
                         <div className="min-w-0">
                           <div className="flex flex-wrap gap-2 items-center">
@@ -98,7 +98,7 @@ export function SellCenterPage() {
                             <Badge tone="info">{formatTierName(item.tier, tierLabels)}</Badge>
                             <Badge tone="success">×{item.quantity}</Badge>
                           </div>
-                          <p className="text-xs text-emerald-300/90 mt-1">{t('sell.safeNowLine')}</p>
+                          <p className="text-xs text-ui-success/90 mt-1">{t('sell.safeNowLine')}</p>
                         </div>
                       </div>
                     )
@@ -130,7 +130,7 @@ export function SellCenterPage() {
                         item.tier,
                       )
                       return (
-                        <div key={`${item.unitId}-${idx}`} className="flex gap-3 rounded-xl bg-white/5 p-3">
+                        <div key={`${item.unitId}-${idx}`} className="flex gap-3 rounded-xl bg-ui-hover p-3">
                           <DroidImage droid={droid} size="sm" />
                           <div className="min-w-0">
                             <div className="flex flex-wrap gap-2 items-center">
@@ -141,7 +141,7 @@ export function SellCenterPage() {
                                 <Badge tone="warn">{t('sellAfter.fusionHold')}</Badge>
                               ) : null}
                             </div>
-                            <p className="text-xs text-zinc-400 mt-1">{reason}</p>
+                            <p className="text-xs text-ui-muted mt-1">{reason}</p>
                           </div>
                         </div>
                       )

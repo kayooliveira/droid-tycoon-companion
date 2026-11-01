@@ -58,12 +58,12 @@ export function AppShell() {
 
   return (
     <div className="min-h-dvh flex flex-col md:flex-row">
-      <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 border-r border-white/10 bg-surface-900">
-        <div className="p-5 flex items-center gap-3 border-b border-white/10">
+      <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 border-r border-ui bg-ui-elevated">
+        <div className="p-5 flex items-center gap-3 border-b border-ui">
           <Logo className="h-8 w-8" />
           <div className="min-w-0">
             <p className="font-display text-sm tracking-wider text-gradient-holo truncate">{t('app.name')}</p>
-            <p className="text-xs text-zinc-400 truncate">{t('app.subtitle')}</p>
+            <p className="text-xs text-ui-muted truncate">{t('app.subtitle')}</p>
           </div>
         </div>
         <nav className="p-3 space-y-1 flex-1">
@@ -75,7 +75,7 @@ export function AppShell() {
               className={({ isActive }) =>
                 cn(
                   'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors min-h-11',
-                  isActive ? 'bg-holo-600/20 text-holo-200' : 'text-zinc-300 hover:bg-white/5',
+                  isActive ? 'bg-holo-600/20 text-holo-800' : 'text-ui-secondary hover:bg-ui-hover',
                 )
               }
             >
@@ -95,7 +95,7 @@ export function AppShell() {
           <Logo className="h-8 w-8" />
           <div className="min-w-0 flex-1">
             <h1 className="font-display text-sm tracking-wide truncate">{t(titleKey)}</h1>
-            <p className="text-[10px] text-zinc-500 truncate">{t('app.shortName')}</p>
+            <p className="text-[10px] text-ui-soft truncate">{t('app.shortName')}</p>
           </div>
         </Glass>
         <div className="mx-auto max-w-6xl px-4 py-5 md:py-8 pt-[max(0.75rem,env(safe-area-inset-top))]">
@@ -120,7 +120,7 @@ export function AppShell() {
               className={({ isActive }) =>
                 cn(
                   'flex items-center gap-3 rounded-xl px-3 py-3 text-sm min-h-11',
-                  isActive ? 'bg-holo-600/20 text-holo-200' : 'hover:bg-white/5',
+                  isActive ? 'bg-holo-600/20 text-holo-800' : 'hover:bg-ui-hover',
                 )
               }
             >

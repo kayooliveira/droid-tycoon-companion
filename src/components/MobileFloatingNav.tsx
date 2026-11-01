@@ -70,7 +70,7 @@ export function MobileFloatingNav({ onMore }: { onMore: () => void }) {
       <Glass
         as="div"
         variant="regular"
-        className="glass-nav glass-nav-liquid relative rounded-full shadow-2xl shadow-black/40 p-1.5"
+        className="glass-nav glass-nav-liquid relative rounded-full shadow-2xl shadow-black/25 p-1.5"
       >
         <div ref={gridRef} className="relative grid grid-cols-5 gap-0.5 min-h-[3.25rem]">
           <div
@@ -90,7 +90,7 @@ export function MobileFloatingNav({ onMore }: { onMore: () => void }) {
             const slotClass = cn(
               'relative z-10 flex flex-col items-center justify-center min-h-[2.75rem] rounded-full',
               'text-[10px] gap-0.5 transition-colors py-2',
-              isActive ? 'text-white' : 'text-zinc-500',
+              isActive ? 'text-ui-fg' : 'text-ui-soft',
             )
             return (
               <div

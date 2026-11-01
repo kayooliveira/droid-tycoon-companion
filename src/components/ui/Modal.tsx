@@ -70,7 +70,7 @@ export function Modal({
       <div
         data-overlay-root
         data-testid={testId}
-        className="fixed inset-0 z-overlay flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-md p-0 sm:p-4"
+        className="fixed inset-0 z-overlay flex items-end sm:items-center justify-center overlay-scrim backdrop-blur-md p-0 sm:p-4"
         role="presentation"
         onMouseDown={(e) => {
           if (e.target === e.currentTarget) onClose()
@@ -92,13 +92,13 @@ export function Modal({
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
-            className="bg-surface-900/95 backdrop-saturate-150 min-h-full outline-none"
+            className="bg-ui-modal backdrop-saturate-150 min-h-full outline-none text-ui-fg"
           >
             <div className="flex justify-center pt-2 sm:hidden" aria-hidden>
-              <span className="h-1 w-10 rounded-full bg-white/20" />
+              <span className="h-1 w-10 rounded-full bg-ui-handle" />
             </div>
-            <div className="flex items-center justify-between gap-2 px-4 pt-3 pb-2 sm:px-5 sm:pt-4 border-b border-white/10">
-              <h2 id={titleId} className="font-display text-base font-semibold tracking-wide text-balance">
+            <div className="flex items-center justify-between gap-2 px-4 pt-3 pb-2 sm:px-5 sm:pt-4 border-b border-ui">
+              <h2 id={titleId} className="font-display text-base font-semibold tracking-wide text-balance text-ui-fg">
                 {title}
               </h2>
               <IconButton label={t('common.close')} onClick={onClose} data-testid={`${testId}-close`}>
@@ -107,7 +107,7 @@ export function Modal({
             </div>
             <div className="px-4 py-4 sm:px-5 text-sm">{children}</div>
             {footer ? (
-              <div className="px-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5 sm:pb-5 pt-0 flex flex-wrap gap-2 justify-end border-t border-white/5">
+              <div className="px-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5 sm:pb-5 pt-0 flex flex-wrap gap-2 justify-end border-t border-ui-subtle">
                 {footer}
               </div>
             ) : null}

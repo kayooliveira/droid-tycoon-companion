@@ -98,7 +98,7 @@ export function ProgressPage() {
   }
 
   return (
-    <div className="space-y-5 pb-6 md:pb-0">
+    <div className="space-y-5 pb-6 md:pb-0" data-testid="progress-page">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-2">
           <h1 className="hidden md:block font-display text-xl tracking-wide text-balance">{t('nav.progress')}</h1>
@@ -213,7 +213,7 @@ export function ProgressPage() {
               ) : null}
             </>
           ) : (
-            <p className="text-sm text-zinc-400">
+            <p className="text-sm text-ui-muted">
               {isPathComplete(progress) ? t('progress.pathComplete') : t('progress.listCurrent')}
             </p>
           )}
@@ -317,7 +317,7 @@ export function ProgressPage() {
           </>
         }
       >
-        <p className="text-xs text-zinc-400 text-pretty">{t('progress.completeBlockedShort')}</p>
+        <p className="text-xs text-ui-muted text-pretty">{t('progress.completeBlockedShort')}</p>
       </Modal>
 
       <Modal
@@ -341,7 +341,7 @@ export function ProgressPage() {
           </>
         }
       >
-        <p className="text-sm text-zinc-300 text-pretty">
+        <p className="text-sm text-ui-secondary text-pretty">
           {t('progress.superConfirmBody', {
             currentCycle: cycleLabel(progress.pathId),
             nextCycle: cycleLabel(nextPathId),
@@ -366,7 +366,7 @@ export function ProgressPage() {
           </>
         }
       >
-        <p className="text-xs text-zinc-400 text-pretty">{t('progress.undoConfirm')}</p>
+        <p className="text-xs text-ui-muted text-pretty">{t('progress.undoConfirm')}</p>
       </Modal>
     </div>
   )
@@ -388,13 +388,13 @@ function DisputePanel({
   return (
     <div className="rounded-xl border border-amber-400/25 bg-amber-500/5 p-3 text-xs space-y-2">
       <p className="text-amber-100 font-medium">{t('dispute.title')}</p>
-      <p className="text-amber-200/80">
+      <p className="text-ui-warn/80">
         {key === 'path-2:17' ? t('dispute.path2r17') : t('dispute.path6r19')}
       </p>
       <ul className="space-y-1">
         {dispute.alternatives.map((alt) => (
-          <li key={alt.labelKey} className="text-zinc-300">
-            <span className="text-zinc-400">{t(alt.labelKey)}: </span>
+          <li key={alt.labelKey} className="text-ui-secondary">
+            <span className="text-ui-muted">{t(alt.labelKey)}: </span>
             {alt.requirements
               .map(
                 (req) =>
@@ -447,10 +447,10 @@ function RebirthListItem({
             {done ? <Badge tone="success">{t('progress.listDone')}</Badge> : null}
             {active ? <Badge tone="info">{t('progress.listCurrent')}</Badge> : null}
           </p>
-          <p className="text-xs text-zinc-500">{entry.credits}</p>
+          <p className="text-xs text-ui-soft">{entry.credits}</p>
         </div>
         {trackInventory && !done ? (
-          <span className="text-xs text-zinc-400 shrink-0">
+          <span className="text-xs text-ui-muted shrink-0">
             {metRequirementCount(checks)}/3 {t('dashboard.statsReady').toLowerCase()}
           </span>
         ) : done ? (
@@ -458,8 +458,8 @@ function RebirthListItem({
         ) : null}
       </button>
       {open ? (
-        <div className="mt-3 space-y-2 border-t border-white/10 pt-3">
-          {entry.note ? <p className="text-xs text-amber-200/90">{entry.note}</p> : null}
+        <div className="mt-3 space-y-2 border-t border-ui pt-3">
+          {entry.note ? <p className="text-xs text-ui-warn/90">{entry.note}</p> : null}
           {!done &&
             checks.map((c) => <RequirementCard key={c.requirement.droidId} check={c} />)}
           {!done && trackInventory ? (

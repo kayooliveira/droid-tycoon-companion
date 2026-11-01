@@ -359,6 +359,11 @@
     "dismiss": "Not now",
     "iosHint": "Tap Share, then \"Add to Home Screen\"."
   },
+  "notFound": {
+    "title": "Page not found",
+    "body": "This address is not in the app. Head home to continue.",
+    "home": "Go home"
+  },
   "common": {
     "confirm": "Confirm",
     "close": "Close",

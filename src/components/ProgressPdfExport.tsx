@@ -57,7 +57,7 @@ export function ProgressPdfExport() {
   return (
     <GlassCard className="p-4" id="progress-export" data-testid="progress-pdf-export">
       <SectionHeader icon={<FilePdf {...uiIconProps} />} title={t('exportProgress.title')} />
-      <p className="text-xs text-zinc-400 mb-3 text-pretty">{t('exportProgress.hint')}</p>
+      <p className="text-xs text-ui-muted mb-3 text-pretty">{t('exportProgress.hint')}</p>
       <IconButton
         variant="soft"
         label={t('exportProgress.pdf')}

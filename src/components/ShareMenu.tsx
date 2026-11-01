@@ -74,10 +74,10 @@ export function ShareMenu({ compact }: { compact?: boolean }) {
     <div data-testid="share-menu">
     <GlassCard className="space-y-3">
       <div className="flex items-center gap-2">
-        <ShareNetwork {...uiIconProps} className="text-holo-300" />
+        <ShareNetwork {...uiIconProps} className="text-ui-accent" />
         <h2 className="font-medium text-sm">{t('share.title')}</h2>
       </div>
-      <p className="text-xs text-zinc-400">{t('share.hint')}</p>
+      <p className="text-xs text-ui-muted">{t('share.hint')}</p>
       <div className={`flex flex-wrap gap-2 ${compact ? '' : ''}`}>
         <Button variant="secondary" className="min-h-11" data-testid="share-app" onClick={shareApp}>
           {t('share.shareApp')}

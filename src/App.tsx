@@ -8,6 +8,7 @@ import { SeoManager } from './components/SeoManager'
 import { OverlayStackProvider } from './components/OverlayStackProvider'
 import { ToastProvider, useToast } from './components/ToastProvider'
 import { DashboardPage } from './pages/DashboardPage'
+import { NotFoundPage } from './pages/NotFoundPage'
 import { OnboardingPage } from './pages/OnboardingPage'
 import { setDocumentLanguage } from './i18n'
 import { reloadForPwaUpdate } from './lib/pwaUpdate'
@@ -85,6 +86,14 @@ export default function App() {
   }, [theme])
 
   useEffect(() => {
+    if (theme !== 'system') return
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    const onChange = () => applyTheme('system')
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [theme])
+
+  useEffect(() => {
     const root = document.documentElement
     const supportsSvgBackdrop =
       typeof CSS !== 'undefined' &&
@@ -110,6 +119,7 @@ export default function App() {
         <Routes>
           <Route path="/onboarding" element={<OnboardingPage />} />
           <Route
+            path="/"
             element={
               <OnboardingGate>
                 <AppShell />
@@ -181,8 +191,9 @@ export default function App() {
                 </LazyPage>
               }
             />
+            <Route path="404" element={<NotFoundPage />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
-          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         </BrowserRouter>
       </ToastProvider>

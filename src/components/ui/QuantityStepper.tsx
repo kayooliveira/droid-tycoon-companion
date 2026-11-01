@@ -31,11 +31,11 @@ export function QuantityStepper({
 
   return (
     <div className={cn(compact ? '' : 'space-y-1', className)}>
-      {label ? <span className="block text-base text-zinc-300">{label}</span> : null}
+      {label ? <span className="block text-base text-ui-secondary">{label}</span> : null}
       <div
         data-testid={testId}
         className={cn(
-          'flex items-center gap-1 rounded-xl border border-white/10 bg-surface-800/80',
+          'flex items-center gap-1 rounded-xl border border-ui bg-ui-field/80',
           compact ? 'p-0.5' : 'p-1',
         )}
       >
@@ -50,7 +50,7 @@ export function QuantityStepper({
         </IconButton>
         <span
           className={cn(
-            'flex-1 text-center font-semibold tabular-nums text-zinc-100',
+            'flex-1 text-center font-semibold tabular-nums text-ui-fg',
             compact ? 'text-sm min-w-[2rem]' : 'text-base',
           )}
           data-testid={testId ? `${testId}-value` : undefined}

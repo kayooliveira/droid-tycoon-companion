@@ -57,7 +57,7 @@ export function CycleGuidePdfExport({
       >
         {busy ? '…' : t('cycles.exportGuidePdf')}
       </Button>
-      <p className="text-xs text-zinc-500 text-pretty">
+      <p className="text-xs text-ui-soft text-pretty">
         {t('cycles.exportGuideHint', { name: cycleName })}
       </p>
     </div>

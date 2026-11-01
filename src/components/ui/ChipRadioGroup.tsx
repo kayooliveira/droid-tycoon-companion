@@ -37,8 +37,8 @@ export function ChipRadioGroup<T extends string>({
             className={cn(
               'rounded-full px-3 py-2 text-base min-h-11 border font-medium shrink-0 snap-start',
               active
-                ? 'border-holo-400/70 bg-holo-600/25 text-white'
-                : 'border-white/10 bg-white/5 text-zinc-400 hover:text-zinc-200',
+                ? 'border-holo-400/70 bg-holo-600/25 text-holo-900'
+                : 'border-ui bg-ui-hover text-ui-muted hover:text-ui-fg',
             )}
             onClick={() => onChange(opt.value)}
           >

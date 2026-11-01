@@ -7,7 +7,7 @@ export function CycleTimeline({ completed }: { completed: number }) {
   const total = 40
   return (
     <div className="space-y-2" data-testid="cycle-timeline">
-      <p className="text-xs font-medium text-zinc-400">{t('home.timelineTitle')}</p>
+      <p className="text-xs font-medium text-ui-muted">{t('home.timelineTitle')}</p>
       <div className="flex flex-wrap gap-1">
         {Array.from({ length: total }, (_, i) => {
           const n = i + 1
@@ -26,7 +26,7 @@ export function CycleTimeline({ completed }: { completed: number }) {
           )
         })}
       </div>
-      <p className="text-[10px] text-zinc-500">
+      <p className="text-[10px] text-ui-soft">
         {t('home.superAtRebirth', { n: SUPER_REBIRTH_UNLOCK_AFTER })}
       </p>
     </div>

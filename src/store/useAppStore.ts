@@ -178,8 +178,9 @@ export const useAppStore = create<AppStore>()(
 )
 
 export function applyTheme(theme: ThemeMode): void {
-  const root = document.body
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
   const isLight = theme === 'light' || (theme === 'system' && !prefersDark)
-  root.classList.toggle('theme-light', isLight)
+  document.documentElement.classList.toggle('theme-light', isLight)
+  document.body.classList.toggle('theme-light', isLight)
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', isLight ? '#f4f4f5' : '#0c121c')
 }

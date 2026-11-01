@@ -48,7 +48,7 @@ function UnitRow({ unit }: { unit: RebirthUnitUsage }) {
           ) : null}
         </div>
         {unit.otherPathIds.length > 0 ? (
-          <p className="text-[11px] text-zinc-500 mt-0.5">
+          <p className="text-[11px] text-ui-soft mt-0.5">
             {(() => {
               const nextPath = earliestOtherPathId(unit.otherPathIds)
               return nextPath
@@ -58,7 +58,7 @@ function UnitRow({ unit }: { unit: RebirthUnitUsage }) {
           </p>
         ) : null}
         {unit.disposition === 'fusionCaution' ? (
-          <p className="text-[11px] text-amber-200/80 mt-0.5">{t('sellAfter.fusionCautionHint')}</p>
+          <p className="text-[11px] text-ui-warn/80 mt-0.5">{t('sellAfter.fusionCautionHint')}</p>
         ) : null}
       </div>
     </li>
@@ -82,7 +82,7 @@ export function SellAfterRebirthList({
 
   if (units.length === 0) {
     return (
-      <p className="text-xs text-zinc-500" data-testid="sell-after-empty">
+      <p className="text-xs text-ui-soft" data-testid="sell-after-empty">
         {t('sellAfter.none')}
       </p>
     )
@@ -90,16 +90,16 @@ export function SellAfterRebirthList({
 
   return (
     <div className="space-y-2" data-testid="sell-after-list">
-      <p className="text-xs font-medium text-zinc-300">
+      <p className="text-xs font-medium text-ui-secondary">
         {t('sellAfter.heading')}
       </p>
-      <ul className={`space-y-2 ${compact ? '' : 'rounded-xl border border-white/10 p-3 bg-black/20'}`}>
+      <ul className={`space-y-2 ${compact ? '' : 'rounded-xl border border-ui p-3 bg-ui-sunken'}`}>
         {(compact ? sellableOnly : units).map((u) => (
           <UnitRow key={u.unitKey} unit={u} />
         ))}
       </ul>
       {!compact && sellableOnly.length < units.length ? (
-        <p className="text-[11px] text-zinc-500">{t('sellAfter.fusionNote')}</p>
+        <p className="text-[11px] text-ui-soft">{t('sellAfter.fusionNote')}</p>
       ) : null}
     </div>
   )

@@ -16,9 +16,9 @@ export function AboutPage() {
   const stale = gameDataSource.isStale()
 
   return (
-    <div className="space-y-5 max-w-2xl pb-4">
+    <div className="space-y-5 max-w-2xl pb-4" data-testid="about-page">
       <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('about.title')}</h1>
-      <p className="text-sm text-zinc-400">{t('about.intro')}</p>
+      <p className="text-sm text-ui-muted">{t('about.intro')}</p>
 
       <GlassCard className="space-y-2 text-sm">
         <h2 className="font-medium">{t('about.dataTitle')}</h2>
@@ -34,12 +34,12 @@ export function AboutPage() {
         ) : (
           <Badge tone="success">{t('settings.dataFresh')}</Badge>
         )}
-        <p className="text-xs text-zinc-500">{t('about.disputedNote')}</p>
+        <p className="text-xs text-ui-soft">{t('about.disputedNote')}</p>
       </GlassCard>
 
       <GlassCard className="space-y-3 text-sm">
         <h2 className="font-medium">{t('about.feedbackTitle')}</h2>
-        <p className="text-zinc-400">{t('about.feedbackBody')}</p>
+        <p className="text-ui-muted">{t('about.feedbackBody')}</p>
         <FeedbackWhatsAppLink />
       </GlassCard>
 
@@ -54,7 +54,7 @@ export function AboutPage() {
       </Link>
 
       <footer
-        className="pt-6 space-y-2 text-[10px] leading-relaxed text-zinc-500"
+        className="pt-6 space-y-2 text-[10px] leading-relaxed text-ui-soft"
         data-testid="about-credits-footer"
       >
         <p>{t('about.wikiCredits')}</p>
@@ -62,7 +62,7 @@ export function AboutPage() {
         <p>{t('app.disclaimer')}</p>
         <p>
           {t('about.url')}:{' '}
-          <a href={APP_PUBLIC_URL} className="text-holo-400/80 hover:underline">
+          <a href={APP_PUBLIC_URL} className="text-ui-accent hover:underline">
             {APP_PUBLIC_URL}
           </a>
         </p>

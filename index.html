@@ -32,6 +32,23 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="https://dthelper.kayooliveira.com/og-image.png" />
     <title>DroidDeck · Star Wars Droid Tycoon</title>
+    <script>
+      (function () {
+        try {
+          var raw = localStorage.getItem('droid-tycoon-companion-store');
+          if (!raw) return;
+          var parsed = JSON.parse(raw);
+          var theme = parsed && parsed.state && parsed.state.settings && parsed.state.settings.theme;
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var light = theme === 'light' || (theme === 'system' && !prefersDark);
+          if (light) {
+            document.documentElement.classList.add('theme-light');
+            var meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', '#f4f4f5');
+          }
+        } catch (e) {}
+      })();
+    </script>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",

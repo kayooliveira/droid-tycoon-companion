@@ -63,10 +63,10 @@ export function InstallBanner() {
         className="fixed bottom-20 md:bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm z-banner glass-panel rounded-2xl p-4 shadow-xl"
       >
         <div className="flex gap-3">
-          <DownloadSimple {...uiIconProps} className="text-holo-300 shrink-0 mt-0.5" />
+          <DownloadSimple {...uiIconProps} className="text-ui-accent shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
             <p className="font-medium text-sm">{t('pwa.installTitle')}</p>
-            <p className="text-xs text-zinc-400 mt-1">
+            <p className="text-xs text-ui-muted mt-1">
               {isIos && !deferred ? t('pwa.iosHint') : t('pwa.installBody')}
             </p>
             <div className="flex gap-2 mt-3">
@@ -87,7 +87,7 @@ export function InstallBanner() {
           </div>
           <button
             type="button"
-            className="text-zinc-500 hover:text-zinc-300"
+            className="text-ui-soft hover:text-ui-secondary"
             onClick={dismiss}
             aria-label={t('pwa.dismiss')}
           >

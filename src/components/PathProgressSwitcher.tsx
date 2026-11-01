@@ -47,11 +47,11 @@ export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
         data-testid="path-switcher-trigger"
         className={
           compact
-            ? 'inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium hover:bg-white/10'
-            : 'inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm hover:bg-white/10'
+            ? 'inline-flex items-center gap-1.5 rounded-xl border border-ui bg-ui-hover px-3 py-1.5 text-xs font-medium hover:bg-ui-hover-strong'
+            : 'inline-flex items-center gap-2 rounded-xl border border-ui bg-ui-hover px-4 py-2 text-sm hover:bg-ui-hover-strong'
         }
       >
-        <Path size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} className="text-holo-300 shrink-0" />
+        <Path size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} className="text-ui-accent shrink-0" />
         <span className="truncate max-w-[10rem]">{cycleLabel(progress.pathId)}</span>
         <CaretDown size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} className="opacity-60 shrink-0" />
       </button>
@@ -78,11 +78,11 @@ export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
         }
       >
         <div className="space-y-3">
-          <p className="text-sm text-zinc-300 text-pretty">
+          <p className="text-sm text-ui-secondary text-pretty">
             {t('path.switchBody', { name: cycleLabel(targetPath) })}
           </p>
           {resetProgress ? (
-            <p className="text-sm text-amber-200/90 text-pretty">
+            <p className="text-sm text-ui-warn/90 text-pretty">
               {t('path.switchBodyReset', { name: cycleLabel(targetPath) })}
             </p>
           ) : null}
@@ -112,11 +112,11 @@ export function ProgressSummaryLine() {
   const { t } = useTranslation()
   const progress = useAppStore((s) => s.progress)
   return (
-    <p className="text-sm text-zinc-400">
-      {t('progress.completed')}: <span className="text-zinc-200">{progress.completedOnPath}</span>
+    <p className="text-sm text-ui-muted">
+      {t('progress.completed')}: <span className="text-ui-fg">{progress.completedOnPath}</span>
       {' · '}
       {t('progress.nextRebirth')}:{' '}
-      <span className="text-zinc-200">#{Math.min(progress.nextRebirth, 40)}</span>
+      <span className="text-ui-fg">#{Math.min(progress.nextRebirth, 40)}</span>
     </p>
   )
 }

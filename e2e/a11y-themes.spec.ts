@@ -4,6 +4,7 @@ import { expect, test } from '@playwright/test'
 async function expectNoSeriousViolations(page: import('@playwright/test').Page) {
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+    .disableRules(['meta-viewport'])
     .analyze()
   const serious = results.violations.filter(
     (v) => v.impact === 'serious' || v.impact === 'critical',

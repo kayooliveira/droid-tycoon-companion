@@ -31,7 +31,7 @@ export function HelpHint({
         title={label}
         testId={`${testId}-modal`}
       >
-        <p className="text-sm text-zinc-300 text-pretty" data-testid={`${testId}-body`}>
+        <p className="text-sm text-ui-secondary text-pretty" data-testid={`${testId}-body`}>
           {text}
         </p>
       </Modal>
