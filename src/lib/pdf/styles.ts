@@ -120,7 +120,28 @@ export const pdfStyles = StyleSheet.create({
     padding: 4,
     marginBottom: 3,
     fontSize: 8,
+    color: c.text,
   },
+  sellCompactLine: {
+    fontSize: 7,
+    color: c.textMuted,
+    marginBottom: 1,
+    lineHeight: 1.2,
+  },
+  sellSummaryStep: {
+    fontSize: 8,
+    fontWeight: 700,
+    color: c.accent,
+    marginBottom: 2,
+  },
+  unconfirmedBadge: {
+    fontSize: 6.5,
+    color: c.warn,
+    fontWeight: 700,
+    marginTop: 1,
+  },
+  colSell: { width: 92, paddingLeft: 4, justifyContent: 'center' },
+  colReq: { flex: 1, flexDirection: 'row', minWidth: 0 },
   rebirthCard: {
     width: '48%',
     backgroundColor: c.cardBg,

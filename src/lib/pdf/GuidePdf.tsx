@@ -3,6 +3,7 @@ import type { CyclePdfModel, PdfRebirthRow } from './buildCyclePdfModel'
 import { guideFactsLine } from './buildCyclePdfModel'
 import { DroidThumb } from './DroidThumb'
 import { PdfFooter } from './PdfFooter'
+import { PdfSellCompactLines, PdfSellSummarySection } from './PdfSellSection'
 import { pdfStyles as s } from './styles'
 import { SUPER_REBIRTH_UNLOCK_AFTER } from '../../domain/progress'
 
@@ -23,6 +24,7 @@ function GuideHeader({ model }: { model: CyclePdfModel }) {
           <Text style={s.bullet}>{`• ${L.guideHowTo1}`}</Text>
           <Text style={s.bullet}>{`• ${L.guideHowTo2}`}</Text>
           <Text style={s.bullet}>{`• ${L.guideHowTo3}`}</Text>
+          <Text style={s.bullet}>{`• ${L.guideHowTo4}`}</Text>
           <Text style={[s.soft, { marginTop: 2 }]}>{model.generatedLine}</Text>
         </View>
       </View>
@@ -37,6 +39,7 @@ function TableHeader({ model }: { model: CyclePdfModel }) {
       <Text style={{ width: 32 }}>#</Text>
       <Text style={{ width: 68 }}>{L.credits}</Text>
       <Text style={{ flex: 1 }}>{L.requirements}</Text>
+      <Text style={{ width: 92 }}>{L.canSell}</Text>
     </View>
   )
 }
@@ -73,6 +76,7 @@ function GuideRebirthRow({
   model: CyclePdfModel
   zebra: boolean
 }) {
+  const L = model.labels
   const isSuper = row.rebirth === SUPER_REBIRTH_UNLOCK_AFTER
   return (
     <View
@@ -81,15 +85,19 @@ function GuideRebirthRow({
     >
       <View style={s.colNum}>
         <Text style={{ fontWeight: 700, fontSize: 9 }}>{row.rebirth}</Text>
-        {isSuper ? <Text style={s.colSuperLabel}>{model.labels.guideSuperRow}</Text> : null}
+        {row.unconfirmed ? <Text style={s.unconfirmedBadge}>{L.unconfirmed}</Text> : null}
+        {isSuper ? <Text style={s.colSuperLabel}>{L.guideSuperRow}</Text> : null}
       </View>
       <View style={s.colCred}>
         <Text style={{ fontSize: 8 }}>{row.credits}</Text>
       </View>
-      <View style={s.colDroids}>
+      <View style={s.colReq}>
         {row.requirements.map((req) => (
           <DroidCell key={`${row.rebirth}-${req.droidId}`} req={req} />
         ))}
+      </View>
+      <View style={s.colSell}>
+        <PdfSellCompactLines lines={row.sellLines} labels={L} emptyLabel={L.sellStepNone} />
       </View>
     </View>
   )
@@ -111,6 +119,7 @@ function GuideNotes({ model }: { model: CyclePdfModel }) {
 }
 
 export function GuidePdf({ model }: { model: CyclePdfModel }) {
+  const L = model.labels
   return (
     <Document>
       <Page size="A4" style={s.guidePage}>
@@ -118,6 +127,13 @@ export function GuidePdf({ model }: { model: CyclePdfModel }) {
         <GuideFixedTableHead model={model} />
         <View wrap={false}>
           <GuideHeader model={model} />
+          <PdfSellSummarySection
+            title={L.sellSummaryTitle}
+            hint={L.sellSummaryHint}
+            blocks={model.guideSellSummary ?? []}
+            labels={L}
+            rebirthLabel={L.rebirth}
+          />
           <TableHeader model={model} />
         </View>
         {model.rebirths.map((row) => (
