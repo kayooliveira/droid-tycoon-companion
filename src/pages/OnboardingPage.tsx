@@ -273,7 +273,7 @@ export function OnboardingPage() {
                       className={cn(
                         'rounded-full px-4 py-2 text-sm min-h-11 border font-medium',
                         completed === chip.value
-                          ? 'border-holo-400 bg-holo-600/25 text-holo-100'
+                          ? 'border-holo-400 bg-holo-600/25 text-holo-900'
                           : 'border-ui bg-ui-hover text-ui-secondary',
                       )}
                       onClick={() => setCompleted(chip.value)}

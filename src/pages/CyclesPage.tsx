@@ -34,7 +34,7 @@ export function CyclesPage() {
   }, [pathId])
 
   return (
-    <div className="space-y-5 pb-6">
+    <div className="space-y-5 pb-6" data-testid="cycles-page">
       <div className="space-y-2">
         <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('cycles.title')}</h1>
         <p className="text-sm text-ui-muted text-pretty">{t('cycles.referenceNote')}</p>
@@ -61,7 +61,7 @@ export function CyclesPage() {
                 className={cn(
                   'rounded-full px-3.5 py-2 text-sm min-h-11 border font-medium transition-colors',
                   selected
-                    ? 'border-holo-400/70 bg-holo-600/25 text-on-accent'
+                    ? 'border-holo-400/70 bg-holo-600/25 text-holo-900'
                     : 'border-ui bg-ui-hover text-ui-muted hover:text-ui-fg',
                 )}
                 onClick={() => {

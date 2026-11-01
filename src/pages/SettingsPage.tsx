@@ -87,7 +87,7 @@ export function SettingsPage() {
   }
 
   return (
-    <div className="space-y-4 max-w-2xl pb-10">
+    <div className="space-y-4 max-w-2xl pb-10" data-testid="settings-page">
       <h1 className="hidden md:block font-display text-xl tracking-wide text-balance">{t('settings.title')}</h1>
 
       <GlassCard className="p-4">

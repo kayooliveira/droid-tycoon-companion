@@ -39,7 +39,7 @@ export function FusionLabPage() {
   const showResultTierRule = gameData.fusions.some((f) => f.resultTierRule)
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-testid="fusion-page">
       <div>
         <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('fusion.title')}</h1>
         <Badge tone="warn" className="mt-2">
@@ -47,7 +47,7 @@ export function FusionLabPage() {
         </Badge>
       </div>
 
-      <GlassCard className="space-y-3 text-sm">
+      <GlassCard className="space-y-3 text-sm" data-testid="fusion-rules-card">
         <p className="font-medium text-ui-fg">{t('fusion.rulesTitle')}</p>
         <ul className="space-y-3">
           {gameData.fusionRules.map((rule) => {

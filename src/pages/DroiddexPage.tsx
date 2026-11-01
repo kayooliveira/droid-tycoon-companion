@@ -30,7 +30,7 @@ export function DroiddexPage() {
   }, [search, classFilter])
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5" data-testid="droiddex-page">
       <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('droiddex.title')}</h1>
       <input
         className="w-full rounded-xl bg-ui-field border border-ui px-4 py-3 min-h-11"
@@ -56,7 +56,7 @@ export function DroiddexPage() {
               className={cn(
                 'rounded-full px-3 py-2 text-sm min-h-11 border font-medium',
                 active
-                  ? 'border-holo-400/70 bg-holo-600/25 text-on-accent'
+                  ? 'border-holo-400/70 bg-holo-600/25 text-holo-900'
                   : 'border-ui bg-ui-hover text-ui-muted hover:text-ui-fg',
               )}
               onClick={() => setClassFilter(c)}
@@ -67,7 +67,10 @@ export function DroiddexPage() {
         })}
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+      <div
+        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3"
+        data-testid="droiddex-grid"
+      >
         {droids.map((d) => (
           <button
             key={d.id}
@@ -77,7 +80,7 @@ export function DroiddexPage() {
           >
             <DroidImage droid={d} className="self-center mb-2" />
             <p className="text-sm font-medium truncate w-full">{d.name}</p>
-            <p className="text-[10px] text-ui-soft">{formatBaseRarity(d.baseRarity, t)}</p>
+            <p className="text-[10px] text-ui-muted">{formatBaseRarity(d.baseRarity, t)}</p>
           </button>
         ))}
       </div>

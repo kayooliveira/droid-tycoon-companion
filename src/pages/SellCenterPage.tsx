@@ -61,7 +61,7 @@ export function SellCenterPage() {
     groups.upgrade.length === 0
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5" data-testid="sell-page">
       <div className="space-y-2">
         <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('sell.title')}</h1>
         <PathProgressSwitcher compact />

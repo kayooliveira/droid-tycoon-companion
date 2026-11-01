@@ -75,7 +75,7 @@ export function AppShell() {
               className={({ isActive }) =>
                 cn(
                   'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors min-h-11',
-                  isActive ? 'bg-holo-600/20 text-holo-200' : 'text-ui-secondary hover:bg-ui-hover',
+                  isActive ? 'bg-holo-600/20 text-holo-800' : 'text-ui-secondary hover:bg-ui-hover',
                 )
               }
             >
@@ -120,7 +120,7 @@ export function AppShell() {
               className={({ isActive }) =>
                 cn(
                   'flex items-center gap-3 rounded-xl px-3 py-3 text-sm min-h-11',
-                  isActive ? 'bg-holo-600/20 text-holo-200' : 'hover:bg-ui-hover',
+                  isActive ? 'bg-holo-600/20 text-holo-800' : 'hover:bg-ui-hover',
                 )
               }
             >

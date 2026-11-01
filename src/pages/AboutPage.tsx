@@ -16,7 +16,7 @@ export function AboutPage() {
   const stale = gameDataSource.isStale()
 
   return (
-    <div className="space-y-5 max-w-2xl pb-4">
+    <div className="space-y-5 max-w-2xl pb-4" data-testid="about-page">
       <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('about.title')}</h1>
       <p className="text-sm text-ui-muted">{t('about.intro')}</p>
 
@@ -62,7 +62,7 @@ export function AboutPage() {
         <p>{t('app.disclaimer')}</p>
         <p>
           {t('about.url')}:{' '}
-          <a href={APP_PUBLIC_URL} className="text-holo-400/80 hover:underline">
+          <a href={APP_PUBLIC_URL} className="text-ui-accent hover:underline">
             {APP_PUBLIC_URL}
           </a>
         </p>

@@ -98,7 +98,7 @@ export function ProgressPage() {
   }
 
   return (
-    <div className="space-y-5 pb-6 md:pb-0">
+    <div className="space-y-5 pb-6 md:pb-0" data-testid="progress-page">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-2">
           <h1 className="hidden md:block font-display text-xl tracking-wide text-balance">{t('nav.progress')}</h1>
