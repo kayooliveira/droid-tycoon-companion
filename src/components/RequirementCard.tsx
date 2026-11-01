@@ -1,4 +1,5 @@
-import { Plus } from 'lucide-react'
+import { Plus } from '@phosphor-icons/react'
+import { uiIconProps } from './ui/iconStyle'
 import { useTranslation } from 'react-i18next'
 import { droidById, gameData } from '../domain/gameData'
 import { buildTierLabelMap, formatTierName } from '../domain/tiers'
@@ -54,7 +55,7 @@ export function RequirementCard({ check }: { check: RequirementCheck }) {
           onClick={() => markOwned(check.requirement.droidId, check.requirement.rarity)}
           aria-label={t('a11y.markOwned', { name: droid.name })}
         >
-          <Plus size={16} />
+          <Plus {...uiIconProps} />
         </Button>
       ) : null}
     </GlassCard>

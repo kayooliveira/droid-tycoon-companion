@@ -2,16 +2,17 @@ import { useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
-  FlaskConical,
+  Flask,
+  Gear,
   Info,
-  LayoutDashboard,
-  ListTree,
-  Menu,
+  List,
   Package,
-  Settings,
-  Sparkles,
-  Store,
-} from 'lucide-react'
+  Sparkle,
+  SquaresFour,
+  Storefront,
+  TreeStructure,
+} from '@phosphor-icons/react'
+import { UI_ICON_SIZE, UI_ICON_WEIGHT } from './ui/iconStyle'
 import { useScrollRestoration } from '../hooks/useScrollRestoration'
 import { cn } from '../lib/utils'
 import { Logo } from './Logo'
@@ -19,17 +20,17 @@ import { InstallBanner } from './InstallBanner'
 import { Modal } from './ui/Modal'
 
 const primaryMobile = [
-  { to: '/', labelKey: 'nav.dashboard', icon: LayoutDashboard, end: true },
-  { to: '/progress', labelKey: 'nav.progress', icon: ListTree },
+  { to: '/', labelKey: 'nav.dashboard', icon: SquaresFour, end: true },
+  { to: '/progress', labelKey: 'nav.progress', icon: TreeStructure },
   { to: '/inventory', labelKey: 'nav.inventory', icon: Package },
-  { to: '/sell', labelKey: 'nav.sell', icon: Store },
+  { to: '/sell', labelKey: 'nav.sell', icon: Storefront },
 ] as const
 
 const moreMobile = [
-  { to: '/droiddex', labelKey: 'nav.droiddex', icon: Sparkles },
-  { to: '/fusion', labelKey: 'nav.fusion', icon: FlaskConical },
+  { to: '/droiddex', labelKey: 'nav.droiddex', icon: Sparkle },
+  { to: '/fusion', labelKey: 'nav.fusion', icon: Flask },
   { to: '/about', labelKey: 'nav.about', icon: Info },
-  { to: '/settings', labelKey: 'nav.settings', icon: Settings },
+  { to: '/settings', labelKey: 'nav.settings', icon: Gear },
 ] as const
 
 const desktopNav = [...primaryMobile, ...moreMobile]
@@ -75,7 +76,7 @@ export function AppShell() {
                 )
               }
             >
-              <item.icon size={18} />
+              <item.icon size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} />
               {t(item.labelKey)}
             </NavLink>
           ))}
@@ -115,7 +116,7 @@ export function AppShell() {
                 )
               }
             >
-              <item.icon size={20} />
+              <item.icon size={20} weight={UI_ICON_WEIGHT} />
               <span className="leading-tight text-center px-0.5">{t(item.labelKey)}</span>
             </NavLink>
           ))}
@@ -129,7 +130,7 @@ export function AppShell() {
               moreMobile.some((m) => location.pathname === m.to) && 'text-holo-300 bg-white/5',
             )}
           >
-            <Menu size={20} />
+            <List size={20} weight={UI_ICON_WEIGHT} />
             <span>{t('nav.more')}</span>
           </button>
         </div>
@@ -149,7 +150,7 @@ export function AppShell() {
                 )
               }
             >
-              <item.icon size={18} />
+              <item.icon size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} />
               {t(item.labelKey)}
             </NavLink>
           ))}

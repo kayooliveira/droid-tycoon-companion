@@ -1,6 +1,6 @@
-import { Info } from 'lucide-react'
+import { Info } from '@phosphor-icons/react'
 import { useId, useState } from 'react'
-import { UI_ICON_SIZE, UI_ICON_STROKE } from './iconStyle'
+import { uiIconProps } from './iconStyle'
 import { IconButton } from './IconButton'
 
 export function HelpHint({ text, label }: { text: string; label: string }) {
@@ -15,7 +15,7 @@ export function HelpHint({ text, label }: { text: string; label: string }) {
         aria-expanded={open}
         aria-describedby={open ? id : undefined}
       >
-        <Info size={UI_ICON_SIZE} strokeWidth={UI_ICON_STROKE} />
+        <Info {...uiIconProps} />
       </IconButton>
       {open ? (
         <span

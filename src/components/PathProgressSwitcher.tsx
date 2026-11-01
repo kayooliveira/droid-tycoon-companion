@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { ChevronDown, Route } from 'lucide-react'
+import { CaretDown, Path } from '@phosphor-icons/react'
+import { UI_ICON_SIZE, UI_ICON_WEIGHT } from './ui/iconStyle'
 import { useTranslation } from 'react-i18next'
 import { cycleById, gameData } from '../domain/gameData'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
@@ -50,9 +51,9 @@ export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
             : 'inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm hover:bg-white/10'
         }
       >
-        <Route size={compact ? 14 : 16} className="text-holo-300 shrink-0" />
+        <Path size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} className="text-holo-300 shrink-0" />
         <span className="truncate max-w-[10rem]">{cycleLabel(progress.pathId)}</span>
-        <ChevronDown size={14} className="opacity-60 shrink-0" />
+        <CaretDown size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} className="opacity-60 shrink-0" />
       </button>
 
       <Modal

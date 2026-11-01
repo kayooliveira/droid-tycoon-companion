@@ -3,15 +3,15 @@ import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   Database,
-  Download,
+  DownloadSimple,
+  GlobeHemisphereWest,
   Info,
-  Languages,
   Moon,
   Palette,
-  RotateCcw,
-  Trash2,
-  Upload,
-} from 'lucide-react'
+  ArrowCounterClockwise,
+  Trash,
+  UploadSimple,
+} from '@phosphor-icons/react'
 import { ShareMenu } from '../components/ShareMenu'
 import { DownloadCycleMenu } from '../components/DownloadCycleMenu'
 import { FeedbackWhatsAppLink } from '../components/FeedbackWhatsAppLink'
@@ -31,7 +31,7 @@ import { downloadJson, exportProgress, parseImportJson } from '../storage/export
 import { useToast } from '../components/ToastProvider'
 import { setDocumentLanguage } from '../i18n'
 import { initI18n } from '../i18n/index'
-import { UI_ICON_SIZE, UI_ICON_STROKE } from '../components/ui/iconStyle'
+import { uiIconProps } from '../components/ui/iconStyle'
 
 export function SettingsPage() {
   const { t, i18n } = useTranslation()
@@ -73,7 +73,7 @@ export function SettingsPage() {
       <h1 className="font-display text-xl tracking-wide text-balance">{t('settings.title')}</h1>
 
       <GlassCard className="p-4">
-        <SectionHeader icon={<Palette size={UI_ICON_SIZE} strokeWidth={UI_ICON_STROKE} />} title={t('settings.appearance')} />
+        <SectionHeader icon={<Palette {...uiIconProps} />} title={t('settings.appearance')} />
         <div className="space-y-4">
           <div>
             <p className="text-xs text-zinc-500 mb-2">{t('settings.theme')}</p>
@@ -82,7 +82,7 @@ export function SettingsPage() {
               value={settings.theme}
               onChange={setTheme}
               options={[
-                { value: 'dark', label: t('settings.themeDark'), icon: <Moon size={16} /> },
+                { value: 'dark', label: t('settings.themeDark'), icon: <Moon {...uiIconProps} /> },
                 { value: 'light', label: t('settings.themeLight') },
                 { value: 'system', label: t('settings.themeSystemShort') },
               ]}
@@ -103,7 +103,7 @@ export function SettingsPage() {
 
       <GlassCard className="p-4">
         <SectionHeader
-          icon={<Languages size={UI_ICON_SIZE} strokeWidth={UI_ICON_STROKE} />}
+          icon={<GlobeHemisphereWest {...uiIconProps} />}
           title={t('settings.language')}
         />
         <div data-testid="language-select">
@@ -120,7 +120,7 @@ export function SettingsPage() {
       </GlassCard>
 
       <GlassCard className="p-4 space-y-3">
-        <SectionHeader icon={<RotateCcw size={UI_ICON_SIZE} strokeWidth={UI_ICON_STROKE} />} title={t('settings.progress')} />
+        <SectionHeader icon={<ArrowCounterClockwise {...uiIconProps} />} title={t('settings.progress')} />
         <PathProgressSwitcher compact />
         <ProgressSummaryLine />
         <label className="block text-xs text-zinc-500">
@@ -141,7 +141,7 @@ export function SettingsPage() {
 
       <GlassCard className="p-4">
         <SectionHeader
-          icon={<Database size={UI_ICON_SIZE} strokeWidth={UI_ICON_STROKE} />}
+          icon={<Database {...uiIconProps} />}
           title={t('settings.dataSection')}
           action={<HelpHint label={t('settings.dataHelp')} text={t('settings.updateHint')} />}
         />
@@ -161,7 +161,7 @@ export function SettingsPage() {
           <Button
             variant="secondary"
             size="sm"
-            icon={<Download size={UI_ICON_SIZE} strokeWidth={UI_ICON_STROKE} />}
+            icon={<DownloadSimple {...uiIconProps} />}
             onClick={() => downloadJson('droid-tycoon-progress.json', exportProgress(toPersisted()))}
           >
             {t('settings.exportShort')}
@@ -169,7 +169,7 @@ export function SettingsPage() {
           <Button
             variant="secondary"
             size="sm"
-            icon={<Upload size={UI_ICON_SIZE} strokeWidth={UI_ICON_STROKE} />}
+            icon={<UploadSimple {...uiIconProps} />}
             onClick={() => fileRef.current?.click()}
           >
             {t('settings.importShort')}
@@ -196,7 +196,7 @@ export function SettingsPage() {
       </GlassCard>
 
       <GlassCard className="p-4 space-y-3">
-        <SectionHeader icon={<Info size={UI_ICON_SIZE} strokeWidth={UI_ICON_STROKE} />} title={t('settings.aboutSection')} />
+        <SectionHeader icon={<Info {...uiIconProps} />} title={t('settings.aboutSection')} />
         <p className="text-xs text-zinc-500 text-pretty">{t('app.disclaimer')}</p>
         <div className="flex flex-wrap gap-2">
           <Button variant="secondary" size="sm" onClick={rerunOnboarding}>
@@ -215,7 +215,7 @@ export function SettingsPage() {
 
       <GlassCard className="p-4 border border-red-500/25 bg-red-950/15">
         <SectionHeader
-          icon={<Trash2 size={UI_ICON_SIZE} strokeWidth={UI_ICON_STROKE} />}
+          icon={<Trash {...uiIconProps} />}
           title={t('settings.danger')}
         />
         {!confirmReset ? (

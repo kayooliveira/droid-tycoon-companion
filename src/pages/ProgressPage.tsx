@@ -1,8 +1,8 @@
 import { motion } from 'motion/react'
 import { useState } from 'react'
-import { Check, ChevronDown, RotateCcw, Sparkles } from 'lucide-react'
+import { ArrowCounterClockwise, CaretDown, Check, Sparkle } from '@phosphor-icons/react'
 import { SegmentedControl } from '../components/ui/SegmentedControl'
-import { UI_ICON_SIZE, UI_ICON_STROKE } from '../components/ui/iconStyle'
+import { uiIconProps } from '../components/ui/iconStyle'
 import { useTranslation } from 'react-i18next'
 import {
   droidById,
@@ -124,7 +124,7 @@ export function ProgressPage() {
               <div className="flex flex-wrap gap-2 pt-1">
                 <Button
                   size="sm"
-                  icon={<Check size={UI_ICON_SIZE} strokeWidth={UI_ICON_STROKE} />}
+                  icon={<Check {...uiIconProps} />}
                   onClick={handleCompleteClick}
                   disabled={trackInventory && !canComplete}
                 >
@@ -137,13 +137,13 @@ export function ProgressPage() {
                   aria-label={t('progress.undoOne')}
                   onClick={() => setUndoOpen(true)}
                 >
-                  <RotateCcw size={UI_ICON_SIZE} strokeWidth={UI_ICON_STROKE} />
+                  <ArrowCounterClockwise {...uiIconProps} />
                 </Button>
                 {canSuperRebirth(progress) ? (
                   <Button
                     variant="secondary"
                     size="sm"
-                    icon={<Sparkles size={UI_ICON_SIZE} strokeWidth={UI_ICON_STROKE} />}
+                    icon={<Sparkle {...uiIconProps} />}
                     onClick={() => superRebirthAdvance()}
                   >
                     {t('progress.superShort')}
@@ -285,7 +285,10 @@ function RebirthListItem({
         className="w-full flex items-center gap-3 text-left"
         onClick={() => setOpen((v) => !v)}
       >
-        <ChevronDown className={`transition-transform shrink-0 ${open ? 'rotate-180' : ''}`} size={16} />
+        <CaretDown
+          {...uiIconProps}
+          className={`transition-transform shrink-0 ${open ? 'rotate-180' : ''}`}
+        />
         <div className="flex-1 min-w-0">
           <p className="font-medium">
             Rebirth {rebirth}{' '}

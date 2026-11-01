@@ -1,4 +1,5 @@
-import { Share2 } from 'lucide-react'
+import { ShareNetwork } from '@phosphor-icons/react'
+import { uiIconProps } from './ui/iconStyle'
 import { useTranslation } from 'react-i18next'
 import { APP_PUBLIC_URL, WHATSAPP_SHARE_BASE } from '../lib/constants'
 import { renderShareProgressCard } from '../lib/shareProgressCard'
@@ -73,7 +74,7 @@ export function ShareMenu({ compact }: { compact?: boolean }) {
     <div data-testid="share-menu">
     <GlassCard className="space-y-3">
       <div className="flex items-center gap-2">
-        <Share2 size={18} className="text-holo-300" />
+        <ShareNetwork {...uiIconProps} className="text-holo-300" />
         <h2 className="font-medium text-sm">{t('share.title')}</h2>
       </div>
       <p className="text-xs text-zinc-400">{t('share.hint')}</p>

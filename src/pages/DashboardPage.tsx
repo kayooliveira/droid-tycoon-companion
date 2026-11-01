@@ -1,4 +1,5 @@
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight } from '@phosphor-icons/react'
+import { uiIconProps } from '../components/ui/iconStyle'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { PathProgressSwitcher, ProgressSummaryLine } from '../components/PathProgressSwitcher'
@@ -55,7 +56,7 @@ export function DashboardPage() {
             )}
           >
             {t('dashboard.ctaProgress')}
-            <ArrowRight size={16} />
+            <ArrowRight {...uiIconProps} />
           </Link>
           {!trackInventory ? (
             <Link
@@ -85,7 +86,7 @@ export function DashboardPage() {
             className="inline-flex items-center gap-1 text-sm text-holo-300 hover:text-holo-200 min-h-11 px-3"
           >
             {t('dashboard.nextStepGo')}
-            <ArrowRight size={16} />
+            <ArrowRight {...uiIconProps} />
           </Link>
         </GlassCard>
       </div>

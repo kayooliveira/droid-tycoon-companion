@@ -1,6 +1,6 @@
-import { Check } from 'lucide-react'
+import { Check } from '@phosphor-icons/react'
 import { cn } from '../../lib/utils'
-import { UI_ICON_SIZE, UI_ICON_STROKE } from './iconStyle'
+import { uiIconProps } from './iconStyle'
 
 export function RadioCardGroup<T extends string>({
   value,
@@ -38,11 +38,7 @@ export function RadioCardGroup<T extends string>({
             )}
           >
             {selected ? (
-              <Check
-                size={UI_ICON_SIZE}
-                strokeWidth={UI_ICON_STROKE}
-                className="absolute top-2 right-2 text-holo-300"
-              />
+              <Check {...uiIconProps} className="absolute top-2 right-2 text-holo-300" />
             ) : null}
             <p className="font-medium text-sm text-pretty pr-6">{opt.label}</p>
             {opt.hint ? <p className="text-[11px] text-zinc-500 mt-0.5 text-pretty">{opt.hint}</p> : null}

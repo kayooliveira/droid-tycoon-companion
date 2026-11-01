@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'motion/react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { ArrowRight, Check } from 'lucide-react'
+import { ArrowRight, Check } from '@phosphor-icons/react'
 import type { AppLocale } from '../i18n/detectLocale'
 import { setDocumentLanguage, initI18n } from '../i18n/index'
 import { gameData } from '../domain/gameData'
@@ -16,7 +16,7 @@ import { Switch } from '../components/ui/Switch'
 import { useAppStore } from '../store/useAppStore'
 import { applyTheme } from '../store/useAppStore'
 import type { ThemeMode } from '../storage/types'
-import { UI_ICON_SIZE, UI_ICON_STROKE } from '../components/ui/iconStyle'
+import { uiIconProps } from '../components/ui/iconStyle'
 
 const steps = ['welcome', 'setup', 'prefs'] as const
 
@@ -101,7 +101,7 @@ export function OnboardingPage() {
                 <Button
                   className="w-full"
                   data-testid="onboarding-start"
-                  icon={<ArrowRight size={UI_ICON_SIZE} strokeWidth={UI_ICON_STROKE} />}
+                  icon={<ArrowRight {...uiIconProps} />}
                   onClick={() => setStep(1)}
                 >
                   {t('onboarding.start')}
@@ -186,7 +186,7 @@ export function OnboardingPage() {
                   <Button
                     className="flex-1"
                     size="sm"
-                    icon={<Check size={UI_ICON_SIZE} strokeWidth={UI_ICON_STROKE} />}
+                    icon={<Check {...uiIconProps} />}
                     onClick={() => finish(true)}
                   >
                     {t('onboarding.finish')}

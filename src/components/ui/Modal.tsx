@@ -1,9 +1,9 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react'
-import { X } from 'lucide-react'
+import { X } from '@phosphor-icons/react'
 import { useScrollLock } from '../../hooks/useScrollLock'
 import { cn } from '../../lib/utils'
 import { IconButton } from './IconButton'
-import { UI_ICON_SIZE, UI_ICON_STROKE } from './iconStyle'
+import { uiIconProps } from './iconStyle'
 
 const FOCUSABLE =
   'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -85,7 +85,7 @@ export function Modal({
             {title}
           </h2>
           <IconButton label="Close" onClick={onClose}>
-            <X size={UI_ICON_SIZE} strokeWidth={UI_ICON_STROKE} />
+            <X {...uiIconProps} />
           </IconButton>
         </div>
         <div className="px-4 py-4 sm:px-5 text-sm">{children}</div>

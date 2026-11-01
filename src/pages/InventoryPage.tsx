@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { Trash2 } from 'lucide-react'
+import { Trash } from '@phosphor-icons/react'
+import { uiIconProps } from '../components/ui/iconStyle'
 import { useTranslation } from 'react-i18next'
 import { droidById, gameData } from '../domain/gameData'
 import { droidHasFutureNeedOnPath } from '../domain/sellCenter'
@@ -160,7 +161,7 @@ export function InventoryPage() {
                     push(t('inventory.removed'))
                   }}
                 >
-                  <Trash2 size={16} />
+                  <Trash {...uiIconProps} />
                 </Button>
               </div>
             </GlassCard>
