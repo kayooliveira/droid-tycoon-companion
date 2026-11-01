@@ -1,0 +1,15 @@
+node_modules
+dist
+dist-ssr
+.git
+.github
+*.md
+docs
+test-results
+playwright-report
+.env
+.env.*
+*.local
+coverage
+.vscode
+.idea

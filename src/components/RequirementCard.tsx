@@ -1,0 +1,57 @@
+import { Plus } from 'lucide-react'
+import { droidById, gameData } from '../domain/gameData'
+import { buildTierLabelMap, formatTierName } from '../domain/tiers'
+import type { RequirementCheck } from '../domain/requirements'
+import { useAppStore } from '../store/useAppStore'
+import { DroidImage } from './DroidImage'
+import { Badge } from './ui/Badge'
+import { Button } from './ui/Button'
+import { GlassCard } from './ui/GlassCard'
+
+const tierLabels = buildTierLabelMap(gameData.rarities)
+
+const statusTone: Record<string, 'success' | 'warn' | 'danger' | 'info' | 'default'> = {
+  ready: 'success',
+  owned: 'warn',
+  missing: 'danger',
+  keep: 'info',
+  sellable: 'default',
+  upgrade: 'warn',
+}
+
+export function RequirementCard({ check }: { check: RequirementCheck }) {
+  const markOwned = useAppStore((s) => s.markDroidOwned)
+  const trackInventory = useAppStore((s) => s.settings.trackInventory)
+  const droid = droidById.get(check.requirement.droidId)
+  if (!droid) return null
+
+  return (
+    <GlassCard className="flex gap-3 items-center">
+      <DroidImage droid={droid} />
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2 flex-wrap">
+          <p className="font-medium truncate">{droid.name}</p>
+          <Badge tone="info">{formatTierName(check.requirement.rarity, tierLabels)}</Badge>
+          {trackInventory ? (
+            <Badge tone={statusTone[check.status] ?? 'default'}>{check.status}</Badge>
+          ) : null}
+        </div>
+        {trackInventory ? (
+          <p className="text-xs text-zinc-400 mt-1">
+            {check.ownedCount}/{check.neededCount} in inventory
+          </p>
+        ) : null}
+      </div>
+      {trackInventory && check.status !== 'ready' ? (
+        <Button
+          variant="secondary"
+          className="shrink-0 px-3"
+          onClick={() => markOwned(check.requirement.droidId, check.requirement.rarity)}
+          aria-label={`Mark ${droid.name} owned`}
+        >
+          <Plus size={16} />
+        </Button>
+      ) : null}
+    </GlassCard>
+  )
+}
