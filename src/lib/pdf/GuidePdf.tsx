@@ -1,9 +1,9 @@
 import { Document, Image, Page, Text, View } from '@react-pdf/renderer'
 import type { CyclePdfModel, PdfRebirthRow } from './buildCyclePdfModel'
 import { guideFactsLine } from './buildCyclePdfModel'
+import { DroidThumb } from './DroidThumb'
 import { PdfFooter } from './PdfFooter'
 import { pdfStyles as s } from './styles'
-import { pdfTheme as c } from '../pdfTheme'
 import { SUPER_REBIRTH_UNLOCK_AFTER } from '../../domain/progress'
 
 function GuideHeader({ model }: { model: CyclePdfModel }) {
@@ -41,28 +41,13 @@ function TableHeader({ model }: { model: CyclePdfModel }) {
   )
 }
 
-/** Column headers + continuation label on pages 2+ (fixed; does not affect page 1 layout). */
-function GuideContinuationHead({ model }: { model: CyclePdfModel }) {
-  const L = model.labels
+/** Repeats column headers on pages 2+ inside the reserved top padding band. */
+function GuideFixedTableHead({ model }: { model: CyclePdfModel }) {
   return (
     <View
       fixed
-      style={{
-        top: 24,
-        left: 32,
-        right: 32,
-        backgroundColor: c.bg,
-      }}
-      render={({ pageNumber }) =>
-        pageNumber > 1 ? (
-          <View>
-            <Text style={{ fontSize: 8, fontWeight: 700, color: c.textMuted, marginBottom: 6 }}>
-              {L.guideContinued}
-            </Text>
-            <TableHeader model={model} />
-          </View>
-        ) : null
-      }
+      style={s.guideFixedTableHead}
+      render={({ pageNumber }) => (pageNumber > 1 ? <TableHeader model={model} /> : null)}
     />
   )
 }
@@ -70,7 +55,7 @@ function GuideContinuationHead({ model }: { model: CyclePdfModel }) {
 function DroidCell({ req }: { req: PdfRebirthRow['requirements'][0] }) {
   return (
     <View style={s.droidCell}>
-      <Image src={req.imageSrc} style={s.thumb} />
+      <DroidThumb req={req} style={s.thumb} />
       <Text style={s.droidName}>{req.name}</Text>
       <View style={s.tierChip}>
         <Text style={s.tierText}>{req.tier}</Text>
@@ -128,9 +113,9 @@ function GuideNotes({ model }: { model: CyclePdfModel }) {
 export function GuidePdf({ model }: { model: CyclePdfModel }) {
   return (
     <Document>
-      <Page size="A4" style={s.page}>
+      <Page size="A4" style={s.guidePage}>
         <PdfFooter brand={model.brand} cycle={model.cycleShort} />
-        <GuideContinuationHead model={model} />
+        <GuideFixedTableHead model={model} />
         <View wrap={false}>
           <GuideHeader model={model} />
           <TableHeader model={model} />

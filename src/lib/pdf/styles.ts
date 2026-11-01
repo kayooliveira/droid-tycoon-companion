@@ -1,18 +1,36 @@
 import { StyleSheet } from '@react-pdf/renderer'
 import { pdfTheme as c } from '../pdfTheme'
 
+/** Top band height: table header row + gap (matches guideFixedTableHead placement). */
+export const GUIDE_PAGE_TOP_BAND = 20
+
 export const pdfStyles = StyleSheet.create({
   page: {
     fontFamily: 'Helvetica',
     fontSize: 9,
     color: c.text,
     backgroundColor: c.bg,
-    // Extra top room so fixed continuation + table head on pages 2+ do not overlap rows.
-    paddingTop: 76,
+    paddingTop: 28,
     paddingBottom: 40,
     paddingHorizontal: 32,
   },
-  guideFirstPagePullUp: { marginTop: -48 },
+  guidePage: {
+    fontFamily: 'Helvetica',
+    fontSize: 9,
+    color: c.text,
+    backgroundColor: c.bg,
+    paddingTop: GUIDE_PAGE_TOP_BAND,
+    paddingBottom: 40,
+    paddingHorizontal: 32,
+  },
+  guideFirstPagePullUp: { marginTop: -GUIDE_PAGE_TOP_BAND },
+  guideFixedTableHead: {
+    position: 'absolute',
+    top: 6,
+    left: 32,
+    right: 32,
+    backgroundColor: c.bg,
+  },
   footer: {
     position: 'absolute',
     bottom: 18,

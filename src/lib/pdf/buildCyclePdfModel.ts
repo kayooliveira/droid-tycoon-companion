@@ -1,6 +1,6 @@
 import { APP_BRAND_NAME } from '../brand'
 import { formatCycleDisplayName } from '../cycleLabel'
-import { droidImageSrc } from '../images'
+import { droidImageSrc, isMissingImageFlag } from '../images'
 import { cycleById, droidById, gameData, getRebirth } from '../../domain/gameData'
 import { pathProgressPercent, REBIRTHS_PER_PATH, SUPER_REBIRTH_UNLOCK_AFTER } from '../../domain/progress'
 import {
@@ -18,6 +18,7 @@ export interface PdfDroidReq {
   name: string
   tier: string
   imageSrc: string
+  imageMissing?: boolean
 }
 
 export interface PdfRebirthRow {
@@ -97,14 +98,15 @@ function mapRebirthRow(
     confidence: entry.confidence,
     requirements: entry.requirements.map((req) => {
       const droid = droidById.get(req.droidId)
+      const missing = droid ? isMissingImageFlag(droid) || !droid.imageLocal : true
       return {
         droidId: req.droidId,
         name: droid?.name ?? req.droidId,
         tier: formatTierName(req.rarity, tierLabels),
-        imageSrc: resolveAsset(
-          droidImageSrc(req.droidId, droid?.imageLocal),
-          origin,
-        ),
+        imageMissing: missing,
+        imageSrc: missing
+          ? ''
+          : resolveAsset(droidImageSrc(req.droidId, droid?.imageLocal), origin),
       }
     }),
   }
@@ -242,11 +244,15 @@ export function progressRebirthCards(
       status,
       requirements: entry.requirements.map((req) => {
         const droid = droidById.get(req.droidId)
+        const missing = droid ? isMissingImageFlag(droid) || !droid.imageLocal : true
         return {
           droidId: req.droidId,
           name: droid?.name ?? req.droidId,
           tier: formatTierName(req.rarity, tierLabels),
-          imageSrc: resolveAsset(droidImageSrc(req.droidId, droid?.imageLocal), origin),
+          imageMissing: missing,
+          imageSrc: missing
+            ? ''
+            : resolveAsset(droidImageSrc(req.droidId, droid?.imageLocal), origin),
         }
       }),
       sellLabels: sellUnits.slice(0, 6).map((u) =>

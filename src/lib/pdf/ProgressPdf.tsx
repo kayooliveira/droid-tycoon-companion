@@ -1,4 +1,5 @@
 import { Document, Image, Page, Text, View } from '@react-pdf/renderer'
+import { DroidThumb } from './DroidThumb'
 import type { CyclePdfModel } from './buildCyclePdfModel'
 import type { progressRebirthCards } from './buildCyclePdfModel'
 import { REBIRTHS_PER_PATH, SUPER_REBIRTH_UNLOCK_AFTER } from '../../domain/progress'
@@ -78,7 +79,7 @@ function RebirthCard({
       <Text style={s.muted}>{`${labels.credits}: ${card.credits}`}</Text>
       {card.requirements.map((req) => (
         <View key={req.droidId} style={{ flexDirection: 'row', marginTop: 3 }}>
-          <Image src={req.imageSrc} style={{ width: 14, height: 14, marginRight: 4 }} />
+          <DroidThumb req={req} style={{ width: 14, height: 14, marginRight: 4 }} />
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 8 }}>{req.name}</Text>
             <Text style={s.tierText}>{req.tier}</Text>
@@ -112,7 +113,7 @@ export function ProgressPdf({
     <Document>
       <Page size="A4" style={s.page}>
         <PdfFooter brand={model.brand} cycle={model.cycleShort} />
-        <View wrap={false} style={s.guideFirstPagePullUp}>
+        <View wrap={false}>
           <ProgressHeader model={model} />
           <StatCards model={model} />
           <View style={s.twoCol}>
