@@ -41,7 +41,8 @@
     "completeShort": "Complete",
     "completeBlockedShort": "Missing droids in inventory.",
     "superShort": "Super",
-    "undoConfirmShort": "Undo"
+    "undoConfirmShort": "Undo",
+    "moreActionsTitle": "More actions"
   },
   "path": {
     "switch": "Change Path",
@@ -137,8 +138,15 @@
     "pdf": "PDF",
     "png": "PNG images",
     "pdfDone": "Cycle PDF ready.",
-    "pngDone": "{{count}} PNG file(s) ready.",
+    "pngDone_one": "{{count}} PNG file ready.",
+    "pngDone_other": "{{count}} PNG files ready.",
     "failed": "Couldn't build the export. Try again."
+  },
+  "shareExport": {
+    "title": "Share",
+    "hint": "Cycle PDF or PNG chunks, app link, or progress card — all generated on your device.",
+    "hintLabel": "About export and share",
+    "footer": "Nothing is uploaded to a server."
   },
   "feedback": {
     "whatsappCtaEn": "Send feedback / Join the group",

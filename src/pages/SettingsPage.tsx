@@ -12,8 +12,7 @@ import {
   Trash,
   UploadSimple,
 } from '@phosphor-icons/react'
-import { ShareMenu } from '../components/ShareMenu'
-import { DownloadCycleMenu } from '../components/DownloadCycleMenu'
+import { ShareExportCard } from '../components/ShareExportCard'
 import { FeedbackWhatsAppLink } from '../components/FeedbackWhatsAppLink'
 import { PathProgressSwitcher, ProgressSummaryLine } from '../components/PathProgressSwitcher'
 import { Button } from '../components/ui/Button'
@@ -209,9 +208,9 @@ export function SettingsPage() {
           </Link>
         </div>
         <FeedbackWhatsAppLink />
-        <DownloadCycleMenu compact />
-        <ShareMenu compact />
       </GlassCard>
+
+      <ShareExportCard />
 
       <GlassCard className="p-4 border border-red-500/25 bg-red-950/15">
         <SectionHeader

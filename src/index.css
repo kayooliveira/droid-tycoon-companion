@@ -102,6 +102,57 @@
   body.theme-light .text-gradient-holo {
     @apply from-holo-700 via-teal-600 to-holo-600;
   }
+
+  body.theme-light .theme-heading,
+  body.theme-light h1.font-display {
+    @apply text-zinc-900;
+  }
+
+  body.theme-light .ui-btn-secondary {
+    @apply bg-zinc-100 border-zinc-300 text-zinc-800 hover:bg-zinc-200;
+  }
+
+  body.theme-light .sticky-mobile-header {
+    @apply bg-white/95 border-zinc-200/90 text-zinc-900;
+  }
+
+  body.theme-light .sticky-mobile-header .text-zinc-500 {
+    @apply text-zinc-600;
+  }
+
+  body.theme-light .mobile-bottom-nav {
+    @apply bg-white/98 border-zinc-200/90;
+  }
+
+  body.theme-light .mobile-bottom-nav .text-zinc-400 {
+    @apply text-zinc-600;
+  }
+
+  body.theme-light .mobile-bottom-nav .text-holo-300 {
+    @apply text-holo-700;
+  }
+
+  body.theme-light .text-emerald-300 {
+    @apply text-emerald-700;
+  }
+
+  body.theme-light .text-holo-300 {
+    @apply text-holo-700;
+  }
+
+  body.theme-light .help-hint-popover {
+    @apply border-zinc-300 bg-white text-zinc-700 shadow-md;
+  }
+
+  html {
+    scroll-padding-top: calc(3.5rem + env(safe-area-inset-top, 0px));
+  }
+
+  @media (min-width: 768px) {
+    html {
+      scroll-padding-top: 0;
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

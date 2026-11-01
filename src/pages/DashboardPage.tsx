@@ -1,11 +1,11 @@
 import { ArrowRight } from '@phosphor-icons/react'
 import { uiIconProps } from '../components/ui/iconStyle'
+import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { PathProgressSwitcher, ProgressSummaryLine } from '../components/PathProgressSwitcher'
 import { RequirementCard } from '../components/RequirementCard'
-import { ShareMenu } from '../components/ShareMenu'
-import { DownloadCycleMenu } from '../components/DownloadCycleMenu'
+import { ShareExportCard } from '../components/ShareExportCard'
 import { Badge } from '../components/ui/Badge'
 import { GlassCard } from '../components/ui/GlassCard'
 import { cn } from '../lib/utils'
@@ -16,6 +16,8 @@ import { evaluateRequirements, metRequirementCount } from '../domain/requirement
 import { analyzeSellCenter, summarizeSellCenter } from '../domain/sellCenter'
 import { isDataStale } from '../domain/gameData'
 import { useAppStore } from '../store/useAppStore'
+
+const DASHBOARD_SEEN_KEY = 'dt-helper-dashboard-seen'
 
 export function DashboardPage() {
   const { t } = useTranslation()
@@ -30,6 +32,11 @@ export function DashboardPage() {
   const ready = metRequirementCount(checks)
   const missing = next ? 3 - ready : 0
 
+  const showIntroRef = useRef(typeof localStorage !== 'undefined' && localStorage.getItem(DASHBOARD_SEEN_KEY) !== '1')
+  useEffect(() => {
+    localStorage.setItem(DASHBOARD_SEEN_KEY, '1')
+  }, [])
+
   let nextStepKey = 'dashboard.nextStepProgress'
   let nextStepHref = '/progress'
   if (next && trackInventory && missing > 0) {
@@ -43,11 +50,18 @@ export function DashboardPage() {
     nextStepHref = '/progress'
   }
 
+  const nextStepText =
+    nextStepKey === 'dashboard.nextStepInventory'
+      ? t('dashboard.nextStepInventory', { count: missing })
+      : nextStepKey === 'dashboard.nextStepSell'
+        ? t('dashboard.nextStepSell', { count: sell.sellable })
+        : t(nextStepKey)
+
   return (
-    <div className="space-y-6" data-testid="dashboard-ready">
-      <GlassCard className="space-y-3 border-holo-500/20 bg-holo-600/5">
-        <p className="text-sm text-zinc-400 text-pretty leading-snug">{t('dashboard.hero')}</p>
-        <div className="flex flex-wrap gap-2">
+    <div className="space-y-4" data-testid="dashboard-ready">
+      {showIntroRef.current ? (
+        <GlassCard className="space-y-3 border-holo-500/20 bg-holo-600/5">
+          <p className="text-sm text-zinc-400 text-pretty leading-snug">{t('dashboard.hero')}</p>
           <Link
             to="/progress"
             className={cn(
@@ -58,44 +72,26 @@ export function DashboardPage() {
             {t('dashboard.ctaProgress')}
             <ArrowRight {...uiIconProps} />
           </Link>
-          {!trackInventory ? (
-            <Link
-              to="/settings"
-              className="inline-flex items-center justify-center min-h-11 rounded-xl px-4 py-2.5 text-sm border border-white/15 text-zinc-200 hover:bg-white/10"
-            >
-              {t('dashboard.ctaInventory')}
-            </Link>
-          ) : null}
-        </div>
-      </GlassCard>
-
-      <div data-testid="next-step">
-        <GlassCard className="flex flex-wrap items-center justify-between gap-3">
-          <div>
+        </GlassCard>
+      ) : (
+        <GlassCard className="flex flex-wrap items-center justify-between gap-3" data-testid="next-step">
+          <div className="min-w-0">
             <p className="text-xs uppercase tracking-widest text-zinc-500">{t('dashboard.nextStepLabel')}</p>
-            <p className="text-sm font-medium mt-1">
-              {nextStepKey === 'dashboard.nextStepInventory'
-                ? t('dashboard.nextStepInventory', { count: missing })
-                : nextStepKey === 'dashboard.nextStepSell'
-                  ? t('dashboard.nextStepSell', { count: sell.sellable })
-                  : t(nextStepKey)}
-            </p>
+            <p className="text-sm font-medium mt-0.5 text-pretty">{nextStepText}</p>
           </div>
           <Link
             to={nextStepHref}
-            className="inline-flex items-center gap-1 text-sm text-holo-300 hover:text-holo-200 min-h-11 px-3"
+            className="inline-flex items-center gap-1 text-sm text-holo-300 hover:text-holo-200 min-h-11 px-3 shrink-0"
           >
             {t('dashboard.nextStepGo')}
             <ArrowRight {...uiIconProps} />
           </Link>
         </GlassCard>
-      </div>
+      )}
 
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="space-y-2 min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <PathProgressSwitcher />
-          </div>
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div className="space-y-1 min-w-0">
+          <PathProgressSwitcher />
           <ProgressSummaryLine />
         </div>
         {isDataStale() ? (
@@ -105,19 +101,40 @@ export function DashboardPage() {
         )}
       </div>
 
-      <GlassCard>
+      <GlassCard className="space-y-2 p-3">
         <ProgressBar label={t('progress.pathProgress')} value={pathProgressPercent(progress)} />
-        <p className="text-xs text-zinc-500 mt-2">
-          {t('progress.completedCount', {
-            done: progress.completedOnPath,
-            total: REBIRTHS_PER_PATH,
-          })}
-        </p>
+        {trackInventory ? (
+          <div className="grid grid-cols-4 gap-2 pt-1 text-center">
+            <div>
+              <p className="text-[10px] text-zinc-500 leading-tight">{t('dashboard.statsRequired')}</p>
+              <p className="text-lg font-semibold tabular-nums">3</p>
+            </div>
+            <div>
+              <p className="text-[10px] text-zinc-500 leading-tight">{t('dashboard.statsReady')}</p>
+              <p className="text-lg font-semibold tabular-nums text-emerald-300">{ready}</p>
+            </div>
+            <div>
+              <p className="text-[10px] text-zinc-500 leading-tight">{t('dashboard.statsKeep')}</p>
+              <p className="text-lg font-semibold tabular-nums">{sell.keep}</p>
+            </div>
+            <div>
+              <p className="text-[10px] text-zinc-500 leading-tight">{t('dashboard.statsSellable')}</p>
+              <p className="text-lg font-semibold tabular-nums text-holo-300">{sell.sellable}</p>
+            </div>
+          </div>
+        ) : (
+          <p className="text-xs text-zinc-500">
+            {t('progress.completedCount', {
+              done: progress.completedOnPath,
+              total: REBIRTHS_PER_PATH,
+            })}
+          </p>
+        )}
       </GlassCard>
 
-      <GlassCard className="space-y-4">
+      <GlassCard className="space-y-3 p-4">
         <div className="flex items-center justify-between gap-2 flex-wrap">
-          <h2 className="font-display text-lg tracking-wide text-gradient-holo">
+          <h2 className="font-display text-base tracking-wide text-gradient-holo">
             {t('dashboard.nextSection')} #{Math.min(progress.nextRebirth, REBIRTHS_PER_PATH)}
           </h2>
           {next ? (
@@ -128,58 +145,22 @@ export function DashboardPage() {
         </div>
         {next ? (
           <>
-            <p className="text-sm text-zinc-400">
+            <p className="text-xs text-zinc-500">
               {t('dashboard.credits', { credits: next.credits })}
               {next.unlocks ? ` · ${t('dashboard.unlocks', { item: next.unlocks })}` : ''}
             </p>
-            {next.note ? (
-              <p className="text-xs text-amber-200/90 border border-amber-400/20 rounded-lg p-2">
-                {next.note}
-              </p>
-            ) : null}
             <div className="space-y-2">
               {checks.map((c) => (
                 <RequirementCard key={c.requirement.droidId} check={c} />
               ))}
             </div>
-            {trackInventory ? (
-              <ProgressBar
-                label={t('dashboard.rebirthReadyCount', {
-                  ready: metRequirementCount(checks),
-                  total: 3,
-                })}
-                value={(metRequirementCount(checks) / 3) * 100}
-              />
-            ) : null}
           </>
         ) : (
           <p className="text-sm text-zinc-400">{t('progress.pathComplete')}</p>
         )}
       </GlassCard>
 
-      {trackInventory ? (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <GlassCard>
-            <p className="text-xs text-zinc-500">{t('dashboard.statsRequired')}</p>
-            <p className="text-2xl font-semibold">3</p>
-          </GlassCard>
-          <GlassCard>
-            <p className="text-xs text-zinc-500">{t('dashboard.statsReady')}</p>
-            <p className="text-2xl font-semibold text-emerald-300">{metRequirementCount(checks)}</p>
-          </GlassCard>
-          <GlassCard>
-            <p className="text-xs text-zinc-500">{t('dashboard.statsKeep')}</p>
-            <p className="text-2xl font-semibold">{sell.keep}</p>
-          </GlassCard>
-          <GlassCard>
-            <p className="text-xs text-zinc-500">{t('dashboard.statsSellable')}</p>
-            <p className="text-2xl font-semibold text-holo-300">{sell.sellable}</p>
-          </GlassCard>
-        </div>
-      ) : null}
-
-      <DownloadCycleMenu />
-      <ShareMenu />
+      <ShareExportCard />
     </div>
   )
 }

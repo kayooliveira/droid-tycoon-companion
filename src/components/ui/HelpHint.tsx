@@ -21,7 +21,7 @@ export function HelpHint({ text, label }: { text: string; label: string }) {
         <span
           id={id}
           role="tooltip"
-          className="absolute z-50 top-full mt-1 right-0 w-56 rounded-lg border border-white/15 bg-surface-850 p-2 text-xs text-zinc-300 shadow-lg text-pretty"
+          className="help-hint-popover absolute z-50 top-full mt-1 right-0 w-56 rounded-lg border border-white/15 bg-surface-850 p-2 text-xs text-zinc-300 shadow-lg text-pretty"
         >
           {text}
         </span>

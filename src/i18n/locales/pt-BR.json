@@ -41,7 +41,8 @@
     "completeShort": "Concluir",
     "completeBlockedShort": "Faltam droids no inventário.",
     "superShort": "Super",
-    "undoConfirmShort": "Desfazer"
+    "undoConfirmShort": "Desfazer",
+    "moreActionsTitle": "Mais ações"
   },
   "path": {
     "switch": "Trocar ciclo",
@@ -137,8 +138,15 @@
     "pdf": "PDF",
     "png": "Imagens PNG",
     "pdfDone": "PDF do ciclo pronto.",
-    "pngDone": "{{count}} arquivo(s) PNG pronto(s).",
+    "pngDone_one": "{{count}} arquivo PNG pronto.",
+    "pngDone_other": "{{count}} arquivos PNG prontos.",
     "failed": "Não deu pra gerar o export. Tenta de novo."
+  },
+  "shareExport": {
+    "title": "Compartilhar",
+    "hint": "PDF ou PNG do ciclo, link do app ou card de progresso — tudo gerado no aparelho.",
+    "hintLabel": "Sobre export e compartilhar",
+    "footer": "Nada é enviado ao servidor."
   },
   "feedback": {
     "whatsappCtaEn": "Send feedback / Join the group",

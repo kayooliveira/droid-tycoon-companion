@@ -31,6 +31,25 @@ async function main() {
   await page.evaluate(() => localStorage.clear())
   await page.getByTestId('onboarding-skip').click()
 
+  await page.evaluate(() => {
+    const key = 'droid-tycoon-companion-store'
+    const raw = localStorage.getItem(key)
+    if (!raw) return
+    const parsed = JSON.parse(raw)
+    const state = parsed.state ?? parsed
+    state.progress = state.progress ?? {}
+    state.settings = state.settings ?? {}
+    state.progress.pathId = 'path-1'
+    state.progress.nextRebirth = 13
+    state.progress.completedOnPath = 12
+    state.settings.locale = 'pt-BR'
+    state.settings.localeSource = 'user'
+    if (parsed.state) parsed.state = state
+    localStorage.setItem(key, JSON.stringify(parsed.state ? parsed : state))
+    localStorage.setItem('dt-helper-dashboard-seen', '1')
+  })
+  await page.reload()
+
   for (const [name, path] of routes) {
     await page.goto(`${base}${path}`)
     await page.waitForTimeout(400)

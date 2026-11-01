@@ -87,7 +87,7 @@ export function AppShell() {
       </aside>
 
       <main className="flex-1 md:ml-64 pb-[4.75rem] md:pb-6">
-        <header className="md:hidden sticky top-0 z-40 border-b border-white/10 bg-surface-950/90 backdrop-blur-xl px-4 py-3 flex items-center gap-3 min-h-[3.25rem]">
+        <header className="sticky-mobile-header md:hidden sticky top-0 z-40 border-b border-white/10 bg-surface-950/90 backdrop-blur-xl px-4 py-3 flex items-center gap-3 min-h-[3.25rem]">
           <Logo className="h-8 w-8" />
           <div className="min-w-0 flex-1">
             <h1 className="font-display text-sm tracking-wide truncate">{t(titleKey)}</h1>
@@ -100,7 +100,7 @@ export function AppShell() {
       </main>
 
       <nav
-        className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-white/10 bg-surface-900/98 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]"
+        className="mobile-bottom-nav md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-white/10 bg-surface-900/98 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]"
         aria-label="Main"
       >
         <div className="grid grid-cols-5 gap-0.5 px-1 py-1">

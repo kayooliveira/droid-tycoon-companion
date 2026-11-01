@@ -1,6 +1,6 @@
 import { motion } from 'motion/react'
 import { useState } from 'react'
-import { ArrowCounterClockwise, CaretDown, Check, Sparkle } from '@phosphor-icons/react'
+import { ArrowCounterClockwise, CaretDown, Check, DotsThreeVertical, Sparkle } from '@phosphor-icons/react'
 import { SegmentedControl } from '../components/ui/SegmentedControl'
 import { uiIconProps } from '../components/ui/iconStyle'
 import { useTranslation } from 'react-i18next'
@@ -29,7 +29,9 @@ import { ProgressBar } from '../components/ui/ProgressBar'
 import { useAppStore } from '../store/useAppStore'
 import { useToast } from '../components/ToastProvider'
 import { SellAfterRebirthList } from '../components/SellAfterRebirthList'
-import { DownloadCycleMenu } from '../components/DownloadCycleMenu'
+import { ShareExportCard } from '../components/ShareExportCard'
+import { HelpHint } from '../components/ui/HelpHint'
+import { IconButton } from '../components/ui/IconButton'
 
 const tierLabels = buildTierLabelMap(gameData.rarities)
 
@@ -38,6 +40,7 @@ export function ProgressPage() {
   const [mode, setMode] = useState<'list' | 'focus'>('focus')
   const [forceCompleteOpen, setForceCompleteOpen] = useState(false)
   const [undoOpen, setUndoOpen] = useState(false)
+  const [moreOpen, setMoreOpen] = useState(false)
   const progress = useAppStore((s) => s.progress)
   const inventory = useAppStore((s) => s.inventory)
   const trackInventory = useAppStore((s) => s.settings.trackInventory)
@@ -118,43 +121,30 @@ export function ProgressPage() {
                   ),
                 )}
               </div>
-              {!canComplete && trackInventory ? (
-                <p className="text-xs text-amber-200/90 text-pretty">{t('progress.completeBlockedShort')}</p>
-              ) : null}
-              <div className="flex flex-wrap gap-2 pt-1">
+              <div className="flex items-center gap-2 pt-1">
                 <Button
                   size="sm"
                   icon={<Check {...uiIconProps} />}
                   onClick={handleCompleteClick}
                   disabled={trackInventory && !canComplete}
+                  className="flex-1 min-w-0 sm:flex-none"
                 >
                   {t('progress.completeShort')}
                 </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  iconOnly
-                  aria-label={t('progress.undoOne')}
-                  onClick={() => setUndoOpen(true)}
+                <IconButton
+                  variant="soft"
+                  label={t('progress.moreActionsTitle')}
+                  onClick={() => setMoreOpen(true)}
                 >
-                  <ArrowCounterClockwise {...uiIconProps} />
-                </Button>
-                {canSuperRebirth(progress) ? (
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    icon={<Sparkle {...uiIconProps} />}
-                    onClick={() => superRebirthAdvance()}
-                  >
-                    {t('progress.superShort')}
-                  </Button>
+                  <DotsThreeVertical {...uiIconProps} />
+                </IconButton>
+                {!canSuperRebirth(progress) ? (
+                  <HelpHint
+                    label={t('progress.superShort')}
+                    text={t('progress.superHint', { n: SUPER_REBIRTH_UNLOCK_AFTER })}
+                  />
                 ) : null}
               </div>
-              {!canSuperRebirth(progress) ? (
-                <p className="text-[11px] text-zinc-500 text-pretty">
-                  {t('progress.superHint', { n: SUPER_REBIRTH_UNLOCK_AFTER })}
-                </p>
-              ) : null}
               <SellAfterRebirthList
                 pathId={progress.pathId}
                 afterRebirth={current.rebirth}
@@ -187,7 +177,57 @@ export function ProgressPage() {
         </div>
       )}
 
-      <DownloadCycleMenu />
+      <ShareExportCard />
+
+      <Modal
+        open={moreOpen}
+        onClose={() => setMoreOpen(false)}
+        title={t('progress.moreActionsTitle')}
+        footer={
+          <Button variant="secondary" size="sm" onClick={() => setMoreOpen(false)}>
+            {t('path.cancel')}
+          </Button>
+        }
+      >
+        <div className="flex flex-col gap-2">
+          {trackInventory && !canComplete ? (
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => {
+                setMoreOpen(false)
+                setForceCompleteOpen(true)
+              }}
+            >
+              {t('progress.completeAnyway')}
+            </Button>
+          ) : null}
+          <Button
+            size="sm"
+            variant="secondary"
+            icon={<ArrowCounterClockwise {...uiIconProps} />}
+            onClick={() => {
+              setMoreOpen(false)
+              setUndoOpen(true)
+            }}
+          >
+            {t('progress.undoOne')}
+          </Button>
+          {canSuperRebirth(progress) ? (
+            <Button
+              size="sm"
+              variant="secondary"
+              icon={<Sparkle {...uiIconProps} />}
+              onClick={() => {
+                superRebirthAdvance()
+                setMoreOpen(false)
+              }}
+            >
+              {t('progress.superShort')}
+            </Button>
+          ) : null}
+        </div>
+      </Modal>
 
       <Modal
         open={forceCompleteOpen}

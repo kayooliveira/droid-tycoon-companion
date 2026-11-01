@@ -5,7 +5,7 @@ type Variant = 'ghost' | 'soft' | 'solid'
 
 const variants: Record<Variant, string> = {
   ghost: 'hover:bg-white/10 text-zinc-300',
-  soft: 'bg-white/10 hover:bg-white/15 border border-white/10 text-zinc-100',
+  soft: 'ui-btn-secondary bg-white/10 hover:bg-white/15 border border-white/10 text-zinc-100',
   solid: 'bg-holo-600 hover:bg-holo-500 text-white',
 }
 

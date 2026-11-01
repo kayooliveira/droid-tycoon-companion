@@ -39,15 +39,19 @@ async function seedPtBr(page: import('@playwright/test').Page, progress: Progres
         version: 0,
       }
       localStorage.setItem(key, JSON.stringify(payload))
+      localStorage.setItem('dt-helper-dashboard-seen', '1')
     },
     { key: STORE_KEY, progress },
   )
+  await page.reload()
 }
 
 async function openDashboardPt(page: import('@playwright/test').Page) {
   await page.goto('/')
   await expect(page.getByTestId('dashboard-ready')).toBeVisible({ timeout: 15000 })
-  await expect(page.getByTestId('next-step')).toBeVisible()
+  await expect(
+    page.getByTestId('next-step').or(page.getByText(/próximo rebirth, inventário/i)),
+  ).toBeVisible()
 }
 
 test('dashboard mobile pt-BR', async ({ browser }) => {
@@ -72,7 +76,7 @@ async function downloadShareCard(
 ) {
   await seedPtBr(page, progress)
   await openDashboardPt(page)
-  await page.getByTestId('share-menu').scrollIntoViewIfNeeded()
+  await page.getByTestId('share-export-card').scrollIntoViewIfNeeded()
   const [download] = await Promise.all([
     page.waitForEvent('download'),
     page.getByTestId('share-progress-card').click(),
