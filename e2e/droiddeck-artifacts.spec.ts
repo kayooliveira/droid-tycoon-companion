@@ -150,8 +150,12 @@ test('DroidDeck UX artifacts at 390x844', async ({ page, browser }) => {
   })
   await page.goto('/progress')
   await page.waitForTimeout(500)
-  await expect(page.getByRole('button', { name: /Super Renascimento/i })).toBeVisible()
+  await expect(page.getByTestId('progress-super-actions')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Super Renascimento', exact: true })).toBeVisible()
+  await page.setViewportSize({ width: 390, height: 844 })
   await page.screenshot({ path: path.join(ARTIFACTS, 'super-cta.png') })
+  await page.setViewportSize({ width: 360, height: 844 })
+  await page.screenshot({ path: path.join(ARTIFACTS, 'super-cta-360.png') })
 
   await seedOnboarding(page, {
     locale: 'pt-BR',

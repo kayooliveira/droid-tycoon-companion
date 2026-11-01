@@ -41,7 +41,7 @@ export function Button({
     <button
       aria-label={iconOnly ? ariaLabel : undefined}
       className={cn(
-        'inline-flex items-center justify-center font-medium transition-all active:scale-[0.98] disabled:opacity-45 disabled:pointer-events-none disabled:active:scale-100 whitespace-nowrap shrink-0',
+        'inline-flex items-center justify-center font-medium transition-all active:scale-[0.98] disabled:opacity-45 disabled:pointer-events-none disabled:active:scale-100 max-w-full min-w-0',
         variants[variant],
         iconOnly || size === 'icon' ? sizes.icon : sizes[size],
         className,
@@ -49,7 +49,9 @@ export function Button({
       {...props}
     >
       {icon ? <span className="shrink-0 [&_svg]:size-[18px]">{icon}</span> : null}
-      {!iconOnly && size !== 'icon' ? children : null}
+      {!iconOnly && size !== 'icon' ? (
+        <span className="truncate min-w-0">{children}</span>
+      ) : null}
       {iconOnly && children}
     </button>
   )

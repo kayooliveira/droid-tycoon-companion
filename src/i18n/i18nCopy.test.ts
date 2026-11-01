@@ -40,4 +40,19 @@ describe('i18n copy hygiene', () => {
     }
     expect(bad, bad.join('\n')).toEqual([])
   })
+
+  it('has no arrow glyphs in user-facing labels', () => {
+    const bad: string[] = []
+    for (const [locale, tree] of [
+      ['en', en],
+      ['pt-BR', pt],
+    ] as const) {
+      for (const [key, value] of walkStrings(tree)) {
+        if (/→/.test(value)) {
+          bad.push(`${locale}:${key} → ${value}`)
+        }
+      }
+    }
+    expect(bad, bad.join('\n')).toEqual([])
+  })
 })

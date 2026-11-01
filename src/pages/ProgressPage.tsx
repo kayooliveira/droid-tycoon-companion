@@ -123,43 +123,67 @@ export function ProgressPage() {
                   ),
                 )}
               </div>
-              <div className="flex items-center gap-2 pt-1">
-                <Button
-                  size="sm"
-                  icon={<Check {...uiIconProps} weight="fill" />}
-                  onClick={handleCompleteClick}
-                  disabled={trackInventory && !canComplete}
-                  className="flex-1 min-w-0 sm:flex-none"
-                >
-                  {t('progress.completeShort')}
-                </Button>
-                {canSuperRebirth(progress) ? (
+              {canSuperRebirth(progress) ? (
+                <div className="flex flex-col gap-2 pt-1 w-full min-w-0" data-testid="progress-super-actions">
                   <Button
-                    size="sm"
                     variant="accent"
+                    size="md"
+                    className="w-full min-h-12 max-w-full"
                     icon={<Sparkle {...uiIconProps} weight="fill" />}
                     onClick={() => {
                       hapticTap()
                       superRebirthAdvance()
                     }}
-                    className="flex-1 min-w-0 sm:flex-none"
                   >
-                    {t('progress.superRebirth')}
+                    {t('progress.superRebirthCta')}
                   </Button>
-                ) : (
+                  <div className="flex items-center gap-2 w-full min-w-0">
+                    {!isPathComplete(progress) ? (
+                      <Button
+                        size="sm"
+                        icon={<Check {...uiIconProps} weight="fill" />}
+                        onClick={handleCompleteClick}
+                        disabled={trackInventory && !canComplete}
+                        className="flex-1 min-w-0 max-w-full"
+                      >
+                        {t('progress.completeShort')}
+                      </Button>
+                    ) : null}
+                    <IconButton
+                      variant="soft"
+                      className="shrink-0"
+                      label={t('progress.moreActionsTitle')}
+                      onClick={() => setMoreOpen(true)}
+                    >
+                      <DotsThreeVertical {...uiIconProps} weight="fill" />
+                    </IconButton>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 pt-1 w-full min-w-0">
+                  <Button
+                    size="sm"
+                    icon={<Check {...uiIconProps} weight="fill" />}
+                    onClick={handleCompleteClick}
+                    disabled={trackInventory && !canComplete}
+                    className="flex-1 min-w-0 max-w-full sm:flex-none"
+                  >
+                    {t('progress.completeShort')}
+                  </Button>
                   <HelpHint
                     label={t('progress.superShort')}
                     text={t('progress.superHint', { n: SUPER_REBIRTH_UNLOCK_AFTER })}
                   />
-                )}
-                <IconButton
-                  variant="soft"
-                  label={t('progress.moreActionsTitle')}
-                  onClick={() => setMoreOpen(true)}
-                >
-                  <DotsThreeVertical {...uiIconProps} weight="fill" />
-                </IconButton>
-              </div>
+                  <IconButton
+                    variant="soft"
+                    className="shrink-0"
+                    label={t('progress.moreActionsTitle')}
+                    onClick={() => setMoreOpen(true)}
+                  >
+                    <DotsThreeVertical {...uiIconProps} weight="fill" />
+                  </IconButton>
+                </div>
+              )}
               <SellAfterRebirthList
                 pathId={progress.pathId}
                 afterRebirth={current.rebirth}
@@ -239,7 +263,7 @@ export function ProgressPage() {
                 setMoreOpen(false)
               }}
             >
-              {t('progress.superRebirth')}
+              {t('progress.superRebirthCta')}
             </Button>
           ) : null}
         </div>
