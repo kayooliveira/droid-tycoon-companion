@@ -18,6 +18,9 @@ import { uiIconProps } from '../components/ui/iconStyle'
 import { gameDataSource } from '../data/dataSource'
 import { droidById, gameData, getRebirth } from '../domain/gameData'
 import { analyzeSellCenter, summarizeSellCenter } from '../domain/sellCenter'
+import { unitsSellableAfterRebirth } from '../domain/rebirthSellPlan'
+import { formatTierName } from '../domain/tiers'
+import { useTierLabels } from '../i18n/useTierLabels'
 import { canCompleteRebirth } from '../domain/progress'
 import { evaluateRequirements } from '../domain/requirements'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
@@ -25,6 +28,7 @@ import { useAppStore } from '../store/useAppStore'
 
 export function DashboardPage() {
   const { t, i18n } = useTranslation()
+  const tierLabels = useTierLabels()
   const progress = useAppStore((s) => s.progress)
   const inventory = useAppStore((s) => s.inventory)
   const trackInventory = useAppStore((s) => s.settings.trackInventory)
@@ -38,7 +42,10 @@ export function DashboardPage() {
     : false
   const sellAnalysis = analyzeSellCenter(progress.pathId, progress.nextRebirth, inventory)
   const sell = summarizeSellCenter(sellAnalysis)
-  const sellSamples = sellAnalysis.filter((i) => i.category === 'sellable').slice(0, 3)
+  const completedRebirth = Math.max(0, progress.nextRebirth - 1)
+  const sellSamples = unitsSellableAfterRebirth(progress.pathId, completedRebirth)
+    .filter((u) => u.disposition === 'sellable')
+    .slice(0, 3)
 
   return (
     <div className="space-y-4 md:pb-8" data-testid="home-hub">
@@ -97,6 +104,7 @@ export function DashboardPage() {
           <div className="flex flex-wrap gap-1.5">
             {sellSamples.map((row) => {
               const d = droidById.get(row.droidId)
+              const tier = formatTierName(row.tier, tierLabels)
               return (
                 <span
                   key={row.droidId}
@@ -104,6 +112,7 @@ export function DashboardPage() {
                 >
                   {d ? <DroidImage droid={d} size="sm" className="!h-6 !w-6" /> : null}
                   {d?.name ?? row.droidId}
+                  <span className="text-ui-soft">· {tier}</span>
                 </span>
               )
             })}

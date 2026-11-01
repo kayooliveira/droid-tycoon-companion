@@ -43,6 +43,7 @@ function UnitRow({ unit }: { unit: RebirthUnitUsage }) {
         <div className="flex flex-wrap gap-1.5 items-center">
           <span className="text-sm font-medium truncate">{droid.name}</span>
           <Badge tone="info">{formatTierName(unit.tier, tierLabels)}</Badge>
+          {unit.quantity > 1 ? <Badge>×{unit.quantity}</Badge> : null}
           {unit.disposition !== 'sellable' ? (
             <Badge tone={tone}>{t(`sellAfter.${unit.disposition}`)}</Badge>
           ) : null}

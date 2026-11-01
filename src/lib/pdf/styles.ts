@@ -67,6 +67,7 @@ export const pdfStyles = StyleSheet.create({
     paddingVertical: 2,
     paddingHorizontal: 5,
   },
+  rowAlignTop: { alignItems: 'flex-start', paddingVertical: 4 },
   rowZebra: { backgroundColor: c.bgAlt },
   rowSuper: { backgroundColor: c.accentSoft, borderColor: c.accent },
   colNum: { width: 32, paddingRight: 2, justifyContent: 'center' },
@@ -145,7 +146,9 @@ export const pdfStyles = StyleSheet.create({
     fontWeight: 700,
     marginTop: 1,
   },
-  colSell: { width: 92, paddingLeft: 4, justifyContent: 'center' },
+  colSell: { width: 92, paddingLeft: 4, justifyContent: 'flex-start', alignSelf: 'stretch' },
+  sellCompactTwoCol: { flexDirection: 'row', gap: 3, alignItems: 'flex-start' },
+  sellCompactCol: { flex: 1, minWidth: 0 },
   colReq: { flex: 1, flexDirection: 'row', minWidth: 0 },
   rebirthCard: {
     width: '48%',

@@ -131,11 +131,17 @@ function mapRebirthRow(
   }
 }
 
-function droidLineLabel(droidId: string, tier: string, tierLabels: Map<string, string>): string {
+function droidLineLabel(
+  droidId: string,
+  tier: string,
+  tierLabels: Map<string, string>,
+  quantity = 1,
+): string {
   const droid = droidById.get(droidId)
   const name = droid?.name ?? droidId
   const t = formatTierName(tier as Parameters<typeof formatTierName>[0], tierLabels)
-  return `${name} · ${t}`
+  const qty = quantity > 1 ? ` ×${quantity}` : ''
+  return `${name} · ${t}${qty}`
 }
 
 function mapSellUnitsToLines(
@@ -150,7 +156,7 @@ function mapSellUnitsToLines(
         u.disposition === 'fusionCaution',
     )
     .map((u) => ({
-      label: droidLineLabel(u.droidId, u.tier, tierLabels),
+      label: droidLineLabel(u.droidId, u.tier, tierLabels, u.quantity),
       disposition: u.disposition,
     }))
 }
@@ -258,7 +264,7 @@ export function buildCyclePdfModel(input: ExportCycleInput): CyclePdfModel | nul
       pct,
       invCount: inventoryUnitCount(input.inventory),
       sellNowLabels: sellNowUnits.slice(0, 14).map((u) =>
-        droidLineLabel(u.droidId, u.tier, tierLabels),
+        droidLineLabel(u.droidId, u.tier, tierLabels, u.quantity),
       ),
       keepUpgradeLabels,
       upcoming,

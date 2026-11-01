@@ -7,8 +7,10 @@ import { inventoryUnitKey } from './inventory'
 import { collectFutureNeeds, type FutureNeed } from './sellCenter'
 import {
   earliestUpgradeRequirement,
+  highestTierHeldThroughRebirth,
   lastRebirthBlockingSell,
 } from './sellTierRules'
+import { tierMeetsRequired } from './tiers'
 import type { Confidence, FusionRecipe, TierId } from './types'
 
 export type RebirthSellDisposition = 'sellable' | 'keep' | 'fusionHold' | 'fusionCaution'
@@ -26,6 +28,8 @@ export interface RebirthUnitUsage {
   otherPathIds: string[]
   /** Set when the unit must stay for a higher tier on a later rebirth. */
   upgradeHint: { rebirth: number; targetTier: TierId } | null
+  /** When > 1, the guide/sell UI may show ×n (same droid required multiple times at once). */
+  quantity: number
 }
 
 function collectRequirementUnitKeys(pathId: string): Array<{ droidId: string; tier: TierId }> {
@@ -146,8 +150,79 @@ export function buildPathUnitUsage(pathId: string): RebirthUnitUsage[] {
       fusionRecipeIds,
       otherPathIds: [],
       upgradeHint: null,
+      quantity: 1,
     }
   })
+}
+
+const DISPOSITION_RANK: Record<RebirthSellDisposition, number> = {
+  sellable: 0,
+  fusionCaution: 1,
+  fusionHold: 2,
+  keep: 3,
+}
+
+function maxRequirementQuantityAtRebirth(
+  pathId: string,
+  droidId: string,
+  rebirth: number,
+): number {
+  const entry = cycleById.get(pathId)?.rebirths.find((r) => r.rebirth === rebirth)
+  if (!entry) return 1
+  let max = 0
+  for (const req of entry.requirements) {
+    if (req.droidId !== droidId) continue
+    max = Math.max(max, req.quantity ?? 1)
+  }
+  return max > 0 ? max : 1
+}
+
+/** One row per droid at the tier the player holds after completing `afterRebirth`. */
+export function groupSellUnitsByDroid(
+  pathId: string,
+  afterRebirth: number,
+  units: RebirthUnitUsage[],
+): RebirthUnitUsage[] {
+  const eligible = units.filter(
+    (u) =>
+      u.disposition === 'sellable' ||
+      u.disposition === 'fusionHold' ||
+      u.disposition === 'fusionCaution',
+  )
+  const byDroid = new Map<string, RebirthUnitUsage[]>()
+  for (const u of eligible) {
+    const list = byDroid.get(u.droidId) ?? []
+    list.push(u)
+    byDroid.set(u.droidId, list)
+  }
+
+  const grouped: RebirthUnitUsage[] = []
+  for (const [droidId, list] of byDroid) {
+    let rep = list[0]!
+    for (const u of list) {
+      if (DISPOSITION_RANK[u.disposition] > DISPOSITION_RANK[rep.disposition]) {
+        rep = u
+      }
+    }
+    const heldTier =
+      highestTierHeldThroughRebirth(pathId, droidId, afterRebirth) ?? rep.tier
+    const quantity =
+      rep.lastNeededRebirth === afterRebirth
+        ? maxRequirementQuantityAtRebirth(pathId, droidId, afterRebirth)
+        : 1
+    grouped.push({
+      ...rep,
+      tier: heldTier,
+      unitKey: inventoryUnitKey(droidId, heldTier),
+      quantity,
+      upgradeHint:
+        rep.disposition === 'keep'
+          ? earliestUpgradeRequirement(pathId, droidId, heldTier, afterRebirth)
+          : rep.upgradeHint,
+    })
+  }
+
+  return grouped.sort((a, b) => a.droidId.localeCompare(b.droidId))
 }
 
 function enrichSellableUnits(
@@ -169,10 +244,9 @@ function enrichSellableUnits(
         disposition === 'keep'
           ? earliestUpgradeRequirement(pathId, u.droidId, u.tier, afterRebirth)
           : null
-      return { ...u, disposition, fusionRecipeIds, otherPathIds, upgradeHint }
+      return { ...u, disposition, fusionRecipeIds, otherPathIds, upgradeHint, quantity: u.quantity ?? 1 }
     })
     .filter((u) => u.disposition === 'sellable' || u.disposition === 'fusionHold' || u.disposition === 'fusionCaution')
-    .sort((a, b) => a.droidId.localeCompare(b.droidId))
 }
 
 /** Cumulative: all units no longer needed from rebirth N+1 onward (after completing N). */
@@ -180,7 +254,8 @@ export function unitsSellableAfterRebirth(
   pathId: string,
   afterRebirth: number,
 ): RebirthUnitUsage[] {
-  return enrichSellableUnits(pathId, afterRebirth, buildPathUnitUsage(pathId))
+  const raw = enrichSellableUnits(pathId, afterRebirth, buildPathUnitUsage(pathId))
+  return groupSellUnitsByDroid(pathId, afterRebirth, raw)
 }
 
 /** Delta: units whose last required rebirth is exactly N (newly free after completing rebirth N). */
@@ -189,11 +264,12 @@ export function unitsNewlySellableAfterRebirth(
   afterRebirth: number,
 ): RebirthUnitUsage[] {
   if (afterRebirth <= 0) return []
-  return enrichSellableUnits(
+  const raw = enrichSellableUnits(
     pathId,
     afterRebirth,
     buildPathUnitUsage(pathId).filter((u) => u.lastNeededRebirth === afterRebirth),
   )
+  return groupSellUnitsByDroid(pathId, afterRebirth, raw)
 }
 
 /** Map rebirth index → units newly sellable after that rebirth completes. */
@@ -213,7 +289,10 @@ export function inventorySafeToSellNow(
   tier: TierId,
 ): RebirthUnitUsage | null {
   const match = unitsSellableAfterRebirth(pathId, completedRebirth).find(
-    (u) => u.droidId === droidId && u.tier === tier,
+    (u) =>
+      u.droidId === droidId &&
+      u.disposition === 'sellable' &&
+      (u.tier === tier || tierMeetsRequired(tier, u.tier)),
   )
   return match ?? null
 }

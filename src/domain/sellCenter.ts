@@ -8,7 +8,7 @@ import {
   consumeFromPool,
   poolRemainingUnits,
 } from './inventory'
-import { maxFutureRequirementForDroid } from './sellTierRules'
+import { earliestUpgradeRequirement, maxFutureRequirementForDroid } from './sellTierRules'
 import { tierMeetsRequired } from './tiers'
 import type { InventoryUnit, TierId } from './types'
 
@@ -135,6 +135,15 @@ export function analyzeSellCenter(
     const nextRebirthNeed = earliestRebirthNeed(futureNeeds, unit.droidId, unit.tier)
 
     if (needsUpgrade) {
+      const completedRebirth = Math.max(0, nextRebirth - 1)
+      const nextStep = earliestUpgradeRequirement(
+        pathId,
+        unit.droidId,
+        unit.tier,
+        completedRebirth,
+      )
+      const hintTier = nextStep?.targetTier ?? maxNeed.tier
+      const hintRebirth = nextStep?.rebirth ?? maxNeed.rebirth
       items.push({
         unitId: unit.id,
         droidId: unit.droidId,
@@ -142,9 +151,9 @@ export function analyzeSellCenter(
         quantity: unit.quantity,
         category: 'upgrade',
         reasonKey: 'sell.upgradeRebirth',
-        reasonParams: { name, tier: maxNeed.tier, rebirth: maxNeed.rebirth },
-        nextNeededAtRebirth: maxNeed.rebirth,
-        upgradeTargetTier: maxNeed.tier,
+        reasonParams: { name, tier: hintTier, rebirth: hintRebirth },
+        nextNeededAtRebirth: hintRebirth,
+        upgradeTargetTier: hintTier,
       })
       continue
     }

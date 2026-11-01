@@ -8,6 +8,7 @@ import {
 } from './sellTierRules'
 import {
   inventorySafeToSellNow,
+  sellableUnitsByRebirth,
   unitsNewlySellableAfterRebirth,
   unitsSellableAfterRebirth,
 } from './rebirthSellPlan'
@@ -51,7 +52,7 @@ describe('sellTierRules', () => {
     if (last !== null && last < 40) {
       expect(isSellableAfterRebirth(pathId, droidId, tier, last)).toBe(true)
       const delta = unitsNewlySellableAfterRebirth(pathId, last)
-      expect(delta.some((u) => u.droidId === droidId && u.tier === tier)).toBe(true)
+      expect(delta.some((u) => u.droidId === droidId)).toBe(true)
     }
   })
 
@@ -103,3 +104,21 @@ describe('inventorySafeToSellNow alignment', () => {
     expect(plan).toBeNull()
   })
 })
+
+describe('grouped sell display', () => {
+  it('never lists the same droid twice for one rebirth step', () => {
+    const map = sellableUnitsByRebirth('path-1')
+    for (let n = 1; n <= 40; n++) {
+      const ids = (map.get(n) ?? []).map((u) => u.droidId)
+      expect(new Set(ids).size).toBe(ids.length)
+    }
+  })
+
+  it('uses held tier at step for multi-tier droids (IG at #39)', () => {
+    const units = unitsNewlySellableAfterRebirth('path-1', 39)
+    const ig = units.find((u) => u.droidId === 'ig')
+    expect(ig).toBeDefined()
+    expect(ig!.tier).toBe('kyber')
+  })
+})
+

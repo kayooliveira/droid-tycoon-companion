@@ -82,8 +82,12 @@ function GuideRebirthRow({
   const isSuper = row.rebirth === SUPER_REBIRTH_UNLOCK_AFTER
   return (
     <View
-      wrap={false}
-      style={[s.row, zebra && !isSuper ? s.rowZebra : undefined, isSuper ? s.rowSuper : undefined]}
+      style={[
+        s.row,
+        s.rowAlignTop,
+        zebra && !isSuper ? s.rowZebra : undefined,
+        isSuper ? s.rowSuper : undefined,
+      ]}
     >
       <View style={s.colNum}>
         <Text style={{ fontWeight: 700, fontSize: 9 }}>{row.rebirth}</Text>

@@ -72,6 +72,28 @@ export function earliestUpgradeRequirement(
   return best
 }
 
+/** Highest tier required for `droidId` on rebirths 1…`throughRebirth` (tier held in place). */
+export function highestTierHeldThroughRebirth(
+  pathId: string,
+  droidId: string,
+  throughRebirth: number,
+): TierId | null {
+  const cycle = cycleById.get(pathId)
+  if (!cycle) return null
+
+  let best: TierId | null = null
+  for (const entry of cycle.rebirths) {
+    if (entry.rebirth > throughRebirth) continue
+    for (const req of entry.requirements) {
+      if (req.droidId !== droidId) continue
+      if (!best || compareTiers(req.rarity, best) > 0) {
+        best = req.rarity
+      }
+    }
+  }
+  return best
+}
+
 export function maxFutureRequirementForDroid(
   pathId: string,
   droidId: string,
