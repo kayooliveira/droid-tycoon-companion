@@ -5,6 +5,7 @@ import {
   Flask,
   Gear,
   Info,
+  MapTrifold,
   Package,
   Sparkle,
   SquaresFour,
@@ -23,6 +24,7 @@ import { MobileFloatingNav } from './MobileFloatingNav'
 const desktopNav = [
   { to: '/', labelKey: 'nav.dashboard', icon: SquaresFour, end: true as const },
   { to: '/progress', labelKey: 'nav.progress', icon: TreeStructure },
+  { to: '/cycles', labelKey: 'nav.cycles', icon: MapTrifold },
   { to: '/inventory', labelKey: 'nav.inventory', icon: Package },
   { to: '/sell', labelKey: 'nav.sell', icon: Storefront },
   { to: '/droiddex', labelKey: 'nav.droiddex', icon: Sparkle },
@@ -34,6 +36,7 @@ const desktopNav = [
 const routeTitleKeys: Record<string, string> = {
   '/': 'nav.dashboard',
   '/progress': 'nav.progress',
+  '/cycles': 'nav.cycles',
   '/inventory': 'nav.inventory',
   '/sell': 'nav.sell',
   '/droiddex': 'nav.droiddex',
@@ -42,7 +45,9 @@ const routeTitleKeys: Record<string, string> = {
   '/about': 'about.title',
 }
 
-const moreMobile = desktopNav.slice(4)
+const moreMobile = desktopNav.filter((item) =>
+  ['/sell', '/droiddex', '/fusion', '/about', '/settings'].includes(item.to),
+)
 
 export function AppShell() {
   const { t } = useTranslation()
