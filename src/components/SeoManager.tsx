@@ -34,7 +34,7 @@ export function SeoManager() {
     const path = location.pathname || '/'
     const appName = t('app.name')
     const section = t(routeKeys[path] ?? 'app.name')
-    const title = path === '/' ? t('seo.defaultTitle') : `${section} — ${appName}`
+    const title = path === '/' ? t('seo.defaultTitle') : `${section} · ${appName}`
     document.title = title
 
     const isPt = i18n.language === 'pt-BR'

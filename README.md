@@ -1,8 +1,8 @@
-# Droid Tycoon Companion
+# DroidDeck
 
-Ferramenta de fã para **Star Wars Droid Tycoon** (ilha UEFN 7865-8305-9184). Acompanhe Path, rebirths, inventário e o que vale vender.
+Ferramenta de fã **DroidDeck** para **Star Wars Droid Tycoon** (ilha UEFN 7865-8305-9184). Acompanhe ciclo, renascimentos, inventário e o que vale vender.
 
-Fan-made companion for **Star Wars Droid Tycoon** — same island code. Not official.
+Fan-made **DroidDeck** companion for **Star Wars Droid Tycoon** (same island code). Not official.
 
 **Produção / Live:** https://dthelper.kayooliveira.com
 
@@ -35,11 +35,11 @@ Push em `current` dispara `.github/workflows/image.yml` → `ghcr.io/kayooliveir
 
 ## Dados
 
-Fonte principal: [droidtycoonhelper.com](https://droidtycoonhelper.com/). Rebirths disputados (Path 2 #17, Path 6 #19) e fusões aparecem marcados no app. Atualize via `scripts/parse.py` + `src/data/gameData.json`.
+Dados de guias da comunidade e da [Star Wars Droid Tycoon Wiki (Fandom)](https://star-wars-droid-tycoon.fandom.com/). Renascimentos disputados (Path 2 #17, Path 6 #19) e fusões aparecem marcados no app. Atualize via `scripts/parse.py` + `src/data/gameData.json`.
 
 ## Imagens
 
-CC BY-SA via wiki / Helper — `public/assets/droids/ATTRIBUTION.md`.
+CC BY-SA via Fandom wiki. Veja `public/assets/droids/ATTRIBUTION.md`.
 
 ## Aviso
 

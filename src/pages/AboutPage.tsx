@@ -1,5 +1,8 @@
+import { Gear } from '@phosphor-icons/react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
+import { Button } from '../components/ui/Button'
+import { uiIconProps } from '../components/ui/iconStyle'
 import { gameDataSource } from '../data/dataSource'
 import { gameData } from '../domain/gameData'
 import { APP_PUBLIC_URL } from '../lib/constants'
@@ -13,8 +16,8 @@ export function AboutPage() {
   const stale = gameDataSource.isStale()
 
   return (
-    <div className="space-y-5 max-w-2xl pb-10">
-      <h1 className="font-display text-2xl tracking-wide">{t('about.title')}</h1>
+    <div className="space-y-5 max-w-2xl pb-4">
+      <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('about.title')}</h1>
       <p className="text-sm text-zinc-400">{t('about.intro')}</p>
 
       <GlassCard className="space-y-2 text-sm">
@@ -32,19 +35,6 @@ export function AboutPage() {
           <Badge tone="success">{t('settings.dataFresh')}</Badge>
         )}
         <p className="text-xs text-zinc-500">{t('about.disputedNote')}</p>
-        <ul className="list-disc pl-5 text-xs text-zinc-400 space-y-1">
-          {(gameData.sources as Array<{ url?: string; name?: string }>).slice(0, 6).map((s, i) => (
-            <li key={i}>
-              {s.url ? (
-                <a href={s.url} className="text-holo-300 hover:underline" target="_blank" rel="noreferrer">
-                  {s.name ?? s.url}
-                </a>
-              ) : (
-                s.name
-              )}
-            </li>
-          ))}
-        </ul>
       </GlassCard>
 
       <GlassCard className="space-y-3 text-sm">
@@ -53,18 +43,30 @@ export function AboutPage() {
         <FeedbackWhatsAppLink />
       </GlassCard>
 
-      <GlassCard className="text-xs text-zinc-500 space-y-2">
+      <Link to="/settings" className="block">
+        <Button
+          variant="secondary"
+          className="w-full justify-start min-h-12"
+          icon={<Gear {...uiIconProps} weight="fill" />}
+        >
+          {t('nav.settings')}
+        </Button>
+      </Link>
+
+      <footer
+        className="pt-6 space-y-2 text-[10px] leading-relaxed text-zinc-500"
+        data-testid="about-credits-footer"
+      >
+        <p>{t('about.wikiCredits')}</p>
+        <p>{t('about.dataSourcesBody')}</p>
         <p>{t('app.disclaimer')}</p>
         <p>
           {t('about.url')}:{' '}
-          <a href={APP_PUBLIC_URL} className="text-holo-300 hover:underline">
+          <a href={APP_PUBLIC_URL} className="text-holo-400/80 hover:underline">
             {APP_PUBLIC_URL}
           </a>
         </p>
-        <Link to="/settings" className="text-holo-300 hover:underline inline-block pt-2">
-          {t('nav.settings')} →
-        </Link>
-      </GlassCard>
+      </footer>
     </div>
   )
 }

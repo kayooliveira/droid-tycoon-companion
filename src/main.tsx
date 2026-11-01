@@ -24,8 +24,20 @@ initI18n(initialLocale)
 setDocumentLanguage(initialLocale)
 
 const updateSW = registerSW({
+  immediate: true,
   onNeedRefresh() {
     window.dispatchEvent(new CustomEvent('pwa-need-refresh'))
+  },
+  onRegisteredSW(_swUrl, registration) {
+    if (!registration) return
+    registration.addEventListener('updatefound', () => {
+      const installing = registration.installing
+      installing?.addEventListener('statechange', () => {
+        if (installing.state === 'installed' && navigator.serviceWorker.controller) {
+          window.dispatchEvent(new CustomEvent('pwa-updated'))
+        }
+      })
+    })
   },
 })
 setPwaUpdateFn(updateSW)

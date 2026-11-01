@@ -69,7 +69,7 @@ export function SettingsPage() {
 
   return (
     <div className="space-y-4 max-w-2xl pb-10">
-      <h1 className="font-display text-xl tracking-wide text-balance">{t('settings.title')}</h1>
+      <h1 className="hidden md:block font-display text-xl tracking-wide text-balance">{t('settings.title')}</h1>
 
       <GlassCard className="p-4">
         <SectionHeader icon={<Palette {...uiIconProps} />} title={t('settings.appearance')} />
@@ -196,7 +196,6 @@ export function SettingsPage() {
 
       <GlassCard className="p-4 space-y-3">
         <SectionHeader icon={<Info {...uiIconProps} />} title={t('settings.aboutSection')} />
-        <p className="text-xs text-zinc-500 text-pretty">{t('app.disclaimer')}</p>
         <div className="flex flex-wrap gap-2">
           <Button variant="secondary" size="sm" onClick={rerunOnboarding}>
             {t('settings.rerunOnboardingShort')}

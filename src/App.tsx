@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AppShell } from './components/AppShell'
+import { GlassFilters } from './components/GlassFilters'
 import { PageSkeleton } from './components/PageSkeleton'
 import { SeoManager } from './components/SeoManager'
 import { ToastProvider, useToast } from './components/ToastProvider'
@@ -41,14 +42,19 @@ function PwaRefreshListener() {
   const { push } = useToast()
   const { t } = useTranslation()
   useEffect(() => {
-    const handler = () => {
+    const promptRefresh = () => {
       push(t('pwa.update'), {
         sticky: true,
         action: { label: t('pwa.updateAction'), onClick: reloadForPwaUpdate },
       })
     }
-    window.addEventListener('pwa-need-refresh', handler)
-    return () => window.removeEventListener('pwa-need-refresh', handler)
+    const autoUpdated = () => push(t('pwa.updatedToast'))
+    window.addEventListener('pwa-need-refresh', promptRefresh)
+    window.addEventListener('pwa-updated', autoUpdated)
+    return () => {
+      window.removeEventListener('pwa-need-refresh', promptRefresh)
+      window.removeEventListener('pwa-updated', autoUpdated)
+    }
   }, [push, t])
   return null
 }
@@ -74,8 +80,13 @@ export default function App() {
     applyTheme(theme)
   }, [theme])
 
+  useEffect(() => {
+    document.documentElement.classList.add('glass-refraction-enabled')
+  }, [])
+
   return (
     <ToastProvider>
+      <GlassFilters />
       <BrowserRouter>
         <LocaleSync />
         <SeoManager />

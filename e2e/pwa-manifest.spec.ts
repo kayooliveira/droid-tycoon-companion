@@ -1,14 +1,14 @@
 import { test, expect } from '@playwright/test'
 
-test('PWA manifest is valid JSON with icons and DT Helper name', async ({ request, page }) => {
+test('PWA manifest is valid JSON with icons and DroidDeck name', async ({ request, page }) => {
   const manifestRes = await request.get('/manifest.webmanifest')
   expect(manifestRes.ok()).toBeTruthy()
   const contentType = manifestRes.headers()['content-type'] ?? ''
   expect(contentType).toMatch(/manifest\+json|json/)
 
   const manifest = await manifestRes.json()
-  expect(manifest.name).toBe('DT Helper')
-  expect(manifest.short_name).toBe('DT Helper')
+  expect(manifest.name).toBe('DroidDeck')
+  expect(manifest.short_name).toBe('DroidDeck')
   expect(manifest.id).toBe('/')
 
   const iconSrcs: string[] = manifest.icons.map((i: { src: string }) => i.src.split('?')[0])
@@ -21,6 +21,6 @@ test('PWA manifest is valid JSON with icons and DT Helper name', async ({ reques
   await page.goto('/')
   await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute(
     'href',
-    /apple-touch-icon\.png\?v=3/,
+    /apple-touch-icon\.png\?v=5/,
   )
 })

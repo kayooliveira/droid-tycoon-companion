@@ -1,22 +1,24 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import { cn } from '../../lib/utils'
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger'
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'accent'
 type Size = 'sm' | 'md' | 'icon'
 
 const variants: Record<Variant, string> = {
   primary:
-    'bg-holo-600 hover:bg-holo-500 text-white shadow-lg shadow-holo-900/30 border border-holo-400/20',
+    'bg-gradient-to-r from-holo-600 to-cyan-600 hover:from-holo-500 hover:to-cyan-500 text-white shadow-lg shadow-holo-900/25 border border-white/10 disabled:!bg-zinc-700/90 disabled:!from-zinc-700 disabled:!to-zinc-700 disabled:!text-zinc-400/90 disabled:!shadow-none disabled:!border-zinc-600/40',
+  accent:
+    'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-zinc-950 font-semibold shadow-lg shadow-amber-900/30 border border-amber-200/20',
   secondary:
-    'ui-btn-secondary bg-white/10 hover:bg-white/15 border border-white/15 text-zinc-100',
+    'ui-btn-secondary bg-white/10 hover:bg-white/15 border border-white/15 text-zinc-100 backdrop-blur-md',
   ghost: 'hover:bg-white/10 text-zinc-200',
   danger: 'bg-red-600/90 hover:bg-red-500 text-white',
 }
 
 const sizes: Record<Size, string> = {
-  sm: 'min-h-9 px-3 py-1.5 text-xs gap-1.5',
-  md: 'min-h-11 px-4 py-2.5 text-sm gap-2',
-  icon: 'min-h-11 min-w-11 p-0',
+  sm: 'min-h-11 px-3.5 py-2 text-xs gap-1.5 rounded-xl',
+  md: 'min-h-11 px-4 py-2.5 text-sm gap-2 rounded-xl',
+  icon: 'min-h-11 min-w-11 p-0 rounded-xl',
 }
 
 export function Button({
@@ -39,7 +41,7 @@ export function Button({
     <button
       aria-label={iconOnly ? ariaLabel : undefined}
       className={cn(
-        'inline-flex items-center justify-center rounded-xl font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap shrink-0',
+        'inline-flex items-center justify-center font-medium transition-all active:scale-[0.98] disabled:opacity-45 disabled:pointer-events-none disabled:active:scale-100 max-w-full min-w-0',
         variants[variant],
         iconOnly || size === 'icon' ? sizes.icon : sizes[size],
         className,
@@ -47,7 +49,9 @@ export function Button({
       {...props}
     >
       {icon ? <span className="shrink-0 [&_svg]:size-[18px]">{icon}</span> : null}
-      {!iconOnly && size !== 'icon' ? children : null}
+      {!iconOnly && size !== 'icon' ? (
+        <span className="truncate min-w-0">{children}</span>
+      ) : null}
       {iconOnly && children}
     </button>
   )

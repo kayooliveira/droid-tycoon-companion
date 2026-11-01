@@ -32,6 +32,7 @@ import { SellAfterRebirthList } from '../components/SellAfterRebirthList'
 import { ShareExportCard } from '../components/ShareExportCard'
 import { HelpHint } from '../components/ui/HelpHint'
 import { IconButton } from '../components/ui/IconButton'
+import { hapticTap } from '../lib/haptics'
 
 const tierLabels = buildTierLabelMap(gameData.rarities)
 
@@ -57,6 +58,7 @@ export function ProgressPage() {
 
   const advanceWithToast = () => {
     completeRebirthAdvance()
+    hapticTap()
     push(t('progress.rebirthCompleted'))
   }
 
@@ -84,7 +86,7 @@ export function ProgressPage() {
     <div className="space-y-5 pb-6 md:pb-0">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-2">
-          <h1 className="font-display text-xl tracking-wide text-balance">{t('nav.progress')}</h1>
+          <h1 className="hidden md:block font-display text-xl tracking-wide text-balance">{t('nav.progress')}</h1>
           <PathProgressSwitcher compact />
           <ProgressSummaryLine />
         </div>
@@ -121,30 +123,67 @@ export function ProgressPage() {
                   ),
                 )}
               </div>
-              <div className="flex items-center gap-2 pt-1">
-                <Button
-                  size="sm"
-                  icon={<Check {...uiIconProps} />}
-                  onClick={handleCompleteClick}
-                  disabled={trackInventory && !canComplete}
-                  className="flex-1 min-w-0 sm:flex-none"
-                >
-                  {t('progress.completeShort')}
-                </Button>
-                <IconButton
-                  variant="soft"
-                  label={t('progress.moreActionsTitle')}
-                  onClick={() => setMoreOpen(true)}
-                >
-                  <DotsThreeVertical {...uiIconProps} />
-                </IconButton>
-                {!canSuperRebirth(progress) ? (
+              {canSuperRebirth(progress) ? (
+                <div className="flex flex-col gap-2 pt-1 w-full min-w-0" data-testid="progress-super-actions">
+                  <Button
+                    variant="accent"
+                    size="md"
+                    className="w-full min-h-12 max-w-full"
+                    icon={<Sparkle {...uiIconProps} weight="fill" />}
+                    onClick={() => {
+                      hapticTap()
+                      superRebirthAdvance()
+                    }}
+                  >
+                    {t('progress.superRebirthCta')}
+                  </Button>
+                  <div className="flex items-center gap-2 w-full min-w-0">
+                    {!isPathComplete(progress) ? (
+                      <Button
+                        size="sm"
+                        icon={<Check {...uiIconProps} weight="fill" />}
+                        onClick={handleCompleteClick}
+                        disabled={trackInventory && !canComplete}
+                        className="flex-1 min-w-0 max-w-full"
+                      >
+                        {t('progress.completeShort')}
+                      </Button>
+                    ) : null}
+                    <IconButton
+                      variant="soft"
+                      className="shrink-0"
+                      label={t('progress.moreActionsTitle')}
+                      onClick={() => setMoreOpen(true)}
+                    >
+                      <DotsThreeVertical {...uiIconProps} weight="fill" />
+                    </IconButton>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 pt-1 w-full min-w-0">
+                  <Button
+                    size="sm"
+                    icon={<Check {...uiIconProps} weight="fill" />}
+                    onClick={handleCompleteClick}
+                    disabled={trackInventory && !canComplete}
+                    className="flex-1 min-w-0 max-w-full sm:flex-none"
+                  >
+                    {t('progress.completeShort')}
+                  </Button>
                   <HelpHint
                     label={t('progress.superShort')}
                     text={t('progress.superHint', { n: SUPER_REBIRTH_UNLOCK_AFTER })}
                   />
-                ) : null}
-              </div>
+                  <IconButton
+                    variant="soft"
+                    className="shrink-0"
+                    label={t('progress.moreActionsTitle')}
+                    onClick={() => setMoreOpen(true)}
+                  >
+                    <DotsThreeVertical {...uiIconProps} weight="fill" />
+                  </IconButton>
+                </div>
+              )}
               <SellAfterRebirthList
                 pathId={progress.pathId}
                 afterRebirth={current.rebirth}
@@ -155,7 +194,7 @@ export function ProgressPage() {
             </>
           ) : (
             <p className="text-sm text-zinc-400">
-              {isPathComplete(progress) ? t('progress.pathComplete') : '—'}
+              {isPathComplete(progress) ? t('progress.pathComplete') : t('progress.listCurrent')}
             </p>
           )}
         </GlassCard>
@@ -216,14 +255,15 @@ export function ProgressPage() {
           {canSuperRebirth(progress) ? (
             <Button
               size="sm"
-              variant="secondary"
-              icon={<Sparkle {...uiIconProps} />}
+              variant="accent"
+              icon={<Sparkle {...uiIconProps} weight="fill" />}
               onClick={() => {
+                hapticTap()
                 superRebirthAdvance()
                 setMoreOpen(false)
               }}
             >
-              {t('progress.superShort')}
+              {t('progress.superRebirthCta')}
             </Button>
           ) : null}
         </div>

@@ -79,7 +79,7 @@ export function InventoryPage() {
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap gap-3 items-center justify-between">
-        <h1 className="font-display text-2xl tracking-wide">{t('inventory.title')}</h1>
+        <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('inventory.title')}</h1>
         <Button onClick={() => setAddOpen(true)}>{t('inventory.addDroid')}</Button>
       </div>
       <input

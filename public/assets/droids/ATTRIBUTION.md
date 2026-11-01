@@ -1,6 +1,10 @@
-# Image attribution
-101 droid images (`<slug>.webp`, 128x128) downloaded 2026-10-31 from https://droidtycoonhelper.com/img/droids/ .
-That site states: "Droid images from the Star Wars Droid Tycoon Wiki" (https://star-wars-droid-tycoon.fandom.com/), whose content license is **CC BY-SA** (https://www.fandom.com/licensing).
-93/101 droids have a matching original `<Name>_Main.png` on the wiki (see `wikiImageUrl` / `wikiFilePage` in data.json) — prefer those originals for redistribution with attribution.
-Underlying artwork/characters: Star Wars © Lucasfilm Ltd.; game by FOAD on Fortnite (Epic Games). Fan use only; not affiliated.
-Required credit line in the app: "Droid images: Star Wars Droid Tycoon Wiki (Fandom), CC BY-SA. Star Wars © Lucasfilm."
+# Droid images
+
+Wiki-sourced files in this folder are from the **Star Wars Droid Tycoon Wiki** on Fandom (CC BY-SA 4.0), resized to 128px WebP.
+
+- Wiki: https://star-wars-droid-tycoon.fandom.com/
+- License: https://creativecommons.org/licenses/by-sa/4.0/
+
+Droids without a wiki image use an in-app CSS placeholder (no file here).
+
+Last sync: 2026-11-01 — 93 files, 8 in-app placeholders.

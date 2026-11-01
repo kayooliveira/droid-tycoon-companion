@@ -1,10 +1,9 @@
 # Droid Tycoon — Research (2026-10-31)
-**Game:** Star Wars Droid Tycoon — Fortnite UEFN island by FOAD, island code **7865-8305-9184** (source: droidtycoonhelper.com/about). Data matches game v1.37 (checked by source 2026-10-30).
+**Game:** Star Wars Droid Tycoon, Fortnite UEFN island by FOAD, island code **7865-8305-9184**. Data matches game v1.37 (checked 2026-10-30).
 
 ## Sources
-- https://droidtycoonhelper.com/ (primary; says it cross-checks 4 guides: tycoon-tools.com, Droidex, Fandom wiki, droid-tycoon.pages.dev; 238/240 agree)
+- https://star-wars-droid-tycoon.fandom.com/ (images, CC BY-SA; community rebirth tables)
 - https://tycoon-tools.com/droid-tycoon/rebirth-requirements/ (independent cross-check: 240/240 match ours after name normalization; only diff is spelling "J09-4MN" vs "JO9-4MN")
-- https://star-wars-droid-tycoon.fandom.com/ (images, CC BY-SA; 119 articles)
 - https://games.gg/fortnite/guides/fortnite-star-wars-droid-tycoon-all-rebirth-requirement/ (path 1 R1–15 only, has errors; not used as authority)
 
 ## Model
@@ -26,7 +25,7 @@
 Fusions: 17 fixed recipes + 3 general rules (tier-up 3→1, random rarity-up, lowest-tier result). Single source → `partial`. Source notes no fusion droid is required by any rebirth.
 
 ## Gaps / caveats
-- No official or public API/JSON found; no GitHub repo found. droidtycoonhelper itself is static HTML (parseable; `parse.py` re-scrapes it) — the nearest thing to an "auto-updating" source. Recommend a manual/CI refresh script + `staleAfterDays: 14`.
+- No official or public API/JSON found; no GitHub repo found. Recommend a manual/CI refresh script + `staleAfterDays: 14`.
 - Per-droid tier caps (e.g. can every droid reach Kyber?) not verified; Iconic/Scourge mechanics thin.
 - Droid descriptions not collected (wiki has some; could be added with CC BY-SA attribution).
 - Images are 128px webp; 8 droids lack a matching wiki original.

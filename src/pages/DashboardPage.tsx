@@ -1,159 +1,159 @@
-import { ArrowRight } from '@phosphor-icons/react'
-import { uiIconProps } from '../components/ui/iconStyle'
-import { useEffect, useRef } from 'react'
+import {
+  Export,
+  Flask,
+  Sparkle,
+  Storefront,
+  TreeStructure,
+} from '@phosphor-icons/react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
+import { CycleTimeline } from '../components/home/CycleTimeline'
 import { PathProgressSwitcher } from '../components/PathProgressSwitcher'
-import { RequirementCard } from '../components/RequirementCard'
 import { ShareExportCard } from '../components/ShareExportCard'
+import { DroidImage } from '../components/DroidImage'
 import { Badge } from '../components/ui/Badge'
+import { Button } from '../components/ui/Button'
 import { GlassCard } from '../components/ui/GlassCard'
-import { cn } from '../lib/utils'
-import { ProgressBar } from '../components/ui/ProgressBar'
-import { getRebirth } from '../domain/gameData'
-import { pathProgressPercent, REBIRTHS_PER_PATH } from '../domain/progress'
-import { evaluateRequirements, metRequirementCount } from '../domain/requirements'
+import { uiIconProps } from '../components/ui/iconStyle'
+import { gameDataSource } from '../data/dataSource'
+import { droidById, gameData, getRebirth } from '../domain/gameData'
 import { analyzeSellCenter, summarizeSellCenter } from '../domain/sellCenter'
-import { isDataStale } from '../domain/gameData'
+import { canCompleteRebirth } from '../domain/progress'
+import { evaluateRequirements } from '../domain/requirements'
+import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { useAppStore } from '../store/useAppStore'
 
-const DASHBOARD_SEEN_KEY = 'dt-helper-dashboard-seen'
-
 export function DashboardPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const progress = useAppStore((s) => s.progress)
   const inventory = useAppStore((s) => s.inventory)
   const trackInventory = useAppStore((s) => s.settings.trackInventory)
+  const meta = gameDataSource.getMeta()
+  const cycle = gameData.cycles.find((c) => c.id === progress.pathId)
+
   const next = getRebirth(progress.pathId, progress.nextRebirth)
   const checks = next ? evaluateRequirements(next.requirements, inventory, trackInventory) : []
-  const sell = summarizeSellCenter(
-    analyzeSellCenter(progress.pathId, progress.nextRebirth, inventory),
-  )
-  const ready = metRequirementCount(checks)
-  const missing = next ? 3 - ready : 0
-
-  const showIntroRef = useRef(typeof localStorage !== 'undefined' && localStorage.getItem(DASHBOARD_SEEN_KEY) !== '1')
-  useEffect(() => {
-    localStorage.setItem(DASHBOARD_SEEN_KEY, '1')
-  }, [])
-
-  let nextStepKey = 'dashboard.nextStepProgress'
-  let nextStepHref = '/progress'
-  if (next && trackInventory && missing > 0) {
-    nextStepKey = 'dashboard.nextStepInventory'
-    nextStepHref = '/inventory'
-  } else if (trackInventory && sell.sellable > 0) {
-    nextStepKey = 'dashboard.nextStepSell'
-    nextStepHref = '/sell'
-  } else if (next) {
-    nextStepKey = 'dashboard.nextStepComplete'
-    nextStepHref = '/progress'
-  }
-
-  const nextStepText =
-    nextStepKey === 'dashboard.nextStepInventory'
-      ? t('dashboard.nextStepInventory', { count: missing })
-      : nextStepKey === 'dashboard.nextStepSell'
-        ? t('dashboard.nextStepSell', { count: sell.sellable })
-        : t(nextStepKey)
+  const canComplete = next
+    ? canCompleteRebirth(progress.pathId, next.rebirth, inventory, trackInventory)
+    : false
+  const sellAnalysis = analyzeSellCenter(progress.pathId, progress.nextRebirth, inventory)
+  const sell = summarizeSellCenter(sellAnalysis)
+  const sellSamples = sellAnalysis.filter((i) => i.category === 'sellable').slice(0, 3)
 
   return (
-    <div className="space-y-4" data-testid="dashboard-ready">
-      {showIntroRef.current ? (
-        <GlassCard className="space-y-3 border-holo-500/20 bg-holo-600/5">
-          <p className="text-sm text-zinc-400 text-pretty leading-snug">{t('dashboard.hero')}</p>
-          <Link
-            to="/progress"
-            className={cn(
-              'inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium min-h-11',
-              'bg-holo-600 hover:bg-holo-500 text-white shadow-lg shadow-holo-900/30 border border-holo-400/20',
-            )}
-          >
-            {t('dashboard.ctaProgress')}
-            <ArrowRight {...uiIconProps} />
-          </Link>
-        </GlassCard>
-      ) : (
-        <GlassCard className="flex flex-wrap items-center justify-between gap-3" data-testid="next-step">
-          <div className="min-w-0">
-            <p className="text-xs uppercase tracking-widest text-zinc-500">{t('dashboard.nextStepLabel')}</p>
-            <p className="text-sm font-medium mt-0.5 text-pretty">{nextStepText}</p>
+    <div className="space-y-4 md:pb-8" data-testid="home-hub">
+      <GlassCard className="space-y-3 p-4" data-testid="home-now">
+        <div className="flex items-start justify-between gap-2 flex-wrap">
+          <div>
+            <p className="text-[10px] uppercase tracking-widest text-zinc-500">{t('home.nowTitle')}</p>
+            <p className="font-display text-lg font-semibold mt-0.5">
+              {cycle ? formatCycleDisplayName(cycle.name, i18n.language) : progress.pathId}
+            </p>
+            <p className="text-sm text-zinc-400">
+              {t('home.nextRenascimento', { n: progress.nextRebirth })}
+            </p>
           </div>
-          <Link
-            to={nextStepHref}
-            className="inline-flex items-center gap-1 text-sm text-holo-300 hover:text-holo-200 min-h-11 px-3 shrink-0"
-          >
-            {t('dashboard.nextStepGo')}
-            <ArrowRight {...uiIconProps} />
-          </Link>
-        </GlassCard>
-      )}
-
-      <div className="flex flex-wrap items-center gap-2">
-        <PathProgressSwitcher />
-        {isDataStale() ? <Badge tone="warn">{t('dashboard.staleData')}</Badge> : null}
-      </div>
-
-      <GlassCard className="space-y-2 p-3">
-        <ProgressBar label={t('progress.pathProgress')} value={pathProgressPercent(progress)} />
-        {trackInventory ? (
-          <div className="grid grid-cols-4 gap-2 pt-1 text-center">
-            <div>
-              <p className="text-[10px] text-zinc-500 leading-tight">{t('dashboard.statsRequired')}</p>
-              <p className="text-lg font-semibold tabular-nums">3</p>
-            </div>
-            <div>
-              <p className="text-[10px] text-zinc-500 leading-tight">{t('dashboard.statsReady')}</p>
-              <p className="text-lg font-semibold tabular-nums text-emerald-300">{ready}</p>
-            </div>
-            <div>
-              <p className="text-[10px] text-zinc-500 leading-tight">{t('dashboard.statsKeep')}</p>
-              <p className="text-lg font-semibold tabular-nums">{sell.keep}</p>
-            </div>
-            <div>
-              <p className="text-[10px] text-zinc-500 leading-tight">{t('dashboard.statsSellable')}</p>
-              <p className="text-lg font-semibold tabular-nums text-holo-300">{sell.sellable}</p>
-            </div>
-          </div>
-        ) : (
-          <p className="text-xs text-zinc-500">
-            {t('progress.completedCount', {
-              done: progress.completedOnPath,
-              total: REBIRTHS_PER_PATH,
-            })}
-          </p>
-        )}
-      </GlassCard>
-
-      <GlassCard className="space-y-3 p-4">
-        <div className="flex items-center justify-between gap-2 flex-wrap">
-          <h2 className="font-display text-base tracking-wide text-gradient-holo">
-            {t('dashboard.nextSection')} #{Math.min(progress.nextRebirth, REBIRTHS_PER_PATH)}
-          </h2>
-          {next ? (
-            <Badge tone={next.confidence === 'confirmed' ? 'success' : 'warn'}>
-              {t(`confidence.${next.confidence}`)}
-            </Badge>
-          ) : null}
+          <PathProgressSwitcher compact />
         </div>
         {next ? (
-          <>
-            <p className="text-xs text-zinc-500">
-              {t('dashboard.credits', { credits: next.credits })}
-              {next.unlocks ? ` · ${t('dashboard.unlocks', { item: next.unlocks })}` : ''}
-            </p>
-            <div className="space-y-2">
-              {checks.map((c) => (
-                <RequirementCard key={c.requirement.droidId} check={c} />
-              ))}
-            </div>
-          </>
-        ) : (
-          <p className="text-sm text-zinc-400">{t('progress.pathComplete')}</p>
-        )}
+          <ul className="space-y-2">
+            {checks.map((c) => {
+              const d = droidById.get(c.requirement.droidId)
+              if (!d) return null
+              const ok = c.status === 'ready'
+              return (
+                <li key={c.requirement.droidId} className="flex items-center gap-2 text-sm">
+                  <DroidImage droid={d} size="sm" />
+                  <span className="flex-1 truncate">{d.name}</span>
+                  <Badge tone={ok ? 'success' : 'danger'}>{t(`status.${c.status}`)}</Badge>
+                </li>
+              )
+            })}
+          </ul>
+        ) : null}
+        <div className="flex flex-wrap gap-2 pt-1">
+          {canComplete || !trackInventory ? (
+            <Link to="/progress">
+              <Button icon={<TreeStructure {...uiIconProps} weight="fill" />}>
+                {t('home.primaryComplete')}
+              </Button>
+            </Link>
+          ) : (
+            <Link to="/progress">
+              <Button variant="secondary" icon={<TreeStructure {...uiIconProps} weight="fill" />}>
+                {t('home.primaryViewProgress')}
+              </Button>
+            </Link>
+          )}
+        </div>
       </GlassCard>
 
-      <ShareExportCard />
+      <GlassCard className="p-4 space-y-2" data-testid="home-sell">
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="text-sm font-semibold">{t('home.sellTitle')}</h2>
+          <Badge tone="info">{sell.sellable}</Badge>
+        </div>
+        {sell.sellable > 0 ? (
+          <div className="flex flex-wrap gap-1.5">
+            {sellSamples.map((row) => {
+              const d = droidById.get(row.droidId)
+              return (
+                <span
+                  key={row.droidId}
+                  className="inline-flex items-center gap-1 rounded-full bg-white/5 border border-white/10 px-2 py-1 text-[11px]"
+                >
+                  {d ? <DroidImage droid={d} size="sm" className="!h-6 !w-6" /> : null}
+                  {d?.name ?? row.droidId}
+                </span>
+              )
+            })}
+          </div>
+        ) : (
+          <p className="text-xs text-zinc-500">{t('home.sellEmpty')}</p>
+        )}
+        <Link to="/sell" className="inline-block pt-1">
+          <Button size="sm" variant="secondary" icon={<Storefront {...uiIconProps} weight="fill" />}>
+            {t('home.sellLink')}
+          </Button>
+        </Link>
+      </GlassCard>
+
+      <GlassCard className="p-4">
+        <CycleTimeline completed={progress.completedOnPath} />
+      </GlassCard>
+
+      <GlassCard className="p-4 space-y-2" data-testid="home-news">
+        <h2 className="text-sm font-semibold">{t('home.newsTitle')}</h2>
+        <p className="text-xs text-zinc-400">
+          {t('home.newsGameLine', { game: meta.gameVersion, date: meta.lastUpdated })}
+        </p>
+        <Link to="/about#app-changelog" className="text-xs text-holo-300 hover:underline">
+          {t('home.newsChangelog')}
+        </Link>
+      </GlassCard>
+
+      <div className="space-y-2">
+        <h2 className="text-sm font-semibold px-0.5">{t('home.toolsTitle')}</h2>
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { to: '/fusion', label: t('home.toolFusion'), icon: Flask },
+            { to: '/droiddex', label: t('home.toolDroiddex'), icon: Sparkle },
+            { to: '#home-export', label: t('home.toolExport'), icon: Export },
+          ].map(({ to, label, icon: Icon }) => (
+            <Link
+              key={label}
+              to={to}
+              className="surface-card p-3 flex flex-col items-center gap-2 text-center min-h-[5.5rem] justify-center hover:bg-white/5 transition-colors"
+            >
+              <Icon {...uiIconProps} className="text-holo-300" weight="fill" />
+              <span className="text-[11px] font-medium leading-tight">{label}</span>
+            </Link>
+          ))}
+        </div>
+        <div id="home-export">
+          <ShareExportCard />
+        </div>
+      </div>
     </div>
   )
 }

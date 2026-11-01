@@ -1,31 +1,56 @@
-import { motion, AnimatePresence } from 'motion/react'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { ArrowRight, Check } from '@phosphor-icons/react'
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  CheckCircle,
+  Export,
+  Minus,
+  Plus,
+  Storefront,
+  TreeStructure,
+} from '@phosphor-icons/react'
 import type { AppLocale } from '../i18n/detectLocale'
 import { setDocumentLanguage, initI18n } from '../i18n/index'
-import { gameData } from '../domain/gameData'
+import { cycleById, droidById, gameData, getRebirth } from '../domain/gameData'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
+import { DroidImage } from '../components/DroidImage'
 import { Logo } from '../components/Logo'
 import { Button } from '../components/ui/Button'
-import { GlassCard } from '../components/ui/GlassCard'
-import { RadioCardGroup } from '../components/ui/RadioCardGroup'
-import { SegmentedControl } from '../components/ui/SegmentedControl'
 import { Switch } from '../components/ui/Switch'
 import { useAppStore } from '../store/useAppStore'
-import { applyTheme } from '../store/useAppStore'
-import type { ThemeMode } from '../storage/types'
 import { uiIconProps } from '../components/ui/iconStyle'
+import { cn } from '../lib/utils'
 
-const steps = ['welcome', 'setup', 'prefs'] as const
+const STEPS = ['welcome', 'cycle', 'progress', 'features'] as const
+const REBIRTHS_PER_PATH = 40
+
+function cycleHeroDroidId(pathId: string): string {
+  const entry = getRebirth(pathId, 1)
+  return entry?.requirements[0]?.droidId ?? 'r2-d2'
+}
+
+function StepHeader({ title, subtitle }: { title: string; subtitle: string }) {
+  return (
+    <header className="space-y-1 shrink-0">
+      <h2
+        data-testid="onboarding-heading"
+        className="font-display text-xl sm:text-2xl font-semibold text-white text-balance tracking-wide"
+      >
+        {title}
+      </h2>
+      <p className="text-sm text-zinc-400 text-pretty">{subtitle}</p>
+    </header>
+  )
+}
 
 export function OnboardingPage() {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const isRerun = params.get('rerun') === '1'
-
   const progressStore = useAppStore((s) => s.progress)
   const settings = useAppStore((s) => s.settings)
   const setOnboardingComplete = useAppStore((s) => s.setOnboardingComplete)
@@ -35,27 +60,14 @@ export function OnboardingPage() {
   const setLocale = useAppStore((s) => s.setLocale)
 
   const [step, setStep] = useState(0)
-  const [pathId, setPathIdLocal] = useState(progressStore.pathId)
+  const [pathId, setPathId] = useState(progressStore.pathId)
   const [completed, setCompleted] = useState(isRerun ? progressStore.completedOnPath : 0)
+  const touchStartX = useRef<number | null>(null)
 
-  const current = steps[step]!
-  const cycleOptions = useMemo(
-    () =>
-      gameData.cycles.map((c) => ({
-        value: c.id,
-        label: formatCycleDisplayName(c.name, i18n.language),
-      })),
-    [i18n.language],
-  )
-
-  const finish = (applyProgress: boolean) => {
-    if (applyProgress) {
-      setPathFresh(pathId)
-      setProgress(completed + 1, completed)
-    }
-    setOnboardingComplete(true)
-    navigate('/')
-  }
+  const current = STEPS[step]!
+  const nextRebirth = Math.min(completed + 1, REBIRTHS_PER_PATH)
+  const preview = getRebirth(pathId, nextRebirth)
+  const cycle = cycleById.get(pathId)
 
   const changeLanguage = (locale: AppLocale) => {
     setLocale(locale, 'user')
@@ -64,139 +76,358 @@ export function OnboardingPage() {
     void i18n.changeLanguage(locale)
   }
 
-  const setTheme = (theme: ThemeMode) => {
-    updateSettings({ theme })
-    applyTheme(theme)
+  const skip = useCallback(() => {
+    setOnboardingComplete(true)
+    navigate('/')
+  }, [navigate, setOnboardingComplete])
+
+  const finish = useCallback(() => {
+    setPathFresh(pathId)
+    setProgress(completed + 1, completed)
+    setOnboardingComplete(true)
+    navigate('/')
+  }, [completed, navigate, pathId, setOnboardingComplete, setPathFresh, setProgress])
+
+  const goNext = () => setStep((s) => Math.min(s + 1, STEPS.length - 1))
+  const goBack = () => setStep((s) => Math.max(s - 1, 0))
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.changedTouches[0]?.clientX ?? null
+  }
+  const onTouchEnd = (e: React.TouchEvent) => {
+    const start = touchStartX.current
+    if (start == null) return
+    const dx = (e.changedTouches[0]?.clientX ?? start) - start
+    if (dx < -48 && step < STEPS.length - 1) goNext()
+    if (dx > 48 && step > 0) goBack()
+    touchStartX.current = null
   }
 
+  const heroDroids = useMemo(
+    () =>
+      ['r2-d2', 'bb-8', 'cb'].map((id) => droidById.get(id)).filter(Boolean) as NonNullable<
+        ReturnType<typeof droidById.get>
+      >[],
+    [],
+  )
+
+  const fanStyles = [
+    'z-10 -rotate-12 translate-y-2 scale-110 shadow-[0_12px_40px_rgba(51,128,255,0.35)]',
+    'z-20 scale-125 shadow-[0_16px_48px_rgba(94,234,212,0.25)]',
+    'z-10 rotate-12 translate-y-2 scale-110 shadow-[0_12px_40px_rgba(51,128,255,0.35)]',
+  ]
+
   return (
-    <div className="min-h-dvh flex items-end sm:items-center justify-center p-4 pb-8">
-      <GlassCard className="w-full max-w-md p-5 sm:p-6">
-        <div className="flex gap-1 mb-4">
-          {steps.map((s, i) => (
+    <div
+      className="min-h-dvh relative flex flex-col bg-surface-950 text-zinc-100 overflow-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+    >
+      <div
+        className="pointer-events-none absolute inset-0 opacity-50"
+        aria-hidden
+        style={{
+          background:
+            'radial-gradient(ellipse 90% 55% at 50% 0%, rgba(29,78,216,0.45), transparent 65%)',
+        }}
+      />
+
+      <div className="relative z-10 mx-auto w-full max-w-lg flex-1 flex flex-col px-4 sm:px-6 py-4 sm:py-6 min-h-0">
+        <div className="flex items-center justify-between gap-2 mb-3 shrink-0">
+          <div
+            className="flex rounded-full border border-white/15 bg-white/5 p-0.5 text-[11px] shrink-0"
+            data-testid="onboarding-lang-pill"
+          >
+            {(['pt-BR', 'en'] as const).map((loc) => (
+              <button
+                key={loc}
+                type="button"
+                className={cn(
+                  'px-2.5 py-1 rounded-full min-h-8 min-w-[2.75rem]',
+                  settings.locale === loc ? 'bg-holo-600 text-white' : 'text-zinc-400',
+                )}
+                onClick={() => changeLanguage(loc)}
+              >
+                {loc === 'pt-BR' ? 'PT' : 'EN'}
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            className="text-xs font-medium text-zinc-400 hover:text-zinc-200 min-h-11 px-3"
+            data-testid="onboarding-skip"
+            onClick={skip}
+          >
+            {t('onboarding.skip')}
+          </button>
+        </div>
+
+        <div
+          className="flex gap-1.5 mb-5 shrink-0"
+          role="tablist"
+          aria-label={t('onboarding.stepProgress')}
+        >
+          {STEPS.map((_, i) => (
             <span
-              key={s}
-              className={`h-1 flex-1 rounded-full ${i <= step ? 'bg-holo-500' : 'bg-white/10'}`}
+              key={STEPS[i]}
+              className={cn(
+                'h-1 flex-1 rounded-full transition-colors',
+                i <= step ? 'bg-holo-500' : 'bg-white/10',
+              )}
             />
           ))}
         </div>
-        <AnimatePresence mode="wait">
-          <motion.div
+
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+          <div
             key={current}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.2 }}
-            className="space-y-4"
+            data-testid={`onboarding-step-${current}`}
+            className="flex-1 flex flex-col min-h-0 gap-4"
           >
             {current === 'welcome' ? (
               <>
-                <div className="flex flex-col items-center text-center gap-2 py-2">
-                  <Logo className="h-14 w-14" />
-                  <h1 className="font-display text-xl tracking-wide text-gradient-holo text-balance">
-                    {t('onboarding.welcomeTitle')}
-                  </h1>
-                  <p className="text-xs text-zinc-500 text-pretty max-w-xs">{t('onboarding.welcomeBody')}</p>
+                <div className="flex-1 flex flex-col items-center justify-center text-center gap-5 min-h-0 py-2">
+                  <Logo className="h-11 w-11 opacity-90" />
+                  <div className="flex items-end justify-center gap-1 px-2">
+                    {heroDroids.map((d, i) => (
+                      <DroidImage
+                        key={d.id}
+                        droid={d}
+                        size="lg"
+                        priority
+                        className={cn('ring-2 ring-surface-950 rounded-2xl', fanStyles[i])}
+                      />
+                    ))}
+                  </div>
+                  <div className="space-y-2 max-w-sm">
+                    <h1
+                      data-testid="onboarding-heading"
+                      className="font-display text-2xl sm:text-[1.75rem] font-bold leading-tight text-balance text-white"
+                    >
+                      {t('onboarding.welcomeHeadlineBefore')}
+                      <span className="text-holo-300">{t('onboarding.welcomeHeadlineAccent')}</span>
+                    </h1>
+                    <p className="text-sm text-zinc-300 text-pretty leading-relaxed">
+                      {t('onboarding.welcomeSub')}
+                    </p>
+                  </div>
                 </div>
-                <Button
-                  className="w-full"
-                  data-testid="onboarding-start"
-                  icon={<ArrowRight {...uiIconProps} />}
-                  onClick={() => setStep(1)}
-                >
-                  {t('onboarding.start')}
-                </Button>
-                <Button variant="ghost" className="w-full" data-testid="onboarding-skip" onClick={() => finish(false)}>
-                  {t('onboarding.skip')}
-                </Button>
               </>
             ) : null}
 
-            {current === 'setup' ? (
+            {current === 'cycle' ? (
               <>
-                <h2 className="font-display text-base text-balance">{t('onboarding.choosePath')}</h2>
-                <RadioCardGroup
-                  ariaLabel={t('onboarding.choosePath')}
-                  value={pathId}
-                  onChange={setPathIdLocal}
-                  options={cycleOptions}
-                />
-                <div>
-                  <div className="flex items-center justify-between text-xs text-zinc-500 mb-1">
-                    <span>{t('onboarding.progressHintShort')}</span>
-                    <span className="text-zinc-300 font-medium tabular-nums">{completed}/40</span>
+                <StepHeader title={t('onboarding.choosePath')} subtitle={t('onboarding.cycleHint')} />
+                <div className="flex-1 min-h-0 overflow-y-auto pr-1 -mr-1 space-y-3">
+                  {gameData.cycles.map((c) => {
+                    const selected = pathId === c.id
+                    const heroId = cycleHeroDroidId(c.id)
+                    const hero = droidById.get(heroId)
+                    const rebirthCount = c.rebirths.length
+                    return (
+                      <button
+                        key={c.id}
+                        type="button"
+                        data-testid={`onboarding-cycle-${c.id}`}
+                        onClick={() => setPathId(c.id)}
+                        className={cn(
+                          'flex w-full items-center gap-3 rounded-2xl border p-3.5 text-left min-h-[5rem] transition-all',
+                          selected
+                            ? 'border-holo-400 ring-2 ring-holo-500/50 bg-holo-600/15 shadow-lg shadow-holo-900/20'
+                            : 'border-white/10 bg-white/5 hover:bg-white/8',
+                        )}
+                      >
+                        {hero ? (
+                          <DroidImage droid={hero} size="md" className="shrink-0 ring-1 ring-white/10" />
+                        ) : null}
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-base">
+                            {formatCycleDisplayName(c.name, i18n.language)}
+                          </p>
+                          <p className="text-xs text-zinc-500 mt-0.5">
+                            {t('onboarding.rebirthCount', { n: rebirthCount })}
+                          </p>
+                        </div>
+                        {selected ? (
+                          <CheckCircle {...uiIconProps} className="text-holo-300 shrink-0" weight="fill" />
+                        ) : null}
+                      </button>
+                    )
+                  })}
+                </div>
+              </>
+            ) : null}
+
+            {current === 'progress' ? (
+              <>
+                <StepHeader title={t('onboarding.progressTitle')} subtitle={t('onboarding.progressHint')} />
+                <div className="flex flex-wrap gap-2 shrink-0">
+                  {[
+                    { label: t('onboarding.chipStart'), value: 0 },
+                    { label: t('onboarding.chipMid'), value: 20 },
+                  ].map((chip) => (
+                    <button
+                      key={chip.value}
+                      type="button"
+                      className={cn(
+                        'rounded-full px-4 py-2 text-sm min-h-11 border font-medium',
+                        completed === chip.value
+                          ? 'border-holo-400 bg-holo-600/25 text-holo-100'
+                          : 'border-white/15 bg-white/5 text-zinc-300',
+                      )}
+                      onClick={() => setCompleted(chip.value)}
+                    >
+                      {chip.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-5 space-y-4 shrink-0">
+                  <div className="flex items-center justify-center gap-5">
+                    <Button
+                      variant="secondary"
+                      size="icon"
+                      iconOnly
+                      icon={<Minus {...uiIconProps} size={22} />}
+                      aria-label={t('onboarding.decrease')}
+                      className="min-h-12 min-w-12 [&_svg]:size-[22px]"
+                      disabled={completed <= 0}
+                      onClick={() => setCompleted((v) => Math.max(0, v - 1))}
+                    />
+                    <div className="text-center min-w-[5rem]">
+                      <p className="text-[10px] uppercase tracking-widest text-zinc-500">
+                        {t('onboarding.progressHintShort')}
+                      </p>
+                      <p className="font-sans text-[56px] font-bold tabular-nums text-white leading-none py-1">
+                        {completed}
+                      </p>
+                      <p className="text-xs text-zinc-400">
+                        {t('onboarding.progressNext', { n: nextRebirth })}
+                      </p>
+                    </div>
+                    <Button
+                      variant="secondary"
+                      size="icon"
+                      iconOnly
+                      icon={<Plus {...uiIconProps} size={22} />}
+                      aria-label={t('onboarding.increase')}
+                      className="min-h-12 min-w-12 [&_svg]:size-[22px]"
+                      disabled={completed >= REBIRTHS_PER_PATH}
+                      onClick={() => setCompleted((v) => Math.min(REBIRTHS_PER_PATH, v + 1))}
+                    />
                   </div>
                   <input
                     type="range"
                     min={0}
-                    max={40}
+                    max={REBIRTHS_PER_PATH}
                     value={completed}
                     onChange={(e) => setCompleted(Number(e.target.value))}
-                    className="w-full accent-holo-500"
+                    className="w-full accent-holo-500 min-h-11"
                     data-testid="onboarding-rebirth-input"
                   />
                 </div>
-                <div className="flex gap-2 pt-1">
-                  <Button variant="secondary" size="sm" onClick={() => setStep(0)}>
-                    {t('onboarding.back')}
-                  </Button>
-                  <Button className="flex-1" size="sm" onClick={() => setStep(2)}>
-                    {t('onboarding.continue')}
-                  </Button>
-                </div>
+                {preview && cycle ? (
+                  <div
+                    className="rounded-xl border border-white/10 bg-white/5 p-3 space-y-2 shrink-0"
+                    data-testid="onboarding-rebirth-preview"
+                  >
+                    <p className="text-xs font-semibold text-zinc-300">
+                      {t('onboarding.nextReqPreview', { n: nextRebirth })}
+                    </p>
+                    <div className="flex flex-wrap gap-3">
+                      {preview.requirements.map((req) => {
+                        const d = droidById.get(req.droidId)
+                        if (!d) return null
+                        return (
+                          <div
+                            key={req.droidId}
+                            className="flex items-center gap-2 text-xs bg-black/20 rounded-lg px-2 py-1.5"
+                          >
+                            <DroidImage droid={d} size="sm" />
+                            <span className="font-medium text-zinc-200">{d.name}</span>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                ) : null}
               </>
             ) : null}
 
-            {current === 'prefs' ? (
-              <>
-                <h2 className="font-display text-base">{t('onboarding.prefsTitle')}</h2>
-                <SegmentedControl
-                  ariaLabel={t('settings.language')}
-                  value={settings.locale}
-                  onChange={changeLanguage}
-                  options={[
-                    { value: 'pt-BR', label: '🇧🇷 PT' },
-                    { value: 'en', label: '🇺🇸 EN' },
-                  ]}
-                />
-                <SegmentedControl
-                  ariaLabel={t('settings.theme')}
-                  value={settings.theme}
-                  onChange={setTheme}
-                  options={[
-                    { value: 'dark', label: t('settings.themeDark') },
-                    { value: 'light', label: t('settings.themeLight') },
-                    { value: 'system', label: t('settings.themeSystemShort') },
-                  ]}
-                />
+            {current === 'features' ? (
+              <div className="flex-1 flex flex-col justify-center gap-5 min-h-0 py-2">
+                <StepHeader title={t('onboarding.featuresTitle')} subtitle={t('onboarding.featuresHint')} />
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 shrink-0">
+                  {[
+                    {
+                      icon: TreeStructure,
+                      label: t('nav.progress'),
+                      desc: t('onboarding.featureProgressDesc'),
+                    },
+                    { icon: Storefront, label: t('nav.sell'), desc: t('onboarding.featureSellDesc') },
+                    { icon: Export, label: t('onboarding.featureExport'), desc: t('onboarding.featureExportDesc') },
+                  ].map(({ icon: Icon, label, desc }) => (
+                    <div
+                      key={label}
+                      className="rounded-2xl border border-white/10 bg-white/5 p-3.5 flex flex-col items-center gap-2 text-center min-h-[7.5rem] justify-center"
+                    >
+                      <Icon {...uiIconProps} className="text-holo-300" size={28} />
+                      <span className="text-xs font-semibold leading-tight text-zinc-100">{label}</span>
+                      <span className="text-[10px] leading-snug text-zinc-500 text-pretty">{desc}</span>
+                    </div>
+                  ))}
+                </div>
                 <Switch
                   label={t('settings.trackInventory')}
                   checked={settings.trackInventory}
                   onChange={(v) => updateSettings({ trackInventory: v })}
                 />
-                <Switch
-                  label={t('settings.animations')}
-                  checked={settings.animationsEnabled}
-                  onChange={(v) => updateSettings({ animationsEnabled: v })}
-                />
-                <div className="flex gap-2 pt-1">
-                  <Button variant="secondary" size="sm" onClick={() => setStep(1)}>
-                    {t('onboarding.back')}
-                  </Button>
-                  <Button
-                    className="flex-1"
-                    size="sm"
-                    icon={<Check {...uiIconProps} />}
-                    onClick={() => finish(true)}
-                  >
-                    {t('onboarding.finish')}
-                  </Button>
-                </div>
-              </>
+              </div>
             ) : null}
-          </motion.div>
-        </AnimatePresence>
-      </GlassCard>
+          </div>
+        </div>
+
+        <div className="relative z-10 flex gap-2 pt-4 mt-auto shrink-0 pb-[calc(env(safe-area-inset-bottom,0px)+12px)]">
+          {step > 0 ? (
+            <Button
+              variant="secondary"
+              className="min-h-11"
+              data-testid="onboarding-back"
+              icon={<ArrowLeft {...uiIconProps} />}
+              onClick={goBack}
+            >
+              {t('onboarding.back')}
+            </Button>
+          ) : null}
+          {current === 'welcome' ? (
+            <Button
+              className="flex-1 min-h-11"
+              data-testid="onboarding-start"
+              icon={<ArrowRight {...uiIconProps} />}
+              onClick={goNext}
+            >
+              {t('onboarding.start')}
+            </Button>
+          ) : step < STEPS.length - 1 ? (
+            <Button
+              className="flex-1 min-h-11"
+              data-testid="onboarding-next"
+              icon={<ArrowRight {...uiIconProps} />}
+              onClick={goNext}
+            >
+              {t('onboarding.continue')}
+            </Button>
+          ) : (
+            <Button
+              className="flex-1 min-h-11"
+              data-testid="onboarding-finish"
+              icon={<Check {...uiIconProps} />}
+              onClick={finish}
+            >
+              {t('onboarding.ctaStart')}
+            </Button>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
