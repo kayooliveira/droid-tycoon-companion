@@ -12,6 +12,7 @@ import {
 import { formatTierName } from '../domain/tiers'
 import { buildI18nTierLabelMapForLocale } from '../i18n/tierLabels'
 import { getPdfCopy } from './pdfCopy'
+import { pdfTheme as T } from './pdfTheme'
 import { gameData } from '../domain/gameData'
 import type { InventoryUnit, RebirthEntry } from '../domain/types'
 
@@ -64,16 +65,24 @@ function labels(input: ExportCycleInput) {
     cycleById.get(input.pathId)?.name ?? input.pathId,
     input.locale,
   )
-  const coverLine =
-    (input.mode ?? 'progress') === 'guide'
-      ? `${p.guideCoverTitle}: ${pathName}`
-      : `${p.progressCoverTitle}: ${pathName}`
+  const isGuide = (input.mode ?? 'progress') === 'guide'
+  const coverLine = isGuide
+    ? p.guideCoverHeading.replace('{{cycle}}', pathName)
+    : p.progressCoverHeading.replace('{{cycle}}', pathName)
   return {
     ...p,
     brand: APP_BRAND_NAME,
     myCycle: (_name: string) => coverLine,
     date: p.generated.replace('{{date}}', formatPdfDate(input.locale)),
   }
+}
+
+function distinctDroidsOnPath(pathId: string): number {
+  const ids = new Set<string>()
+  for (let n = 1; n <= REBIRTHS_PER_PATH; n++) {
+    getRebirth(pathId, n)?.requirements.forEach((r) => ids.add(r.droidId))
+  }
+  return ids.size
 }
 
 function countRebirthSheetPages(rebirthCount: number): number {
@@ -109,10 +118,7 @@ function createPageCanvas(): { canvas: HTMLCanvasElement; ctx: CanvasRenderingCo
 }
 
 function fillBackground(ctx: CanvasRenderingContext2D) {
-  const g = ctx.createLinearGradient(0, 0, PAGE_W, PAGE_H)
-  g.addColorStop(0, '#0c121c')
-  g.addColorStop(1, '#070b12')
-  ctx.fillStyle = g
+  ctx.fillStyle = T.bg
   ctx.fillRect(0, 0, PAGE_W, PAGE_H)
 }
 
@@ -132,7 +138,7 @@ function drawPageFooter(
     .replace('{{cycle}}', cycleShortLabel(input.pathId, input.locale))
     .replace('{{page}}', String(page))
     .replace('{{total}}', String(total))
-  ctx.fillStyle = '#64748b'
+  ctx.fillStyle = T.footer
   ctx.font = '11px system-ui, sans-serif'
   const tw = ctx.measureText(text).width
   ctx.fillText(text, (PAGE_W - tw) / 2, PAGE_H - 28)
@@ -168,17 +174,17 @@ function drawStatBlock(
   label: string,
   value: string,
 ) {
-  ctx.fillStyle = 'rgba(255,255,255,0.06)'
-  ctx.strokeStyle = 'rgba(255,255,255,0.12)'
+  ctx.fillStyle = T.cardBg
+  ctx.strokeStyle = T.cardBorder
   ctx.lineWidth = 1
   roundRect(ctx, x, y, w, h, 10)
   ctx.fill()
   ctx.stroke()
-  ctx.fillStyle = '#64748b'
+  ctx.fillStyle = T.textSoft
   ctx.font = '11px system-ui, sans-serif'
   ctx.fillText(label, x + 12, y + 24)
-  ctx.fillStyle = '#f1f5f9'
-  ctx.font = 'bold 24px system-ui, sans-serif'
+  ctx.fillStyle = T.text
+  ctx.font = 'bold 22px system-ui, sans-serif'
   ctx.fillText(value, x + 12, y + 52)
 }
 
@@ -205,10 +211,10 @@ function drawTextChip(
   const tw = ctx.measureText(label).width
   const pw = tw + 10
   const ph = 16
-  ctx.fillStyle = 'rgba(129,140,248,0.18)'
+  ctx.fillStyle = T.accentSoft
   roundRect(ctx, x, y, pw, ph, 5)
   ctx.fill()
-  ctx.fillStyle = '#e2e8f0'
+  ctx.fillStyle = T.textMuted
   ctx.fillText(label, x + 5, y + 11)
   return pw + 4
 }
@@ -226,7 +232,7 @@ async function drawDroidRow(
   if (img) ctx.drawImage(img, x, y, 28, 28)
   const name = droid?.name ?? droidId
   const tier = formatTierName(tierId as RebirthUnitUsage['tier'], exportTierLabels)
-  ctx.fillStyle = '#e2e8f0'
+  ctx.fillStyle = T.text
   ctx.font = '10px system-ui, sans-serif'
   const nameMax = maxW - 38 - 70
   let displayName = name
@@ -246,7 +252,7 @@ async function drawSellUnitChips(
   emptyLabel: string,
 ): Promise<number> {
   if (units.length === 0) {
-    ctx.fillStyle = '#64748b'
+    ctx.fillStyle = T.textSoft
     ctx.font = '9px system-ui, sans-serif'
     ctx.fillText(emptyLabel, x, y + 10)
     return 14
@@ -310,7 +316,7 @@ async function drawUpcomingRebirths(
   for (let r = start; r <= end; r++) {
     const entry = getRebirth(input.pathId, r)
     if (!entry) continue
-    ctx.fillStyle = '#94a3b8'
+    ctx.fillStyle = T.textMuted
     ctx.font = 'bold 10px system-ui, sans-serif'
     ctx.fillText(`${L.rebirth} ${r} · ${entry.credits}`, x, uy + 10)
     uy += 14
@@ -337,7 +343,7 @@ async function drawRemainingTable(
   tableStartRebirth: number,
   maxY: number,
 ): Promise<number> {
-  ctx.fillStyle = '#cbd5e1'
+  ctx.fillStyle = T.text
   ctx.font = 'bold 13px system-ui, sans-serif'
   ctx.fillText(L.remainingRebirths, PAD + 12, y + 16)
   let ry = y + 28
@@ -348,14 +354,14 @@ async function drawRemainingTable(
     const entry = getRebirth(input.pathId, r)
     if (!entry) continue
 
-    ctx.fillStyle = 'rgba(255,255,255,0.03)'
+    ctx.fillStyle = T.bgAlt
     roundRect(ctx, PAD, ry - 2, PAGE_W - PAD * 2, TABLE_ROW_H - 4, 6)
     ctx.fill()
 
-    ctx.fillStyle = '#94a3b8'
+    ctx.fillStyle = T.text
     ctx.font = 'bold 10px system-ui, sans-serif'
     ctx.fillText(`#${r}`, PAD + 12, ry + 14)
-    ctx.fillStyle = '#64748b'
+    ctx.fillStyle = T.textMuted
     ctx.font = '9px system-ui, sans-serif'
     ctx.fillText(entry.credits, PAD + 44, ry + 14)
 
@@ -388,11 +394,11 @@ async function drawCover(ctx: CanvasRenderingContext2D, input: ExportCycleInput)
   const headerY = PAD
   if (logo) ctx.drawImage(logo, PAD, headerY, 96, 96)
 
-  ctx.fillStyle = '#f8fafc'
+  ctx.fillStyle = T.text
   ctx.font = 'bold 32px system-ui, sans-serif'
   ctx.fillText(L.brand, PAD + 112, headerY + 38)
   ctx.font = 'bold 28px system-ui, sans-serif'
-  ctx.fillStyle = '#a5b4fc'
+  ctx.fillStyle = T.accent
   ctx.fillText(L.myCycle(pathName), PAD + 112, headerY + 76)
 
   const gridY = headerY + 108
@@ -447,10 +453,13 @@ async function drawCover(ctx: CanvasRenderingContext2D, input: ExportCycleInput)
   const panelInnerH = Math.max(sellInnerH, upcomingInnerH)
   const panelH = 22 + panelInnerH + 14
 
-  ctx.fillStyle = 'rgba(255,255,255,0.05)'
+  ctx.fillStyle = T.cardBg
+  ctx.strokeStyle = T.cardBorder
+  ctx.lineWidth = 1
   roundRect(ctx, PAD, panelY, panelW, panelH, 10)
   ctx.fill()
-  ctx.fillStyle = '#cbd5e1'
+  ctx.stroke()
+  ctx.fillStyle = T.text
   ctx.font = 'bold 13px system-ui, sans-serif'
   ctx.fillText(L.sellNow, PAD + 12, panelY + 20)
   await drawSellUnitChips(
@@ -463,10 +472,12 @@ async function drawCover(ctx: CanvasRenderingContext2D, input: ExportCycleInput)
   )
 
   const rightX = PAD + panelW + COL_GAP
-  ctx.fillStyle = 'rgba(255,255,255,0.05)'
+  ctx.fillStyle = T.cardBg
+  ctx.strokeStyle = T.cardBorder
   roundRect(ctx, rightX, panelY, panelW, panelH, 10)
   ctx.fill()
-  ctx.fillStyle = '#cbd5e1'
+  ctx.stroke()
+  ctx.fillStyle = T.text
   ctx.font = 'bold 13px system-ui, sans-serif'
   ctx.fillText(L.upcomingRebirths, rightX + 12, panelY + 20)
   await drawUpcomingRebirths(ctx, rightX + 12, panelY + 26, panelW - 24, input, L)
@@ -482,7 +493,7 @@ async function drawCover(ctx: CanvasRenderingContext2D, input: ExportCycleInput)
     month: 'long',
     day: 'numeric',
   })
-  ctx.fillStyle = '#94a3b8'
+  ctx.fillStyle = T.textSoft
   ctx.font = '12px system-ui, sans-serif'
   ctx.fillText(`${L.date}: ${dateStr}`, PAD, PAGE_H - FOOTER_H - 14)
 
@@ -505,9 +516,9 @@ function drawStatusChip(
   status: 'done' | 'next' | 'pending',
 ) {
   const colors = {
-    done: { bg: 'rgba(34,197,94,0.2)', fg: '#86efac' },
-    next: { bg: 'rgba(129,140,248,0.25)', fg: '#c7d2fe' },
-    pending: { bg: 'rgba(148,163,184,0.15)', fg: '#94a3b8' },
+    done: { bg: '#dcfce7', fg: '#166534' },
+    next: { bg: T.accentSoft, fg: '#1e40af' },
+    pending: { bg: T.bgAlt, fg: T.textSoft },
   }[status]
   ctx.font = '9px system-ui, sans-serif'
   const tw = ctx.measureText(label).width
@@ -532,8 +543,9 @@ async function drawCompactRebirthCard(
   const statusLabel =
     status === 'done' ? L.done : status === 'next' ? L.next : L.pending
 
-  ctx.fillStyle = 'rgba(255,255,255,0.04)'
-  ctx.strokeStyle = 'rgba(255,255,255,0.1)'
+  ctx.fillStyle = T.cardBg
+  ctx.strokeStyle = T.cardBorder
+  ctx.lineWidth = 1
   roundRect(ctx, x, y, CARD_W, CARD_H, 10)
   ctx.fill()
   ctx.stroke()
@@ -541,7 +553,7 @@ async function drawCompactRebirthCard(
   const innerX = x + 8
   const innerW = CARD_W - 16
   let cy = y + 18
-  ctx.fillStyle = '#f1f5f9'
+  ctx.fillStyle = T.text
   ctx.font = 'bold 13px system-ui, sans-serif'
   const title = `${L.rebirth} ${entry.rebirth}`
   ctx.fillText(title, innerX, cy)
@@ -554,7 +566,7 @@ async function drawCompactRebirthCard(
   }
 
   cy += 16
-  ctx.fillStyle = '#94a3b8'
+  ctx.fillStyle = T.textMuted
   ctx.font = '10px system-ui, sans-serif'
   ctx.fillText(`${L.credits}: ${entry.credits}`, innerX, cy)
 
@@ -566,7 +578,7 @@ async function drawCompactRebirthCard(
 
   if (!isGuide) {
     cy += 6
-    ctx.fillStyle = '#a5b4fc'
+    ctx.fillStyle = T.accent
     ctx.font = 'bold 9px system-ui, sans-serif'
     ctx.fillText(L.sellAfter, innerX, cy + 10)
 
@@ -635,73 +647,176 @@ async function drawGuideCover(ctx: CanvasRenderingContext2D, input: ExportCycleI
     input.locale,
   )
   const logo = await loadImage('/pwa-512.png')
-  if (logo) ctx.drawImage(logo, PAD, PAD, 88, 88)
-  ctx.fillStyle = '#f8fafc'
-  ctx.font = 'bold 30px system-ui, sans-serif'
-  ctx.fillText(L.brand, PAD + 104, PAD + 40)
-  ctx.font = 'bold 22px system-ui, sans-serif'
-  ctx.fillStyle = '#a5b4fc'
-  ctx.fillText(`${L.guideCoverTitle}: ${pathName}`, PAD + 104, PAD + 76)
-  ctx.fillStyle = '#94a3b8'
+  const top = PAD + 8
+  if (logo) ctx.drawImage(logo, PAD, top, 72, 72)
+
+  ctx.fillStyle = T.text
+  ctx.font = 'bold 28px system-ui, sans-serif'
+  ctx.fillText(L.brand, PAD + 88, top + 32)
+  ctx.fillStyle = T.accent
+  ctx.font = 'bold 24px system-ui, sans-serif'
+  ctx.fillText(L.guideCoverHeading.replace('{{cycle}}', pathName), PAD + 88, top + 64)
+
+  ctx.fillStyle = T.textMuted
   ctx.font = '14px system-ui, sans-serif'
-  ctx.fillText(L.date, PAD, PAD + 120)
+  wrapText(ctx, L.guideIntro, PAD, top + 108, PAGE_W - PAD * 2, 20)
+
+  const factsY = top + 168
+  const factW = (PAGE_W - PAD * 2 - COL_GAP * 2) / 3
+  const factH = 64
+  drawStatBlock(
+    ctx,
+    PAD,
+    factsY,
+    factW,
+    factH,
+    L.coverFactRebirths,
+    String(REBIRTHS_PER_PATH),
+  )
+  drawStatBlock(
+    ctx,
+    PAD + factW + COL_GAP,
+    factsY,
+    factW,
+    factH,
+    L.coverFactSuper,
+    `#${SUPER_REBIRTH_UNLOCK_AFTER}`,
+  )
+  drawStatBlock(
+    ctx,
+    PAD + (factW + COL_GAP) * 2,
+    factsY,
+    factW,
+    factH,
+    L.coverFactDroids,
+    String(distinctDroidsOnPath(input.pathId)),
+  )
+
+  ctx.fillStyle = T.textSoft
+  ctx.font = '13px system-ui, sans-serif'
+  ctx.fillText(L.date, PAD, factsY + factH + 28)
   ctx.fillText(
     L.dataVersion
       .replace('{{version}}', gameData.dataVersion)
       .replace('{{game}}', gameData.gameVersion),
     PAD,
-    PAD + 142,
+    factsY + factH + 48,
   )
-  ctx.fillStyle = '#64748b'
+
+  ctx.strokeStyle = T.border
+  ctx.beginPath()
+  ctx.moveTo(PAD, PAGE_H - PAD - 56)
+  ctx.lineTo(PAGE_W - PAD, PAGE_H - PAD - 56)
+  ctx.stroke()
+  ctx.fillStyle = T.textSoft
   ctx.font = '11px system-ui, sans-serif'
-  wrapText(ctx, L.disclaimer, PAD, PAGE_H - PAD - 48, PAGE_W - PAD * 2, 16)
+  wrapText(ctx, L.disclaimer, PAD, PAGE_H - PAD - 44, PAGE_W - PAD * 2, 14)
 }
 
-function drawTocPage(ctx: CanvasRenderingContext2D, input: ExportCycleInput, rebirthSheets: number) {
+function reqBrief(droidId: string, tierId: string): string {
+  const name = droidById.get(droidId)?.name ?? droidId
+  const short = name.length > 8 ? `${name.slice(0, 7)}…` : name
+  const tier = formatTierName(tierId as RebirthUnitUsage['tier'], exportTierLabels)
+  const tShort = tier.length > 6 ? `${tier.slice(0, 5)}…` : tier
+  return `${short} (${tShort})`
+}
+
+function drawOverviewRow(
+  ctx: CanvasRenderingContext2D,
+  input: ExportCycleInput,
+  x: number,
+  y: number,
+  n: number,
+) {
+  const entry = getRebirth(input.pathId, n)
+  if (!entry) return
+  ctx.fillStyle = T.text
+  ctx.font = '9px system-ui, sans-serif'
+  ctx.fillText(String(n), x, y)
+  ctx.fillStyle = T.textMuted
+  const cred = entry.credits.length > 9 ? `${entry.credits.slice(0, 8)}…` : entry.credits
+  ctx.fillText(cred, x + 24, y)
+  const reqs = entry.requirements.map((r) => reqBrief(r.droidId, r.rarity)).join(', ')
+  const reqShort = reqs.length > 38 ? `${reqs.slice(0, 37)}…` : reqs
+  ctx.fillStyle = T.textSoft
+  ctx.fillText(reqShort, x + 92, y)
+}
+
+function drawOverviewTablePage(
+  ctx: CanvasRenderingContext2D,
+  input: ExportCycleInput,
+  pageIndex: 0 | 1,
+) {
   const L = labels(input)
-  let y = PAD + 8
-  ctx.fillStyle = '#f1f5f9'
-  ctx.font = 'bold 26px system-ui, sans-serif'
-  ctx.fillText(L.tocTitle, PAD, y)
-  y += 40
-  ctx.fillStyle = '#cbd5e1'
-  ctx.font = '15px system-ui, sans-serif'
-  const lines = [
-    `3–${2 + rebirthSheets}. ${L.tocRebirths.replace('{{n}}', String(REBIRTHS_PER_PATH))}`,
-    `${3 + rebirthSheets}. ${L.tocSuper}`,
-    `${4 + rebirthSheets}. ${L.tocClosing}`,
-  ]
-  for (const line of lines) {
-    ctx.fillText(line, PAD + 8, y)
-    y += 28
+  ctx.fillStyle = T.text
+  ctx.font = 'bold 22px system-ui, sans-serif'
+  ctx.fillText(
+    pageIndex === 0 ? L.overviewTitle : `${L.overviewTitle} (21-40)`,
+    PAD,
+    PAD + 28,
+  )
+
+  const colW = (PAGE_W - PAD * 2 - COL_GAP) / 2
+  const leftX = PAD
+  const rightX = PAD + colW + COL_GAP
+  const rowH = 18
+  const headerY = PAD + 48
+
+  for (const x of [leftX, rightX]) {
+    ctx.fillStyle = T.textMuted
+    ctx.font = 'bold 9px system-ui, sans-serif'
+    ctx.fillText('#', x, headerY)
+    ctx.fillText(L.credits, x + 24, headerY)
+    ctx.fillText(L.requirements, x + 92, headerY)
   }
+
+  const base = pageIndex === 0 ? 1 : 21
+  for (let i = 0; i < 10; i++) {
+    const y = headerY + 12 + i * rowH
+    drawOverviewRow(ctx, input, leftX, y, base + i)
+    drawOverviewRow(ctx, input, rightX, y, base + 10 + i)
+  }
+}
+
+async function renderOverviewPages(input: ExportCycleInput): Promise<HTMLCanvasElement[]> {
+  const pages: HTMLCanvasElement[] = []
+  for (const idx of [0, 1] as const) {
+    const { canvas, ctx } = createPageCanvas()
+    fillBackground(ctx)
+    drawOverviewTablePage(ctx, input, idx)
+    pages.push(canvas)
+  }
+  return pages
 }
 
 function drawClosingPage(ctx: CanvasRenderingContext2D, input: ExportCycleInput) {
   const L = labels(input)
   let y = PAD
-  ctx.fillStyle = '#f1f5f9'
-  ctx.font = 'bold 24px system-ui, sans-serif'
+  ctx.fillStyle = T.text
+  ctx.font = 'bold 22px system-ui, sans-serif'
   ctx.fillText(L.closingTitle, PAD, y)
-  y += 36
-  ctx.fillStyle = '#cbd5e1'
-  ctx.font = '16px system-ui, sans-serif'
+  y += 32
+  ctx.fillStyle = T.textMuted
+  ctx.font = 'bold 15px system-ui, sans-serif'
+  ctx.fillText(L.superTitle, PAD, y)
+  y += 22
+  ctx.font = '14px system-ui, sans-serif'
   wrapText(
     ctx,
     L.superBody.replace('{{n}}', String(SUPER_REBIRTH_UNLOCK_AFTER)),
     PAD,
     y,
     PAGE_W - PAD * 2,
-    22,
+    20,
   )
-  y += 72
-  ctx.fillStyle = '#94a3b8'
-  ctx.font = '13px system-ui, sans-serif'
-  wrapText(ctx, L.disclaimer, PAD, y, PAGE_W - PAD * 2, 18)
-  y += 56
-  wrapText(ctx, L.sources, PAD, y, PAGE_W - PAD * 2, 18)
-  y += 48
-  ctx.fillStyle = '#64748b'
+  y += 64
+  ctx.fillStyle = T.textSoft
+  ctx.font = '12px system-ui, sans-serif'
+  wrapText(ctx, L.disclaimer, PAD, y, PAGE_W - PAD * 2, 17)
+  y += 52
+  wrapText(ctx, L.sources, PAD, y, PAGE_W - PAD * 2, 17)
+  y += 44
+  ctx.fillStyle = T.footer
   ctx.font = '11px system-ui, sans-serif'
   ctx.fillText(APP_PUBLIC_URL.replace('https://', ''), PAD, y)
 }
@@ -712,8 +827,9 @@ export async function buildCyclePdfCanvases(input: ExportCycleInput): Promise<HT
   const cycle = cycleById.get(input.pathId)
   if (!cycle) return []
 
-  const rebirthSheets = countRebirthSheetPages(cycle.rebirths.length)
-  const totalPages = (mode === 'guide' ? 2 : 1) + rebirthSheets + 1
+  const rebirthSheets = mode === 'guide' ? 0 : countRebirthSheetPages(cycle.rebirths.length)
+  const overviewCount = mode === 'guide' ? 2 : 0
+  const totalPages = (mode === 'guide' ? 1 + overviewCount : 1 + rebirthSheets) + 1
   let pageNum = 0
   const out: HTMLCanvasElement[] = []
 
@@ -729,21 +845,22 @@ export async function buildCyclePdfCanvases(input: ExportCycleInput): Promise<HT
     await drawGuideCover(g1.ctx, input)
     stamp(g1.canvas, g1.ctx)
 
-    const g2 = createPageCanvas()
-    fillBackground(g2.ctx)
-    drawTocPage(g2.ctx, input, rebirthSheets)
-    stamp(g2.canvas, g2.ctx)
+    const overviewPages = await renderOverviewPages(input)
+    for (const canvas of overviewPages) {
+      const ctx = canvas.getContext('2d')
+      if (ctx) stamp(canvas, ctx)
+    }
   } else {
     const cover = createPageCanvas()
     fillBackground(cover.ctx)
     await drawCover(cover.ctx, input)
     stamp(cover.canvas, cover.ctx)
-  }
 
-  const rebirthPages = await renderRebirthPages(input)
-  for (const canvas of rebirthPages) {
-    const ctx = canvas.getContext('2d')
-    if (ctx) stamp(canvas, ctx)
+    const rebirthPages = await renderRebirthPages(input)
+    for (const canvas of rebirthPages) {
+      const ctx = canvas.getContext('2d')
+      if (ctx) stamp(canvas, ctx)
+    }
   }
 
   const closing = createPageCanvas()

@@ -87,7 +87,10 @@ export default function App() {
     const root = document.documentElement
     const supportsSvgBackdrop =
       typeof CSS !== 'undefined' &&
-      (CSS.supports('(-webkit-backdrop-filter: url(#lg))') || CSS.supports('(backdrop-filter: url(#lg))'))
+      (CSS.supports('(-webkit-backdrop-filter: url(#lg-nav))') ||
+        CSS.supports('(backdrop-filter: url(#lg-nav))') ||
+        CSS.supports('(-webkit-backdrop-filter: url(#lg))') ||
+        CSS.supports('(backdrop-filter: url(#lg))'))
     if (supportsSvgBackdrop) {
       root.classList.add('glass-refraction-enabled')
     } else {

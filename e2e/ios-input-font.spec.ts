@@ -64,7 +64,7 @@ test.describe('iOS input zoom guard', () => {
 
     await page.goto('/cycles')
     await page.waitForTimeout(200)
-    const cycleSelect = page.getByTestId('cycles-path-select')
+    const cycleSelect = page.getByTestId('cycles-chip-path-1')
     await expect(cycleSelect).toBeVisible()
     const cyclePx = await cycleSelect.evaluate((node) => parseFloat(getComputedStyle(node).fontSize))
     expect(cyclePx).toBeGreaterThanOrEqual(16)

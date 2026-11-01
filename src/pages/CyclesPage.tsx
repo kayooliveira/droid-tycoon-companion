@@ -41,25 +41,39 @@ export function CyclesPage() {
       </div>
 
       <GlassCard className="p-4 space-y-3">
-        <label className="block text-sm font-medium text-zinc-200" htmlFor="cycles-path-select">
-          {t('cycles.pickCycle')}
-        </label>
-        <select
-          id="cycles-path-select"
-          data-testid="cycles-path-select"
-          className="w-full rounded-xl bg-surface-800 border border-white/10 px-4 py-3 min-h-11"
-          value={pathId}
-          onChange={(e) => {
-            setPathId(e.target.value)
-            setOpenRebirth(1)
-          }}
+        <p className="text-sm font-medium text-zinc-200">{t('cycles.pickCycle')}</p>
+        <div
+          className="flex flex-wrap gap-2"
+          role="radiogroup"
+          aria-label={t('cycles.pickCycle')}
+          data-testid="cycles-path-chips"
         >
-          {gameData.cycles.map((c) => (
-            <option key={c.id} value={c.id}>
-              {formatCycleDisplayName(c.name, i18n.language)}
-            </option>
-          ))}
-        </select>
+          {gameData.cycles.map((c) => {
+            const selected = pathId === c.id
+            const label = formatCycleDisplayName(c.name, i18n.language)
+            return (
+              <button
+                key={c.id}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                data-testid={`cycles-chip-${c.id}`}
+                className={cn(
+                  'rounded-full px-3.5 py-2 text-sm min-h-11 border font-medium transition-colors',
+                  selected
+                    ? 'border-holo-400/70 bg-holo-600/25 text-white'
+                    : 'border-white/10 bg-white/5 text-zinc-400 hover:text-zinc-200',
+                )}
+                onClick={() => {
+                  setPathId(c.id)
+                  setOpenRebirth(1)
+                }}
+              >
+                {label}
+              </button>
+            )
+          })}
+        </div>
         <CycleGuidePdfExport pathId={pathId} cycleName={cycleName} />
       </GlassCard>
 

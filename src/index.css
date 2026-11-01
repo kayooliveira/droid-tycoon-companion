@@ -121,8 +121,8 @@
     }
 
     html.glass-refraction-enabled .glass-nav-liquid.glass-regular {
-      -webkit-backdrop-filter: url(#lg) blur(22px) saturate(195%) brightness(1.08);
-      backdrop-filter: url(#lg) blur(22px) saturate(195%) brightness(1.08);
+      -webkit-backdrop-filter: url(#lg-nav) blur(18px) saturate(200%) brightness(1.1);
+      backdrop-filter: url(#lg-nav) blur(18px) saturate(200%) brightness(1.1);
     }
   }
 

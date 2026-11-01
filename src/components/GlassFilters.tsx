@@ -3,10 +3,10 @@ export function GlassFilters() {
   const edgeMap = `data:image/svg+xml,${encodeURIComponent(
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80">
       <defs>
-        <radialGradient id="g" cx="50%" cy="50%" r="72%">
-          <stop offset="0%" stop-color="#808080"/>
-          <stop offset="55%" stop-color="#808080"/>
-          <stop offset="100%" stop-color="#000000"/>
+        <radialGradient id="g" cx="50%" cy="50%" r="68%">
+          <stop offset="0%" stop-color="#909090"/>
+          <stop offset="45%" stop-color="#808080"/>
+          <stop offset="100%" stop-color="#101010"/>
         </radialGradient>
       </defs>
       <rect width="200" height="80" rx="40" fill="url(#g)"/>
@@ -20,6 +20,17 @@ export function GlassFilters() {
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
+        <filter id="lg-nav" x="-35%" y="-45%" width="170%" height="190%" colorInterpolationFilters="sRGB">
+          <feImage href={edgeMap} result="dispMap" preserveAspectRatio="none" />
+          <feGaussianBlur in="SourceGraphic" stdDeviation="0.25" result="sharp" />
+          <feDisplacementMap in="sharp" in2="dispMap" scale="42" xChannelSelector="R" yChannelSelector="G" result="warp" />
+          <feOffset in="warp" dx="-1.2" dy="0" result="rShift" />
+          <feOffset in="warp" dx="1.2" dy="0" result="bShift" />
+          <feColorMatrix in="rShift" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="r" />
+          <feColorMatrix in="bShift" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="b" />
+          <feBlend in="r" in2="warp" mode="screen" result="rb" />
+          <feBlend in="b" in2="rb" mode="screen" />
+        </filter>
         <filter id="lg" x="-25%" y="-35%" width="150%" height="170%" colorInterpolationFilters="sRGB">
           <feImage href={edgeMap} result="dispMap" preserveAspectRatio="none" />
           <feGaussianBlur in="SourceGraphic" stdDeviation="0.4" result="sharp" />
