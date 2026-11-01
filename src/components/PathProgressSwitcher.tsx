@@ -63,16 +63,29 @@ export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
         testId="path-switch-modal"
         footer={
           <>
-            <Button variant="secondary" size="sm" onClick={() => setOpen(false)}>
+            <Button
+              variant="secondary"
+              size="sm"
+              data-testid="path-switch-cancel"
+              onClick={() => setOpen(false)}
+            >
               {t('path.cancel')}
             </Button>
             <Button size="sm" data-testid="path-switcher-confirm" onClick={confirm}>
-              {t('path.confirmSwitch')}
+              {t('common.confirm')}
             </Button>
           </>
         }
       >
         <div className="space-y-3">
+          <p className="text-sm text-zinc-300 text-pretty">
+            {t('path.switchBody', { name: cycleLabel(targetPath) })}
+          </p>
+          {resetProgress ? (
+            <p className="text-sm text-amber-200/90 text-pretty">
+              {t('path.switchBodyReset', { name: cycleLabel(targetPath) })}
+            </p>
+          ) : null}
           <RadioCardGroup
             ariaLabel={t('settings.path')}
             value={targetPath}

@@ -18,6 +18,7 @@ import { PathProgressSwitcher, ProgressSummaryLine } from '../components/PathPro
 import { Button } from '../components/ui/Button'
 import { Badge } from '../components/ui/Badge'
 import { GlassCard } from '../components/ui/GlassCard'
+import { Modal } from '../components/ui/Modal'
 import { SectionHeader } from '../components/ui/SectionHeader'
 import { SegmentedControl } from '../components/ui/SegmentedControl'
 import { Switch } from '../components/ui/Switch'
@@ -26,6 +27,7 @@ import { gameDataSource } from '../data/dataSource'
 import type { AppLocale } from '../i18n/detectLocale'
 import { useAppStore, applyTheme } from '../store/useAppStore'
 import type { ThemeMode } from '../storage/types'
+import type { PersistedState } from '../storage/types'
 import { downloadJson, exportProgress, parseImportJson } from '../storage/exportImport'
 import { useToast } from '../components/ToastProvider'
 import { setDocumentLanguage } from '../i18n'
@@ -37,7 +39,9 @@ export function SettingsPage() {
   const navigate = useNavigate()
   const { push } = useToast()
   const fileRef = useRef<HTMLInputElement>(null)
-  const [confirmReset, setConfirmReset] = useState(false)
+  const [resetOpen, setResetOpen] = useState(false)
+  const [importOpen, setImportOpen] = useState(false)
+  const [pendingImport, setPendingImport] = useState<PersistedState | null>(null)
 
   const settings = useAppStore((s) => s.settings)
   const progress = useAppStore((s) => s.progress)
@@ -65,6 +69,21 @@ export function SettingsPage() {
 
   const rerunOnboarding = () => {
     navigate('/onboarding?rerun=1')
+  }
+
+  const confirmImport = () => {
+    if (!pendingImport) return
+    importState(pendingImport)
+    push(t('settings.importOk'))
+    setPendingImport(null)
+    setImportOpen(false)
+  }
+
+  const confirmReset = () => {
+    resetAll()
+    push(t('settings.resetDone'))
+    setResetOpen(false)
+    navigate('/onboarding')
   }
 
   return (
@@ -175,6 +194,7 @@ export function SettingsPage() {
             variant="secondary"
             size="sm"
             icon={<UploadSimple {...uiIconProps} />}
+            data-testid="settings-import-trigger"
             onClick={() => fileRef.current?.click()}
           >
             {t('settings.importShort')}
@@ -186,6 +206,7 @@ export function SettingsPage() {
             className="hidden"
             onChange={async (e) => {
               const file = e.target.files?.[0]
+              e.target.value = ''
               if (!file) return
               const text = await file.text()
               const result = parseImportJson(text)
@@ -193,8 +214,8 @@ export function SettingsPage() {
                 push(t('settings.importFail'))
                 return
               }
-              importState(result.state)
-              push(t('settings.importOk'))
+              setPendingImport(result.state)
+              setImportOpen(true)
             }}
           />
         </div>
@@ -218,33 +239,65 @@ export function SettingsPage() {
       <ShareExportCard />
 
       <GlassCard className="p-4 border border-red-500/25 bg-red-950/15">
-        <SectionHeader
-          icon={<Trash {...uiIconProps} />}
-          title={t('settings.danger')}
-        />
-        {!confirmReset ? (
-          <Button variant="danger" size="sm" onClick={() => setConfirmReset(true)}>
-            {t('settings.resetShort')}
-          </Button>
-        ) : (
-          <div className="flex flex-wrap gap-2">
+        <SectionHeader icon={<Trash {...uiIconProps} />} title={t('settings.danger')} />
+        <Button variant="danger" size="sm" data-testid="settings-reset-trigger" onClick={() => setResetOpen(true)}>
+          {t('settings.resetShort')}
+        </Button>
+      </GlassCard>
+
+      <Modal
+        open={importOpen}
+        onClose={() => {
+          setImportOpen(false)
+          setPendingImport(null)
+        }}
+        title={t('settings.importConfirmTitle')}
+        testId="settings-import-modal"
+        footer={
+          <>
             <Button
-              variant="danger"
+              variant="secondary"
               size="sm"
+              data-testid="settings-import-cancel"
               onClick={() => {
-                resetAll()
-                push(t('settings.resetDone'))
-                navigate('/onboarding')
+                setImportOpen(false)
+                setPendingImport(null)
               }}
             >
-              {t('settings.resetConfirm')}
-            </Button>
-            <Button variant="secondary" size="sm" onClick={() => setConfirmReset(false)}>
               {t('path.cancel')}
             </Button>
-          </div>
-        )}
-      </GlassCard>
+            <Button size="sm" data-testid="settings-import-confirm" onClick={confirmImport}>
+              {t('common.confirm')}
+            </Button>
+          </>
+        }
+      >
+        <p className="text-sm text-zinc-300 text-pretty">{t('settings.importConfirmBody')}</p>
+      </Modal>
+
+      <Modal
+        open={resetOpen}
+        onClose={() => setResetOpen(false)}
+        title={t('settings.resetConfirmTitle')}
+        testId="settings-reset-modal"
+        footer={
+          <>
+            <Button
+              variant="secondary"
+              size="sm"
+              data-testid="settings-reset-cancel"
+              onClick={() => setResetOpen(false)}
+            >
+              {t('path.cancel')}
+            </Button>
+            <Button variant="danger" size="sm" data-testid="settings-reset-confirm" onClick={confirmReset}>
+              {t('common.confirm')}
+            </Button>
+          </>
+        }
+      >
+        <p className="text-sm text-zinc-300 text-pretty">{t('settings.resetConfirmBody')}</p>
+      </Modal>
     </div>
   )
 }

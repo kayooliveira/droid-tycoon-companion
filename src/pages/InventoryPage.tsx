@@ -45,6 +45,11 @@ export function InventoryPage() {
   const [newDroidId, setNewDroidId] = useState(gameData.droids[0]?.id ?? '')
   const [newTier, setNewTier] = useState<TierId>('default')
   const [newQty, setNewQty] = useState(1)
+  const [removeTarget, setRemoveTarget] = useState<{
+    unitId: string
+    name: string
+    tier: string
+  } | null>(null)
 
   const rarityOptions = useMemo(
     () => [
@@ -198,9 +203,13 @@ export function InventoryPage() {
                   variant="ghost"
                   className="min-h-11 min-w-11"
                   aria-label={t('a11y.removeUnit')}
+                  data-testid={`inventory-remove-${unit.id}`}
                   onClick={() => {
-                    removeInventoryUnit(unit.id)
-                    push(t('inventory.removed'))
+                    setRemoveTarget({
+                      unitId: unit.id,
+                      name: droid.name,
+                      tier: formatTierName(unit.tier, tierLabels),
+                    })
                   }}
                 >
                   <Trash {...uiIconProps} />
@@ -280,6 +289,46 @@ export function InventoryPage() {
             {t('inventory.add')}
           </Button>
         </div>
+      </Modal>
+
+      <Modal
+        open={Boolean(removeTarget)}
+        onClose={() => setRemoveTarget(null)}
+        title={t('inventory.removeConfirmTitle')}
+        testId="inventory-remove-modal"
+        footer={
+          <>
+            <Button
+              variant="secondary"
+              size="sm"
+              data-testid="inventory-remove-cancel"
+              onClick={() => setRemoveTarget(null)}
+            >
+              {t('path.cancel')}
+            </Button>
+            <Button
+              size="sm"
+              variant="danger"
+              data-testid="inventory-remove-confirm"
+              onClick={() => {
+                if (removeTarget) removeInventoryUnit(removeTarget.unitId)
+                push(t('inventory.removed'))
+                setRemoveTarget(null)
+              }}
+            >
+              {t('common.confirm')}
+            </Button>
+          </>
+        }
+      >
+        {removeTarget ? (
+          <p className="text-sm text-zinc-300 text-pretty">
+            {t('inventory.removeConfirmBody', {
+              name: removeTarget.name,
+              tier: removeTarget.tier,
+            })}
+          </p>
+        ) : null}
       </Modal>
     </div>
   )
