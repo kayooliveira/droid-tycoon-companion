@@ -18,7 +18,7 @@ test('path switcher updates path', async ({ page }) => {
   await page.goto('/onboarding')
   await page.getByTestId('onboarding-skip').click()
   await page.getByTestId('path-switcher-trigger').click()
-  await page.getByTestId('path-switcher-select').selectOption('path-3')
+  await page.getByTestId('path-switcher-option-path-3').click()
   await page.getByTestId('path-switcher-confirm').click()
   await page.goto('/settings')
   await expect(page.getByTestId('path-switcher-trigger')).toContainText(/Path 3|Ciclo 3|path-3/i)

@@ -60,6 +60,7 @@ export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
         open={open}
         onClose={() => setOpen(false)}
         title={t('path.switchTitle')}
+        testId="path-switch-modal"
         footer={
           <>
             <Button variant="secondary" size="sm" onClick={() => setOpen(false)}>
@@ -77,25 +78,12 @@ export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
             value={targetPath}
             onChange={setTargetPath}
             columns={3}
+            optionTestIdPrefix="path-switcher-option"
             options={gameData.cycles.map((c) => ({
               value: c.id,
               label: formatCycleDisplayName(c.name, i18n.language),
             }))}
           />
-          <select
-            className="sr-only"
-            value={targetPath}
-            onChange={(e) => setTargetPath(e.target.value)}
-            data-testid="path-switcher-select"
-            tabIndex={-1}
-            aria-hidden
-          >
-            {gameData.cycles.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
           <Switch
             label={t('path.resetRebirthOnSwitch')}
             checked={resetProgress}

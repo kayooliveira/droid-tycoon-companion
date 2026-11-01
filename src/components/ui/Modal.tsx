@@ -3,8 +3,10 @@ import { useTranslation } from 'react-i18next'
 import { X } from '@phosphor-icons/react'
 import { useScrollLock } from '../../hooks/useScrollLock'
 import { cn } from '../../lib/utils'
+import { useOverlayStackRegister } from '../OverlayStackProvider'
 import { IconButton } from './IconButton'
 import { Glass } from './Glass'
+import { OverlayPortal } from './OverlayPortal'
 import { uiIconProps } from './iconStyle'
 
 const FOCUSABLE =
@@ -34,6 +36,7 @@ export function Modal({
   children,
   className,
   footer,
+  testId = 'overlay-modal',
 }: {
   open: boolean
   onClose: () => void
@@ -41,11 +44,13 @@ export function Modal({
   children: ReactNode
   className?: string
   footer?: ReactNode
+  testId?: string
 }) {
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDivElement>(null)
   const titleId = useId()
   useScrollLock(open)
+  useOverlayStackRegister(open)
 
   useEffect(() => {
     if (!open) return
@@ -61,49 +66,54 @@ export function Modal({
   if (!open) return null
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-4"
-      role="presentation"
-      onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onClose()
-      }}
-    >
-      <Glass
-        as="div"
-        variant="regular"
-        className={cn(
-          'w-full sm:max-w-md max-h-[88dvh] overflow-auto',
-          'rounded-t-2xl sm:rounded-2xl pb-[calc(env(safe-area-inset-bottom,0px)+12px)]',
-          className,
-        )}
+    <OverlayPortal>
+      <div
+        data-overlay-root
+        data-testid={testId}
+        className="fixed inset-0 z-overlay flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-md p-0 sm:p-4"
+        role="presentation"
+        onMouseDown={(e) => {
+          if (e.target === e.currentTarget) onClose()
+        }}
       >
-        <div
-          ref={dialogRef}
-          tabIndex={-1}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby={titleId}
-          className="bg-surface-900/95 backdrop-saturate-150 min-h-full outline-none"
+        <Glass
+          as="div"
+          variant="regular"
+          className={cn(
+            'relative z-modal w-full sm:max-w-md max-h-[88dvh] overflow-auto',
+            'rounded-t-2xl sm:rounded-2xl',
+            'pb-[calc(env(safe-area-inset-bottom,0px)+12px)] sm:pb-[calc(env(safe-area-inset-bottom,0px)+12px)]',
+            className,
+          )}
         >
-          <div className="flex justify-center pt-2 sm:hidden" aria-hidden>
-            <span className="h-1 w-10 rounded-full bg-white/20" />
-          </div>
-          <div className="flex items-center justify-between gap-2 px-4 pt-3 pb-2 sm:px-5 sm:pt-4 border-b border-white/10">
-            <h2 id={titleId} className="font-display text-base font-semibold tracking-wide text-balance">
-              {title}
-            </h2>
-            <IconButton label={t('common.close')} onClick={onClose}>
-              <X {...uiIconProps} />
-            </IconButton>
-          </div>
-          <div className="px-4 py-4 sm:px-5 text-sm">{children}</div>
-          {footer ? (
-            <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-0 flex flex-wrap gap-2 justify-end border-t border-white/5">
-              {footer}
+          <div
+            ref={dialogRef}
+            tabIndex={-1}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
+            className="bg-surface-900/95 backdrop-saturate-150 min-h-full outline-none"
+          >
+            <div className="flex justify-center pt-2 sm:hidden" aria-hidden>
+              <span className="h-1 w-10 rounded-full bg-white/20" />
             </div>
-          ) : null}
-        </div>
-      </Glass>
-    </div>
+            <div className="flex items-center justify-between gap-2 px-4 pt-3 pb-2 sm:px-5 sm:pt-4 border-b border-white/10">
+              <h2 id={titleId} className="font-display text-base font-semibold tracking-wide text-balance">
+                {title}
+              </h2>
+              <IconButton label={t('common.close')} onClick={onClose} data-testid={`${testId}-close`}>
+                <X {...uiIconProps} />
+              </IconButton>
+            </div>
+            <div className="px-4 py-4 sm:px-5 text-sm">{children}</div>
+            {footer ? (
+              <div className="px-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5 sm:pb-5 pt-0 flex flex-wrap gap-2 justify-end border-t border-white/5">
+                {footer}
+              </div>
+            ) : null}
+          </div>
+        </Glass>
+      </div>
+    </OverlayPortal>
   )
 }

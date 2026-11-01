@@ -1,31 +1,40 @@
 import { Info } from '@phosphor-icons/react'
-import { useId, useState } from 'react'
+import { useState } from 'react'
 import { uiIconProps } from './iconStyle'
 import { IconButton } from './IconButton'
+import { Modal } from './Modal'
 
-export function HelpHint({ text, label }: { text: string; label: string }) {
+export function HelpHint({
+  text,
+  label,
+  testId = 'help-hint',
+}: {
+  text: string
+  label: string
+  testId?: string
+}) {
   const [open, setOpen] = useState(false)
-  const id = useId()
   return (
-    <span className="relative inline-flex">
+    <>
       <IconButton
         label={label}
         className="min-h-8 min-w-8"
-        onClick={() => setOpen((v) => !v)}
+        data-testid={`${testId}-trigger`}
+        onClick={() => setOpen(true)}
         aria-expanded={open}
-        aria-describedby={open ? id : undefined}
       >
         <Info {...uiIconProps} />
       </IconButton>
-      {open ? (
-        <span
-          id={id}
-          role="tooltip"
-          className="help-hint-popover absolute z-50 top-full mt-1 right-0 w-56 rounded-lg border border-white/15 bg-surface-850 p-2 text-xs text-zinc-300 shadow-lg text-pretty"
-        >
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        title={label}
+        testId={`${testId}-modal`}
+      >
+        <p className="text-sm text-zinc-300 text-pretty" data-testid={`${testId}-body`}>
           {text}
-        </span>
-      ) : null}
-    </span>
+        </p>
+      </Modal>
+    </>
   )
 }
