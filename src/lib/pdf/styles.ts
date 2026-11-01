@@ -23,7 +23,12 @@ export const pdfStyles = StyleSheet.create({
     paddingBottom: 40,
     paddingHorizontal: 32,
   },
-  guideFirstPagePullUp: { marginTop: -GUIDE_PAGE_TOP_BAND },
+  guideCover: {
+    marginBottom: 8,
+    paddingBottom: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: c.border,
+  },
   guideFixedTableHead: {
     position: 'absolute',
     top: 6,
@@ -94,7 +99,7 @@ export const pdfStyles = StyleSheet.create({
   headerRow: { flexDirection: 'row', marginBottom: 6, gap: 8 },
   logo: { width: 44, height: 44, objectFit: 'contain' },
   headerMain: { flex: 1 },
-  bullet: { fontSize: 8, color: c.textMuted, marginBottom: 2, paddingLeft: 4 },
+  bullet: { fontSize: 8, color: c.textMuted, marginBottom: 3, paddingLeft: 4, lineHeight: 1.3 },
   notesBlock: {
     marginTop: 12,
     paddingTop: 10,
@@ -123,10 +128,10 @@ export const pdfStyles = StyleSheet.create({
     color: c.text,
   },
   sellCompactLine: {
-    fontSize: 7,
-    color: c.textMuted,
-    marginBottom: 1,
-    lineHeight: 1.2,
+    fontSize: 8,
+    color: c.text,
+    marginBottom: 2,
+    lineHeight: 1.25,
   },
   sellSummaryStep: {
     fontSize: 8,

@@ -3,31 +3,33 @@ import type { CyclePdfModel, PdfRebirthRow } from './buildCyclePdfModel'
 import { guideFactsLine } from './buildCyclePdfModel'
 import { DroidThumb } from './DroidThumb'
 import { PdfFooter } from './PdfFooter'
-import { PdfSellCompactLines, PdfSellSummarySection } from './PdfSellSection'
+import { PdfSellCompactLines } from './PdfSellSection'
 import { pdfStyles as s } from './styles'
 import { SUPER_REBIRTH_UNLOCK_AFTER } from '../../domain/progress'
 
-function GuideHeader({ model }: { model: CyclePdfModel }) {
+function GuideCover({ model }: { model: CyclePdfModel }) {
   const L = model.labels
   const title = L.guideCoverHeading.replace('{{cycle}}', model.cycleName)
   return (
-    <View style={s.guideFirstPagePullUp}>
+    <View style={s.guideCover} wrap={false}>
       <View style={s.headerRow}>
         <Image src={`${model.origin}/pwa-512.png`} style={s.logo} />
         <View style={s.headerMain}>
           <Text style={s.h1}>{model.brand}</Text>
-          <Text style={s.accent}>{title}</Text>
-          <Text style={[s.muted, { marginTop: 3, fontSize: 8 }]}>{guideFactsLine(model)}</Text>
-          <Text style={s.soft}>{model.dataVersionLine}</Text>
-          <Text style={[s.muted, { marginTop: 4, fontSize: 8 }]}>{L.guideIntro}</Text>
-          <Text style={[s.h2, { marginTop: 4, fontSize: 9 }]}>{L.guideHowToTitle}</Text>
-          <Text style={s.bullet}>{`• ${L.guideHowTo1}`}</Text>
-          <Text style={s.bullet}>{`• ${L.guideHowTo2}`}</Text>
-          <Text style={s.bullet}>{`• ${L.guideHowTo3}`}</Text>
-          <Text style={s.bullet}>{`• ${L.guideHowTo4}`}</Text>
-          <Text style={[s.soft, { marginTop: 2 }]}>{model.generatedLine}</Text>
+          <Text style={[s.accent, { marginTop: 2, fontSize: 11 }]}>{title}</Text>
+          <Text style={[s.muted, { marginTop: 4, fontSize: 8, lineHeight: 1.35 }]}>
+            {guideFactsLine(model)}
+          </Text>
+          <Text style={[s.soft, { marginTop: 2 }]}>{model.dataVersionLine}</Text>
         </View>
       </View>
+      <Text style={[s.muted, { marginTop: 6, fontSize: 8, lineHeight: 1.35 }]}>{L.guideIntro}</Text>
+      <Text style={[s.h2, { marginTop: 5, fontSize: 9 }]}>{L.guideHowToTitle}</Text>
+      <Text style={s.bullet}>{`• ${L.guideHowTo1}`}</Text>
+      <Text style={s.bullet}>{`• ${L.guideHowTo2}`}</Text>
+      <Text style={s.bullet}>{`• ${L.guideHowTo3}`}</Text>
+      <Text style={s.bullet}>{`• ${L.guideHowTo4}`}</Text>
+      <Text style={[s.soft, { marginTop: 4 }]}>{model.generatedLine}</Text>
     </View>
   )
 }
@@ -35,7 +37,7 @@ function GuideHeader({ model }: { model: CyclePdfModel }) {
 function TableHeader({ model }: { model: CyclePdfModel }) {
   const L = model.labels
   return (
-    <View style={s.tableHead}>
+    <View style={s.tableHead} minPresenceAhead={72}>
       <Text style={{ width: 32 }}>#</Text>
       <Text style={{ width: 68 }}>{L.credits}</Text>
       <Text style={{ flex: 1 }}>{L.requirements}</Text>
@@ -119,24 +121,22 @@ function GuideNotes({ model }: { model: CyclePdfModel }) {
 }
 
 export function GuidePdf({ model }: { model: CyclePdfModel }) {
-  const L = model.labels
+  const [firstRow, ...restRows] = model.rebirths
   return (
     <Document>
       <Page size="A4" style={s.guidePage}>
         <PdfFooter brand={model.brand} cycle={model.cycleShort} />
         <GuideFixedTableHead model={model} />
-        <View wrap={false}>
-          <GuideHeader model={model} />
-          <PdfSellSummarySection
-            title={L.sellSummaryTitle}
-            hint={L.sellSummaryHint}
-            blocks={model.guideSellSummary ?? []}
-            labels={L}
-            rebirthLabel={L.rebirth}
-          />
+        <GuideCover model={model} />
+        {firstRow ? (
+          <View wrap={false}>
+            <TableHeader model={model} />
+            <GuideRebirthRow row={firstRow} model={model} zebra={firstRow.rebirth % 2 === 0} />
+          </View>
+        ) : (
           <TableHeader model={model} />
-        </View>
-        {model.rebirths.map((row) => (
+        )}
+        {restRows.map((row) => (
           <GuideRebirthRow
             key={row.rebirth}
             row={row}
