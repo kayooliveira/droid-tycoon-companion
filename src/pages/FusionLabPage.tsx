@@ -7,8 +7,14 @@ import { Badge } from '../components/ui/Badge'
 import { GlassCard } from '../components/ui/GlassCard'
 import { useAppStore } from '../store/useAppStore'
 
-function fusionRuleText(rule: (typeof gameData.fusionRules)[0]): string {
-  return rule.description ?? rule.summary ?? rule.text ?? ''
+const FUSION_RULE_KEY: Record<string, string> = {
+  'tier-up': 'fusion.rules.tierUp',
+  random: 'fusion.rules.random',
+  unlock: 'fusion.rules.unlock',
+}
+
+function fusionRuleKey(rule: (typeof gameData.fusionRules)[0]): string {
+  return FUSION_RULE_KEY[rule.id] ?? ''
 }
 
 export function FusionLabPage() {
@@ -30,7 +36,7 @@ export function FusionLabPage() {
   }, [search])
 
   const helpful = recipes.filter((f) => upcomingIds.has(f.resultDroidId))
-  const resultTierNote = gameData.fusions.find((f) => f.resultTierRule)?.resultTierRule
+  const showResultTierRule = gameData.fusions.some((f) => f.resultTierRule)
 
   return (
     <div className="space-y-6">
@@ -44,41 +50,45 @@ export function FusionLabPage() {
       <GlassCard className="space-y-3 text-sm">
         <p className="font-medium text-zinc-100">{t('fusion.rulesTitle')}</p>
         <ul className="space-y-3">
-          {gameData.fusionRules.map((rule) => (
-            <li key={rule.id} className="border-b border-white/5 pb-3 last:border-0 last:pb-0">
-              <p className="text-zinc-300">{fusionRuleText(rule)}</p>
-              <div className="flex flex-wrap gap-2 mt-2">
-                <Badge tone={rule.confidence === 'confirmed' ? 'success' : 'warn'}>
-                  {t(`confidence.${rule.confidence ?? 'partial'}`)}
-                </Badge>
-                {rule.sourceUrl ? (
-                  <a
-                    href={rule.sourceUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-xs text-holo-300 hover:underline"
-                  >
-                    Source
-                  </a>
-                ) : null}
-              </div>
-            </li>
-          ))}
+          {gameData.fusionRules.map((rule) => {
+            const key = fusionRuleKey(rule)
+            const text = key ? t(key) : (rule.description ?? rule.summary ?? rule.text ?? '')
+            return (
+              <li key={rule.id} className="border-b border-white/5 pb-3 last:border-0 last:pb-0">
+                <p className="text-zinc-300">{text}</p>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  <Badge tone={rule.confidence === 'confirmed' ? 'success' : 'warn'}>
+                    {t(`confidence.${rule.confidence ?? 'partial'}`)}
+                  </Badge>
+                  {rule.sourceUrl ? (
+                    <a
+                      href={rule.sourceUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-xs text-holo-300 hover:underline"
+                    >
+                      {t('fusion.sourceLink')}
+                    </a>
+                  ) : null}
+                </div>
+              </li>
+            )
+          })}
         </ul>
-        {resultTierNote ? (
-          <p className="text-xs text-zinc-400 border-t border-white/10 pt-3">{resultTierNote}</p>
+        {showResultTierRule ? (
+          <p className="text-xs text-zinc-400 border-t border-white/10 pt-3">{t('fusion.resultTierRule')}</p>
         ) : null}
         <p className="text-xs text-zinc-500">{t('fusion.rulesFootnote')}</p>
       </GlassCard>
 
-      {helpful.length > 0 ? (
-        <section className="space-y-2">
-          <h2 className="font-display text-lg">{t('fusion.helpsNext')}</h2>
-          {helpful.map((f) => (
-            <RecipeCard key={f.id} fusion={f} />
-          ))}
-        </section>
-      ) : null}
+      <section className="space-y-2">
+        <h2 className="font-display text-lg">{t('fusion.helpsNext')}</h2>
+        {helpful.length > 0 ? (
+          helpful.map((f) => <RecipeCard key={f.id} fusion={f} />)
+        ) : (
+          <GlassCard className="text-sm text-zinc-400 py-4 px-4">{t('fusion.helpsNextEmpty')}</GlassCard>
+        )}
+      </section>
 
       <section className="space-y-3">
         <div className="flex gap-2 items-center flex-wrap">
@@ -88,11 +98,14 @@ export function FusionLabPage() {
             placeholder={t('fusion.search')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            aria-label={t('fusion.search')}
           />
         </div>
-        {recipes.map((f) => (
-          <RecipeCard key={f.id} fusion={f} />
-        ))}
+        {recipes.length === 0 ? (
+          <GlassCard className="text-sm text-zinc-400 py-6 px-4 text-center">{t('fusion.emptySearch')}</GlassCard>
+        ) : (
+          recipes.map((f) => <RecipeCard key={f.id} fusion={f} />)
+        )}
       </section>
     </div>
   )
@@ -121,7 +134,7 @@ function RecipeCard({ fusion }: { fusion: FusionRecipe }) {
               className="inline-flex items-center gap-2 rounded-lg bg-white/5 px-2 py-1 text-xs"
             >
               {d ? <DroidImage droid={d} size="sm" className="!h-8 !w-8" /> : null}
-              {d?.name ?? ing.droidId} ×{ing.quantity}
+              {d?.name ?? ing.droidId} {t('common.quantity', { n: ing.quantity })}
             </span>
           )
         })}

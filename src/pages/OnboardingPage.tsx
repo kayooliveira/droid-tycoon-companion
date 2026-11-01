@@ -119,6 +119,7 @@ export function OnboardingPage() {
 
   return (
     <div
+      data-testid="onboarding-shell"
       className="min-h-dvh relative flex flex-col bg-surface-950 text-zinc-100 overflow-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
@@ -245,7 +246,7 @@ export function OnboardingPage() {
                             {formatCycleDisplayName(c.name, i18n.language)}
                           </p>
                           <p className="text-xs text-zinc-500 mt-0.5">
-                            {t('onboarding.rebirthCount', { n: rebirthCount })}
+                            {t('onboarding.rebirthCount', { count: rebirthCount })}
                           </p>
                         </div>
                         {selected ? (

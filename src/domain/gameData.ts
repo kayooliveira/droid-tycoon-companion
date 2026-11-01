@@ -39,13 +39,16 @@ export function isDataStale(): boolean {
 /** Disputed rebirth alternatives not encoded as separate arrays in source JSON. */
 export const DISPUTED_REBIRTH_ALTERNATIVES: Record<
   string,
-  { note: string; alternatives: Array<{ label: string; requirements: RebirthEntry['requirements'] }> }
+  {
+    note: string
+    alternatives: Array<{ labelKey: string; requirements: RebirthEntry['requirements'] }>
+  }
 > = {
   'path-2:17': {
     note: 'Community guides disagree: three list R7 (Diamond), one lists B2-RP (Diamond).',
     alternatives: [
       {
-        label: 'Primary (R7 Diamond)',
+        labelKey: 'dispute.path2r17AltPrimary',
         requirements: [
           { droidId: 'opti-pod', rarity: 'rainbow' as TierId, quantity: 1 },
           { droidId: 'mono-wlkr', rarity: 'gold' as TierId, quantity: 1 },
@@ -53,7 +56,7 @@ export const DISPUTED_REBIRTH_ALTERNATIVES: Record<
         ],
       },
       {
-        label: 'Alternate (B2-RP Diamond)',
+        labelKey: 'dispute.path2r17AltAlternate',
         requirements: [
           { droidId: 'opti-pod', rarity: 'rainbow' as TierId, quantity: 1 },
           { droidId: 'mono-wlkr', rarity: 'gold' as TierId, quantity: 1 },
@@ -66,7 +69,7 @@ export const DISPUTED_REBIRTH_ALTERNATIVES: Record<
     note: 'Proto-Roller tier disputed: four guides say Gold, two say Diamond.',
     alternatives: [
       {
-        label: 'Primary (Proto-Roller Gold)',
+        labelKey: 'dispute.path6r19AltPrimary',
         requirements: [
           { droidId: 'jo9-4mn', rarity: 'diamond' as TierId, quantity: 1 },
           { droidId: 'proto-roller', rarity: 'gold' as TierId, quantity: 1 },
@@ -74,7 +77,7 @@ export const DISPUTED_REBIRTH_ALTERNATIVES: Record<
         ],
       },
       {
-        label: 'Alternate (Proto-Roller Diamond)',
+        labelKey: 'dispute.path6r19AltAlternate',
         requirements: [
           { droidId: 'jo9-4mn', rarity: 'diamond' as TierId, quantity: 1 },
           { droidId: 'proto-roller', rarity: 'diamond' as TierId, quantity: 1 },

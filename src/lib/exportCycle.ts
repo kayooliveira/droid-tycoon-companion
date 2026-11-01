@@ -2,16 +2,20 @@ import { APP_BRAND_NAME } from './brand'
 import { APP_PUBLIC_URL } from './constants'
 import { formatCycleDisplayName } from './cycleLabel'
 import { droidImageSrc } from './images'
-import { cycleById, droidById, gameData, getRebirth } from '../domain/gameData'
+import { cycleById, droidById, getRebirth } from '../domain/gameData'
 import { pathProgressPercent, REBIRTHS_PER_PATH, SUPER_REBIRTH_UNLOCK_AFTER } from '../domain/progress'
 import {
-  fusionsRelevantToPath,
   unitsNewlySellableAfterRebirth,
   unitsSellableAfterRebirth,
   type RebirthUnitUsage,
 } from '../domain/rebirthSellPlan'
-import { buildTierLabelMap, formatTierName } from '../domain/tiers'
+import { formatTierName } from '../domain/tiers'
+import { buildI18nTierLabelMapForLocale } from '../i18n/tierLabels'
+import { getPdfCopy } from './pdfCopy'
+import { gameData } from '../domain/gameData'
 import type { InventoryUnit, RebirthEntry } from '../domain/types'
+
+export type ExportCycleMode = 'guide' | 'progress'
 
 export interface ExportCycleInput {
   pathId: string
@@ -19,6 +23,7 @@ export interface ExportCycleInput {
   completedOnPath: number
   inventory: InventoryUnit[]
   locale: 'en' | 'pt-BR'
+  mode?: ExportCycleMode
 }
 
 const PAGE_W = 794
@@ -34,58 +39,55 @@ const CARD_W = (PAGE_W - PAD * 2 - COL_GAP) / 2
 const DROID_ROW_H = 32
 const CARD_H = 52 + DROID_ROW_H * 3 + 44
 
-const tierLabels = buildTierLabelMap(gameData.rarities)
+let exportTierLabels = buildI18nTierLabelMapForLocale('en')
 
-const copy = {
-  en: {
-    myCycle: (name: string) => `My ${name}`,
+function applyExportLocale(locale: 'en' | 'pt-BR') {
+  exportTierLabels = buildI18nTierLabelMapForLocale(locale)
+}
+
+function cycleShortLabel(pathId: string, locale: 'en' | 'pt-BR'): string {
+  const name = formatCycleDisplayName(cycleById.get(pathId)?.name ?? pathId, locale)
+  return name.length > 28 ? `${name.slice(0, 27)}…` : name
+}
+
+function formatPdfDate(locale: 'en' | 'pt-BR'): string {
+  return new Date().toLocaleDateString(locale === 'pt-BR' ? 'pt-BR' : 'en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+}
+
+function labels(input: ExportCycleInput) {
+  const p = getPdfCopy(input.locale)
+  const pathName = formatCycleDisplayName(
+    cycleById.get(input.pathId)?.name ?? input.pathId,
+    input.locale,
+  )
+  const coverLine =
+    (input.mode ?? 'progress') === 'guide'
+      ? `${p.guideCoverTitle}: ${pathName}`
+      : `${p.progressCoverTitle}: ${pathName}`
+  return {
+    ...p,
     brand: APP_BRAND_NAME,
-    rebirthsDone: 'Rebirths done',
-    pathPct: 'Cycle progress',
-    nextRebirth: 'Next rebirth',
-    inventory: 'Units in inventory',
-    sellNow: 'Safe to sell now',
-    upcomingRebirths: 'Upcoming rebirths',
-    remainingRebirths: 'Remaining rebirths',
-    date: 'Generated',
-    rebirth: 'Rebirth',
-    credits: 'Credits',
-    sellAfter: 'Sell later:',
-    done: 'Done',
-    next: 'Current',
-    pending: 'Upcoming',
-    footer: 'Fan-made. Not affiliated with Epic Games.',
-    superTitle: 'Super Rebirth',
-    superBody: `Available after rebirth ${SUPER_REBIRTH_UNLOCK_AFTER}. Resets credits, base upgrades, and most droids (Iconics stay).`,
-    fusionTitle: 'Fusion recipes on this cycle',
-    noneSell: 'Nothing to sell yet',
-    noneSellNow: 'Nothing to sell at this step yet',
-  },
-  'pt-BR': {
-    myCycle: (name: string) => `Meu ${name}`,
-    brand: APP_BRAND_NAME,
-    rebirthsDone: 'Renascimentos concluídos',
-    pathPct: '% do ciclo',
-    nextRebirth: 'Próximo renascimento',
-    inventory: 'Droids no inventário',
-    sellNow: 'Pode vender agora',
-    upcomingRebirths: 'Próximos renascimentos',
-    remainingRebirths: 'Renascimentos restantes',
-    date: 'Gerado em',
-    rebirth: 'Renascimento',
-    credits: 'Créditos',
-    sellAfter: 'Vender depois:',
-    done: 'Feito',
-    next: 'Atual',
-    pending: 'Próximos',
-    footer: 'Feito por fãs. Sem vínculo com a Epic Games.',
-    superTitle: 'Super Renascimento',
-    superBody: `Libera depois do renascimento ${SUPER_REBIRTH_UNLOCK_AFTER}. Zera créditos, upgrades da base e quase todos os droids (Iconics ficam).`,
-    fusionTitle: 'Receitas de fusão neste ciclo',
-    noneSell: 'Nada pra vender ainda',
-    noneSellNow: 'Nada pra vender neste passo',
-  },
-} as const
+    myCycle: (_name: string) => coverLine,
+    date: p.generated.replace('{{date}}', formatPdfDate(input.locale)),
+  }
+}
+
+function countRebirthSheetPages(rebirthCount: number): number {
+  let pages = 1
+  let onPage = 0
+  for (let i = 0; i < rebirthCount; i++) {
+    onPage++
+    if (onPage >= REBIRTHS_PER_PAGE) {
+      pages++
+      onPage = 0
+    }
+  }
+  return Math.max(1, pages)
+}
 
 function loadImage(src: string): Promise<HTMLImageElement | null> {
   return new Promise((resolve) => {
@@ -118,32 +120,22 @@ function inventoryUnitCount(inventory: InventoryUnit[]): number {
   return inventory.reduce((sum, u) => sum + (u.quantity ?? 1), 0)
 }
 
-async function drawFooter(ctx: CanvasRenderingContext2D, locale: 'en' | 'pt-BR', qrDataUrl: string) {
-  const y = PAGE_H - FOOTER_H
-  ctx.fillStyle = 'rgba(255,255,255,0.06)'
-  ctx.fillRect(0, y, PAGE_W, FOOTER_H)
-
-  ctx.fillStyle = '#94a3b8'
-  ctx.font = '13px system-ui, sans-serif'
-  ctx.fillText(APP_PUBLIC_URL.replace('https://', ''), PAD, y + 26)
+function drawPageFooter(
+  ctx: CanvasRenderingContext2D,
+  input: ExportCycleInput,
+  page: number,
+  total: number,
+) {
+  const L = getPdfCopy(input.locale)
+  const text = L.pageFooter
+    .replace('{{brand}}', APP_BRAND_NAME)
+    .replace('{{cycle}}', cycleShortLabel(input.pathId, input.locale))
+    .replace('{{page}}', String(page))
+    .replace('{{total}}', String(total))
   ctx.fillStyle = '#64748b'
   ctx.font = '11px system-ui, sans-serif'
-  ctx.fillText(copy[locale].footer, PAD, y + 44)
-
-  const logo = await loadImage('/pwa-192.png')
-  if (logo) ctx.drawImage(logo, PAGE_W - PAD - 108, y + 12, 36, 36)
-
-  const qrImg = await loadImage(qrDataUrl)
-  if (qrImg) ctx.drawImage(qrImg, PAGE_W - PAD - 52, y + 10, 44, 44)
-}
-
-async function makeQr(): Promise<string> {
-  const QRCode = (await import('qrcode')).default
-  return QRCode.toDataURL(APP_PUBLIC_URL, {
-    margin: 1,
-    width: 128,
-    color: { dark: '#e2e8f0', light: '#0c121c' },
-  })
+  const tw = ctx.measureText(text).width
+  ctx.fillText(text, (PAGE_W - tw) / 2, PAGE_H - 28)
 }
 
 function roundRect(
@@ -233,7 +225,7 @@ async function drawDroidRow(
   const img = droid ? await loadImage(droidImageSrc(droid.id, droid.imageLocal)) : null
   if (img) ctx.drawImage(img, x, y, 28, 28)
   const name = droid?.name ?? droidId
-  const tier = formatTierName(tierId as RebirthUnitUsage['tier'], tierLabels)
+  const tier = formatTierName(tierId as RebirthUnitUsage['tier'], exportTierLabels)
   ctx.fillStyle = '#e2e8f0'
   ctx.font = '10px system-ui, sans-serif'
   const nameMax = maxW - 38 - 70
@@ -262,7 +254,7 @@ async function drawSellUnitChips(
   let cx = x
   let cy = y
   for (const unit of units.slice(0, 8)) {
-    const tier = formatTierName(unit.tier, tierLabels)
+    const tier = formatTierName(unit.tier, exportTierLabels)
     const chip = unitChipLabel(unit.droidId, tier)
     const chipW = Math.min(maxW, 120)
     if (cx + chipW > x + maxW && cx > x) {
@@ -285,7 +277,7 @@ async function drawMiniDroidChip(
   const droid = droidById.get(droidId)
   const img = droid ? await loadImage(droidImageSrc(droid.id, droid.imageLocal)) : null
   if (img) ctx.drawImage(img, x, y, 20, 20)
-  const tier = formatTierName(tierId as RebirthUnitUsage['tier'], tierLabels)
+  const tier = formatTierName(tierId as RebirthUnitUsage['tier'], exportTierLabels)
   const chip = unitChipLabel(droidId, tier)
   return drawTextChip(ctx, x + 24, y + 2, chip, 96) + 24
 }
@@ -310,7 +302,7 @@ async function drawUpcomingRebirths(
   y: number,
   w: number,
   input: ExportCycleInput,
-  L: (typeof copy)['en'] | (typeof copy)['pt-BR'],
+  L: ReturnType<typeof labels>,
 ) {
   let uy = y
   const start = input.nextRebirth
@@ -341,7 +333,7 @@ async function drawRemainingTable(
   ctx: CanvasRenderingContext2D,
   y: number,
   input: ExportCycleInput,
-  L: (typeof copy)['en'] | (typeof copy)['pt-BR'],
+  L: ReturnType<typeof labels>,
   tableStartRebirth: number,
   maxY: number,
 ): Promise<number> {
@@ -378,9 +370,9 @@ async function drawRemainingTable(
   return ry
 }
 
-async function drawCover(ctx: CanvasRenderingContext2D, input: ExportCycleInput, qr: string) {
+async function drawCover(ctx: CanvasRenderingContext2D, input: ExportCycleInput) {
   fillBackground(ctx)
-  const L = copy[input.locale]
+  const L = labels(input)
   const pathName = formatCycleDisplayName(
     cycleById.get(input.pathId)?.name ?? input.pathId,
     input.locale,
@@ -494,7 +486,6 @@ async function drawCover(ctx: CanvasRenderingContext2D, input: ExportCycleInput,
   ctx.font = '12px system-ui, sans-serif'
   ctx.fillText(`${L.date}: ${dateStr}`, PAD, PAGE_H - FOOTER_H - 14)
 
-  await drawFooter(ctx, input.locale, qr)
 }
 
 function rebirthStatus(
@@ -535,7 +526,8 @@ async function drawCompactRebirthCard(
   entry: RebirthEntry,
   input: ExportCycleInput,
 ) {
-  const L = copy[input.locale]
+  const L = labels(input)
+  const isGuide = (input.mode ?? 'progress') === 'guide'
   const status = rebirthStatus(entry.rebirth, input)
   const statusLabel =
     status === 'done' ? L.done : status === 'next' ? L.next : L.pending
@@ -553,7 +545,13 @@ async function drawCompactRebirthCard(
   ctx.font = 'bold 13px system-ui, sans-serif'
   const title = `${L.rebirth} ${entry.rebirth}`
   ctx.fillText(title, innerX, cy)
-  drawStatusChip(ctx, innerX + ctx.measureText(title).width + 6, cy, statusLabel, status)
+  if (isGuide) {
+    if (entry.confidence !== 'confirmed') {
+      drawStatusChip(ctx, innerX + ctx.measureText(title).width + 6, cy, L.unconfirmed, 'pending')
+    }
+  } else {
+    drawStatusChip(ctx, innerX + ctx.measureText(title).width + 6, cy, statusLabel, status)
+  }
 
   cy += 16
   ctx.fillStyle = '#94a3b8'
@@ -566,19 +564,21 @@ async function drawCompactRebirthCard(
     await drawDroidRow(ctx, innerX, cy - DROID_ROW_H + 2, innerW, req.droidId, req.rarity)
   }
 
-  cy += 6
-  ctx.fillStyle = '#a5b4fc'
-  ctx.font = 'bold 9px system-ui, sans-serif'
-  ctx.fillText(L.sellAfter, innerX, cy + 10)
+  if (!isGuide) {
+    cy += 6
+    ctx.fillStyle = '#a5b4fc'
+    ctx.font = 'bold 9px system-ui, sans-serif'
+    ctx.fillText(L.sellAfter, innerX, cy + 10)
 
-  const sellUnits = unitsNewlySellableAfterRebirth(input.pathId, entry.rebirth).filter(
-    (u) => u.disposition === 'sellable',
-  )
-  await drawSellUnitChips(ctx, innerX, cy + 14, innerW, sellUnits, L.noneSell)
+    const sellUnits = unitsNewlySellableAfterRebirth(input.pathId, entry.rebirth).filter(
+      (u) => u.disposition === 'sellable',
+    )
+    await drawSellUnitChips(ctx, innerX, cy + 14, innerW, sellUnits, L.noneSell)
+  }
 }
 
 
-async function renderRebirthPages(input: ExportCycleInput, qr: string): Promise<HTMLCanvasElement[]> {
+async function renderRebirthPages(input: ExportCycleInput): Promise<HTMLCanvasElement[]> {
   const cycle = cycleById.get(input.pathId)
   if (!cycle) return []
 
@@ -593,7 +593,6 @@ async function renderRebirthPages(input: ExportCycleInput, qr: string): Promise<
 
   const placeCard = async (entry: RebirthEntry) => {
     if (indexOnPage >= REBIRTHS_PER_PAGE) {
-      await drawFooter(ctx, input.locale, qr)
       pages.push(canvas)
       ;({ canvas, ctx } = createPageCanvas())
       fillBackground(ctx)
@@ -604,7 +603,6 @@ async function renderRebirthPages(input: ExportCycleInput, qr: string): Promise<
     const x = PAD + col * (CARD_W + COL_GAP)
     const y = contentTop + row * (CARD_H + ROW_GAP)
     if (y + CARD_H > contentBottom) {
-      await drawFooter(ctx, input.locale, qr)
       pages.push(canvas)
       ;({ canvas, ctx } = createPageCanvas())
       fillBackground(ctx)
@@ -626,45 +624,134 @@ async function renderRebirthPages(input: ExportCycleInput, qr: string): Promise<
     await placeCard(entry)
   }
 
-  await drawFooter(ctx, input.locale, qr)
   pages.push(canvas)
   return pages
 }
 
-async function renderAppendix(input: ExportCycleInput, qr: string): Promise<HTMLCanvasElement> {
-  const { canvas, ctx } = createPageCanvas()
-  fillBackground(ctx)
-  const L = copy[input.locale]
-  let y = PAD
+async function drawGuideCover(ctx: CanvasRenderingContext2D, input: ExportCycleInput) {
+  const L = labels(input)
+  const pathName = formatCycleDisplayName(
+    cycleById.get(input.pathId)?.name ?? input.pathId,
+    input.locale,
+  )
+  const logo = await loadImage('/pwa-512.png')
+  if (logo) ctx.drawImage(logo, PAD, PAD, 88, 88)
+  ctx.fillStyle = '#f8fafc'
+  ctx.font = 'bold 30px system-ui, sans-serif'
+  ctx.fillText(L.brand, PAD + 104, PAD + 40)
+  ctx.font = 'bold 22px system-ui, sans-serif'
+  ctx.fillStyle = '#a5b4fc'
+  ctx.fillText(`${L.guideCoverTitle}: ${pathName}`, PAD + 104, PAD + 76)
+  ctx.fillStyle = '#94a3b8'
+  ctx.font = '14px system-ui, sans-serif'
+  ctx.fillText(L.date, PAD, PAD + 120)
+  ctx.fillText(
+    L.dataVersion
+      .replace('{{version}}', gameData.dataVersion)
+      .replace('{{game}}', gameData.gameVersion),
+    PAD,
+    PAD + 142,
+  )
+  ctx.fillStyle = '#64748b'
+  ctx.font = '11px system-ui, sans-serif'
+  wrapText(ctx, L.disclaimer, PAD, PAGE_H - PAD - 48, PAGE_W - PAD * 2, 16)
+}
 
+function drawTocPage(ctx: CanvasRenderingContext2D, input: ExportCycleInput, rebirthSheets: number) {
+  const L = labels(input)
+  let y = PAD + 8
+  ctx.fillStyle = '#f1f5f9'
+  ctx.font = 'bold 26px system-ui, sans-serif'
+  ctx.fillText(L.tocTitle, PAD, y)
+  y += 40
+  ctx.fillStyle = '#cbd5e1'
+  ctx.font = '15px system-ui, sans-serif'
+  const lines = [
+    `3–${2 + rebirthSheets}. ${L.tocRebirths.replace('{{n}}', String(REBIRTHS_PER_PATH))}`,
+    `${3 + rebirthSheets}. ${L.tocSuper}`,
+    `${4 + rebirthSheets}. ${L.tocClosing}`,
+  ]
+  for (const line of lines) {
+    ctx.fillText(line, PAD + 8, y)
+    y += 28
+  }
+}
+
+function drawClosingPage(ctx: CanvasRenderingContext2D, input: ExportCycleInput) {
+  const L = labels(input)
+  let y = PAD
   ctx.fillStyle = '#f1f5f9'
   ctx.font = 'bold 24px system-ui, sans-serif'
-  ctx.fillText(L.superTitle, PAD, y)
+  ctx.fillText(L.closingTitle, PAD, y)
   y += 36
   ctx.fillStyle = '#cbd5e1'
   ctx.font = '16px system-ui, sans-serif'
-  wrapText(ctx, L.superBody, PAD, y, PAGE_W - PAD * 2, 22)
-  y += 80
+  wrapText(
+    ctx,
+    L.superBody.replace('{{n}}', String(SUPER_REBIRTH_UNLOCK_AFTER)),
+    PAD,
+    y,
+    PAGE_W - PAD * 2,
+    22,
+  )
+  y += 72
+  ctx.fillStyle = '#94a3b8'
+  ctx.font = '13px system-ui, sans-serif'
+  wrapText(ctx, L.disclaimer, PAD, y, PAGE_W - PAD * 2, 18)
+  y += 56
+  wrapText(ctx, L.sources, PAD, y, PAGE_W - PAD * 2, 18)
+  y += 48
+  ctx.fillStyle = '#64748b'
+  ctx.font = '11px system-ui, sans-serif'
+  ctx.fillText(APP_PUBLIC_URL.replace('https://', ''), PAD, y)
+}
 
-  ctx.fillStyle = '#f1f5f9'
-  ctx.font = 'bold 20px system-ui, sans-serif'
-  ctx.fillText(L.fusionTitle, PAD, y)
-  y += 32
+export async function buildCyclePdfCanvases(input: ExportCycleInput): Promise<HTMLCanvasElement[]> {
+  applyExportLocale(input.locale)
+  const mode = input.mode ?? 'progress'
+  const cycle = cycleById.get(input.pathId)
+  if (!cycle) return []
 
-  const fusions = fusionsRelevantToPath(input.pathId).slice(0, 12)
-  ctx.font = '14px system-ui, sans-serif'
-  for (const f of fusions) {
-    const result = droidById.get(f.resultDroidId)?.name ?? f.resultDroidId
-    const ings = f.ingredients
-      .map((i) => `${droidById.get(i.droidId)?.name ?? i.droidId}×${i.quantity}`)
-      .join(' + ')
-    ctx.fillStyle = '#e2e8f0'
-    wrapText(ctx, `→ ${result}: ${ings}`, PAD, y, PAGE_W - PAD * 2, 20)
-    y += 36
+  const rebirthSheets = countRebirthSheetPages(cycle.rebirths.length)
+  const totalPages = (mode === 'guide' ? 2 : 1) + rebirthSheets + 1
+  let pageNum = 0
+  const out: HTMLCanvasElement[] = []
+
+  const stamp = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
+    pageNum++
+    drawPageFooter(ctx, input, pageNum, totalPages)
+    out.push(canvas)
   }
 
-  await drawFooter(ctx, input.locale, qr)
-  return canvas
+  if (mode === 'guide') {
+    const g1 = createPageCanvas()
+    fillBackground(g1.ctx)
+    await drawGuideCover(g1.ctx, input)
+    stamp(g1.canvas, g1.ctx)
+
+    const g2 = createPageCanvas()
+    fillBackground(g2.ctx)
+    drawTocPage(g2.ctx, input, rebirthSheets)
+    stamp(g2.canvas, g2.ctx)
+  } else {
+    const cover = createPageCanvas()
+    fillBackground(cover.ctx)
+    await drawCover(cover.ctx, input)
+    stamp(cover.canvas, cover.ctx)
+  }
+
+  const rebirthPages = await renderRebirthPages(input)
+  for (const canvas of rebirthPages) {
+    const ctx = canvas.getContext('2d')
+    if (ctx) stamp(canvas, ctx)
+  }
+
+  const closing = createPageCanvas()
+  fillBackground(closing.ctx)
+  drawClosingPage(closing.ctx, input)
+  stamp(closing.canvas, closing.ctx)
+
+  return out
 }
 
 function wrapText(
@@ -706,21 +793,35 @@ async function canvasesToPdf(pages: HTMLCanvasElement[]): Promise<Blob> {
 }
 
 export async function exportCyclePdf(input: ExportCycleInput): Promise<Blob> {
-  const qr = await makeQr()
-  const { canvas, ctx } = createPageCanvas()
-  await drawCover(ctx, input, qr)
-  const cover = canvas
-  const rebirthPages = await renderRebirthPages(input, qr)
-  const appendix = await renderAppendix(input, qr)
-  return canvasesToPdf([cover, ...rebirthPages, appendix])
+  return canvasesToPdf(await buildCyclePdfCanvases(input))
+}
+
+export async function exportCycleGuidePdf(input: {
+  pathId: string
+  locale: 'en' | 'pt-BR'
+}): Promise<Blob> {
+  return exportCyclePdf({
+    pathId: input.pathId,
+    locale: input.locale,
+    mode: 'guide',
+    nextRebirth: 1,
+    completedOnPath: 0,
+    inventory: [],
+  })
+}
+
+export async function exportCycleProgressPdf(
+  input: Omit<ExportCycleInput, 'mode'>,
+): Promise<Blob> {
+  return exportCyclePdf({ ...input, mode: 'progress' })
 }
 
 export async function exportCyclePngChunks(input: ExportCycleInput): Promise<Blob[]> {
+  applyExportLocale(input.locale)
   const cycle = cycleById.get(input.pathId)
   if (!cycle) return []
 
-  const qr = await makeQr()
-  const pages = await renderRebirthPages(input, qr)
+  const pages = await renderRebirthPages(input)
   const chunks: Blob[] = []
   for (const canvas of pages) {
     chunks.push(
@@ -733,9 +834,9 @@ export async function exportCyclePngChunks(input: ExportCycleInput): Promise<Blo
 }
 
 export async function exportCycleCoverBlob(input: ExportCycleInput): Promise<Blob> {
-  const qr = await makeQr()
+  applyExportLocale(input.locale)
   const { canvas, ctx } = createPageCanvas()
-  await drawCover(ctx, input, qr)
+  await drawCover(ctx, input)
   return new Promise((resolve, reject) => {
     canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('PNG failed'))), 'image/png')
   })

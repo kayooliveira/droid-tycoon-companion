@@ -182,11 +182,7 @@ test('DroidDeck UX artifacts at 390x844', async ({ page, browser }) => {
   await expect(page.getByTestId('mobile-floating-nav')).toBeVisible()
   await page.screenshot({ path: path.join(ARTIFACTS, 'navbar-over-busy-bg.png') })
 
-  await page.goto('/')
-  await page.waitForTimeout(300)
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
-  await page.waitForTimeout(400)
   const nav = page.getByTestId('mobile-floating-nav')
-  await expect(nav).toHaveAttribute('data-nav-minimized', '1', { timeout: 5000 })
-  await page.screenshot({ path: path.join(ARTIFACTS, 'navbar-minimized.png') })
+  await expect(nav.getByText(/Início|Dashboard/i)).toBeVisible()
+  await page.screenshot({ path: path.join(ARTIFACTS, 'navbar-labels-visible.png') })
 })

@@ -1,16 +1,16 @@
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { gameData } from '../domain/gameData'
-import { buildTierLabelMap, formatTierName } from '../domain/tiers'
+import { formatTierName } from '../domain/tiers'
+import { useTierLabels } from '../i18n/useTierLabels'
 import { DroidImage } from '../components/DroidImage'
 import { Badge } from '../components/ui/Badge'
 import { Modal } from '../components/ui/Modal'
 import type { Droid } from '../domain/types'
 
-const tierLabels = buildTierLabelMap(gameData.rarities)
-
 export function DroiddexPage() {
   const { t } = useTranslation()
+  const tierLabels = useTierLabels()
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState<Droid | null>(null)
   const [classFilter, setClassFilter] = useState<string>('all')
@@ -67,7 +67,7 @@ export function DroiddexPage() {
       <Modal
         open={Boolean(selected)}
         onClose={() => setSelected(null)}
-        title={selected?.name ?? 'Droid'}
+        title={selected?.name ?? t('droiddex.title')}
       >
         {selected ? (
           <div className="space-y-4">

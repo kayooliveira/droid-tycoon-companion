@@ -145,7 +145,7 @@ export function SettingsPage() {
           action={<HelpHint label={t('settings.dataHelp')} text={t('settings.updateHint')} />}
         />
         <p className="text-xs text-zinc-500 mb-3">
-          v{meta.dataVersion} · {meta.gameVersion}
+          {`v${meta.dataVersion} · ${meta.gameVersion}`}
           {stale ? (
             <Badge tone="warn" className="ml-2">
               {t('settings.dataStaleShort')}

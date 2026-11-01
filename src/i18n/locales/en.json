@@ -15,7 +15,25 @@
     "fusion": "Fusion",
     "settings": "Settings",
     "about": "About",
-    "more": "More"
+    "more": "More",
+    "cycles": "Cycles"
+  },
+  "cycles": {
+    "title": "Cycles",
+    "referenceNote": "Reference guide from community data. Not tied to your saved progress.",
+    "pickCycle": "Choose a cycle",
+    "rebirthN": "Rebirth #{{n}}",
+    "superSection": "Super Rebirth",
+    "superBody": "Unlocks after rebirth #{{n}}. Resets credits, base upgrades, and most droids (Iconics stay).",
+    "exportGuidePdf": "Export cycle PDF",
+    "exportGuideHint": "Printable guide for {{name}} with every rebirth requirement. No personal progress.",
+    "exportGuideDone": "Cycle guide PDF ready."
+  },
+  "exportProgress": {
+    "title": "My progress PDF",
+    "hint": "Includes your rebirth step, inventory, and sell notes for this cycle.",
+    "pdf": "Download PDF",
+    "pdfDone": "Progress PDF ready."
   },
   "progress": {
     "completed": "Completed",
@@ -43,7 +61,8 @@
     "completeBlockedShort": "Missing droids in inventory.",
     "superShort": "Super",
     "undoConfirmShort": "Undo",
-    "moreActionsTitle": "More actions"
+    "moreActionsTitle": "More actions",
+    "listRebirthHeading": "Rebirth #{{n}}"
   },
   "path": {
     "switch": "Change Path",
@@ -149,7 +168,7 @@
   },
   "shareExport": {
     "title": "Share",
-    "hint": "Cycle PDF or PNG chunks, app link, or progress card, all generated on your device.",
+    "hint": "App link, progress card, or WhatsApp, all generated on your device.",
     "hintLabel": "About export and share",
     "footer": "Nothing is uploaded to a server."
   },
@@ -165,9 +184,18 @@
     "rulesTitle": "General rules",
     "rulesFootnote": "Fusion unlocks at rebirth #3. Fusion-only droids aren't required for rebirths (per sources).",
     "helpsNext": "Useful for your next rebirth",
+    "helpsNextEmpty": "Nothing flagged for your next rebirth yet.",
     "recipes": "Recipes",
     "search": "Search…",
-    "resultTier": "Result tier"
+    "emptySearch": "No recipes match your search.",
+    "resultTier": "Result tier",
+    "resultTierRule": "Result takes the lowest tier among the three ingredients.",
+    "sourceLink": "Source",
+    "rules": {
+      "tierUp": "Three of the same droid at the same tier fuse into one of that droid at the next tier.",
+      "random": "Three different droids of the same base rarity fuse into a random droid one rarity up.",
+      "unlock": "Fusion opens at rebirth 3."
+    }
   },
   "droiddex": {
     "title": "Droiddex",
@@ -193,7 +221,8 @@
     "stepProgress": "Setup steps",
     "choosePath": "Pick your Path",
     "cycleHint": "You can switch Path later in Settings.",
-    "rebirthCount": "{{n}} rebirths on this Path",
+    "rebirthCount_one": "{{count}} rebirth in this cycle",
+    "rebirthCount_other": "{{count}} rebirths in this cycle",
     "progressTitle": "Where are you on this Path?",
     "progressHint": "How many rebirths have you already finished?",
     "progressHintShort": "Rebirths done",
@@ -271,7 +300,11 @@
   "dispute": {
     "title": "Requirements disputed",
     "path2r17": "Guides disagree on rebirth #17: R7 (Diamond) vs B2-RP (Diamond).",
-    "path6r19": "Guides disagree on Proto-Roller: Gold vs Diamond on rebirth #19."
+    "path6r19": "Guides disagree on Proto-Roller: Gold vs Diamond on rebirth #19.",
+    "path2r17AltPrimary": "Primary (R7 Diamond)",
+    "path2r17AltAlternate": "Alternate (B2-RP Diamond)",
+    "path6r19AltPrimary": "Primary (Proto-Roller Gold)",
+    "path6r19AltAlternate": "Alternate (Proto-Roller Diamond)"
   },
   "share": {
     "title": "Share with your squad",
@@ -328,7 +361,8 @@
   "a11y": {
     "markOwned": "Mark {{name}} as owned",
     "removeUnit": "Remove from inventory",
-    "openMoreNav": "Open more sections"
+    "openMoreNav": "Open more sections",
+    "mainNav": "Main navigation"
   },
   "home": {
     "nowTitle": "Now",
@@ -350,5 +384,57 @@
     "toolExport": "Export",
     "changelogTitle": "DroidDeck changelog",
     "changelogItems": "v1.0: Home hub, glass nav, Fandom wiki images, pt-BR Renascimento copy."
+  },
+  "tier": {
+    "default": "Default",
+    "gold": "Gold",
+    "diamond": "Diamond",
+    "rainbow": "Rainbow",
+    "beskar": "Beskar",
+    "galactic": "Galactic",
+    "stellar": "Stellar",
+    "kyber": "Kyber",
+    "scourge": "Scourge"
+  },
+  "rarity": {
+    "common": "Common",
+    "rare": "Rare",
+    "epic": "Epic",
+    "legendary": "Legendary",
+    "mythic": "Mythic",
+    "iconic": "Iconic"
+  },
+  "pdf": {
+    "pageFooter": "{{brand}} · {{cycle}} · p. {{page}}/{{total}}",
+    "guideCoverTitle": "Cycle guide",
+    "progressCoverTitle": "My cycle progress",
+    "generated": "Generated {{date}}",
+    "dataVersion": "Data v{{version}} · game {{game}}",
+    "tocTitle": "Overview",
+    "tocRebirths": "Rebirths 1-{{n}}",
+    "tocSuper": "Super Rebirth",
+    "tocClosing": "Notes and sources",
+    "rebirthsDone": "Rebirths done",
+    "pathPct": "Cycle progress",
+    "nextRebirth": "Next rebirth",
+    "inventory": "Units tracked",
+    "sellNow": "Safe to sell now",
+    "rebirth": "Rebirth",
+    "credits": "Credits",
+    "requirements": "Required droids",
+    "unconfirmed": "Unconfirmed",
+    "sellAfter": "Sell after this step",
+    "done": "Done",
+    "next": "Current",
+    "pending": "Upcoming",
+    "noneSell": "Nothing flagged to sell",
+    "noneSellNow": "Nothing to sell at this step",
+    "upcomingRebirths": "Upcoming rebirths",
+    "remainingRebirths": "Later rebirths",
+    "superTitle": "Super Rebirth",
+    "superBody": "Available after rebirth {{n}}. Resets credits, base upgrades, and most droids (Iconics stay).",
+    "closingTitle": "Notes",
+    "disclaimer": "Fan-made companion. Not affiliated with Epic Games, Lucasfilm, or Disney.",
+    "sources": "Data from community guides and wikis. Verify in game before selling or fusing droids."
   }
 }

@@ -13,5 +13,8 @@ export default defineConfig({
     port: 4173,
     reuseExistingServer: !process.env.CI,
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    { name: 'chromium', use: { ...devices['Pixel 5'] } },
+    { name: 'webkit', use: { ...devices['iPhone 13'] } },
+  ],
 })
