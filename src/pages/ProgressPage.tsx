@@ -5,11 +5,14 @@ import { SegmentedControl } from '../components/ui/SegmentedControl'
 import { uiIconProps } from '../components/ui/iconStyle'
 import { useTranslation } from 'react-i18next'
 import {
+  cycleById,
   droidById,
   DISPUTED_REBIRTH_ALTERNATIVES,
   getDisputeKey,
+  getNextPathId,
   getRebirth,
 } from '../domain/gameData'
+import { formatCycleDisplayName } from '../lib/cycleLabel'
 import {
   canCompleteRebirth,
   canSuperRebirth,
@@ -36,12 +39,14 @@ import { IconButton } from '../components/ui/IconButton'
 import { hapticTap } from '../lib/haptics'
 
 export function ProgressPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const tierLabels = useTierLabels()
   const [mode, setMode] = useState<'list' | 'focus'>('focus')
   const [forceCompleteOpen, setForceCompleteOpen] = useState(false)
   const [undoOpen, setUndoOpen] = useState(false)
   const [moreOpen, setMoreOpen] = useState(false)
+  const [superConfirmOpen, setSuperConfirmOpen] = useState(false)
+  const [completeConfirmOpen, setCompleteConfirmOpen] = useState(false)
   const progress = useAppStore((s) => s.progress)
   const inventory = useAppStore((s) => s.inventory)
   const trackInventory = useAppStore((s) => s.settings.trackInventory)
@@ -62,18 +67,34 @@ export function ProgressPage() {
     push(t('progress.rebirthCompleted'))
   }
 
+  const cycleLabel = (pathId: string) =>
+    formatCycleDisplayName(cycleById.get(pathId)?.name ?? pathId, i18n.language)
+  const nextPathId = getNextPathId(progress.pathId)
+
   const handleCompleteClick = () => {
     if (!current) return
     if (canComplete || !trackInventory) {
-      advanceWithToast()
+      setCompleteConfirmOpen(true)
       return
     }
     setForceCompleteOpen(true)
   }
 
+  const confirmComplete = () => {
+    advanceWithToast()
+    setCompleteConfirmOpen(false)
+  }
+
   const confirmForceComplete = () => {
     advanceWithToast()
     setForceCompleteOpen(false)
+  }
+
+  const confirmSuperRebirth = () => {
+    superRebirthAdvance()
+    hapticTap()
+    setSuperConfirmOpen(false)
+    push(t('path.switched', { name: cycleLabel(nextPathId) }))
   }
 
   const confirmUndo = () => {
@@ -133,11 +154,9 @@ export function ProgressPage() {
                     variant="accent"
                     size="md"
                     className="w-full min-h-12 max-w-full"
+                    data-testid="progress-super-cta"
                     icon={<Sparkle {...uiIconProps} weight="fill" />}
-                    onClick={() => {
-                      hapticTap()
-                      superRebirthAdvance()
-                    }}
+                    onClick={() => setSuperConfirmOpen(true)}
                   >
                     {t('progress.superRebirthCta')}
                   </Button>
@@ -273,9 +292,8 @@ export function ProgressPage() {
               variant="accent"
               icon={<Sparkle {...uiIconProps} weight="fill" />}
               onClick={() => {
-                hapticTap()
-                superRebirthAdvance()
                 setMoreOpen(false)
+                setSuperConfirmOpen(true)
               }}
             >
               {t('progress.superRebirthCta')}
@@ -306,6 +324,67 @@ export function ProgressPage() {
         }
       >
         <p className="text-xs text-zinc-400 text-pretty">{t('progress.completeBlockedShort')}</p>
+      </Modal>
+
+      <Modal
+        open={superConfirmOpen}
+        onClose={() => setSuperConfirmOpen(false)}
+        title={t('progress.superConfirmTitle')}
+        testId="progress-super-confirm-modal"
+        footer={
+          <>
+            <Button
+              variant="secondary"
+              size="sm"
+              data-testid="progress-super-cancel"
+              onClick={() => setSuperConfirmOpen(false)}
+            >
+              {t('path.cancel')}
+            </Button>
+            <Button size="sm" data-testid="progress-super-confirm" onClick={confirmSuperRebirth}>
+              {t('common.confirm')}
+            </Button>
+          </>
+        }
+      >
+        <p className="text-sm text-zinc-300 text-pretty">
+          {t('progress.superConfirmBody', {
+            currentCycle: cycleLabel(progress.pathId),
+            nextCycle: cycleLabel(nextPathId),
+            currentStep: progress.nextRebirth,
+          })}
+        </p>
+      </Modal>
+
+      <Modal
+        open={completeConfirmOpen}
+        onClose={() => setCompleteConfirmOpen(false)}
+        title={t('progress.completeConfirmTitle')}
+        testId="progress-complete-confirm-modal"
+        footer={
+          <>
+            <Button
+              variant="secondary"
+              size="sm"
+              data-testid="progress-complete-cancel"
+              onClick={() => setCompleteConfirmOpen(false)}
+            >
+              {t('path.cancel')}
+            </Button>
+            <Button size="sm" data-testid="progress-complete-confirm" onClick={confirmComplete}>
+              {t('common.confirm')}
+            </Button>
+          </>
+        }
+      >
+        <p className="text-sm text-zinc-300 text-pretty">
+          {current
+            ? t('progress.completeConfirmBody', {
+                n: current.rebirth,
+                next: Math.min(current.rebirth + 1, 40),
+              })
+            : null}
+        </p>
       </Modal>
 
       <Modal

@@ -62,12 +62,17 @@
     "superShort": "Super",
     "undoConfirmShort": "Undo",
     "moreActionsTitle": "More actions",
-    "listRebirthHeading": "Rebirth #{{n}}"
+    "listRebirthHeading": "Rebirth #{{n}}",
+    "superConfirmTitle": "Super Rebirth?",
+    "superConfirmBody": "You leave {{currentCycle}} and start {{nextCycle}}. Rebirth #{{currentStep}} is closed in the app and the new Path begins at #1. This cannot be undone.",
+    "completeConfirmTitle": "Complete rebirth?",
+    "completeConfirmBody": "Marks rebirth #{{n}} done and moves you to #{{next}}. You can undo from More actions."
   },
   "path": {
     "switch": "Change Path",
     "switchTitle": "Switch Path?",
     "switchBody": "Move to {{name}}. Your inventory stays. Rebirth progress stays unless you reset it below.",
+    "switchBodyReset": "Rebirth progress on {{name}} starts at #1. This cannot be undone.",
     "resetRebirthOnSwitch": "Reset rebirth progress on the new Path (start at rebirth #1)",
     "confirmSwitch": "Switch Path",
     "cancel": "Cancel",
@@ -132,7 +137,9 @@
     "pickTier": "Tier for this droid",
     "searchDroids": "Search droids…",
     "add": "Add",
-    "inInventory": "{{owned}} / {{needed}} in inventory"
+    "inInventory": "{{owned}} / {{needed}} in inventory",
+    "removeConfirmTitle": "Remove from inventory?",
+    "removeConfirmBody": "Removes {{name}} ({{tier}}) from your list. You can add it again later."
   },
   "sell": {
     "title": "Sell Center",
@@ -294,6 +301,10 @@
     "danger": "Danger zone",
     "reset": "Reset all data",
     "resetConfirm": "Confirm reset",
+    "resetConfirmTitle": "Erase everything?",
+    "resetConfirmBody": "Removes progress, inventory, and settings on this device. This cannot be undone.",
+    "importConfirmTitle": "Import progress?",
+    "importConfirmBody": "Replaces inventory, Path, and rebirth progress with the file data. This cannot be undone.",
     "resetDone": "All data cleared",
     "credits": "Credits & images",
     "creditsBody": "Images from the Star Wars Droid Tycoon Wiki (Fandom), CC BY-SA. See public/assets/droids/ATTRIBUTION.md."
@@ -351,6 +362,7 @@
     "iosHint": "Tap Share, then \"Add to Home Screen\"."
   },
   "common": {
+    "confirm": "Confirm",
     "close": "Close",
     "verified": "Verified",
     "unconfirmed": "Unconfirmed",

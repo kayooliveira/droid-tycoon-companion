@@ -62,12 +62,17 @@
     "superShort": "Super",
     "undoConfirmShort": "Desfazer",
     "moreActionsTitle": "Mais ações",
-    "listRebirthHeading": "Renascimento #{{n}}"
+    "listRebirthHeading": "Renascimento #{{n}}",
+    "superConfirmTitle": "Super Renascimento?",
+    "superConfirmBody": "Você sai do {{currentCycle}} e entra no {{nextCycle}}. O renascimento #{{currentStep}} fica fechado no app e o novo ciclo começa do #1. Não dá para desfazer.",
+    "completeConfirmTitle": "Concluir renascimento?",
+    "completeConfirmBody": "Marca o renascimento #{{n}} como feito e avança para o #{{next}}. Você pode desfazer em Mais ações."
   },
   "path": {
     "switch": "Trocar ciclo",
     "switchTitle": "Trocar de ciclo?",
     "switchBody": "Ir para {{name}}. O inventário continua. O progresso de renascimento também, a menos que você marque reset abaixo.",
+    "switchBodyReset": "Os renascimentos no {{name}} começam do #1. Não dá para desfazer.",
     "resetRebirthOnSwitch": "Zerar renascimentos no novo ciclo (começar no #1)",
     "confirmSwitch": "Trocar ciclo",
     "cancel": "Cancelar",
@@ -132,7 +137,9 @@
     "pickTier": "Nível deste droid",
     "searchDroids": "Buscar droids…",
     "add": "Adicionar",
-    "inInventory": "{{owned}} / {{needed}} no inventário"
+    "inInventory": "{{owned}} / {{needed}} no inventário",
+    "removeConfirmTitle": "Remover do inventário?",
+    "removeConfirmBody": "Remove {{name}} ({{tier}}) da sua lista. Você pode adicionar de novo depois."
   },
   "sell": {
     "title": "Vender",
@@ -294,6 +301,10 @@
     "danger": "Zona de risco",
     "reset": "Apagar tudo",
     "resetConfirm": "Confirmar apagar",
+    "resetConfirmTitle": "Apagar tudo?",
+    "resetConfirmBody": "Remove progresso, inventário e ajustes deste aparelho. Não dá para desfazer.",
+    "importConfirmTitle": "Importar progresso?",
+    "importConfirmBody": "Substitui inventário, ciclo e renascimentos pelos dados do arquivo. Não dá para desfazer.",
     "resetDone": "Dados apagados",
     "credits": "Créditos e imagens",
     "creditsBody": "Imagens da Star Wars Droid Tycoon Wiki (Fandom), CC BY-SA. Veja public/assets/droids/ATTRIBUTION.md."
@@ -351,6 +362,7 @@
     "iosHint": "Toque em Compartilhar e \"Adicionar à Tela de Início\"."
   },
   "common": {
+    "confirm": "Confirmar",
     "close": "Fechar",
     "verified": "Confirmado",
     "unconfirmed": "Não confirmado",
