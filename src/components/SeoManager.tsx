@@ -4,8 +4,6 @@ import { useLocation } from 'react-router-dom'
 
 const SITE = 'https://dthelper.kayooliveira.com'
 const OG_IMAGE = `${SITE}/og-image.png`
-const OG_IMAGE_ALT = 'Droid Tycoon Companion — rebirths, inventory, and sell tips'
-
 const routeKeys: Record<string, string> = {
   '/': 'nav.dashboard',
   '/progress': 'nav.progress',
@@ -14,6 +12,7 @@ const routeKeys: Record<string, string> = {
   '/droiddex': 'nav.droiddex',
   '/fusion': 'nav.fusion',
   '/settings': 'nav.settings',
+  '/about': 'about.title',
   '/onboarding': 'onboarding.welcomeTitle',
 }
 
@@ -37,19 +36,24 @@ export function SeoManager() {
     const title = `${section} · ${t('app.name')}`
     document.title = title
 
-    const desc =
-      i18n.language === 'pt-BR' ? t('seo.descriptionPt') : t('seo.description')
+    const isPt = i18n.language === 'pt-BR'
+    const desc = isPt ? t('seo.descriptionPt') : t('seo.description')
+    const ogAlt = isPt ? t('seo.ogImageAltPt') : t('seo.ogImageAlt')
     const url = `${SITE}${path === '/' ? '' : path}`
+    const ogLocale = isPt ? 'pt_BR' : 'en_US'
+    const ogAltLocale = isPt ? 'en_US' : 'pt_BR'
 
     upsertMeta('description', desc)
     upsertMeta('og:title', title, 'property')
     upsertMeta('og:description', desc, 'property')
     upsertMeta('og:url', url, 'property')
     upsertMeta('og:type', 'website', 'property')
+    upsertMeta('og:locale', ogLocale, 'property')
+    upsertMeta('og:locale:alternate', ogAltLocale, 'property')
     upsertMeta('og:image', OG_IMAGE, 'property')
     upsertMeta('og:image:width', '1200', 'property')
     upsertMeta('og:image:height', '630', 'property')
-    upsertMeta('og:image:alt', OG_IMAGE_ALT, 'property')
+    upsertMeta('og:image:alt', ogAlt, 'property')
     upsertMeta('twitter:card', 'summary_large_image')
     upsertMeta('twitter:title', title)
     upsertMeta('twitter:description', desc)
@@ -70,7 +74,7 @@ export function SeoManager() {
       '@type': 'WebApplication',
       name: t('app.name'),
       url: SITE,
-      description: t('seo.description'),
+      description: i18n.language === 'pt-BR' ? t('seo.descriptionPt') : t('seo.description'),
       applicationCategory: 'GameApplication',
       operatingSystem: 'Web',
     }

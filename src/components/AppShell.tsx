@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
   FlaskConical,
+  Info,
   LayoutDashboard,
   ListTree,
   Menu,
@@ -11,6 +12,7 @@ import {
   Sparkles,
   Store,
 } from 'lucide-react'
+import { useScrollRestoration } from '../hooks/useScrollRestoration'
 import { cn } from '../lib/utils'
 import { Logo } from './Logo'
 import { InstallBanner } from './InstallBanner'
@@ -26,6 +28,7 @@ const primaryMobile = [
 const moreMobile = [
   { to: '/droiddex', labelKey: 'nav.droiddex', icon: Sparkles },
   { to: '/fusion', labelKey: 'nav.fusion', icon: FlaskConical },
+  { to: '/about', labelKey: 'nav.about', icon: Info },
   { to: '/settings', labelKey: 'nav.settings', icon: Settings },
 ] as const
 
@@ -39,11 +42,13 @@ const routeTitleKeys: Record<string, string> = {
   '/droiddex': 'nav.droiddex',
   '/fusion': 'nav.fusion',
   '/settings': 'nav.settings',
+  '/about': 'about.title',
 }
 
 export function AppShell() {
   const { t } = useTranslation()
   const location = useLocation()
+  useScrollRestoration()
   const [moreOpen, setMoreOpen] = useState(false)
   const titleKey = routeTitleKeys[location.pathname] ?? 'app.name'
 
@@ -88,7 +93,7 @@ export function AppShell() {
             <p className="text-[10px] text-zinc-500 truncate">{t('app.shortName')}</p>
           </div>
         </header>
-        <div className="mx-auto max-w-6xl px-4 py-5 md:py-8">
+        <div className="mx-auto max-w-6xl px-4 py-5 md:py-8 pt-[max(1.25rem,env(safe-area-inset-top))]">
           <Outlet />
         </div>
       </main>

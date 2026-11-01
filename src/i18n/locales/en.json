@@ -13,6 +13,7 @@
     "droiddex": "Droiddex",
     "fusion": "Fusion",
     "settings": "Settings",
+    "about": "About",
     "more": "More"
   },
   "progress": {
@@ -32,6 +33,7 @@
     "listCurrent": "Current",
     "listCompletedState": "Completed",
     "pathComplete": "Path finished. Use Super Rebirth to move on.",
+    "rebirthCompleted": "Rebirth marked complete.",
     "focus": "Focus",
     "list": "List"
   },
@@ -63,7 +65,16 @@
     "statsKeep": "Keep (path)",
     "statsSellable": "Sellable",
     "staleData": "Game data may be stale — check Settings",
-    "dataVersion": "Data v{{version}}"
+    "dataVersion": "Data v{{version}}",
+    "hero": "Plan your next rebirth on Star Wars Droid Tycoon — Path progress, inventory checks, and what you can safely sell.",
+    "ctaProgress": "See my next rebirth",
+    "ctaInventory": "Turn on inventory tracking",
+    "nextStepLabel": "Do this next",
+    "nextStepGo": "Go",
+    "nextStepProgress": "Open Progress and review what this rebirth asks for.",
+    "nextStepInventory": "Add or upgrade {{missing}} droid(s) still missing for the next rebirth.",
+    "nextStepSell": "You have {{sellable}} droid(s) you can sell — check Sell before rebirthing.",
+    "nextStepComplete": "Requirements look good — complete the rebirth when you're ready in-game."
   },
   "inventory": {
     "title": "Inventory",
@@ -79,6 +90,9 @@
     "neededFilter": "Needed on path",
     "notNeededFilter": "Not needed",
     "empty": "No droids yet.",
+    "emptyHint": "Add the droids in your base so the app can compare them to the next rebirth.",
+    "added": "Added {{name}} to inventory.",
+    "removed": "Removed from inventory.",
     "modalTitle": "Add droid",
     "quantity": "Quantity",
     "searchDroids": "Search droids…",
@@ -181,8 +195,34 @@
     "path2r17": "Guides disagree on rebirth #17: R7 (Diamond) vs B2-RP (Diamond).",
     "path6r19": "Guides disagree on Proto-Roller: Gold vs Diamond on rebirth #19."
   },
+  "share": {
+    "title": "Share with your squad",
+    "hint": "Send the app link or a progress card to your WhatsApp or Discord group.",
+    "shareApp": "Share app",
+    "whatsapp": "WhatsApp",
+    "progressCard": "Progress card (image)",
+    "message": "Droid Tycoon Companion — rebirth planner for our island: {{url}}",
+    "linkCopied": "Link copied.",
+    "cardTitle": "My Droid Tycoon progress",
+    "cardShared": "Progress card shared.",
+    "cardDownloaded": "Progress card saved — attach it in your chat.",
+    "cardFailed": "Could not create the card. Try again."
+  },
+  "about": {
+    "title": "About",
+    "intro": "Fan-made companion for Star Wars Droid Tycoon. Numbers come from community guides — not from Epic or FOAD.",
+    "dataTitle": "Data sources & freshness",
+    "dataLine": "Bundle {{version}} · game {{game}} · last data update {{date}}",
+    "disputedNote": "Some rebirths are marked unconfirmed when guides disagree. You'll see badges on those entries.",
+    "feedbackTitle": "Wrong data or idea?",
+    "feedbackBody": "Tell us what you saw in-game versus what the app shows.",
+    "feedbackCta": "Send feedback",
+    "feedbackUnset": "Feedback link is not configured for this build — ask the site owner to set VITE_REPORT_FEEDBACK_URL.",
+    "url": "Site"
+  },
   "pwa": {
-    "update": "New version available — refresh to update.",
+    "update": "New version available.",
+    "updateAction": "Update",
     "installTitle": "Install on your phone",
     "installBody": "Add to home screen for quick access while you play.",
     "install": "Install",
@@ -198,7 +238,9 @@
   },
   "seo": {
     "description": "Track Path, rebirths, inventory, and sell advice for Star Wars Droid Tycoon (Fortnite UEFN).",
-    "descriptionPt": "Acompanhe Path, rebirths, inventário e o que vender no Star Wars Droid Tycoon (Fortnite UEFN)."
+    "descriptionPt": "Acompanhe Path, rebirths, inventário e o que vender no Star Wars Droid Tycoon (Fortnite UEFN).",
+    "ogImageAlt": "Droid Tycoon Companion — rebirths, inventory, and sell tips",
+    "ogImageAltPt": "Droid Tycoon Companion — rebirths, inventário e dicas de venda"
   },
   "a11y": {
     "markOwned": "Mark {{name}} as owned",

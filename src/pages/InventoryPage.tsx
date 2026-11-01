@@ -10,6 +10,11 @@ import { Badge } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
 import { GlassCard } from '../components/ui/GlassCard'
 import { Modal } from '../components/ui/Modal'
+import { useToast } from '../components/ToastProvider'
+import {
+  usePersistedInventoryFilters,
+  type InventoryFilters,
+} from '../hooks/usePersistedInventoryFilters'
 import { useAppStore } from '../store/useAppStore'
 
 const tierLabels = buildTierLabelMap(gameData.rarities)
@@ -22,11 +27,15 @@ export function InventoryPage() {
   const updateInventoryUnit = useAppStore((s) => s.updateInventoryUnit)
   const removeInventoryUnit = useAppStore((s) => s.removeInventoryUnit)
   const trackInventory = useAppStore((s) => s.settings.trackInventory)
+  const { push } = useToast()
 
-  const [search, setSearch] = useState('')
-  const [rarityFilter, setRarityFilter] = useState('all')
-  const [tierFilter, setTierFilter] = useState('all')
-  const [neededFilter, setNeededFilter] = useState<'all' | 'needed' | 'not-needed'>('all')
+  const [filters, setFilters] = usePersistedInventoryFilters()
+  const { search, rarityFilter, tierFilter, neededFilter } = filters
+  const setSearch = (search: string) => setFilters((f) => ({ ...f, search }))
+  const setRarityFilter = (rarityFilter: string) => setFilters((f) => ({ ...f, rarityFilter }))
+  const setTierFilter = (tierFilter: string) => setFilters((f) => ({ ...f, tierFilter }))
+  const setNeededFilter = (neededFilter: InventoryFilters['neededFilter']) =>
+    setFilters((f) => ({ ...f, neededFilter }))
   const [addOpen, setAddOpen] = useState(false)
   const [pickerSearch, setPickerSearch] = useState('')
   const [newDroidId, setNewDroidId] = useState(gameData.droids[0]?.id ?? '')
@@ -73,14 +82,14 @@ export function InventoryPage() {
         <Button onClick={() => setAddOpen(true)}>{t('inventory.addDroid')}</Button>
       </div>
       <input
-        className="w-full rounded-xl bg-surface-800 border border-white/10 px-4 py-2.5 text-sm"
+        className="w-full rounded-xl bg-surface-800 border border-white/10 px-4 py-3 text-sm min-h-11"
         placeholder={t('inventory.search')}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
       <div className="flex flex-wrap gap-2">
         <select
-          className="rounded-lg bg-surface-800 border border-white/10 px-3 py-2 text-sm"
+          className="rounded-lg bg-surface-800 border border-white/10 px-3 py-2.5 text-sm min-h-11"
           value={rarityFilter}
           onChange={(e) => setRarityFilter(e.target.value)}
         >
@@ -92,7 +101,7 @@ export function InventoryPage() {
           ))}
         </select>
         <select
-          className="rounded-lg bg-surface-800 border border-white/10 px-3 py-2 text-sm"
+          className="rounded-lg bg-surface-800 border border-white/10 px-3 py-2.5 text-sm min-h-11"
           value={tierFilter}
           onChange={(e) => setTierFilter(e.target.value)}
         >
@@ -104,9 +113,9 @@ export function InventoryPage() {
           ))}
         </select>
         <select
-          className="rounded-lg bg-surface-800 border border-white/10 px-3 py-2 text-sm"
+          className="rounded-lg bg-surface-800 border border-white/10 px-3 py-2.5 text-sm min-h-11"
           value={neededFilter}
-          onChange={(e) => setNeededFilter(e.target.value as typeof neededFilter)}
+          onChange={(e) => setNeededFilter(e.target.value as InventoryFilters['neededFilter'])}
         >
           <option value="all">{t('inventory.allNeeds')}</option>
           <option value="needed">{t('inventory.neededFilter')}</option>
@@ -144,8 +153,12 @@ export function InventoryPage() {
                 />
                 <Button
                   variant="ghost"
+                  className="min-h-11 min-w-11"
                   aria-label={t('a11y.removeUnit')}
-                  onClick={() => removeInventoryUnit(unit.id)}
+                  onClick={() => {
+                    removeInventoryUnit(unit.id)
+                    push(t('inventory.removed'))
+                  }}
                 >
                   <Trash2 size={16} />
                 </Button>
@@ -154,7 +167,12 @@ export function InventoryPage() {
           )
         })}
         {filtered.length === 0 ? (
-          <p className="text-sm text-zinc-500 text-center py-8">{t('inventory.empty')}</p>
+          <GlassCard className="text-center py-8 space-y-3">
+            <p className="text-sm text-zinc-400">{t('inventory.emptyHint')}</p>
+            <Button className="min-h-11" onClick={() => setAddOpen(true)}>
+              {t('inventory.addDroid')}
+            </Button>
+          </GlassCard>
         ) : null}
       </div>
 
@@ -211,6 +229,8 @@ export function InventoryPage() {
             className="w-full"
             onClick={() => {
               addInventoryUnit(newDroidId, newTier, newQty)
+              const name = droidById.get(newDroidId)?.name ?? newDroidId
+              push(t('inventory.added', { name }))
               setAddOpen(false)
               setNewQty(1)
             }}

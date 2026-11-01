@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { ShareMenu } from '../components/ShareMenu'
 import { gameDataSource } from '../data/dataSource'
 import { gameData } from '../domain/gameData'
 import type { AppLocale } from '../i18n/detectLocale'
@@ -164,6 +165,14 @@ export function SettingsPage() {
         <h2 className="font-medium text-zinc-300 text-sm">{t('settings.credits')}</h2>
         <p>{t('settings.creditsBody')}</p>
         <p className="pt-2 border-t border-white/10">{t('app.disclaimer')}</p>
+      </GlassCard>
+
+      <ShareMenu compact />
+
+      <GlassCard className="space-y-2 text-sm">
+        <Link to="/about" className="text-holo-300 hover:underline inline-flex min-h-11 items-center">
+          {t('nav.about')} →
+        </Link>
       </GlassCard>
 
       <GlassCard className="space-y-3 border border-red-500/30 bg-red-950/20 mt-8">

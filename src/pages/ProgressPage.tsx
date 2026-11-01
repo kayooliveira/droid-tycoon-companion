@@ -48,17 +48,22 @@ export function ProgressPage() {
     ? canCompleteRebirth(progress.pathId, current.rebirth, inventory, trackInventory)
     : false
 
+  const advanceWithToast = () => {
+    completeRebirthAdvance()
+    push(t('progress.rebirthCompleted'))
+  }
+
   const handleCompleteClick = () => {
     if (!current) return
     if (canComplete || !trackInventory) {
-      completeRebirthAdvance()
+      advanceWithToast()
       return
     }
     setForceCompleteOpen(true)
   }
 
   const confirmForceComplete = () => {
-    completeRebirthAdvance()
+    advanceWithToast()
     setForceCompleteOpen(false)
   }
 

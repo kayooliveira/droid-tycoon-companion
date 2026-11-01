@@ -13,6 +13,7 @@
     "droiddex": "Droiddex",
     "fusion": "Fusão",
     "settings": "Ajustes",
+    "about": "Sobre",
     "more": "Mais"
   },
   "progress": {
@@ -32,6 +33,7 @@
     "listCurrent": "Atual",
     "listCompletedState": "Concluído",
     "pathComplete": "Path completo. Use Super Rebirth para seguir.",
+    "rebirthCompleted": "Rebirth marcado como concluído.",
     "focus": "Foco",
     "list": "Lista"
   },
@@ -63,7 +65,16 @@
     "statsKeep": "Guardar (path)",
     "statsSellable": "Vender",
     "staleData": "Dados podem estar velhos — veja Ajustes",
-    "dataVersion": "Dados v{{version}}"
+    "dataVersion": "Dados v{{version}}",
+    "hero": "Organize o próximo rebirth no Star Wars Droid Tycoon — Path, inventário e o que dá pra vender sem medo.",
+    "ctaProgress": "Ver meu próximo rebirth",
+    "ctaInventory": "Ativar inventário",
+    "nextStepLabel": "Próximo passo",
+    "nextStepGo": "Ir",
+    "nextStepProgress": "Abra Progresso e confira os três droids deste rebirth.",
+    "nextStepInventory": "Faltam {{missing}} requisito(s) — ajuste o inventário.",
+    "nextStepSell": "Tem {{sellable}} droid(s) que dá pra vender — veja Vender antes do rebirth.",
+    "nextStepComplete": "Requisitos ok — quando terminar no jogo, conclua o rebirth aqui."
   },
   "inventory": {
     "title": "Inventário",
@@ -79,6 +90,9 @@
     "neededFilter": "Usa no path",
     "notNeededFilter": "Não usa",
     "empty": "Nenhum droid ainda.",
+    "emptyHint": "Cadastre os droids da sua base pra comparar com o próximo rebirth.",
+    "added": "{{name}} adicionado ao inventário.",
+    "removed": "Removido do inventário.",
     "modalTitle": "Adicionar droid",
     "quantity": "Quantidade",
     "searchDroids": "Buscar droids…",
@@ -181,8 +195,34 @@
     "path2r17": "Rebirth #17: R7 (Diamond) ou B2-RP (Diamond), conforme o guia.",
     "path6r19": "Rebirth #19: Proto-Roller Gold ou Diamond."
   },
+  "share": {
+    "title": "Manda pro grupo",
+    "hint": "Link do app ou um card com seu progresso pro WhatsApp ou Discord.",
+    "shareApp": "Compartilhar app",
+    "whatsapp": "WhatsApp",
+    "progressCard": "Card de progresso",
+    "message": "Droid Tycoon Companion — planner de rebirth da ilha: {{url}}",
+    "linkCopied": "Link copiado.",
+    "cardTitle": "Meu progresso no Droid Tycoon",
+    "cardShared": "Card enviado.",
+    "cardDownloaded": "Card salvo — manda no chat.",
+    "cardFailed": "Não deu pra gerar o card. Tenta de novo."
+  },
+  "about": {
+    "title": "Sobre",
+    "intro": "Companion feito por fãs do Star Wars Droid Tycoon. Os números vêm de guias da comunidade — não da Epic nem da FOAD.",
+    "dataTitle": "Fontes e atualização",
+    "dataLine": "Pacote {{version}} · jogo {{game}} · dados de {{date}}",
+    "disputedNote": "Rebirths disputados aparecem com aviso quando os guias não batem.",
+    "feedbackTitle": "Dado errado ou sugestão?",
+    "feedbackBody": "Conta o que você viu no jogo versus o que o app mostra.",
+    "feedbackCta": "Enviar feedback",
+    "feedbackUnset": "Link de feedback não configurado neste build — o dono do site pode definir VITE_REPORT_FEEDBACK_URL.",
+    "url": "Site"
+  },
   "pwa": {
-    "update": "Versão nova — recarregue para atualizar.",
+    "update": "Tem versão nova.",
+    "updateAction": "Atualizar",
     "installTitle": "Instalar no celular",
     "installBody": "Atalho na tela inicial enquanto joga.",
     "install": "Instalar",
@@ -198,7 +238,9 @@
   },
   "seo": {
     "description": "Track Path, rebirths, inventory, and sell advice for Star Wars Droid Tycoon (Fortnite UEFN).",
-    "descriptionPt": "Acompanhe Path, rebirths, inventário e o que vender no Star Wars Droid Tycoon (Fortnite UEFN)."
+    "descriptionPt": "Acompanhe Path, rebirths, inventário e o que vender no Star Wars Droid Tycoon (Fortnite UEFN).",
+    "ogImageAlt": "Droid Tycoon Companion — rebirths, inventory, and sell tips",
+    "ogImageAltPt": "Droid Tycoon Companion — rebirths, inventário e dicas de venda"
   },
   "a11y": {
     "markOwned": "Marcar {{name}} como owned",

@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { registerSW } from 'virtual:pwa-register'
 import App from './App.tsx'
+import { setPwaUpdateFn } from './lib/pwaUpdate.ts'
 import { initI18n, setDocumentLanguage } from './i18n/index.ts'
 import { detectBrowserLocale } from './i18n/detectLocale.ts'
 import { useAppStore } from './store/useAppStore.ts'
@@ -22,11 +23,12 @@ try {
 initI18n(initialLocale)
 setDocumentLanguage(initialLocale)
 
-registerSW({
+const updateSW = registerSW({
   onNeedRefresh() {
     window.dispatchEvent(new CustomEvent('pwa-need-refresh'))
   },
 })
+setPwaUpdateFn(updateSW)
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
