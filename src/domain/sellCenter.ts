@@ -8,7 +8,8 @@ import {
   consumeFromPool,
   poolRemainingUnits,
 } from './inventory'
-import { compareTiers, tierMeetsRequired } from './tiers'
+import { maxFutureRequirementForDroid } from './sellTierRules'
+import { tierMeetsRequired } from './tiers'
 import type { InventoryUnit, TierId } from './types'
 
 export type SellCategory = 'keep' | 'sellable' | 'upgrade'
@@ -60,26 +61,6 @@ export function collectFutureNeeds(
   return needs
 }
 
-function maxRequiredTierForDroid(
-  needs: FutureNeed[],
-  droidId: string,
-): { tier: TierId; rebirth: number } | null {
-  const filtered = needs.filter((n) => n.droidId === droidId)
-  if (filtered.length === 0) return null
-  let best = filtered[0]!
-  for (const n of filtered) {
-    if (compareTiers(n.minTier, best.minTier) > 0) {
-      best = n
-    } else if (
-      compareTiers(n.minTier, best.minTier) === 0 &&
-      n.rebirth < best.rebirth
-    ) {
-      best = n
-    }
-  }
-  return { tier: best.minTier, rebirth: best.rebirth }
-}
-
 function earliestRebirthNeed(
   needs: FutureNeed[],
   droidId: string,
@@ -129,7 +110,7 @@ export function analyzeSellCenter(
     const droid = droidById.get(unit.droidId)
     const name = droid?.name ?? unit.droidId
 
-    const maxNeed = maxRequiredTierForDroid(futureNeeds, unit.droidId)
+    const maxNeed = maxFutureRequirementForDroid(pathId, unit.droidId, nextRebirth)
     const leftover = remaining.find(
       (r) => r.id === unit.id || (r.droidId === unit.droidId && r.tier === unit.tier),
     )

@@ -153,6 +153,7 @@
     "sellableExtra": "Venda {{qty}} {{name}} extra. Só precisa de um pro que falta neste ciclo.",
     "keepRebirth": "Guarde {{name}}. Precisa de novo no renascimento #{{rebirth}}.",
     "upgradeRebirth": "Upe {{name}} pra pelo menos {{tier}} antes do renascimento #{{rebirth}}.",
+    "keepForUpgrade": "Guarda: vira {{tier}} no #{{rebirth}}",
     "safeNowTitle": "Pode vender agora",
     "safeNowHint": "Com base nos renascimentos concluídos até o #{{rebirth}} e no que ainda falta neste ciclo.",
     "safeNowLine": "Está no seu inventário e pode vender antes do próximo renascimento."
@@ -448,6 +449,7 @@
     "nextRebirth": "Próximo renascimento",
     "inventory": "Droids no inventário",
     "sellNow": "Pode vender agora",
+    "keepForUpgrade": "Guarda: vira {{tier}} no #{{rebirth}}",
     "rebirth": "Renascimento",
     "credits": "Créditos",
     "requirements": "Droids necessários",

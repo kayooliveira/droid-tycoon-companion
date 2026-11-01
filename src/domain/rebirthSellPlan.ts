@@ -5,7 +5,10 @@
 import { cycleById, gameData, getPathIds } from './gameData'
 import { inventoryUnitKey } from './inventory'
 import { collectFutureNeeds, type FutureNeed } from './sellCenter'
-import { tierMeetsRequired } from './tiers'
+import {
+  earliestUpgradeRequirement,
+  lastRebirthBlockingSell,
+} from './sellTierRules'
 import type { Confidence, FusionRecipe, TierId } from './types'
 
 export type RebirthSellDisposition = 'sellable' | 'keep' | 'fusionHold' | 'fusionCaution'
@@ -21,6 +24,8 @@ export interface RebirthUnitUsage {
   disposition: RebirthSellDisposition
   fusionRecipeIds: string[]
   otherPathIds: string[]
+  /** Set when the unit must stay for a higher tier on a later rebirth. */
+  upgradeHint: { rebirth: number; targetTier: TierId } | null
 }
 
 function collectRequirementUnitKeys(pathId: string): Array<{ droidId: string; tier: TierId }> {
@@ -39,24 +44,13 @@ function collectRequirementUnitKeys(pathId: string): Array<{ droidId: string; ti
   return out
 }
 
-/** Max rebirth where (droidId, tier) can satisfy any requirement on the Path. */
+/** Last rebirth where (droidId, tier) must be kept on this path (tier upgrade chain). */
 export function lastRebirthNeedingUnit(
   pathId: string,
   droidId: string,
   tier: TierId,
 ): number | null {
-  const cycle = cycleById.get(pathId)
-  if (!cycle) return null
-
-  let last = 0
-  for (const entry of cycle.rebirths) {
-    for (const req of entry.requirements) {
-      if (req.droidId !== droidId) continue
-      if (!tierMeetsRequired(tier, req.rarity)) continue
-      last = Math.max(last, entry.rebirth)
-    }
-  }
-  return last === 0 ? null : last
+  return lastRebirthBlockingSell(pathId, droidId, tier)
 }
 
 function lastRebirthNeedingDroidOnPath(pathId: string, droidId: string): number | null {
@@ -151,6 +145,7 @@ export function buildPathUnitUsage(pathId: string): RebirthUnitUsage[] {
       disposition,
       fusionRecipeIds,
       otherPathIds: [],
+      upgradeHint: null,
     }
   })
 }
@@ -170,7 +165,11 @@ function enrichSellableUnits(
         afterRebirth,
         u.lastNeededRebirth,
       )
-      return { ...u, disposition, fusionRecipeIds, otherPathIds }
+      const upgradeHint =
+        disposition === 'keep'
+          ? earliestUpgradeRequirement(pathId, u.droidId, u.tier, afterRebirth)
+          : null
+      return { ...u, disposition, fusionRecipeIds, otherPathIds, upgradeHint }
     })
     .filter((u) => u.disposition === 'sellable' || u.disposition === 'fusionHold' || u.disposition === 'fusionCaution')
     .sort((a, b) => a.droidId.localeCompare(b.droidId))

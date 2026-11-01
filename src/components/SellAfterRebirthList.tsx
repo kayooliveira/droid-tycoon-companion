@@ -60,6 +60,14 @@ function UnitRow({ unit }: { unit: RebirthUnitUsage }) {
         {unit.disposition === 'fusionCaution' ? (
           <p className="text-[11px] text-ui-warn/80 mt-0.5">{t('sellAfter.fusionCautionHint')}</p>
         ) : null}
+        {unit.upgradeHint ? (
+          <p className="text-[11px] text-ui-soft mt-0.5">
+            {t('sell.keepForUpgrade', {
+              tier: formatTierName(unit.upgradeHint.targetTier, tierLabels),
+              rebirth: unit.upgradeHint.rebirth,
+            })}
+          </p>
+        ) : null}
       </div>
     </li>
   )

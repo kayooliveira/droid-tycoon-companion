@@ -29,20 +29,13 @@ describe('rebirth sell plan', () => {
     }
   })
 
-  it('scourge tier counts for any requirement tier on same droid', () => {
+  it('scourge tier is only blocked by scourge-or-higher requirement tiers on the path', () => {
     const pathId = 'path-1'
-    let found = false
-    for (let r = 1; r <= 40; r++) {
-      const entry = getRebirth(pathId, r)
-      if (!entry?.requirements.some((req) => req.droidId === 'cb')) continue
-      const lastScourge = lastRebirthNeedingUnit(pathId, 'cb', 'scourge')
-      const lastAny = lastRebirthNeedingUnit(pathId, 'cb', entry.requirements.find((x) => x.droidId === 'cb')!.rarity)
-      if (lastScourge !== null && lastAny !== null) {
-        expect(lastScourge).toBeGreaterThanOrEqual(lastAny)
-        found = true
-      }
+    const lastScourge = lastRebirthNeedingUnit(pathId, 'cb', 'scourge')
+    const lastDefault = lastRebirthNeedingUnit(pathId, 'cb', 'default')
+    if (lastDefault !== null && lastScourge !== null) {
+      expect(lastScourge).toBeLessThanOrEqual(lastDefault)
     }
-    expect(found).toBe(true)
   })
 
   it('units sellable after rebirth 40 include those only needed at or before 40', () => {
