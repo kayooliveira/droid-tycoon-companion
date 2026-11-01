@@ -10,7 +10,16 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'og-image.svg', 'robots.txt'],
+      includeAssets: [
+        'favicon.svg',
+        'og-image.png',
+        'og-image.svg',
+        'pwa-192.png',
+        'pwa-512.png',
+        'pwa-512-maskable.png',
+        'apple-touch-icon.png',
+        'robots.txt',
+      ],
       manifest: {
         name: 'Droid Tycoon Companion',
         short_name: 'DT Helper',
@@ -22,12 +31,18 @@ export default defineConfig({
         scope: '/',
         lang: 'en',
         icons: [
-          { src: '/favicon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
-          { src: '/favicon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'maskable' },
+          { src: '/pwa-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: '/pwa-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          {
+            src: '/pwa-512-maskable.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,webp,svg,json,woff2}'],
+        globPatterns: ['**/*.{js,css,html,webp,svg,png,json,woff2}'],
         navigateFallback: '/index.html',
       },
     }),

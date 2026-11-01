@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
 
 const SITE = 'https://dthelper.kayooliveira.com'
+const OG_IMAGE = `${SITE}/og-image.png`
+const OG_IMAGE_ALT = 'Droid Tycoon Companion — rebirths, inventory, and sell tips'
 
 const routeKeys: Record<string, string> = {
   '/': 'nav.dashboard',
@@ -44,11 +46,14 @@ export function SeoManager() {
     upsertMeta('og:description', desc, 'property')
     upsertMeta('og:url', url, 'property')
     upsertMeta('og:type', 'website', 'property')
-    upsertMeta('og:image', `${SITE}/og-image.svg`, 'property')
+    upsertMeta('og:image', OG_IMAGE, 'property')
+    upsertMeta('og:image:width', '1200', 'property')
+    upsertMeta('og:image:height', '630', 'property')
+    upsertMeta('og:image:alt', OG_IMAGE_ALT, 'property')
     upsertMeta('twitter:card', 'summary_large_image')
     upsertMeta('twitter:title', title)
     upsertMeta('twitter:description', desc)
-    upsertMeta('twitter:image', `${SITE}/og-image.svg`)
+    upsertMeta('twitter:image', OG_IMAGE)
 
     let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null
     if (!canonical) {
