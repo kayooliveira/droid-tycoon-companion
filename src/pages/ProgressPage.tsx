@@ -26,6 +26,8 @@ import { Modal } from '../components/ui/Modal'
 import { ProgressBar } from '../components/ui/ProgressBar'
 import { useAppStore } from '../store/useAppStore'
 import { useToast } from '../components/ToastProvider'
+import { SellAfterRebirthList } from '../components/SellAfterRebirthList'
+import { DownloadCycleMenu } from '../components/DownloadCycleMenu'
 
 const tierLabels = buildTierLabelMap(gameData.rarities)
 
@@ -146,6 +148,10 @@ export function ProgressPage() {
                   {t('progress.superHint', { n: SUPER_REBIRTH_UNLOCK_AFTER })}
                 </p>
               )}
+              <SellAfterRebirthList
+                pathId={progress.pathId}
+                afterRebirth={current.rebirth}
+              />
               {animations ? (
                 <motion.div layout className="h-1 rounded-full bg-gradient-to-r from-holo-600 to-accent-cyan" />
               ) : null}
@@ -173,6 +179,8 @@ export function ProgressPage() {
             ))}
         </div>
       )}
+
+      <DownloadCycleMenu />
 
       <Modal open={forceCompleteOpen} onClose={() => setForceCompleteOpen(false)} title={t('progress.completeAnyway')}>
         <p className="text-sm text-zinc-400 mb-4">{t('progress.completeBlocked')}</p>
@@ -283,6 +291,11 @@ function RebirthListItem({
           {!done && trackInventory ? (
             <ProgressBar value={(metRequirementCount(checks) / 3) * 100} />
           ) : null}
+          {done ? (
+            <SellAfterRebirthList pathId={pathId} afterRebirth={rebirth} compact />
+          ) : (
+            <SellAfterRebirthList pathId={pathId} afterRebirth={rebirth} />
+          )}
         </div>
       ) : null}
     </GlassCard>

@@ -2,17 +2,19 @@ import { useState } from 'react'
 import { ChevronDown, Route } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { cycleById, gameData } from '../domain/gameData'
+import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { useAppStore } from '../store/useAppStore'
 import { useToast } from './ToastProvider'
 import { Button } from './ui/Button'
 import { Modal } from './ui/Modal'
 
 export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const progress = useAppStore((s) => s.progress)
   const switchPath = useAppStore((s) => s.switchPath)
   const { push } = useToast()
-  const cycle = cycleById.get(progress.pathId)
+  const cycleLabel = (id: string) =>
+    formatCycleDisplayName(cycleById.get(id)?.name ?? id, i18n.language)
 
   const [open, setOpen] = useState(false)
   const [targetPath, setTargetPath] = useState(progress.pathId)
@@ -30,8 +32,7 @@ export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
       return
     }
     switchPath(targetPath, { resetProgress })
-    const name = cycleById.get(targetPath)?.name ?? targetPath
-    push(t('path.switched', { name }))
+    push(t('path.switched', { name: cycleLabel(targetPath) }))
     setOpen(false)
   }
 
@@ -48,13 +49,13 @@ export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
         }
       >
         <Route size={compact ? 14 : 16} className="text-holo-300 shrink-0" />
-        <span className="truncate max-w-[10rem]">{cycle?.name ?? progress.pathId}</span>
+        <span className="truncate max-w-[10rem]">{cycleLabel(progress.pathId)}</span>
         <ChevronDown size={14} className="opacity-60 shrink-0" />
       </button>
 
       <Modal open={open} onClose={() => setOpen(false)} title={t('path.switchTitle')}>
         <div className="space-y-4 text-sm">
-          <p className="text-zinc-400">{t('path.switchBody', { name: cycleById.get(targetPath)?.name ?? targetPath })}</p>
+          <p className="text-zinc-400">{t('path.switchBody', { name: cycleLabel(targetPath) })}</p>
           <label className="block">
             <span className="text-zinc-300 mb-1 block">{t('settings.path')}</span>
             <select
@@ -65,7 +66,7 @@ export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
             >
               {gameData.cycles.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.name}
+                  {formatCycleDisplayName(c.name, i18n.language)}
                 </option>
               ))}
             </select>

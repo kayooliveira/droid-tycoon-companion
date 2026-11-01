@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import type { AppLocale } from '../i18n/detectLocale'
 import { setDocumentLanguage, initI18n } from '../i18n/index'
 import { gameData } from '../domain/gameData'
+import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { Logo } from '../components/Logo'
 import { Button } from '../components/ui/Button'
 import { GlassCard } from '../components/ui/GlassCard'
@@ -87,7 +88,7 @@ export function OnboardingPage() {
                           : 'border-white/10 hover:bg-white/5'
                       }`}
                     >
-                      <p className="font-medium">{c.name}</p>
+                      <p className="font-medium">{formatCycleDisplayName(c.name, i18n.language)}</p>
                     </button>
                   ))}
                 </div>

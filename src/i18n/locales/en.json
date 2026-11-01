@@ -104,7 +104,7 @@
   },
   "sell": {
     "title": "Sell Center",
-    "intro": "Looks at rebirths {{from}}–40 on {{path}} only. After Super Rebirth, most droids reset — plan the next Path yourself.",
+    "intro": "Looks at rebirths {{from}}–40 on {{cycle}} only. After Super Rebirth, most droids reset — plan the next Path yourself.",
     "keep": "Keep",
     "sellable": "Sellable",
     "upgrade": "Upgrade",
@@ -112,7 +112,34 @@
     "sellableNotNeeded": "Safe to sell {{name}} (×{{qty}}). Not used in any remaining rebirth on this Path.",
     "sellableExtra": "Sell {{qty}} extra {{name}}. You only need one for what's left on this Path.",
     "keepRebirth": "Keep {{name}}. Needed again at rebirth #{{rebirth}}.",
-    "upgradeRebirth": "Bring {{name}} up to at least {{tier}} before rebirth #{{rebirth}}."
+    "upgradeRebirth": "Bring {{name}} up to at least {{tier}} before rebirth #{{rebirth}}.",
+    "safeNowTitle": "Safe to sell right now",
+    "safeNowHint": "Based on rebirths you've finished through #{{rebirth}} and what's left on this Path.",
+    "safeNowLine": "In your inventory and clear to sell before the next rebirth."
+  },
+  "sellAfter": {
+    "heading": "After this rebirth you can sell:",
+    "none": "No requirement droids become free after this step.",
+    "fusionHold": "Keep for fusion",
+    "fusionCaution": "Fusion?",
+    "fusionCautionHint": "Recipe isn't fully verified — check in game before selling.",
+    "fusionNote": "Some droids stay marked for fusion even when rebirths no longer need them.",
+    "usedOnOtherPath": "Still used on {{paths}}."
+  },
+  "exportCycle": {
+    "title": "Download my cycle",
+    "hint": "PDF for printing or PNG chunks for WhatsApp. Generated on your device — nothing is uploaded.",
+    "pdf": "PDF",
+    "png": "PNG images",
+    "pdfDone": "Cycle PDF ready.",
+    "pngDone": "{{count}} PNG file(s) ready.",
+    "failed": "Couldn't build the export. Try again."
+  },
+  "feedback": {
+    "whatsappCtaEn": "Send feedback / Join the group",
+    "whatsappCta": "Send feedback / Join the group",
+    "settingsTitle": "Community & feedback",
+    "settingsHint": "Report wrong data or suggest improvements in our WhatsApp group."
   },
   "fusion": {
     "title": "Fusion Lab",
@@ -219,7 +246,7 @@
     "disputedNote": "Some rebirths are marked unconfirmed when guides disagree. You'll see badges on those entries.",
     "feedbackTitle": "Wrong data or idea?",
     "feedbackBody": "Tell us what you saw in-game versus what the app shows.",
-    "feedbackCta": "Send feedback",
+    "feedbackCta": "Send feedback / Join the group",
     "feedbackUnset": "Feedback link is not configured for this build — ask the site owner to set VITE_REPORT_FEEDBACK_URL.",
     "url": "Site"
   },
