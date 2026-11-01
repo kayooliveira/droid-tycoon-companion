@@ -46,7 +46,6 @@ export function ProgressPage() {
   const [undoOpen, setUndoOpen] = useState(false)
   const [moreOpen, setMoreOpen] = useState(false)
   const [superConfirmOpen, setSuperConfirmOpen] = useState(false)
-  const [completeConfirmOpen, setCompleteConfirmOpen] = useState(false)
   const progress = useAppStore((s) => s.progress)
   const inventory = useAppStore((s) => s.inventory)
   const trackInventory = useAppStore((s) => s.settings.trackInventory)
@@ -74,15 +73,10 @@ export function ProgressPage() {
   const handleCompleteClick = () => {
     if (!current) return
     if (canComplete || !trackInventory) {
-      setCompleteConfirmOpen(true)
+      advanceWithToast()
       return
     }
     setForceCompleteOpen(true)
-  }
-
-  const confirmComplete = () => {
-    advanceWithToast()
-    setCompleteConfirmOpen(false)
   }
 
   const confirmForceComplete = () => {
@@ -353,37 +347,6 @@ export function ProgressPage() {
             nextCycle: cycleLabel(nextPathId),
             currentStep: progress.nextRebirth,
           })}
-        </p>
-      </Modal>
-
-      <Modal
-        open={completeConfirmOpen}
-        onClose={() => setCompleteConfirmOpen(false)}
-        title={t('progress.completeConfirmTitle')}
-        testId="progress-complete-confirm-modal"
-        footer={
-          <>
-            <Button
-              variant="secondary"
-              size="sm"
-              data-testid="progress-complete-cancel"
-              onClick={() => setCompleteConfirmOpen(false)}
-            >
-              {t('path.cancel')}
-            </Button>
-            <Button size="sm" data-testid="progress-complete-confirm" onClick={confirmComplete}>
-              {t('common.confirm')}
-            </Button>
-          </>
-        }
-      >
-        <p className="text-sm text-zinc-300 text-pretty">
-          {current
-            ? t('progress.completeConfirmBody', {
-                n: current.rebirth,
-                next: Math.min(current.rebirth + 1, 40),
-              })
-            : null}
         </p>
       </Modal>
 

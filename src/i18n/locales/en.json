@@ -64,9 +64,7 @@
     "moreActionsTitle": "More actions",
     "listRebirthHeading": "Rebirth #{{n}}",
     "superConfirmTitle": "Super Rebirth?",
-    "superConfirmBody": "You leave {{currentCycle}} and start {{nextCycle}}. Rebirth #{{currentStep}} is closed in the app and the new Path begins at #1. This cannot be undone.",
-    "completeConfirmTitle": "Complete rebirth?",
-    "completeConfirmBody": "Marks rebirth #{{n}} done and moves you to #{{next}}. You can undo from More actions."
+    "superConfirmBody": "You leave {{currentCycle}} and start {{nextCycle}}. Rebirth #{{currentStep}} is closed in the app and the new Path begins at #1. This cannot be undone."
   },
   "path": {
     "switch": "Change Path",
