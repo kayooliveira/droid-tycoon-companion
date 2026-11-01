@@ -1,3 +1,5 @@
+import { APP_BRAND_NAME } from './brand'
+import { formatCycleDisplayName } from './cycleLabel'
 import { cycleById, droidById, getRebirth } from '../domain/gameData'
 import { pathProgressPercent } from '../domain/progress'
 import type { InventoryUnit } from '../domain/types'
@@ -76,7 +78,10 @@ export async function renderShareProgressCard(data: ShareCardInput): Promise<Blo
   if (!ctx) throw new Error('Canvas not supported')
 
   const isPt = data.locale === 'pt-BR'
-  const pathName = cycleById.get(data.pathId)?.name ?? data.pathId
+  const pathName = formatCycleDisplayName(
+    cycleById.get(data.pathId)?.name ?? data.pathId,
+    data.locale,
+  )
   const pathPct = pathProgressPercent({
     pathId: data.pathId,
     nextRebirth: data.nextRebirth,
@@ -118,13 +123,14 @@ export async function renderShareProgressCard(data: ShareCardInput): Promise<Blo
   const titleX = ix + logoSize + 24
   ctx.fillStyle = '#fafafa'
   ctx.font = '700 38px system-ui, sans-serif'
-  ctx.fillText('DT Helper', titleX, iy + 44)
+  ctx.fillText(APP_BRAND_NAME, titleX, iy + 44)
   ctx.fillStyle = '#a1a1aa'
   ctx.font = '22px system-ui, sans-serif'
   ctx.fillText('Companion for Star Wars Droid Tycoon', titleX, iy + 78)
   ctx.fillStyle = '#71717a'
   ctx.font = '26px system-ui, sans-serif'
-  ctx.fillText(`Path · ${pathName}`, titleX, iy + 112)
+  const cycleLabel = isPt ? 'Ciclo' : 'Path'
+  ctx.fillText(`${cycleLabel} · ${pathName}`, titleX, iy + 88)
 
   const nextY = iy + 128 + SECTION_GAP
   const nextLabel = isPt
@@ -186,7 +192,7 @@ export async function renderShareProgressCard(data: ShareCardInput): Promise<Blo
     {
       kind: 'pct' as const,
       value: `${Math.round(pathPct)}%`,
-      sub: isPt ? 'progresso do Path' : 'path progress',
+      sub: isPt ? 'progresso do ciclo' : 'path progress',
     },
     {
       kind: 'inv' as const,

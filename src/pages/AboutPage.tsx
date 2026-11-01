@@ -2,9 +2,11 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { gameDataSource } from '../data/dataSource'
 import { gameData } from '../domain/gameData'
-import { APP_PUBLIC_URL, REPORT_FEEDBACK_URL } from '../lib/constants'
+import { APP_PUBLIC_URL } from '../lib/constants'
+import { FeedbackWhatsAppLink } from '../components/FeedbackWhatsAppLink'
 import { Badge } from '../components/ui/Badge'
 import { GlassCard } from '../components/ui/GlassCard'
+
 export function AboutPage() {
   const { t } = useTranslation()
   const meta = gameDataSource.getMeta()
@@ -45,21 +47,10 @@ export function AboutPage() {
         </ul>
       </GlassCard>
 
-      <GlassCard className="space-y-2 text-sm">
+      <GlassCard className="space-y-3 text-sm">
         <h2 className="font-medium">{t('about.feedbackTitle')}</h2>
         <p className="text-zinc-400">{t('about.feedbackBody')}</p>
-        {REPORT_FEEDBACK_URL ? (
-          <a
-            href={REPORT_FEEDBACK_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium min-h-11 bg-white/10 hover:bg-white/15 border border-white/15 text-zinc-100"
-          >
-            {t('about.feedbackCta')}
-          </a>
-        ) : (
-          <p className="text-xs text-zinc-500">{t('about.feedbackUnset')}</p>
-        )}
+        <FeedbackWhatsAppLink />
       </GlassCard>
 
       <GlassCard className="text-xs text-zinc-500 space-y-2">

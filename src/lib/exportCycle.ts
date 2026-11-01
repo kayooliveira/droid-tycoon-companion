@@ -1,4 +1,6 @@
-import { APP_PUBLIC_URL } from './constants'
+import { APP_BRAND_NAME } from './brand'
+import { APP_PUBLIC_URL, REPORT_FEEDBACK_URL } from './constants'
+import { formatCycleDisplayName } from './cycleLabel'
 import { droidImageSrc } from './images'
 import { cycleById, droidById, gameData } from '../domain/gameData'
 import { pathProgressPercent, REBIRTHS_PER_PATH, SUPER_REBIRTH_UNLOCK_AFTER } from '../domain/progress'
@@ -17,14 +19,15 @@ export interface ExportCycleInput {
 const PAGE_W = 794
 const PAGE_H = 1123
 const PAD = 48
-const FOOTER_H = 72
+const FOOTER_H = 88
 
 const tierLabels = buildTierLabelMap(gameData.rarities)
 
 const copy = {
   en: {
     title: 'My Droid Tycoon cycle',
-    path: 'Path',
+    cycle: 'Path',
+    brand: APP_BRAND_NAME,
     progress: 'Progress',
     rebirthsDone: 'Rebirths completed',
     pathPct: 'Path progress',
@@ -40,14 +43,16 @@ const copy = {
     superTitle: 'Super Rebirth',
     superBody: `Available after rebirth ${SUPER_REBIRTH_UNLOCK_AFTER}. Resets credits, base upgrades, and most droids (Iconics stay).`,
     fusionTitle: 'Fusion recipes on this Path',
+    feedbackLink: 'Feedback on WhatsApp',
     noneSell: 'Nothing to free up from requirements here.',
   },
   'pt-BR': {
     title: 'Meu ciclo no Droid Tycoon',
-    path: 'Path',
+    cycle: 'Ciclo',
+    brand: APP_BRAND_NAME,
     progress: 'Progresso',
     rebirthsDone: 'Rebirths concluídos',
-    pathPct: 'Progresso no Path',
+    pathPct: 'Progresso do ciclo',
     date: 'Gerado em',
     rebirth: 'Rebirth',
     credits: 'Créditos',
@@ -59,7 +64,8 @@ const copy = {
     footer: 'Fan-made · não afiliado à Epic Games',
     superTitle: 'Super Rebirth',
     superBody: `Libera depois do rebirth ${SUPER_REBIRTH_UNLOCK_AFTER}. Zera créditos, upgrades da base e quase todos os droids (Iconics ficam).`,
-    fusionTitle: 'Receitas de fusão neste Path',
+    fusionTitle: 'Receitas de fusão neste ciclo',
+    feedbackLink: 'Feedback no WhatsApp',
     noneSell: 'Nada pra liberar dos requisitos aqui.',
   },
 } as const
@@ -99,6 +105,11 @@ async function drawFooter(ctx: CanvasRenderingContext2D, locale: 'en' | 'pt-BR',
   ctx.font = '14px system-ui, sans-serif'
   ctx.fillText(APP_PUBLIC_URL.replace('https://', ''), PAD, y + 28)
   ctx.fillText(copy[locale].footer, PAD, y + 48)
+  if (REPORT_FEEDBACK_URL) {
+    ctx.fillStyle = '#64748b'
+    ctx.font = '11px system-ui, sans-serif'
+    ctx.fillText(copy[locale].feedbackLink, PAD, y + 64)
+  }
 
   const logo = await loadImage('/pwa-192.png')
   if (logo) ctx.drawImage(logo, PAGE_W - PAD - 120, y + 10, 40, 40)
@@ -119,7 +130,10 @@ async function makeQr(): Promise<string> {
 async function drawCover(ctx: CanvasRenderingContext2D, input: ExportCycleInput, qr: string) {
   fillBackground(ctx)
   const L = copy[input.locale]
-  const pathName = cycleById.get(input.pathId)?.name ?? input.pathId
+  const pathName = formatCycleDisplayName(
+    cycleById.get(input.pathId)?.name ?? input.pathId,
+    input.locale,
+  )
   const pct = pathProgressPercent({
     pathId: input.pathId,
     nextRebirth: input.nextRebirth,
@@ -130,21 +144,22 @@ async function drawCover(ctx: CanvasRenderingContext2D, input: ExportCycleInput,
   if (logo) ctx.drawImage(logo, PAD, PAD, 96, 96)
 
   ctx.fillStyle = '#f1f5f9'
-  ctx.font = 'bold 36px system-ui, sans-serif'
-  ctx.fillText(L.title, PAD, PAD + 140)
+  ctx.font = 'bold 40px system-ui, sans-serif'
+  ctx.fillText(L.brand, PAD, PAD + 140)
 
   ctx.font = '22px system-ui, sans-serif'
   ctx.fillStyle = '#cbd5e1'
-  ctx.fillText(`${L.path}: ${pathName}`, PAD, PAD + 190)
-  ctx.fillText(`${L.rebirthsDone}: ${input.completedOnPath} / ${REBIRTHS_PER_PATH}`, PAD, PAD + 230)
-  ctx.fillText(`${L.pathPct}: ${pct.toFixed(0)}%`, PAD, PAD + 270)
+  ctx.fillText(L.title, PAD, PAD + 178)
+  ctx.fillText(`${L.cycle}: ${pathName}`, PAD, PAD + 210)
+  ctx.fillText(`${L.rebirthsDone}: ${input.completedOnPath} / ${REBIRTHS_PER_PATH}`, PAD, PAD + 250)
+  ctx.fillText(`${L.pathPct}: ${pct.toFixed(0)}%`, PAD, PAD + 290)
 
   const dateStr = new Date().toLocaleDateString(input.locale === 'pt-BR' ? 'pt-BR' : 'en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   })
-  ctx.fillText(`${L.date}: ${dateStr}`, PAD, PAD + 310)
+  ctx.fillText(`${L.date}: ${dateStr}`, PAD, PAD + 330)
 
   await drawFooter(ctx, input.locale, qr)
 }
@@ -369,10 +384,13 @@ export async function exportCyclePngChunks(input: ExportCycleInput): Promise<Blo
     const ctx = canvas.getContext('2d')!
     fillBackground(ctx)
     let y = PAD
-    const pathName = cycleById.get(input.pathId)?.name ?? input.pathId
+    const pathName = formatCycleDisplayName(
+      cycleById.get(input.pathId)?.name ?? input.pathId,
+      input.locale,
+    )
     ctx.fillStyle = '#f1f5f9'
     ctx.font = 'bold 22px system-ui, sans-serif'
-    ctx.fillText(`${copy[input.locale].title} · ${pathName}`, PAD, y)
+    ctx.fillText(`${copy[input.locale].brand} · ${pathName}`, PAD, y)
     y += 40
 
     for (const entry of slice) {

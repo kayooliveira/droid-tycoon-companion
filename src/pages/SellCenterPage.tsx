@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { analyzeSellCenter } from '../domain/sellCenter'
-import { droidById } from '../domain/gameData'
+import { cycleById, droidById, gameData } from '../domain/gameData'
 import { inventorySafeToSellNow } from '../domain/rebirthSellPlan'
 import { buildTierLabelMap, formatTierName } from '../domain/tiers'
-import { gameData } from '../domain/gameData'
 import { PathProgressSwitcher } from '../components/PathProgressSwitcher'
+import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { DroidImage } from '../components/DroidImage'
 import { Badge } from '../components/ui/Badge'
 import { GlassCard } from '../components/ui/GlassCard'
@@ -14,9 +14,13 @@ import { useAppStore } from '../store/useAppStore'
 const tierLabels = buildTierLabelMap(gameData.rarities)
 
 export function SellCenterPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const progress = useAppStore((s) => s.progress)
   const inventory = useAppStore((s) => s.inventory)
+  const cycleName = formatCycleDisplayName(
+    cycleById.get(progress.pathId)?.name ?? progress.pathId,
+    i18n.language,
+  )
   const items = analyzeSellCenter(progress.pathId, progress.nextRebirth, inventory)
   const completedRebirth = Math.max(0, progress.nextRebirth - 1)
 
@@ -41,7 +45,7 @@ export function SellCenterPage() {
       <div className="space-y-2">
         <h1 className="font-display text-2xl tracking-wide">{t('sell.title')}</h1>
         <PathProgressSwitcher compact />
-        <p className="text-sm text-zinc-400">{t('sell.intro', { from: progress.nextRebirth, path: progress.pathId })}</p>
+        <p className="text-sm text-zinc-400">{t('sell.intro', { from: progress.nextRebirth, cycle: cycleName })}</p>
       </div>
 
       {safeNow.length > 0 ? (

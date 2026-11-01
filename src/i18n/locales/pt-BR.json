@@ -21,29 +21,29 @@
     "completed": "Concluídos",
     "nextRebirth": "Próximo rebirth",
     "workingOn": "Rebirth #{{n}} agora",
-    "completedCount": "{{done}} / {{total}} neste Path",
-    "pathProgress": "Progresso do Path",
+    "completedCount": "{{done}} / {{total}} neste ciclo",
+    "pathProgress": "Progresso do ciclo",
     "completeRebirth": "Concluir rebirth",
     "completeAnyway": "Concluir mesmo assim",
     "completeBlocked": "Ainda faltam droids neste rebirth. Atualize o inventário ou conclua mesmo assim se você não registra tudo aqui.",
     "undoOne": "Desfazer rebirth",
-    "undoConfirm": "Voltar um rebirth neste Path? O inventário não muda.",
-    "superRebirth": "Super Rebirth → próximo Path",
+    "undoConfirm": "Voltar um rebirth neste ciclo? O inventário não muda.",
+    "superRebirth": "Super Rebirth → próximo ciclo",
     "superHint": "Super Rebirth libera depois de {{n}} rebirths concluídos.",
     "listDone": "Feito",
     "listCurrent": "Atual",
     "listCompletedState": "Concluído",
-    "pathComplete": "Path completo. Use Super Rebirth para seguir.",
+    "pathComplete": "Ciclo completo. Use Super Rebirth para seguir.",
     "rebirthCompleted": "Rebirth marcado como concluído.",
     "focus": "Foco",
     "list": "Lista"
   },
   "path": {
-    "switch": "Trocar Path",
-    "switchTitle": "Trocar de Path?",
+    "switch": "Trocar ciclo",
+    "switchTitle": "Trocar de ciclo?",
     "switchBody": "Ir para {{name}}. O inventário continua. O progresso de rebirth também, a menos que você marque reset abaixo.",
-    "resetRebirthOnSwitch": "Zerar rebirths no novo Path (começar no #1)",
-    "confirmSwitch": "Trocar Path",
+    "resetRebirthOnSwitch": "Zerar rebirths no novo ciclo (começar no #1)",
+    "confirmSwitch": "Trocar ciclo",
     "cancel": "Cancelar",
     "switched": "Agora em {{name}}"
   },
@@ -63,11 +63,11 @@
     "rebirthReadyCount": "{{ready}} de {{total}} prontos",
     "statsRequired": "Precisa agora",
     "statsReady": "Já tem",
-    "statsKeep": "Guardar no path",
+    "statsKeep": "Guardar no ciclo",
     "statsSellable": "Pode vender",
     "staleData": "Dados podem estar velhos — veja Ajustes",
     "dataVersion": "Dados v{{version}}",
-    "hero": "Acompanhe Path, inventário e o que vale a pena vender no Star Wars Droid Tycoon.",
+    "hero": "Acompanhe o ciclo, inventário e o que vale a pena vender no Star Wars Droid Tycoon.",
     "ctaProgress": "Ver meu próximo rebirth",
     "ctaInventory": "Ativar inventário",
     "nextStepLabel": "Próximo passo",
@@ -89,8 +89,8 @@
     "allTiers": "Todos tiers",
     "allNeeds": "Todos",
     "neededLater": "Usa depois",
-    "notNeeded": "Não usa neste path",
-    "neededFilter": "Usa no path",
+    "notNeeded": "Não usa neste ciclo",
+    "neededFilter": "Usa no ciclo",
     "notNeededFilter": "Não usa",
     "empty": "Nenhum droid ainda.",
     "emptyHint": "Cadastre os droids da sua base pra comparar com o próximo rebirth.",
@@ -104,17 +104,17 @@
   },
   "sell": {
     "title": "Central de venda",
-    "intro": "Olha rebirths {{from}}–40 no {{path}}. Depois do Super Rebirth quase tudo reseta — planeje o próximo Path na mão.",
+    "intro": "Olha rebirths {{from}}–40 no {{cycle}}. Depois do Super Rebirth quase tudo reseta — planeje o próximo ciclo na mão.",
     "keep": "Guardar",
     "sellable": "Vender",
     "upgrade": "Upgradar",
     "emptyCategory": "Nada aqui.",
-    "sellableNotNeeded": "Pode vender {{name}} (×{{qty}}). Não entra em nenhum rebirth que falta neste Path.",
-    "sellableExtra": "Venda {{qty}} {{name}} extra. Só precisa de um pro que falta neste Path.",
+    "sellableNotNeeded": "Pode vender {{name}} (×{{qty}}). Não entra em nenhum rebirth que falta neste ciclo.",
+    "sellableExtra": "Venda {{qty}} {{name}} extra. Só precisa de um pro que falta neste ciclo.",
     "keepRebirth": "Guarde {{name}}. Precisa de novo no rebirth #{{rebirth}}.",
     "upgradeRebirth": "Suba {{name}} para pelo menos {{tier}} antes do rebirth #{{rebirth}}.",
     "safeNowTitle": "Pode vender agora",
-    "safeNowHint": "Com base nos rebirths concluídos até o #{{rebirth}} e no que ainda falta neste Path.",
+    "safeNowHint": "Com base nos rebirths concluídos até o #{{rebirth}} e no que ainda falta neste ciclo.",
     "safeNowLine": "Está no seu inventário e pode vender antes do próximo rebirth."
   },
   "sellAfter": {
@@ -124,7 +124,7 @@
     "fusionCaution": "Fusão?",
     "fusionCautionHint": "Receita ainda não está 100% confirmada — confira no jogo antes de vender.",
     "fusionNote": "Alguns droids ficam marcados pra fusão mesmo quando os rebirths não pedem mais.",
-    "usedOnOtherPath": "Ainda entra no {{paths}}."
+    "usedOnOtherPath": "Também entra em {{paths}}."
   },
   "exportCycle": {
     "title": "Baixar meu ciclo",
@@ -134,6 +134,12 @@
     "pdfDone": "PDF do ciclo pronto.",
     "pngDone": "{{count}} arquivo(s) PNG pronto(s).",
     "failed": "Não deu pra gerar o export. Tenta de novo."
+  },
+  "feedback": {
+    "whatsappCtaEn": "Send feedback / Join the group",
+    "whatsappCta": "Mandar feedback / Entrar no grupo",
+    "settingsTitle": "Grupo e feedback",
+    "settingsHint": "Comenta dado errado ou sugere melhoria no grupo do WhatsApp."
   },
   "fusion": {
     "title": "Laboratório de fusão",
@@ -160,9 +166,9 @@
     "start": "Começar",
     "skip": "Pular",
     "welcomeTitle": "DT Helper",
-    "welcomeBody": "Path, rebirths e o que guardar ou vender. Ilha 7865-8305-9184. Fan-made, não oficial.",
-    "choosePath": "Escolha o Path",
-    "progressTitle": "Onde você está neste Path?",
+    "welcomeBody": "Ciclo, rebirths e o que guardar ou vender. Ilha 7865-8305-9184. Fan-made, não oficial.",
+    "choosePath": "Escolha o ciclo",
+    "progressTitle": "Onde você está neste ciclo?",
     "progressHint": "Quantos rebirths você já terminou?",
     "progressNext": "Próximo rebirth: #{{n}}",
     "prefsTitle": "Preferências",
@@ -191,7 +197,7 @@
     "langPt": "Português (Brasil)",
     "rerunOnboarding": "Refazer configuração",
     "progress": "Progresso",
-    "path": "Path",
+    "path": "Ciclo",
     "completedRebirths": "Rebirths concluídos ({{n}})",
     "gameData": "Dados do jogo",
     "dataFresh": "Dados recentes",
@@ -240,8 +246,7 @@
     "disputedNote": "Rebirths disputados aparecem com aviso quando os guias não batem.",
     "feedbackTitle": "Dado errado ou sugestão?",
     "feedbackBody": "Conta o que você viu no jogo versus o que o app mostra.",
-    "feedbackCta": "Enviar feedback",
-    "feedbackUnset": "Link de feedback não configurado neste build — o dono do site pode definir VITE_REPORT_FEEDBACK_URL.",
+    "feedbackCta": "Mandar feedback / Entrar no grupo",
     "url": "Site"
   },
   "pwa": {
@@ -263,7 +268,11 @@
   "seo": {
     "defaultTitle": "DT Helper — Star Wars Droid Tycoon",
     "description": "Track Path, rebirths, inventory, and sell advice for Star Wars Droid Tycoon (Fortnite UEFN).",
+<<<<<<< HEAD
     "descriptionPt": "Acompanhe Path, rebirths, inventário e o que vender no Star Wars Droid Tycoon (Fortnite UEFN).",
+=======
+    "descriptionPt": "Acompanhe ciclo, rebirths, inventário e o que vender no Star Wars Droid Tycoon (Fortnite UEFN).",
+>>>>>>> 150f484 (fix: DT Helper branding, Ciclo pt-BR, feedback WhatsApp, static SEO)
     "ogImageAlt": "DT Helper — rebirths, inventory, and sell tips",
     "ogImageAltPt": "DT Helper — rebirths, inventário e dicas de venda"
   },

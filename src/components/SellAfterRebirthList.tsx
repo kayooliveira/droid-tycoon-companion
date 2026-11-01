@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { droidById, cycleById } from '../domain/gameData'
+import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { unitsSellableAfterRebirth, type RebirthUnitUsage } from '../domain/rebirthSellPlan'
 import { buildTierLabelMap, formatTierName } from '../domain/tiers'
 import { gameData } from '../domain/gameData'
@@ -8,12 +9,11 @@ import { Badge } from './ui/Badge'
 
 const tierLabels = buildTierLabelMap(gameData.rarities)
 
-function pathLabel(pathId: string): string {
-  return cycleById.get(pathId)?.name ?? pathId
-}
 
 function UnitRow({ unit }: { unit: RebirthUnitUsage }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const pathLabel = (pathId: string) =>
+    formatCycleDisplayName(cycleById.get(pathId)?.name ?? pathId, i18n.language)
   const droid = droidById.get(unit.droidId)
   if (!droid) return null
 

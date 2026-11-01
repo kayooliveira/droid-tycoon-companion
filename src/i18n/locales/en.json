@@ -104,7 +104,7 @@
   },
   "sell": {
     "title": "Sell Center",
-    "intro": "Looks at rebirths {{from}}–40 on {{path}} only. After Super Rebirth, most droids reset — plan the next Path yourself.",
+    "intro": "Looks at rebirths {{from}}–40 on {{cycle}} only. After Super Rebirth, most droids reset — plan the next Path yourself.",
     "keep": "Keep",
     "sellable": "Sellable",
     "upgrade": "Upgrade",
@@ -134,6 +134,12 @@
     "pdfDone": "Cycle PDF ready.",
     "pngDone": "{{count}} PNG file(s) ready.",
     "failed": "Couldn't build the export. Try again."
+  },
+  "feedback": {
+    "whatsappCtaEn": "Send feedback / Join the group",
+    "whatsappCta": "Send feedback / Join the group",
+    "settingsTitle": "Community & feedback",
+    "settingsHint": "Report wrong data or suggest improvements in our WhatsApp group."
   },
   "fusion": {
     "title": "Fusion Lab",
@@ -240,7 +246,7 @@
     "disputedNote": "Some rebirths are marked unconfirmed when guides disagree. You'll see badges on those entries.",
     "feedbackTitle": "Wrong data or idea?",
     "feedbackBody": "Tell us what you saw in-game versus what the app shows.",
-    "feedbackCta": "Send feedback",
+    "feedbackCta": "Send feedback / Join the group",
     "feedbackUnset": "Feedback link is not configured for this build — ask the site owner to set VITE_REPORT_FEEDBACK_URL.",
     "url": "Site"
   },

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
 import { ShareMenu } from '../components/ShareMenu'
 import { DownloadCycleMenu } from '../components/DownloadCycleMenu'
+import { FeedbackWhatsAppLink } from '../components/FeedbackWhatsAppLink'
 import { gameDataSource } from '../data/dataSource'
 import { gameData } from '../domain/gameData'
 import type { AppLocale } from '../i18n/detectLocale'
@@ -166,6 +167,12 @@ export function SettingsPage() {
         <h2 className="font-medium text-zinc-300 text-sm">{t('settings.credits')}</h2>
         <p>{t('settings.creditsBody')}</p>
         <p className="pt-2 border-t border-white/10">{t('app.disclaimer')}</p>
+      </GlassCard>
+
+      <GlassCard className="space-y-3">
+        <h2 className="font-medium text-sm">{t('feedback.settingsTitle')}</h2>
+        <p className="text-xs text-zinc-400">{t('feedback.settingsHint')}</p>
+        <FeedbackWhatsAppLink />
       </GlassCard>
 
       <DownloadCycleMenu />
