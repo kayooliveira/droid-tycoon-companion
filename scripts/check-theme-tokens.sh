@@ -12,9 +12,10 @@ ALLOW=(
 
 violations=0
 while IFS= read -r file; do
+  rel="${file#"$ROOT/"}"
   skip=0
   for a in "${ALLOW[@]}"; do
-    if [[ "$file" == "$ROOT/$a" ]]; then skip=1; break; fi
+    if [[ "$rel" == "$a" ]]; then skip=1; break; fi
   done
   [[ $skip -eq 1 ]] && continue
   if matches=$(rg -n '\b(text-white|bg-black)\b' "$file" 2>/dev/null || true); then
