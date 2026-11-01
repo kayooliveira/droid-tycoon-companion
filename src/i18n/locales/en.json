@@ -59,7 +59,7 @@
     "nextSection": "Next rebirth",
     "credits": "Credits {{credits}}",
     "unlocks": "Unlocks {{item}}",
-    "requirementsReady": "Good to go for this rebirth",
+    "rebirthReadyCount": "{{ready}} of {{total}} ready",
     "statsRequired": "For next rebirth",
     "statsReady": "Ready",
     "statsKeep": "Keep on path",

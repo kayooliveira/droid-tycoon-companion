@@ -142,7 +142,10 @@ export function DashboardPage() {
             </div>
             {trackInventory ? (
               <ProgressBar
-                label={t('dashboard.requirementsReady')}
+                label={t('dashboard.rebirthReadyCount', {
+                  ready: metRequirementCount(checks),
+                  total: 3,
+                })}
                 value={(metRequirementCount(checks) / 3) * 100}
               />
             ) : null}

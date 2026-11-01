@@ -59,7 +59,7 @@
     "nextSection": "Próximo rebirth",
     "credits": "Créditos {{credits}}",
     "unlocks": "Libera {{item}}",
-    "requirementsReady": "Tudo certo pro rebirth",
+    "rebirthReadyCount": "{{ready}} de {{total}} prontos",
     "statsRequired": "Precisa agora",
     "statsReady": "Já tem",
     "statsKeep": "Guardar no path",
