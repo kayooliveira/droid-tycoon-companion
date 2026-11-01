@@ -4,7 +4,9 @@ import { uiIconProps } from '../components/ui/iconStyle'
 import { useTranslation } from 'react-i18next'
 import { droidById, gameData } from '../domain/gameData'
 import { droidHasFutureNeedOnPath } from '../domain/sellCenter'
-import { buildTierLabelMap, formatTierName } from '../domain/tiers'
+import { formatTierName } from '../domain/tiers'
+import { formatBaseRarity, rarityLabel } from '../i18n/tierLabels'
+import { useTierLabels } from '../i18n/useTierLabels'
 import type { TierId } from '../domain/types'
 import { DroidImage } from '../components/DroidImage'
 import { Badge } from '../components/ui/Badge'
@@ -18,10 +20,9 @@ import {
 } from '../hooks/usePersistedInventoryFilters'
 import { useAppStore } from '../store/useAppStore'
 
-const tierLabels = buildTierLabelMap(gameData.rarities)
-
 export function InventoryPage() {
   const { t } = useTranslation()
+  const tierLabels = useTierLabels()
   const inventory = useAppStore((s) => s.inventory)
   const progress = useAppStore((s) => s.progress)
   const addInventoryUnit = useAppStore((s) => s.addInventoryUnit)
@@ -97,7 +98,7 @@ export function InventoryPage() {
           <option value="all">{t('inventory.allRarities')}</option>
           {gameData.baseRarities.map((r) => (
             <option key={r.id} value={r.id}>
-              {r.name}
+              {rarityLabel(t, r.id)}
             </option>
           ))}
         </select>
@@ -109,7 +110,7 @@ export function InventoryPage() {
           <option value="all">{t('inventory.allTiers')}</option>
           {gameData.rarities.map((tier) => (
             <option key={tier.id} value={tier.id}>
-              {tier.name}
+              {formatTierName(tier.id, tierLabels)}
             </option>
           ))}
         </select>
@@ -135,7 +136,7 @@ export function InventoryPage() {
               <div className="flex-1 min-w-0">
                 <p className="font-medium truncate">{droid.name}</p>
                 <div className="flex flex-wrap gap-2 mt-1">
-                  <Badge>{droid.baseRarity}</Badge>
+                  <Badge>{formatBaseRarity(droid.baseRarity, t)}</Badge>
                   <Badge tone="info">{formatTierName(unit.tier, tierLabels)}</Badge>
                   <Badge tone={needed ? 'warn' : 'success'}>
                     {needed ? t('inventory.neededLater') : t('inventory.notNeeded')}

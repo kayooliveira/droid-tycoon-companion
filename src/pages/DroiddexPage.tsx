@@ -1,16 +1,20 @@
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { gameData } from '../domain/gameData'
-import { buildTierLabelMap, formatTierName } from '../domain/tiers'
+import { formatTierName } from '../domain/tiers'
+import { formatBaseRarity } from '../i18n/tierLabels'
+import { useTierLabels } from '../i18n/useTierLabels'
 import { DroidImage } from '../components/DroidImage'
 import { Badge } from '../components/ui/Badge'
 import { Modal } from '../components/ui/Modal'
+import { cn } from '../lib/utils'
 import type { Droid } from '../domain/types'
 
-const tierLabels = buildTierLabelMap(gameData.rarities)
+const DROID_CLASSES = ['Worker', 'Astromech', 'Battle', 'Protocol'] as const
 
 export function DroiddexPage() {
   const { t } = useTranslation()
+  const tierLabels = useTierLabels()
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState<Droid | null>(null)
   const [classFilter, setClassFilter] = useState<string>('all')
@@ -28,25 +32,39 @@ export function DroiddexPage() {
   return (
     <div className="space-y-5">
       <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('droiddex.title')}</h1>
-      <div className="flex flex-wrap gap-2">
-        <input
-          className="flex-1 min-w-[200px] rounded-xl bg-surface-800 border border-white/10 px-4 py-2 text-sm"
-          placeholder={t('droiddex.search')}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <select
-          className="rounded-xl bg-surface-800 border border-white/10 px-3 py-2 text-sm"
-          value={classFilter}
-          onChange={(e) => setClassFilter(e.target.value)}
-        >
-          <option value="all">{t('droiddex.allClasses')}</option>
-          {['Worker', 'Astromech', 'Battle', 'Protocol'].map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
+      <input
+        className="w-full rounded-xl bg-surface-800 border border-white/10 px-4 py-3 min-h-11"
+        placeholder={t('droiddex.search')}
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+      <div
+        className="flex flex-wrap gap-2"
+        role="radiogroup"
+        aria-label={t('droiddex.allClasses')}
+        data-testid="droiddex-class-chips"
+      >
+        {(['all', ...DROID_CLASSES] as const).map((c) => {
+          const active = classFilter === c
+          return (
+            <button
+              key={c}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              data-testid={`droiddex-class-${c}`}
+              className={cn(
+                'rounded-full px-3 py-2 text-sm min-h-11 border font-medium',
+                active
+                  ? 'border-holo-400/70 bg-holo-600/25 text-white'
+                  : 'border-white/10 bg-white/5 text-zinc-400 hover:text-zinc-200',
+              )}
+              onClick={() => setClassFilter(c)}
+            >
+              {c === 'all' ? t('droiddex.allClasses') : c}
+            </button>
+          )
+        })}
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
@@ -59,7 +77,7 @@ export function DroiddexPage() {
           >
             <DroidImage droid={d} className="self-center mb-2" />
             <p className="text-sm font-medium truncate w-full">{d.name}</p>
-            <p className="text-[10px] text-zinc-500">{d.baseRarity}</p>
+            <p className="text-[10px] text-zinc-500">{formatBaseRarity(d.baseRarity, t)}</p>
           </button>
         ))}
       </div>
@@ -67,7 +85,7 @@ export function DroiddexPage() {
       <Modal
         open={Boolean(selected)}
         onClose={() => setSelected(null)}
-        title={selected?.name ?? 'Droid'}
+        title={selected?.name ?? t('droiddex.title')}
       >
         {selected ? (
           <div className="space-y-4">
@@ -75,7 +93,7 @@ export function DroiddexPage() {
               <DroidImage droid={selected} size="lg" />
               <div className="space-y-2 text-sm">
                 <Badge>{selected.class}</Badge>
-                <Badge tone="info">{selected.baseRarity}</Badge>
+                <Badge tone="info">{formatBaseRarity(selected.baseRarity, t)}</Badge>
                 {selected.fusionOnly ? <Badge tone="warn">{t('droiddex.fusionOnly')}</Badge> : null}
                 <Badge tone={selected.confidence === 'confirmed' ? 'success' : 'warn'}>
                   {t(`confidence.${selected.confidence}`)}

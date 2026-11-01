@@ -27,6 +27,9 @@ const DroiddexPage = lazy(() =>
 const FusionLabPage = lazy(() =>
   import('./pages/FusionLabPage').then((m) => ({ default: m.FusionLabPage })),
 )
+const CyclesPage = lazy(() =>
+  import('./pages/CyclesPage').then((m) => ({ default: m.CyclesPage })),
+)
 const SettingsPage = lazy(() =>
   import('./pages/SettingsPage').then((m) => ({ default: m.SettingsPage })),
 )
@@ -81,7 +84,18 @@ export default function App() {
   }, [theme])
 
   useEffect(() => {
-    document.documentElement.classList.add('glass-refraction-enabled')
+    const root = document.documentElement
+    const supportsSvgBackdrop =
+      typeof CSS !== 'undefined' &&
+      (CSS.supports('(-webkit-backdrop-filter: url(#lg-nav))') ||
+        CSS.supports('(backdrop-filter: url(#lg-nav))') ||
+        CSS.supports('(-webkit-backdrop-filter: url(#lg))') ||
+        CSS.supports('(backdrop-filter: url(#lg))'))
+    if (supportsSvgBackdrop) {
+      root.classList.add('glass-refraction-enabled')
+    } else {
+      root.classList.add('glass-refraction-fallback')
+    }
   }, [])
 
   return (
@@ -106,6 +120,14 @@ export default function App() {
               element={
                 <LazyPage>
                   <ProgressPage />
+                </LazyPage>
+              }
+            />
+            <Route
+              path="cycles"
+              element={
+                <LazyPage>
+                  <CyclesPage />
                 </LazyPage>
               }
             />

@@ -1,4 +1,4 @@
-import { FilePdf, Image, LinkSimple, ShareNetwork, WhatsappLogo } from '@phosphor-icons/react'
+import { LinkSimple, ShareNetwork, WhatsappLogo } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { APP_PUBLIC_URL, WHATSAPP_SHARE_BASE } from '../lib/constants'
@@ -35,42 +35,9 @@ export function ShareExportCard() {
   const progress = useAppStore((s) => s.progress)
   const inventory = useAppStore((s) => s.inventory)
   const locale = useAppStore((s) => s.settings.locale)
-  const [busy, setBusy] = useState<'pdf' | 'png' | 'card' | null>(null)
+  const [busy, setBusy] = useState<'card' | null>(null)
 
   const shareText = t('share.message', { url: APP_PUBLIC_URL })
-
-  const runExport = async (format: 'pdf' | 'png') => {
-    setBusy(format)
-    try {
-      const { exportCyclePdf, exportCyclePngChunks } = await import('../lib/exportCycle')
-      const input = {
-        pathId: progress.pathId,
-        nextRebirth: progress.nextRebirth,
-        completedOnPath: progress.completedOnPath,
-        inventory,
-        locale: locale === 'pt-BR' ? 'pt-BR' : 'en',
-      } as const
-      if (format === 'pdf') {
-        const blob = await exportCyclePdf(input)
-        await downloadOrShare(blob, `droid-ciclo-${progress.pathId}.pdf`, 'application/pdf')
-        push(t('exportCycle.pdfDone'))
-      } else {
-        const blobs = await exportCyclePngChunks(input)
-        for (let i = 0; i < blobs.length; i++) {
-          await downloadOrShare(
-            blobs[i]!,
-            `droid-ciclo-${progress.pathId}-${i + 1}.png`,
-            'image/png',
-          )
-        }
-        push(t('exportCycle.pngDone', { count: blobs.length }))
-      }
-    } catch {
-      push(t('exportCycle.failed'))
-    } finally {
-      setBusy(null)
-    }
-  }
 
   const shareApp = async () => {
     if (navigator.share) {
@@ -133,24 +100,6 @@ export function ShareExportCard() {
         }
       />
       <div className="flex flex-wrap gap-2">
-        <IconButton
-          variant="soft"
-          label={t('exportCycle.pdf')}
-          disabled={busy !== null}
-          data-testid="export-cycle-pdf"
-          onClick={() => void runExport('pdf')}
-        >
-          {busy === 'pdf' ? '…' : <FilePdf {...uiIconProps} />}
-        </IconButton>
-        <IconButton
-          variant="soft"
-          label={t('exportCycle.png')}
-          disabled={busy !== null}
-          data-testid="export-cycle-png"
-          onClick={() => void runExport('png')}
-        >
-          {busy === 'png' ? '…' : <Image {...uiIconProps} />}
-        </IconButton>
         <IconButton variant="soft" label={t('share.shareApp')} data-testid="share-app" onClick={() => void shareApp()}>
           <LinkSimple {...uiIconProps} />
         </IconButton>

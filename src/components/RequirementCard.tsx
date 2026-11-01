@@ -1,16 +1,15 @@
 import { Plus } from '@phosphor-icons/react'
 import { uiIconProps } from './ui/iconStyle'
 import { useTranslation } from 'react-i18next'
-import { droidById, gameData } from '../domain/gameData'
-import { buildTierLabelMap, formatTierName } from '../domain/tiers'
+import { droidById } from '../domain/gameData'
+import { formatTierName } from '../domain/tiers'
+import { useTierLabels } from '../i18n/useTierLabels'
 import type { RequirementCheck } from '../domain/requirements'
 import { useAppStore } from '../store/useAppStore'
 import { DroidImage } from './DroidImage'
 import { Badge } from './ui/Badge'
 import { Button } from './ui/Button'
 import { GlassCard } from './ui/GlassCard'
-
-const tierLabels = buildTierLabelMap(gameData.rarities)
 
 const statusTone: Record<string, 'success' | 'warn' | 'danger' | 'info' | 'default'> = {
   ready: 'success',
@@ -23,6 +22,7 @@ const statusTone: Record<string, 'success' | 'warn' | 'danger' | 'info' | 'defau
 
 export function RequirementCard({ check }: { check: RequirementCheck }) {
   const { t } = useTranslation()
+  const tierLabels = useTierLabels()
   const markOwned = useAppStore((s) => s.markDroidOwned)
   const trackInventory = useAppStore((s) => s.settings.trackInventory)
   const droid = droidById.get(check.requirement.droidId)

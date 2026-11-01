@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import { X } from '@phosphor-icons/react'
 import { useScrollLock } from '../../hooks/useScrollLock'
 import { cn } from '../../lib/utils'
@@ -41,6 +42,7 @@ export function Modal({
   className?: string
   footer?: ReactNode
 }) {
+  const { t } = useTranslation()
   const dialogRef = useRef<HTMLDivElement>(null)
   const titleId = useId()
   useScrollLock(open)
@@ -90,7 +92,7 @@ export function Modal({
             <h2 id={titleId} className="font-display text-base font-semibold tracking-wide text-balance">
               {title}
             </h2>
-            <IconButton label="Close" onClick={onClose}>
+            <IconButton label={t('common.close')} onClick={onClose}>
               <X {...uiIconProps} />
             </IconButton>
           </div>

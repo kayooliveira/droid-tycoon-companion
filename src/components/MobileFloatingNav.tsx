@@ -1,11 +1,10 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { List, Package, SquaresFour, Storefront, TreeStructure } from '@phosphor-icons/react'
+import { List, MapTrifold, Package, SquaresFour, TreeStructure } from '@phosphor-icons/react'
 import { UI_ICON_WEIGHT } from './ui/iconStyle'
 import { Glass } from './ui/Glass'
 import { cn } from '../lib/utils'
-import { useNavMinimize } from '../hooks/useNavMinimize'
 
 const INDICATOR_INSET_X = 3
 const INDICATOR_INSET_Y = 4
@@ -13,22 +12,21 @@ const INDICATOR_INSET_Y = 4
 const tabs = [
   { to: '/', labelKey: 'nav.dashboard', icon: SquaresFour, end: true as const },
   { to: '/progress', labelKey: 'nav.progress', icon: TreeStructure },
+  { to: '/cycles', labelKey: 'nav.cycles', icon: MapTrifold },
   { to: '/inventory', labelKey: 'nav.inventory', icon: Package },
-  { to: '/sell', labelKey: 'nav.sell', icon: Storefront },
   { to: 'more', labelKey: 'nav.more', icon: List, isMore: true as const },
 ] as const
 
 export function MobileFloatingNav({ onMore }: { onMore: () => void }) {
   const { t } = useTranslation()
   const location = useLocation()
-  const minimized = useNavMinimize()
   const gridRef = useRef<HTMLDivElement>(null)
   const slotRefs = useRef<Array<HTMLDivElement | null>>([])
   const [indicator, setIndicator] = useState({ left: 0, width: 0 })
 
   const activeIndex = tabs.findIndex((tab) => {
     if ('isMore' in tab && tab.isMore) {
-      return ['/droiddex', '/fusion', '/about', '/settings'].includes(location.pathname)
+      return ['/droiddex', '/fusion', '/about', '/settings', '/sell'].includes(location.pathname)
     }
     if ('end' in tab && tab.end) return location.pathname === tab.to
     if (typeof tab.to === 'string' && !('isMore' in tab)) return location.pathname === tab.to
@@ -61,32 +59,22 @@ export function MobileFloatingNav({ onMore }: { onMore: () => void }) {
       ro.disconnect()
       window.removeEventListener('resize', measure)
     }
-  }, [activeIndex, minimized, location.pathname])
+  }, [activeIndex, location.pathname])
 
   return (
     <nav
       className="md:hidden fixed z-50 inset-x-3 bottom-[calc(env(safe-area-inset-bottom,0px)+12px)]"
-      aria-label="Main"
+      aria-label={t('a11y.mainNav')}
       data-testid="mobile-floating-nav"
-      data-nav-minimized={minimized ? '1' : '0'}
     >
       <Glass
         as="div"
         variant="regular"
-        className={cn(
-          'glass-nav relative rounded-full shadow-2xl shadow-black/40 transition-[padding] duration-200',
-          minimized ? 'p-1' : 'p-1.5',
-        )}
+        className="glass-nav glass-nav-liquid relative rounded-full shadow-2xl shadow-black/40 p-1.5"
       >
-        <div
-          ref={gridRef}
-          className={cn(
-            'relative grid grid-cols-5 gap-0.5',
-            minimized ? 'min-h-[2.75rem]' : 'min-h-[3.25rem]',
-          )}
-        >
+        <div ref={gridRef} className="relative grid grid-cols-5 gap-0.5 min-h-[3.25rem]">
           <div
-            className="nav-tab-indicator pointer-events-none absolute rounded-full bg-holo-500/30 border border-white/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] transition-[left,width] duration-300 ease-out"
+            className="nav-tab-indicator nav-glass-lens pointer-events-none absolute rounded-full transition-[left,width] duration-300 ease-out"
             style={{
               left: indicator.width > 0 ? indicator.left : 0,
               width: indicator.width,
@@ -101,9 +89,8 @@ export function MobileFloatingNav({ onMore }: { onMore: () => void }) {
             const Icon = tab.icon
             const slotClass = cn(
               'relative z-10 flex flex-col items-center justify-center min-h-[2.75rem] rounded-full',
-              'text-[10px] gap-0.5 transition-colors',
+              'text-[10px] gap-0.5 transition-colors py-2',
               isActive ? 'text-white' : 'text-zinc-500',
-              minimized ? 'py-1.5' : 'py-2',
             )
             return (
               <div
@@ -121,10 +108,8 @@ export function MobileFloatingNav({ onMore }: { onMore: () => void }) {
                     className={cn(slotClass, 'w-full')}
                     onClick={onMore}
                   >
-                    <Icon size={minimized ? 22 : 20} weight={isActive ? 'fill' : UI_ICON_WEIGHT} />
-                    {!minimized ? (
-                      <span className="leading-tight px-0.5 truncate max-w-full">{t(tab.labelKey)}</span>
-                    ) : null}
+                    <Icon size={20} weight={isActive ? 'fill' : UI_ICON_WEIGHT} />
+                    <span className="leading-tight px-0.5 truncate max-w-full">{t(tab.labelKey)}</span>
                   </button>
                 ) : (
                   <NavLink
@@ -132,10 +117,8 @@ export function MobileFloatingNav({ onMore }: { onMore: () => void }) {
                     end={'end' in tab ? tab.end : false}
                     className={cn(slotClass, 'w-full')}
                   >
-                    <Icon size={minimized ? 22 : 20} weight={isActive ? 'fill' : UI_ICON_WEIGHT} />
-                    {!minimized ? (
-                      <span className="leading-tight px-0.5 truncate max-w-full">{t(tab.labelKey)}</span>
-                    ) : null}
+                    <Icon size={20} weight={isActive ? 'fill' : UI_ICON_WEIGHT} />
+                    <span className="leading-tight px-0.5 truncate max-w-full">{t(tab.labelKey)}</span>
                   </NavLink>
                 )}
               </div>

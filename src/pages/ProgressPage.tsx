@@ -17,7 +17,8 @@ import {
   SUPER_REBIRTH_UNLOCK_AFTER,
 } from '../domain/progress'
 import { evaluateRequirements, metRequirementCount } from '../domain/requirements'
-import { buildTierLabelMap, formatTierName } from '../domain/tiers'
+import { formatTierName } from '../domain/tiers'
+import { useTierLabels } from '../i18n/useTierLabels'
 import { gameData } from '../domain/gameData'
 import { PathProgressSwitcher, ProgressSummaryLine } from '../components/PathProgressSwitcher'
 import { RequirementCard } from '../components/RequirementCard'
@@ -29,15 +30,14 @@ import { ProgressBar } from '../components/ui/ProgressBar'
 import { useAppStore } from '../store/useAppStore'
 import { useToast } from '../components/ToastProvider'
 import { SellAfterRebirthList } from '../components/SellAfterRebirthList'
-import { ShareExportCard } from '../components/ShareExportCard'
+import { ProgressPdfExport } from '../components/ProgressPdfExport'
 import { HelpHint } from '../components/ui/HelpHint'
 import { IconButton } from '../components/ui/IconButton'
 import { hapticTap } from '../lib/haptics'
 
-const tierLabels = buildTierLabelMap(gameData.rarities)
-
 export function ProgressPage() {
   const { t } = useTranslation()
+  const tierLabels = useTierLabels()
   const [mode, setMode] = useState<'list' | 'focus'>('focus')
   const [forceCompleteOpen, setForceCompleteOpen] = useState(false)
   const [undoOpen, setUndoOpen] = useState(false)
@@ -114,7 +114,11 @@ export function ProgressPage() {
                 </Badge>
               </div>
               {getDisputeKey(progress.pathId, current.rebirth) ? (
-                <DisputePanel pathId={progress.pathId} rebirth={current.rebirth} />
+                <DisputePanel
+                  pathId={progress.pathId}
+                  rebirth={current.rebirth}
+                  tierLabels={tierLabels}
+                />
               ) : null}
               <div className="space-y-2">
                 {evaluateRequirements(current.requirements, inventory, trackInventory).map(
@@ -216,7 +220,7 @@ export function ProgressPage() {
         </div>
       )}
 
-      <ShareExportCard />
+      <ProgressPdfExport />
 
       <Modal
         open={moreOpen}
@@ -308,7 +312,15 @@ export function ProgressPage() {
   )
 }
 
-function DisputePanel({ pathId, rebirth }: { pathId: string; rebirth: number }) {
+function DisputePanel({
+  pathId,
+  rebirth,
+  tierLabels,
+}: {
+  pathId: string
+  rebirth: number
+  tierLabels: Map<string, string>
+}) {
   const { t } = useTranslation()
   const key = getDisputeKey(pathId, rebirth)
   if (!key) return null
@@ -321,8 +333,8 @@ function DisputePanel({ pathId, rebirth }: { pathId: string; rebirth: number }) 
       </p>
       <ul className="space-y-1">
         {dispute.alternatives.map((alt) => (
-          <li key={alt.label} className="text-zinc-300">
-            <span className="text-zinc-400">{alt.label}: </span>
+          <li key={alt.labelKey} className="text-zinc-300">
+            <span className="text-zinc-400">{t(alt.labelKey)}: </span>
             {alt.requirements
               .map(
                 (req) =>
@@ -371,7 +383,7 @@ function RebirthListItem({
         />
         <div className="flex-1 min-w-0">
           <p className="font-medium">
-            Rebirth {rebirth}{' '}
+            {t('progress.listRebirthHeading', { n: rebirth })}{' '}
             {done ? <Badge tone="success">{t('progress.listDone')}</Badge> : null}
             {active ? <Badge tone="info">{t('progress.listCurrent')}</Badge> : null}
           </p>

@@ -2,12 +2,10 @@ import { useTranslation } from 'react-i18next'
 import { cycleById, droidById, getPathIds } from '../domain/gameData'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { unitsNewlySellableAfterRebirth, type RebirthUnitUsage } from '../domain/rebirthSellPlan'
-import { buildTierLabelMap, formatTierName } from '../domain/tiers'
-import { gameData } from '../domain/gameData'
+import { formatTierName } from '../domain/tiers'
+import { useTierLabels } from '../i18n/useTierLabels'
 import { DroidImage } from './DroidImage'
 import { Badge } from './ui/Badge'
-
-const tierLabels = buildTierLabelMap(gameData.rarities)
 
 function earliestOtherPathId(pathIds: string[]): string | null {
   const order = getPathIds()
@@ -25,6 +23,7 @@ function earliestOtherPathId(pathIds: string[]): string | null {
 
 function UnitRow({ unit }: { unit: RebirthUnitUsage }) {
   const { t, i18n } = useTranslation()
+  const tierLabels = useTierLabels()
   const pathLabel = (pathId: string) =>
     formatCycleDisplayName(cycleById.get(pathId)?.name ?? pathId, i18n.language)
   const droid = droidById.get(unit.droidId)

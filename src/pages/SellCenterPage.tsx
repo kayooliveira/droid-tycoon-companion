@@ -3,9 +3,10 @@ import { Package } from '@phosphor-icons/react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { analyzeSellCenter } from '../domain/sellCenter'
-import { cycleById, droidById, gameData } from '../domain/gameData'
+import { cycleById, droidById } from '../domain/gameData'
 import { inventorySafeToSellNow } from '../domain/rebirthSellPlan'
-import { buildTierLabelMap, formatTierName } from '../domain/tiers'
+import { formatTierName } from '../domain/tiers'
+import { useTierLabels } from '../i18n/useTierLabels'
 import { PathProgressSwitcher } from '../components/PathProgressSwitcher'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { DroidImage } from '../components/DroidImage'
@@ -14,8 +15,6 @@ import { Button } from '../components/ui/Button'
 import { GlassCard } from '../components/ui/GlassCard'
 import { uiIconProps } from '../components/ui/iconStyle'
 import { useAppStore } from '../store/useAppStore'
-
-const tierLabels = buildTierLabelMap(gameData.rarities)
 
 function SectionCard({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -28,6 +27,7 @@ function SectionCard({ title, children }: { title: string; children: ReactNode }
 
 export function SellCenterPage() {
   const { t, i18n } = useTranslation()
+  const tierLabels = useTierLabels()
   const progress = useAppStore((s) => s.progress)
   const inventory = useAppStore((s) => s.inventory)
   const cycleName = formatCycleDisplayName(
