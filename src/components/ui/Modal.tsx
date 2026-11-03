@@ -103,9 +103,9 @@ export function Modal({
         data-testid={testId}
         className={cn(
           'fixed inset-0',
-          anchorAboveMobileNav && 'pointer-events-none',
+          anchorAboveMobileNav && 'z-overlay isolate pointer-events-none',
           !anchorAboveMobileNav &&
-            'z-overlay flex items-end sm:items-center justify-center overlay-scrim backdrop-blur-md p-0 sm:p-4',
+            'z-modal flex items-end sm:items-center justify-center overlay-scrim backdrop-blur-md p-0 sm:p-4',
         )}
         role="presentation"
         onMouseDown={
@@ -119,7 +119,7 @@ export function Modal({
         {anchorAboveMobileNav ? (
           <div
             data-testid={`${testId}-scrim`}
-            className="modal-above-mobile-nav-scrim overlay-scrim backdrop-blur-md z-[100] pointer-events-auto"
+            className="modal-above-mobile-nav-scrim overlay-scrim backdrop-blur-md pointer-events-auto"
             role="presentation"
             onMouseDown={(e) => {
               if (e.target === e.currentTarget) onClose()
@@ -129,7 +129,7 @@ export function Modal({
         <div
           className={cn(
             anchorAboveMobileNav
-              ? 'modal-above-mobile-nav-panel z-[110] flex justify-center pointer-events-none'
+              ? 'modal-above-mobile-nav-panel relative z-[1] flex justify-center pointer-events-none'
               : 'contents',
           )}
         >

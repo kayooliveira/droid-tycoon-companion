@@ -293,6 +293,7 @@ html.theme-light {
 
   .tier-droid-backdrop {
     position: relative;
+    z-index: var(--z-index-content);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -305,7 +306,7 @@ html.theme-light {
 
   .tier-droid-backdrop__img {
     position: relative;
-    z-index: 2;
+    z-index: 1;
     height: 88%;
     width: 88%;
     max-height: 100%;

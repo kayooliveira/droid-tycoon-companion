@@ -60,6 +60,52 @@ test('mobile tab bar navigates reliably under rapid taps', async ({ page }) => {
   }
 })
 
+test('Mais sheet paints above Progresso content at hit-test points', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await seed(page)
+  await page.goto('/progress')
+  await expect(page.getByTestId('progress-unified-group')).toBeVisible({ timeout: 25_000 })
+  await page.getByTestId('mobile-more-nav').click()
+  await expect(page.getByTestId('nav-more-modal')).toBeVisible()
+
+  const hitTest = await page.evaluate(() => {
+    const modal = document.querySelector('[data-testid="nav-more-modal"]')
+    const scrim = document.querySelector('[data-testid="nav-more-modal-scrim"]')
+    const panel = modal?.querySelector('.modal-above-mobile-nav-panel') as HTMLElement | null
+    if (!modal || !scrim || !panel) return { ok: false, reason: 'missing-nodes' }
+
+    const panelRect = panel.getBoundingClientRect()
+    const panelPoints = [
+      { x: panelRect.left + panelRect.width * 0.5, y: panelRect.top + 28 },
+      { x: panelRect.left + 40, y: panelRect.top + 72 },
+      { x: panelRect.left + panelRect.width - 40, y: panelRect.top + 120 },
+    ]
+    for (const p of panelPoints) {
+      const el = document.elementFromPoint(p.x, p.y)
+      if (!el || !panel.contains(el)) {
+        return { ok: false, reason: 'panel', x: p.x, y: p.y, tag: el?.tagName ?? null }
+      }
+    }
+
+    const scrimRect = scrim.getBoundingClientRect()
+    const scrimPoints = [
+      { x: scrimRect.left + 24, y: scrimRect.top + 100 },
+      { x: scrimRect.left + scrimRect.width * 0.5, y: scrimRect.top + 220 },
+      { x: scrimRect.right - 24, y: scrimRect.top + 160 },
+    ]
+    for (const p of scrimPoints) {
+      const el = document.elementFromPoint(p.x, p.y)
+      if (!el || (el !== scrim && !scrim.contains(el))) {
+        return { ok: false, reason: 'scrim', x: p.x, y: p.y, tag: el?.tagName ?? null }
+      }
+    }
+
+    return { ok: true as const }
+  })
+
+  expect(hitTest.ok, JSON.stringify(hitTest)).toBe(true)
+})
+
 test('tab bar navigates while Mais sheet is open', async ({ page }) => {
   test.setTimeout(60_000)
   await page.setViewportSize({ width: 390, height: 844 })

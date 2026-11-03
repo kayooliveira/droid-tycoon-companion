@@ -690,7 +690,7 @@ html.theme-light .qty-badge {
   position: fixed;
   inset: 0;
   background: rgb(0 0 0 / 0.45);
-  z-index: 95;
+  z-index: calc(var(--z-index-overlay) - 2);
 }
 
 .dc-sheet {
@@ -698,7 +698,7 @@ html.theme-light .qty-badge {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 96;
+  z-index: calc(var(--z-index-overlay) - 1);
   background: var(--ui-raised);
   border-radius: 14px 14px 0 0;
   padding: 0 16px calc(20px + env(safe-area-inset-bottom, 0px));
