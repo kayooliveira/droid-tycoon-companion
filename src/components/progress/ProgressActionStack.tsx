@@ -12,7 +12,6 @@ export function ProgressActionStack({
   showForceComplete,
   onForceComplete,
   onUndo,
-  completeTestId = 'progress-complete-main',
 }: {
   showComplete: boolean
   completeDisabled?: boolean
@@ -22,7 +21,6 @@ export function ProgressActionStack({
   showForceComplete: boolean
   onForceComplete: () => void
   onUndo: () => void
-  completeTestId?: string
 }) {
   const { t } = useTranslation()
 
@@ -32,7 +30,7 @@ export function ProgressActionStack({
         <Button
           variant="primary"
           className="w-full min-h-12"
-          data-testid={completeTestId}
+          data-testid="progress-complete-main"
           disabled={completeDisabled}
           onClick={onComplete}
         >

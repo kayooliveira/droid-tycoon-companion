@@ -13,6 +13,7 @@ import { InsetGroup } from '../ui/InsetGroup'
 import { ProgressBar } from '../ui/ProgressBar'
 import { SellBadge } from '../ui/SellBadge'
 import { useAppStore } from '../../store/useAppStore'
+import { ScreenSection } from '../layout/ScreenSection'
 import { cn } from '../../lib/utils'
 
 function ownedFor(
@@ -211,9 +212,9 @@ export function ProgressRebirthList({
   const toggleAria = anyExpanded ? t('progress.collapseAllAria') : t('progress.expandAllAria')
 
   return (
-    <div className="space-y-3" data-testid="progress-rebirth-list">
-      <div className="dc-section-header-row">
-        <h2 className="dc-section-header">{t('progress.rebirthListSection')}</h2>
+    <ScreenSection className="gap-[var(--space-3)]" testId="progress-rebirth-list">
+      <div className="dc-section-header-row !mb-0">
+        <h2 className="dc-section-header !mb-0">{t('progress.rebirthListSection')}</h2>
         <button
           type="button"
           data-testid="progress-list-expand-all"
@@ -239,6 +240,6 @@ export function ProgressRebirthList({
           highlighted={highlightRebirth === rebirth}
         />
       ))}
-    </div>
+    </ScreenSection>
   )
 }

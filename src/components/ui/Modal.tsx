@@ -37,6 +37,7 @@ export function Modal({
   className,
   footer,
   testId = 'overlay-modal',
+  anchorAboveMobileNav = false,
 }: {
   open: boolean
   onClose: () => void
@@ -45,6 +46,7 @@ export function Modal({
   className?: string
   footer?: ReactNode
   testId?: string
+  anchorAboveMobileNav?: boolean
 }) {
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDivElement>(null)
@@ -65,54 +67,84 @@ export function Modal({
 
   if (!open) return null
 
+  const dialogBody = (
+    <div
+      ref={dialogRef}
+      tabIndex={-1}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={titleId}
+      className="bg-ui-modal backdrop-saturate-150 min-h-full outline-none text-ui-fg"
+    >
+      <div className="flex justify-center pt-2 sm:hidden" aria-hidden>
+        <span className="h-1 w-10 rounded-full bg-ui-handle" />
+      </div>
+      <div className="flex items-center justify-between gap-2 px-4 pt-3 pb-2 sm:px-5 sm:pt-4 border-b border-ui">
+        <h2 id={titleId} className="font-display text-base font-semibold tracking-wide text-balance text-ui-fg">
+          {title}
+        </h2>
+        <IconButton label={t('common.close')} onClick={onClose} data-testid={`${testId}-close`}>
+          <X {...uiIconProps} />
+        </IconButton>
+      </div>
+      <div className="px-4 py-4 sm:px-5 text-sm">{children}</div>
+      {footer ? (
+        <div className="px-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5 sm:pb-5 pt-0 flex flex-wrap gap-2 justify-end border-t border-ui-subtle">
+          {footer}
+        </div>
+      ) : null}
+    </div>
+  )
+
   return (
     <OverlayPortal>
       <div
         data-overlay-root
         data-testid={testId}
-        className="fixed inset-0 z-overlay flex items-end sm:items-center justify-center overlay-scrim backdrop-blur-md p-0 sm:p-4"
+        className={cn(
+          'fixed inset-0 z-overlay',
+          anchorAboveMobileNav && 'pointer-events-none',
+          !anchorAboveMobileNav && 'flex items-end sm:items-center justify-center overlay-scrim backdrop-blur-md p-0 sm:p-4',
+        )}
         role="presentation"
-        onMouseDown={(e) => {
-          if (e.target === e.currentTarget) onClose()
-        }}
+        onMouseDown={
+          anchorAboveMobileNav
+            ? undefined
+            : (e) => {
+                if (e.target === e.currentTarget) onClose()
+              }
+        }
       >
-        <Glass
-          as="div"
-          variant="regular"
+        {anchorAboveMobileNav ? (
+          <div
+            className="modal-above-mobile-nav-scrim overlay-scrim backdrop-blur-md"
+            role="presentation"
+            onMouseDown={(e) => {
+              if (e.target === e.currentTarget) onClose()
+            }}
+          />
+        ) : null}
+        <div
           className={cn(
-            'relative z-modal w-full sm:max-w-md max-h-[88dvh] overflow-auto',
-            'rounded-t-2xl sm:rounded-2xl',
-            'pb-[calc(env(safe-area-inset-bottom,0px)+12px)] sm:pb-[calc(env(safe-area-inset-bottom,0px)+12px)]',
-            className,
+            anchorAboveMobileNav
+              ? 'modal-above-mobile-nav-panel flex justify-center pointer-events-none'
+              : 'contents',
           )}
         >
-          <div
-            ref={dialogRef}
-            tabIndex={-1}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby={titleId}
-            className="bg-ui-modal backdrop-saturate-150 min-h-full outline-none text-ui-fg"
+          <Glass
+            as="div"
+            variant="regular"
+            className={cn(
+              'relative z-modal w-full overflow-auto pointer-events-auto',
+              anchorAboveMobileNav
+                ? 'max-h-[min(70dvh,calc(100dvh-var(--mobile-nav-clearance)-24px))] rounded-t-2xl'
+                : 'sm:max-w-md max-h-[88dvh] rounded-t-2xl sm:rounded-2xl pb-[calc(env(safe-area-inset-bottom,0px)+12px)] sm:pb-[calc(env(safe-area-inset-bottom,0px)+12px)]',
+              className,
+            )}
           >
-            <div className="flex justify-center pt-2 sm:hidden" aria-hidden>
-              <span className="h-1 w-10 rounded-full bg-ui-handle" />
-            </div>
-            <div className="flex items-center justify-between gap-2 px-4 pt-3 pb-2 sm:px-5 sm:pt-4 border-b border-ui">
-              <h2 id={titleId} className="font-display text-base font-semibold tracking-wide text-balance text-ui-fg">
-                {title}
-              </h2>
-              <IconButton label={t('common.close')} onClick={onClose} data-testid={`${testId}-close`}>
-                <X {...uiIconProps} />
-              </IconButton>
-            </div>
-            <div className="px-4 py-4 sm:px-5 text-sm">{children}</div>
-            {footer ? (
-              <div className="px-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5 sm:pb-5 pt-0 flex flex-wrap gap-2 justify-end border-t border-ui-subtle">
-                {footer}
-              </div>
-            ) : null}
-          </div>
-        </Glass>
+            {dialogBody}
+          </Glass>
+        </div>
       </div>
     </OverlayPortal>
   )

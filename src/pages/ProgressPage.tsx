@@ -208,9 +208,6 @@ export function ProgressPage() {
             showForceComplete={trackInventory && !canComplete && !isPathComplete(progress)}
             onForceComplete={() => setForceCompleteOpen(true)}
             onUndo={() => setUndoOpen(true)}
-            completeTestId={
-              canSuperRebirth(progress) ? 'progress-complete-main' : 'progress-complete-main'
-            }
           />
         </>
       ) : (

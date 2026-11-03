@@ -51,3 +51,57 @@ test('mobile tab bar navigates reliably under rapid taps', async ({ page }) => {
     await expect(page.getByTestId('home-hub')).toBeVisible({ timeout: 15_000 })
   }
 })
+
+test('tab bar navigates while Mais sheet is open', async ({ page }) => {
+  test.setTimeout(60_000)
+  await page.setViewportSize({ width: 390, height: 844 })
+  await seed(page)
+
+  const tabTestId = (path: string) =>
+    path === '/' ? 'mobile-nav-home' : `mobile-nav-${path.slice(1)}`
+
+  const tapTab = async (path: string) => {
+    const id = tabTestId(path)
+    await page.waitForSelector(`[data-testid="${id}"]`, { state: 'attached' })
+    await page.evaluate((testId) => {
+      const el = document.querySelector(`[data-testid="${testId}"]`) as HTMLButtonElement | null
+      el?.click()
+    }, id)
+  }
+
+  const tabsWithSheetOpen = [
+    { path: '/progress', hub: 'progress-page' },
+    { path: '/inventory', hub: 'inventory-page' },
+    { path: '/cycles', hub: 'cycles-page' },
+  ] as const
+
+  for (const tab of tabsWithSheetOpen) {
+    await page.goto('/inventory')
+    await page.getByTestId('mobile-more-nav').click()
+    await expect(page.getByTestId('nav-more-modal')).toBeVisible()
+
+    await tapTab(tab.path)
+    await expect(page.getByTestId('nav-more-modal')).toHaveCount(0, { timeout: 8000 })
+    await expect(page).not.toHaveURL(/\/settings/)
+    await expect(page).toHaveURL(new RegExp(`${tab.path}(\\?|$)`), { timeout: 10_000 })
+    await expect(page.getByTestId(tab.hub)).toBeVisible({ timeout: 15_000 })
+  }
+
+  await page.goto('/cycles')
+  await page.getByTestId('mobile-more-nav').click()
+  await expect(page.getByTestId('nav-more-modal')).toBeVisible()
+  await tapTab('/')
+  await expect(page.getByTestId('nav-more-modal')).toHaveCount(0, { timeout: 8000 })
+  await expect(page).toHaveURL(/\/$/)
+  await expect(page.getByTestId('home-hub')).toBeVisible()
+
+  await page.goto('/inventory')
+  const tapMore = () =>
+    page.evaluate(() => {
+      ;(document.querySelector('[data-testid="mobile-more-nav"]') as HTMLButtonElement | null)?.click()
+    })
+  await tapMore()
+  await expect(page.getByTestId('nav-more-modal')).toBeVisible()
+  await tapMore()
+  await expect(page.getByTestId('nav-more-modal')).toHaveCount(0, { timeout: 8000 })
+})
