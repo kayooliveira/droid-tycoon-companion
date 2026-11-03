@@ -57,7 +57,7 @@ export function Sheet({
           <div className="dc-sheet-grabber" aria-hidden />
           <IconButton
             label={closeLabel}
-            className="absolute right-3 top-1 z-[1]"
+            className="absolute right-3 top-1 z-10"
             data-testid={testId ? `${testId}-close` : 'sheet-close'}
             onClick={onClose}
           >

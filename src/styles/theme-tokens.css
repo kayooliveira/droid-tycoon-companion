@@ -381,9 +381,9 @@ html.theme-light {
   }
 
   .toast-stack--sheet-open {
-    top: auto;
-    bottom: calc(var(--mobile-nav-clearance) + min(70dvh, calc(100dvh - var(--mobile-nav-clearance) - 24px)) + var(--space-2));
-    padding-bottom: var(--space-2);
+    top: calc(env(safe-area-inset-top, 0px) + 8px);
+    bottom: auto;
+    z-index: calc(var(--z-index-modal) - 1);
   }
 
   .toast-surface {

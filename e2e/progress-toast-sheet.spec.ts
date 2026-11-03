@@ -67,7 +67,17 @@ test.describe('Progresso inventory toasts and sheet', () => {
     await expect(page.getByTestId('toast-item')).toBeVisible()
     await page.getByTestId('progress-droid-row-open').first().click()
     await expect(page.getByTestId('droid-detail-sheet')).toBeVisible()
-    await page.getByTestId('droid-detail-sheet-close').click()
+    const close = page.getByTestId('droid-detail-sheet-close')
+    await expect(close).toBeVisible()
+    const hitTarget = await page.evaluate(() => {
+      const btn = document.querySelector('[data-testid="droid-detail-sheet-close"]')
+      if (!btn) return null
+      const r = btn.getBoundingClientRect()
+      const el = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)
+      return el?.closest('[data-testid]')?.getAttribute('data-testid') ?? el?.tagName ?? null
+    })
+    expect(hitTarget).toBe('droid-detail-sheet-close')
+    await close.click()
     await expect(page.getByTestId('droid-detail-sheet')).toHaveCount(0, { timeout: 8000 })
   })
 })

@@ -249,9 +249,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         <div
           data-testid="toast-stack"
           className={cn(
-            'toast-stack pointer-events-none fixed inset-x-0 z-toast mx-auto flex w-[calc(100%-24px)] max-w-[360px] flex-col gap-2 px-0',
+            'toast-stack pointer-events-none fixed inset-x-0 mx-auto flex w-[calc(100%-24px)] max-w-[360px] flex-col gap-2 px-0',
             'top-[calc(env(safe-area-inset-top,0px)+8px)]',
-            sheetOpen && 'toast-stack--sheet-open',
+            sheetOpen ? 'toast-stack--sheet-open' : 'z-toast',
           )}
         >
           <AnimatePresence mode="popLayout">
