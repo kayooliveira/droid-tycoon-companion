@@ -55,6 +55,7 @@ test.describe('PR15 final viewport artifacts', () => {
     await page.screenshot({ path: path.join(ARTIFACTS, 'mobile-dark-motrak.png'), fullPage: false })
 
     await page.getByTestId('progress-droid-search-input').fill('')
+    await page.getByText('Renascimento #8 agora').scrollIntoViewIfNeeded()
     await expect(page.getByTestId('requirement-inventory-stepper').first()).toBeVisible()
     await page.screenshot({ path: path.join(ARTIFACTS, 'mobile-dark-steppers.png'), fullPage: false })
 

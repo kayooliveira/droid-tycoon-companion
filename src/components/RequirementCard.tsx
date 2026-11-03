@@ -43,7 +43,7 @@ export function RequirementCard({
           <Badge tone="info" className="shrink-0">
             {formatTierName(check.requirement.rarity, tierLabels)}
           </Badge>
-          {trackInventory ? (
+          {trackInventory && !showStepper ? (
             <Badge tone={statusTone[check.status] ?? 'default'} className="shrink-0">
               {t(`status.${check.status}`)}
             </Badge>
