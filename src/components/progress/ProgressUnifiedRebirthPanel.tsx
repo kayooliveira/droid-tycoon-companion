@@ -54,10 +54,7 @@ export function ProgressUnifiedRebirthPanel({
       <h2 className="dc-section-header">
         {t('progress.listRebirthHeading', { n: rebirth })}
       </h2>
-      <InsetGroup
-        footer={t('progress.unifiedListFooter')}
-        testId="progress-unified-group"
-      >
+      <InsetGroup testId="progress-unified-group">
         {checks.map((c) => {
           const d = droidById.get(c.requirement.droidId)
           if (!d) return null

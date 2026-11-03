@@ -51,6 +51,19 @@ describe('useProgressListExpansion', () => {
     expect(persist).toHaveBeenCalledWith(true)
   })
 
+  it('toggleAll collapses when only some steps are expanded', () => {
+    const persist = vi.fn()
+    const { result } = renderHook(() =>
+      useProgressListExpansion(STEPS, 'path-1', true, persist),
+    )
+    act(() => result.current.toggleOne(2))
+    expect(result.current.allExpanded).toBe(false)
+    act(() => result.current.toggleAll())
+    expect(result.current.allExpanded).toBe(false)
+    expect(result.current.anyExpanded).toBe(false)
+    expect(persist).toHaveBeenCalledWith(false)
+  })
+
   it('individual toggle still works when list starts expanded', () => {
     const { result } = renderHook(() =>
       useProgressListExpansion(STEPS, 'path-1', true, vi.fn()),

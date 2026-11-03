@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { ArrowCounterClockwise, DotsThreeVertical } from '@phosphor-icons/react'
-import { uiIconProps } from '../components/ui/iconStyle'
 import { useTranslation } from 'react-i18next'
 import {
   cycleById,
@@ -16,7 +14,6 @@ import {
   canCompleteRebirth,
   canSuperRebirth,
   isPathComplete,
-  SUPER_REBIRTH_UNLOCK_AFTER,
 } from '../domain/progress'
 import { formatTierName } from '../domain/tiers'
 import { useTierLabels } from '../i18n/useTierLabels'
@@ -37,8 +34,8 @@ import {
   pathIdFromCycleNumber,
 } from '../domain/progressDroidSearch'
 import { ProgressPdfExport } from '../components/ProgressPdfExport'
-import { HelpHint } from '../components/ui/HelpHint'
-import { IconButton } from '../components/ui/IconButton'
+import { ProgressActionStack } from '../components/progress/ProgressActionStack'
+import { ScreenSummaryCard } from '../components/layout/ScreenSummaryCard'
 import { hapticTap } from '../lib/haptics'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
 import { DroidDetailSheet } from '../components/droid/DroidDetailSheet'
@@ -50,7 +47,6 @@ export function ProgressPage() {
   const tierLabels = useTierLabels()
   const [forceCompleteOpen, setForceCompleteOpen] = useState(false)
   const [undoOpen, setUndoOpen] = useState(false)
-  const [moreOpen, setMoreOpen] = useState(false)
   const [superConfirmOpen, setSuperConfirmOpen] = useState(false)
   const [droidDetail, setDroidDetail] = useState<{
     droidId: string
@@ -163,24 +159,27 @@ export function ProgressPage() {
 
   return (
     <TabScrollLayout title={t('nav.progress')} testId="progress-page">
-      <InsetGroup footer={t('progress.workingOn', { n: progress.nextRebirth })}>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{cycleLabel(progress.pathId)}</span>
-            <span className="dc-row-sub">
-              <PathProgressSwitcher compact />
-            </span>
+      <ScreenSummaryCard testId="progress-summary">
+          <div className="dc-row">
+            <div className="dc-row-main">
+              <span className="dc-row-label">{cycleLabel(progress.pathId)}</span>
+              <span className="dc-row-sub">
+                <PathProgressSwitcher compact />
+              </span>
+            </div>
           </div>
-        </div>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('progress.pathProgress')}</span>
-            <span className="dc-row-sub">
-              <ProgressSummaryLine />
-            </span>
+          <div className="dc-row">
+            <div className="dc-row-main">
+              <span className="dc-row-label">{t('progress.pathProgress')}</span>
+              <span className="dc-row-sub">
+                <ProgressSummaryLine />
+              </span>
+              <span className="dc-row-sub text-ui-muted">
+                {t('progress.workingOn', { n: progress.nextRebirth })}
+              </span>
+            </div>
           </div>
-        </div>
-      </InsetGroup>
+      </ScreenSummaryCard>
 
       <ProgressDroidSearch initialQuery={searchQueryFromUrl} onNavigateToStep={goToRebirthStep} />
 
@@ -200,63 +199,19 @@ export function ProgressPage() {
             trackInventory={trackInventory}
             onOpenDroid={openDroidDetail}
           />
-          {canSuperRebirth(progress) ? (
-            <div className="flex flex-col gap-2 px-4 w-full min-w-0" data-testid="progress-super-actions">
-              <Button
-                variant="accent"
-                className="w-full min-h-12"
-                data-testid="progress-super-cta"
-                onClick={() => setSuperConfirmOpen(true)}
-              >
-                {t('progress.superRebirthCta')}
-              </Button>
-              <div className="flex items-center gap-2 w-full min-w-0">
-                {!isPathComplete(progress) ? (
-                  <Button
-                    onClick={handleCompleteClick}
-                    disabled={trackInventory && !canComplete}
-                    className="flex-1 min-w-0"
-                  >
-                    {t('progress.completeShort')}
-                  </Button>
-                ) : null}
-                <IconButton
-                  variant="soft"
-                  className="shrink-0"
-                  data-testid="progress-more-trigger"
-                  label={t('progress.moreActionsTitle')}
-                  onClick={() => setMoreOpen(true)}
-                >
-                  <DotsThreeVertical {...uiIconProps} />
-                </IconButton>
-              </div>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2 px-4 w-full min-w-0">
-              <Button
-                className="btn-wide !mx-0 flex-1"
-                onClick={handleCompleteClick}
-                disabled={trackInventory && !canComplete}
-                data-testid="progress-complete-main"
-              >
-                {t('progress.completeShort')}
-              </Button>
-              <HelpHint
-                testId="progress-super-hint"
-                label={t('progress.superShort')}
-                text={t('progress.superHint', { n: SUPER_REBIRTH_UNLOCK_AFTER })}
-              />
-              <IconButton
-                variant="soft"
-                className="shrink-0"
-                data-testid="progress-more-trigger"
-                label={t('progress.moreActionsTitle')}
-                onClick={() => setMoreOpen(true)}
-              >
-                <DotsThreeVertical {...uiIconProps} />
-              </IconButton>
-            </div>
-          )}
+          <ProgressActionStack
+            showComplete={!isPathComplete(progress)}
+            completeDisabled={trackInventory && !canComplete}
+            onComplete={handleCompleteClick}
+            showSuper={canSuperRebirth(progress)}
+            onSuper={() => setSuperConfirmOpen(true)}
+            showForceComplete={trackInventory && !canComplete && !isPathComplete(progress)}
+            onForceComplete={() => setForceCompleteOpen(true)}
+            onUndo={() => setUndoOpen(true)}
+            completeTestId={
+              canSuperRebirth(progress) ? 'progress-complete-main' : 'progress-complete-main'
+            }
+          />
         </>
       ) : (
         <p className="text-sm text-ui-muted px-4">
@@ -285,63 +240,6 @@ export function ProgressPage() {
         quantity={droidDetail?.qty}
         sellable={droidDetail?.sellable}
       />
-
-      <Modal
-        open={moreOpen}
-        onClose={() => setMoreOpen(false)}
-        title={t('progress.moreActionsTitle')}
-        testId="progress-more-modal"
-        footer={
-          <Button
-            variant="secondary"
-            size="sm"
-            data-testid="progress-more-cancel"
-            onClick={() => setMoreOpen(false)}
-          >
-            {t('path.cancel')}
-          </Button>
-        }
-      >
-        <div className="flex flex-col gap-2">
-          {trackInventory && !canComplete ? (
-            <Button
-              size="sm"
-              variant="secondary"
-              data-testid="progress-more-force-complete"
-              onClick={() => {
-                setMoreOpen(false)
-                setForceCompleteOpen(true)
-              }}
-            >
-              {t('progress.completeAnyway')}
-            </Button>
-          ) : null}
-          <Button
-            size="sm"
-            variant="secondary"
-            data-testid="progress-more-undo"
-            icon={<ArrowCounterClockwise {...uiIconProps} />}
-            onClick={() => {
-              setMoreOpen(false)
-              setUndoOpen(true)
-            }}
-          >
-            {t('progress.undoOne')}
-          </Button>
-          {canSuperRebirth(progress) ? (
-            <Button
-              size="sm"
-              variant="accent"
-              onClick={() => {
-                setMoreOpen(false)
-                setSuperConfirmOpen(true)
-              }}
-            >
-              {t('progress.superRebirthCta')}
-            </Button>
-          ) : null}
-        </div>
-      </Modal>
 
       <Modal
         open={forceCompleteOpen}

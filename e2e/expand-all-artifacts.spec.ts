@@ -41,7 +41,7 @@ async function openProgressList(page: Page) {
   await page.goto('/progress', { waitUntil: 'domcontentloaded', timeout: 45_000 })
   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: 25_000 })
   await expect(page.getByTestId('progress-page')).toBeVisible({ timeout: 25_000 })
-  await page.getByRole('radio', { name: 'Lista' }).click()
+  await page.getByTestId('progress-rebirth-list').scrollIntoViewIfNeeded()
   await expect(page.getByTestId('progress-rebirth-list')).toBeVisible({ timeout: 15_000 })
   await expect(page.getByTestId('progress-list-expand-all')).toBeVisible()
 }

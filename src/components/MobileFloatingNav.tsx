@@ -5,6 +5,7 @@ import { Backpack, List, MapTrifold, SquaresFour, TreeStructure } from '@phospho
 import { UI_ICON_WEIGHT } from './ui/iconStyle'
 import { Glass } from './ui/Glass'
 import { cn } from '../lib/utils'
+import { persistLastTab } from '../hooks/useLastTab'
 
 const INDICATOR_INSET_X = 3
 const INDICATOR_INSET_Y = 4
@@ -115,7 +116,15 @@ export function MobileFloatingNav({ onMore }: { onMore: () => void }) {
                   <NavLink
                     to={tab.to}
                     end={'end' in tab ? tab.end : false}
-                    className={cn(slotClass, 'w-full')}
+                    data-testid={
+                      tab.to === '/'
+                        ? 'mobile-nav-home'
+                        : `mobile-nav-${String(tab.to).slice(1)}`
+                    }
+                    className={cn(slotClass, 'w-full relative z-20 touch-manipulation')}
+                    onClick={() => {
+                      if (typeof tab.to === 'string') persistLastTab(tab.to)
+                    }}
                   >
                     <Icon size={20} weight={isActive ? 'fill' : UI_ICON_WEIGHT} />
                     <span className="leading-tight px-0.5 truncate max-w-full">{t(tab.labelKey)}</span>

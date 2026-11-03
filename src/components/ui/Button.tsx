@@ -1,12 +1,13 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import { cn } from '../../lib/utils'
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'accent'
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'accent' | 'accentSoft'
 type Size = 'sm' | 'md' | 'icon'
 
 const variants: Record<Variant, string> = {
   primary: 'btn-filled',
   accent: 'btn-filled',
+  accentSoft: 'btn-accent-soft rounded-xl border',
   secondary: 'ui-btn-secondary border rounded-xl',
   ghost: 'ui-btn-ghost rounded-xl',
   danger: 'bg-red-600/90 hover:bg-red-500 text-white rounded-xl',

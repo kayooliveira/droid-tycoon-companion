@@ -67,8 +67,7 @@ async function completeRebirthWithToast(page: Page) {
   if (await complete.isEnabled()) {
     await complete.click()
   } else {
-    await page.getByTestId('progress-more-trigger').click()
-    await page.getByTestId('progress-more-force-complete').click()
+    await page.getByTestId('progress-force-complete-inline').click()
     await page.getByTestId('progress-force-confirm').click()
   }
   await settleToast(page)

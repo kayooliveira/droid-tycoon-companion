@@ -1,4 +1,4 @@
-import { CaretRight, MagnifyingGlass, X } from '@phosphor-icons/react'
+import { CaretRight } from '@phosphor-icons/react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { cycleById, droidById, gameData } from '../../domain/gameData'
@@ -20,6 +20,7 @@ import { cn } from '../../lib/utils'
 import { useAppStore } from '../../store/useAppStore'
 import { DroidImage } from '../DroidImage'
 import { Badge } from '../ui/Badge'
+import { SearchInput } from '../ui/SearchInput'
 import { uiIconProps } from '../ui/iconStyle'
 
 export type ProgressNavTarget = { pathId: string; rebirth: number }
@@ -86,20 +87,13 @@ export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: Pro
     cycleDisplayNameForId(pathId, cycleById.get(pathId)?.name ?? pathId, i18n.language)
 
   return (
-    <div className="space-y-3 mb-4" data-testid="progress-droid-search">
+    <div className="dc-screen-stack-item" data-testid="progress-droid-search">
       <label className="sr-only" htmlFor="progress-droid-search-input">
         {t('progress.search.label')}
       </label>
-      <div className="dc-search-wrap relative">
-        <MagnifyingGlass
-          {...uiIconProps}
-          className="absolute left-7 top-1/2 -translate-y-1/2 size-5 text-ui-muted pointer-events-none z-[1]"
-          aria-hidden
-        />
-        <input
+      <div className="dc-search-wrap">
+        <SearchInput
           id="progress-droid-search-input"
-          type="search"
-          enterKeyHint="search"
           autoComplete="off"
           spellCheck={false}
           value={query}
@@ -107,20 +101,11 @@ export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: Pro
           placeholder={t('progress.search.placeholder')}
           aria-controls="progress-droid-search-results"
           aria-expanded={effectiveQuery.length > 0}
-          className="dc-search !pl-10 !pr-10 appearance-none [-webkit-appearance:none] [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden [&::-ms-clear]:hidden"
           data-testid="progress-droid-search-input"
+          clearLabel={t('progress.search.clear')}
+          clearTestId="progress-droid-search-clear"
+          onClear={() => setQuery('')}
         />
-        {query ? (
-          <button
-            type="button"
-            aria-label={t('progress.search.clear')}
-            data-testid="progress-droid-search-clear"
-            onClick={() => setQuery('')}
-            className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex size-7 items-center justify-center rounded-full text-ui-muted hover:text-ui-fg hover:bg-ui-hover/80 transition-colors"
-          >
-            <X {...uiIconProps} className="size-4" />
-          </button>
-        ) : null}
       </div>
 
       <div id="progress-droid-search-results" className="space-y-3">

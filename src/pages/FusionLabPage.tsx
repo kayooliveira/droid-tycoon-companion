@@ -9,6 +9,7 @@ import { droidMatchesQuery } from '../lib/droidNameMatch'
 import { useAppStore } from '../store/useAppStore'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
 import { InsetGroup } from '../components/ui/InsetGroup'
+import { SearchInput } from '../components/ui/SearchInput'
 
 const FUSION_RULE_KEY: Record<string, string> = {
   'tier-up': 'fusion.rules.tierUp',
@@ -85,8 +86,7 @@ export function FusionLabPage() {
 
       <h2 className="dc-section-header">{t('fusion.recipes')}</h2>
       <div className="dc-search-wrap">
-        <input
-          className="dc-search"
+        <SearchInput
           placeholder={t('fusion.search')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
