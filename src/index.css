@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;600;700&display=swap');
 @import 'tailwindcss';
 @import './styles/theme-tokens.css';
-@import './styles/design-tokens.css';
 
 @theme {
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
@@ -76,8 +75,7 @@
 @layer utilities {
   /* Solid content cards (not glass) */
   .surface-card {
-    @apply rounded-[var(--radius-glass)] shadow-sm;
-    background-color: var(--ui-raised);
+    @apply rounded-[var(--radius-glass)] bg-ui-raised shadow-sm;
     border: 1px solid var(--ui-border);
   }
 
