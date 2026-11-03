@@ -47,6 +47,7 @@ function sanitize(partial: Partial<PersistedState>): PersistedState {
       ...settingsIn,
       locale: settingsIn.locale === 'pt-BR' ? 'pt-BR' : 'en',
       localeSource: settingsIn.localeSource === 'user' ? 'user' : 'auto',
+      progressListAllExpanded: settingsIn.progressListAllExpanded !== false,
     },
     lastSavedAt: partial.lastSavedAt ?? new Date().toISOString(),
   }

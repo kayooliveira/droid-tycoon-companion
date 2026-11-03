@@ -63,6 +63,10 @@
     "undoConfirmShort": "Desfazer",
     "moreActionsTitle": "Mais ações",
     "listRebirthHeading": "Renascimento #{{n}}",
+    "collapseAll": "Recolher todos",
+    "expandAll": "Expandir todos",
+    "collapseAllAria": "Recolher todos os renascimentos da lista",
+    "expandAllAria": "Expandir todos os renascimentos da lista",
     "superConfirmTitle": "Super Renascimento?",
     "superConfirmBody": "Você sai do {{currentCycle}} e entra no {{nextCycle}}. O renascimento #{{currentStep}} fica fechado no app e o novo ciclo começa do #1. Não dá para desfazer."
   },
