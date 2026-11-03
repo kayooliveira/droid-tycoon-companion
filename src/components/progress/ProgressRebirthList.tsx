@@ -85,7 +85,10 @@ const RebirthListItem = memo(function RebirthListItem({
       {open ? (
         <div className="mt-3 space-y-2 border-t border-ui pt-3">
           {entry.note ? <p className="text-xs text-ui-warn/90">{entry.note}</p> : null}
-          {!done && checks.map((c) => <RequirementCard key={c.requirement.droidId} check={c} />)}
+          {!done &&
+            checks.map((c) => (
+              <RequirementCard key={c.requirement.droidId} check={c} trackInventory={trackInventory} />
+            ))}
           {!done && trackInventory ? (
             <ProgressBar value={(metRequirementCount(checks) / 3) * 100} />
           ) : null}

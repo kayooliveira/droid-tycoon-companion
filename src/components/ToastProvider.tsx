@@ -4,10 +4,13 @@ import { OverlayPortal } from './ui/OverlayPortal'
 
 type ToastAction = { label: string; onClick: () => void }
 
-type Toast = { id: string; message: string; action?: ToastAction; sticky?: boolean }
+type Toast = { id: string; message: string; action?: ToastAction; sticky?: boolean; replaceKey?: string }
 
 const ToastContext = createContext<{
-  push: (message: string, options?: { action?: ToastAction; sticky?: boolean }) => void
+  push: (
+    message: string,
+    options?: { action?: ToastAction; sticky?: boolean; replaceKey?: string },
+  ) => void
 } | null>(null)
 
 export function ToastProvider({ children }: { children: ReactNode }) {
@@ -18,10 +21,26 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const push = useCallback(
-    (message: string, options?: { action?: ToastAction; sticky?: boolean }) => {
+    (
+      message: string,
+      options?: { action?: ToastAction; sticky?: boolean; replaceKey?: string },
+    ) => {
       const id = crypto.randomUUID()
       setToasts((prev) => {
-        const next = [...prev, { id, message, action: options?.action, sticky: options?.sticky }]
+        const filtered =
+          options?.replaceKey != null
+            ? prev.filter((t) => t.replaceKey !== options.replaceKey)
+            : prev
+        const next = [
+          ...filtered,
+          {
+            id,
+            message,
+            action: options?.action,
+            sticky: options?.sticky,
+            replaceKey: options?.replaceKey,
+          },
+        ]
         return next.slice(-2)
       })
       if (!options?.sticky) {

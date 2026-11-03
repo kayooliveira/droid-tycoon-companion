@@ -1,5 +1,3 @@
-import { Plus } from '@phosphor-icons/react'
-import { uiIconProps } from './ui/iconStyle'
 import { useTranslation } from 'react-i18next'
 import { droidById } from '../domain/gameData'
 import { formatTierName } from '../domain/tiers'
@@ -7,8 +5,8 @@ import { useTierLabels } from '../i18n/useTierLabels'
 import type { RequirementCheck } from '../domain/requirements'
 import { useAppStore } from '../store/useAppStore'
 import { DroidImage } from './DroidImage'
+import { RequirementInventoryControls } from './RequirementInventoryControls'
 import { Badge } from './ui/Badge'
-import { Button } from './ui/Button'
 import { GlassCard } from './ui/GlassCard'
 
 const statusTone: Record<string, 'success' | 'warn' | 'danger' | 'info' | 'default'> = {
@@ -20,13 +18,21 @@ const statusTone: Record<string, 'success' | 'warn' | 'danger' | 'info' | 'defau
   upgrade: 'warn',
 }
 
-export function RequirementCard({ check }: { check: RequirementCheck }) {
+export function RequirementCard({
+  check,
+  trackInventory: trackInventoryOverride,
+}: {
+  check: RequirementCheck
+  trackInventory?: boolean
+}) {
   const { t } = useTranslation()
   const tierLabels = useTierLabels()
-  const markOwned = useAppStore((s) => s.markDroidOwned)
-  const trackInventory = useAppStore((s) => s.settings.trackInventory)
+  const trackFromStore = useAppStore((s) => s.settings.trackInventory)
+  const trackInventory = trackInventoryOverride ?? trackFromStore
   const droid = droidById.get(check.requirement.droidId)
   if (!droid) return null
+
+  const showControls = trackInventory && (check.status !== 'ready' || check.ownedCount > 0)
 
   return (
     <GlassCard className="flex gap-3 items-center">
@@ -48,15 +54,16 @@ export function RequirementCard({ check }: { check: RequirementCheck }) {
           </p>
         ) : null}
       </div>
-      {trackInventory && check.status !== 'ready' ? (
-        <Button
-          variant="secondary"
-          className="shrink-0 px-3"
-          onClick={() => markOwned(check.requirement.droidId, check.requirement.rarity)}
-          aria-label={t('a11y.markOwned', { name: droid.name })}
-        >
-          <Plus {...uiIconProps} />
-        </Button>
+      {showControls ? (
+        <RequirementInventoryControls
+          droidId={check.requirement.droidId}
+          droidName={droid.name}
+          tier={check.requirement.rarity}
+          ownedCount={check.ownedCount}
+          neededCount={check.neededCount}
+          showDecrement={check.ownedCount > 0}
+          allowIncrement={check.status !== 'ready'}
+        />
       ) : null}
     </GlassCard>
   )

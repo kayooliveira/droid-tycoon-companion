@@ -31,7 +31,7 @@ type ProgressDroidSearchProps = {
 }
 
 const SEARCH_INPUT_CLASS =
-  'w-full rounded-xl bg-ui-field border border-ui pl-10 pr-10 py-3 text-base min-h-11 text-ui-fg placeholder:text-ui-muted appearance-none [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden'
+  'w-full rounded-xl bg-ui-field border border-ui pl-10 pr-10 py-3 text-base min-h-11 text-ui-fg placeholder:text-ui-muted appearance-none [-webkit-appearance:none] [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden [&::-ms-clear]:hidden'
 
 export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: ProgressDroidSearchProps) {
   const { t, i18n } = useTranslation()

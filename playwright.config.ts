@@ -9,7 +9,7 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'npm run preview',
+    command: 'npm run preview:e2e',
     port: 4173,
     reuseExistingServer: !process.env.CI,
   },

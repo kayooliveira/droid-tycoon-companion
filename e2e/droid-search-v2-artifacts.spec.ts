@@ -63,10 +63,15 @@ test.describe('droid search v2 viewport artifacts', () => {
     await openProgressSearch(page)
     await page.getByTestId('progress-droid-search-input').fill('motrak')
     await expect(page.getByTestId('progress-search-path-path-1')).toBeVisible({ timeout: 8000 })
+    const searchPanel = page.getByTestId('progress-droid-search')
+    await expect(searchPanel.getByText('Depois')).toHaveCount(0)
+    await expect(searchPanel.getByText(/Abrir Ciclo/i)).toHaveCount(0)
+    await expect(page.getByTestId('progress-droid-search-clear')).toBeVisible()
     await viewportShot(page, 'mobile-dark-motrak.png')
 
     await page.getByTestId('progress-droid-search-input').fill('whl-ex')
     await expect(page.getByTestId('progress-droid-search-never')).toBeVisible({ timeout: 8000 })
+    await expect(page.getByText('Pode vender sem medo.')).toBeVisible()
     await viewportShot(page, 'mobile-dark-never-needed.png')
 
     await seedOnboarded(page, 'light')
