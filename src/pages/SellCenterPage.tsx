@@ -87,7 +87,7 @@ export function SellCenterPage() {
           <span className="dc-droid-name dc-row-label">{name}</span>
           <span className="dc-row-sub dc-row-sub--badge">
             <span className="dc-row-sub-meta">
-              {formatTierName(item.tier, tierLabels)} · ×{item.quantity}
+              {`${formatTierName(item.tier, tierLabels)} · ${t('progress.qtyShort', { n: item.quantity })}`}
             </span>
             <SellBadge sellable={sellable} />
           </span>
