@@ -50,14 +50,21 @@ export function OnboardingPage() {
     setOnboardingComplete(true)
     try {
       localStorage.setItem('droiddeck:onboardingDone', '1')
-    } catch {}
+    } catch {
+      void 0
+    }
     navigate('/')
   }, [navigate, setOnboardingComplete])
 
   const skip = finish
 
   return (
-    <div className="ob-page" data-testid={`onboarding-step-${current.id}`}>
+    <div
+      className="ob-page"
+      data-testid="onboarding-shell"
+      data-onboarding-step={current.id}
+    >
+      <div className="ob-page-inner" data-testid={`onboarding-step-${current.id}`}>
       <button type="button" className="ob-skip" data-testid="onboarding-skip" onClick={skip}>
         {t('onboarding.skip')}
       </button>
@@ -90,6 +97,7 @@ export function OnboardingPage() {
           {isRerun ? t('onboarding.doneRerun') : t('onboarding.enter')}
         </Button>
       )}
+      </div>
     </div>
   )
 }

@@ -3,13 +3,16 @@ import path from 'node:path'
 import {
   auditInventoryCards,
   collectHorizontalOverflow,
+  heavyAppState,
   seedHeavyStore,
+  STORE_KEY,
 } from './overflowHelpers'
 
 const ARTIFACTS = '/opt/cursor/artifacts/overflow'
 const INVENTORY_FIX_ARTIFACTS = '/opt/cursor/artifacts/inventory-fix'
 
 const ROUTES: Array<{ path: string; testId: string; wait?: (page: import('@playwright/test').Page) => Promise<void> }> = [
+  { path: '/onboarding', testId: 'onboarding-step-welcome' },
   { path: '/', testId: 'home-hub' },
   { path: '/progress', testId: 'progress-page' },
   { path: '/cycles', testId: 'cycles-page' },
@@ -38,7 +41,22 @@ async function openRoute(
   route: (typeof ROUTES)[number],
   theme: 'dark' | 'light',
 ) {
-  await seedHeavyStore(page, theme)
+  if (route.path === '/onboarding') {
+    await page.goto('/onboarding')
+    await page.evaluate(
+      ({ key, state }) => {
+        localStorage.clear()
+        localStorage.setItem(
+          key,
+          JSON.stringify({ state: { ...state, onboardingComplete: false }, version: 0 }),
+        )
+      },
+      { key: STORE_KEY, state: heavyAppState(theme) },
+    )
+    await page.reload()
+  } else {
+    await seedHeavyStore(page, theme)
+  }
   await page.goto(route.path, { waitUntil: 'domcontentloaded', timeout: 45_000 })
   if (theme === 'light') {
     await expect(page.locator('html')).toHaveClass(/theme-light/, { timeout: 10_000 })

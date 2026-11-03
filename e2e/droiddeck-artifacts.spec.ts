@@ -67,7 +67,7 @@ async function seedOnboarding(
 async function waitOnboardingStep(page: import('@playwright/test').Page, step: string) {
   const testId = `onboarding-step-${step}`
   await page.getByTestId(testId).waitFor({ state: 'visible', timeout: 15000 })
-  await page.getByTestId(testId).getByTestId('onboarding-heading').waitFor({ state: 'visible' })
+  await page.getByTestId('onboarding-heading').waitFor({ state: 'visible' })
   await page.waitForTimeout(120)
 }
 
@@ -105,16 +105,16 @@ test('DroidDeck UX artifacts at 390x844', async ({ page, browser }) => {
   await waitOnboardingStep(page, 'welcome')
   await page.screenshot({ path: path.join(ARTIFACTS, 'onboarding-1.png') })
 
-  await page.getByTestId('onboarding-start').click()
-  await waitOnboardingStep(page, 'cycle')
+  await page.getByTestId('onboarding-next').click()
+  await waitOnboardingStep(page, 'cycles')
   await page.screenshot({ path: path.join(ARTIFACTS, 'onboarding-2.png') })
 
   await page.getByTestId('onboarding-next').click()
-  await waitOnboardingStep(page, 'progress')
+  await waitOnboardingStep(page, 'inventory')
   await page.screenshot({ path: path.join(ARTIFACTS, 'onboarding-3.png') })
 
   await page.getByTestId('onboarding-next').click()
-  await waitOnboardingStep(page, 'features')
+  await waitOnboardingStep(page, 'progress')
   await page.screenshot({ path: path.join(ARTIFACTS, 'onboarding-4.png') })
 
   await finishOnboardingSkip(page)

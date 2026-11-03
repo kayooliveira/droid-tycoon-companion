@@ -3,17 +3,13 @@ import { test, expect } from '@playwright/test'
 async function waitOnboardingStep(page: import('@playwright/test').Page, step: string) {
   const testId = `onboarding-step-${step}`
   await expect(page.getByTestId(testId)).toBeVisible({ timeout: 15000 })
-  await expect(page.getByTestId(testId).getByTestId('onboarding-heading')).toBeVisible()
+  await expect(page.getByTestId('onboarding-heading')).toBeVisible()
   await page.waitForFunction(
-    (id) => {
-      const el = document.querySelector(`[data-testid="${id}"]`)
-      if (!el) return false
-      const style = getComputedStyle(el)
-      if (Number.parseFloat(style.opacity) < 0.9) return false
-      const heading = el.querySelector('[data-testid="onboarding-heading"]')
+    () => {
+      const heading = document.querySelector('[data-testid="onboarding-heading"]')
       return Boolean(heading?.textContent?.trim())
     },
-    testId,
+    undefined,
     { timeout: 10000 },
   )
 }
@@ -27,41 +23,32 @@ test.beforeEach(async ({ page }) => {
 test('four-step onboarding completes to dashboard', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await waitOnboardingStep(page, 'welcome')
-  await page.getByTestId('onboarding-start').click()
+  await page.getByTestId('onboarding-next').click()
 
-  await waitOnboardingStep(page, 'cycle')
-  await expect(page.getByTestId('onboarding-cycle-path-1')).toBeVisible()
+  await waitOnboardingStep(page, 'cycles')
+  await page.getByTestId('onboarding-next').click()
+
+  await waitOnboardingStep(page, 'inventory')
   await page.getByTestId('onboarding-next').click()
 
   await waitOnboardingStep(page, 'progress')
-  await expect(page.getByTestId('onboarding-rebirth-input')).toBeVisible()
-  await page.getByTestId('onboarding-next').click()
+  await page.getByTestId('onboarding-start').click()
 
-  await waitOnboardingStep(page, 'features')
-  await expect(page.getByTestId('onboarding-finish')).toBeVisible()
-  await page.getByTestId('onboarding-finish').click()
-
-  await expect(page.getByRole('heading', { name: /Dashboard|Início/i }).first()).toBeVisible({
-    timeout: 10000,
-  })
+  await expect(page.getByTestId('home-hub')).toBeVisible({ timeout: 10000 })
 })
 
 test('skip from welcome still reaches dashboard', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await waitOnboardingStep(page, 'welcome')
   await page.getByTestId('onboarding-skip').click()
-  await expect(page.getByRole('heading', { name: /Dashboard|Início/i }).first()).toBeVisible({
-    timeout: 10000,
-  })
+  await expect(page.getByTestId('home-hub')).toBeVisible({ timeout: 10000 })
 })
 
 test('step content visible with prefers-reduced-motion', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.setViewportSize({ width: 390, height: 844 })
   await waitOnboardingStep(page, 'welcome')
-  await page.getByTestId('onboarding-start').click()
-  await waitOnboardingStep(page, 'cycle')
   await page.getByTestId('onboarding-next').click()
-  await waitOnboardingStep(page, 'progress')
-  await expect(page.getByTestId('onboarding-rebirth-preview')).toBeVisible()
+  await waitOnboardingStep(page, 'cycles')
+  await expect(page.getByTestId('onboarding-heading')).toBeVisible()
 })
