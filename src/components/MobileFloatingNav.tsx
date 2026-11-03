@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { List, MapTrifold, Package, SquaresFour, TreeStructure } from '@phosphor-icons/react'
+import { Backpack, List, MapTrifold, SquaresFour, TreeStructure } from '@phosphor-icons/react'
 import { UI_ICON_WEIGHT } from './ui/iconStyle'
 import { Glass } from './ui/Glass'
 import { cn } from '../lib/utils'
@@ -12,8 +12,8 @@ const INDICATOR_INSET_Y = 4
 const tabs = [
   { to: '/', labelKey: 'nav.dashboard', icon: SquaresFour, end: true as const },
   { to: '/progress', labelKey: 'nav.progress', icon: TreeStructure },
+  { to: '/inventory', labelKey: 'nav.inventory', icon: Backpack },
   { to: '/cycles', labelKey: 'nav.cycles', icon: MapTrifold },
-  { to: '/inventory', labelKey: 'nav.inventory', icon: Package },
   { to: 'more', labelKey: 'nav.more', icon: List, isMore: true as const },
 ] as const
 

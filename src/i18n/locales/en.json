@@ -64,6 +64,10 @@
     "undoConfirmShort": "Undo",
     "moreActionsTitle": "More actions",
     "listRebirthHeading": "Rebirth #{{n}}",
+    "badgeCanSell": "Can sell",
+    "badgeDoNotSell": "Do not sell",
+    "unifiedListFooter": "Green badge: safe to sell in this Cycle. Red badge: still needed or reserved.",
+    "qtyShort": "Qty. {{n}}",
     "inventoryDeltaPlus": "+1 {{name}} {{tier}}",
     "inventoryRemovedUnit": "{{name}} {{tier}} removed.",
     "inventoryRestored": "Inventory restored.",
@@ -72,6 +76,7 @@
     "inventoryRemoveAria": "Remove {{name}} {{tier}}",
     "inventoryAddOne": "Add one {{name}} {{tier}}",
     "inventoryRemoveOne": "Remove one {{name}} {{tier}}",
+    "rebirthListSection": "All rebirths",
     "collapseAll": "Collapse all",
     "expandAll": "Expand all",
     "collapseAllAria": "Collapse all rebirth steps in the list",
@@ -173,7 +178,9 @@
     "add": "Add",
     "inInventory": "{{owned}} / {{needed}} in inventory",
     "removeConfirmTitle": "Remove from inventory?",
-    "removeConfirmBody": "Removes {{name}} ({{tier}}) from your list. You can add it again later."
+    "removeConfirmBody": "Removes {{name}} ({{tier}}) from your list. You can add it again later.",
+    "viewGrid": "Grid view",
+    "viewList": "List view"
   },
   "sell": {
     "title": "Sell Center",
@@ -192,7 +199,10 @@
     "keepForUpgrade": "Keep: upgrade to {{tier}} at #{{rebirth}}",
     "safeNowTitle": "Safe to sell right now",
     "safeNowHint": "Based on rebirths you've finished through #{{rebirth}} and what's left on this Path.",
-    "safeNowLine": "In your inventory and clear to sell before the next rebirth."
+    "safeNowLine": "In your inventory and clear to sell before the next rebirth.",
+    "keepGroupFooter": "Still needed in a later rebirth on this cycle.",
+    "upgradeGroupFooter": "Raise tier before the rebirth that requires it.",
+    "sellableGroupFooter": "Not needed in remaining rebirths; sell when you're ready."
   },
   "sellAfter": {
     "heading": "Sell later:",
@@ -425,6 +435,12 @@
   "home": {
     "nowTitle": "Now",
     "nextRenascimento": "Rebirth #{{n}}",
+    "nextRenascimentoSection": "Next rebirth",
+    "creditsDisclaimer": "Double-check in-game before selling or fusing.",
+    "sellCount": "{{n}} droids free to sell",
+    "sellInCycle": "This Cycle",
+    "cycleSummaryTitle": "Cycle summary",
+    "superPending": "Not yet",
     "primaryComplete": "Complete rebirth",
     "primaryViewProgress": "View progress",
     "sellTitle": "Safe to sell now",

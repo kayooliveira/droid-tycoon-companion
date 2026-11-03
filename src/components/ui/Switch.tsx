@@ -24,7 +24,7 @@ export function Switch({
         onClick={() => onChange(!checked)}
         className={cn(
           'relative h-7 w-12 shrink-0 rounded-full border transition-colors',
-          checked ? 'bg-holo-600 border-holo-400/40' : 'bg-ui-field-muted border-ui',
+          checked ? 'bg-ui-accent-fill border-ui-accent-fill' : 'bg-ui-field-muted border-ui',
         )}
       >
         <span

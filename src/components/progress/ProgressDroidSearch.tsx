@@ -20,7 +20,6 @@ import { cn } from '../../lib/utils'
 import { useAppStore } from '../../store/useAppStore'
 import { DroidImage } from '../DroidImage'
 import { Badge } from '../ui/Badge'
-import { GlassCard } from '../ui/GlassCard'
 import { uiIconProps } from '../ui/iconStyle'
 
 export type ProgressNavTarget = { pathId: string; rebirth: number }
@@ -29,9 +28,6 @@ type ProgressDroidSearchProps = {
   initialQuery?: string
   onNavigateToStep: (target: ProgressNavTarget) => void
 }
-
-const SEARCH_INPUT_CLASS =
-  'w-full rounded-xl bg-ui-field border border-ui pl-10 pr-10 py-3 text-base min-h-11 text-ui-fg placeholder:text-ui-muted appearance-none [-webkit-appearance:none] [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden [&::-ms-clear]:hidden'
 
 export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: ProgressDroidSearchProps) {
   const { t, i18n } = useTranslation()
@@ -90,15 +86,14 @@ export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: Pro
     cycleDisplayNameForId(pathId, cycleById.get(pathId)?.name ?? pathId, i18n.language)
 
   return (
-    <GlassCard className="space-y-3" data-testid="progress-droid-search">
+    <div className="space-y-3 mb-4" data-testid="progress-droid-search">
       <label className="sr-only" htmlFor="progress-droid-search-input">
         {t('progress.search.label')}
       </label>
-      <div className="relative">
+      <div className="dc-search-wrap relative">
         <MagnifyingGlass
           {...uiIconProps}
-         
-          className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-ui-muted pointer-events-none"
+          className="absolute left-7 top-1/2 -translate-y-1/2 size-5 text-ui-muted pointer-events-none z-[1]"
           aria-hidden
         />
         <input
@@ -112,7 +107,7 @@ export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: Pro
           placeholder={t('progress.search.placeholder')}
           aria-controls="progress-droid-search-results"
           aria-expanded={effectiveQuery.length > 0}
-          className={SEARCH_INPUT_CLASS}
+          className="dc-search !pl-10 !pr-10 appearance-none [-webkit-appearance:none] [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden [&::-ms-clear]:hidden"
           data-testid="progress-droid-search-input"
         />
         {query ? (
@@ -158,7 +153,7 @@ export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: Pro
                 className={cn(
                   'inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-xs',
                   selectedDroid?.id === d.id
-                    ? 'border-holo-400/50 bg-ui-hover-strong text-ui-fg'
+                    ? 'border-[var(--ui-accent-fill)]/50 bg-ui-hover-strong text-ui-fg'
                     : 'border-ui bg-ui-hover/60 text-ui-secondary hover:bg-ui-hover-strong',
                 )}
                 onClick={() => setQuery(d.name)}
@@ -187,7 +182,7 @@ export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: Pro
           />
         ))}
       </div>
-    </GlassCard>
+    </div>
   )
 }
 
@@ -326,7 +321,7 @@ function NeedRow({
         data-testid={`progress-search-hit-${hit.pathId}-${hit.rebirth}`}
         className={cn(
           'w-full text-left rounded-xl border border-ui bg-ui-hover/50 px-3 py-2.5 text-sm hover:bg-ui-hover-strong transition-colors flex items-center gap-2',
-          highlight && 'ring-2 ring-holo-400/50 bg-holo-500/10',
+          highlight && 'ring-2 ring-[var(--ui-accent-fill)]/50 bg-[var(--ui-accent-fill)]/10',
         )}
       >
         <div className="flex-1 min-w-0">

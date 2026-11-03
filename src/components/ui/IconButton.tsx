@@ -1,36 +1,30 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import { cn } from '../../lib/utils'
 
-type Variant = 'ghost' | 'soft' | 'solid'
-
-const variants: Record<Variant, string> = {
-  ghost: 'hover:bg-ui-hover-strong text-ui-secondary',
-  soft: 'ui-btn-secondary bg-ui-hover-strong hover:bg-ui-hover-strong border border-ui text-ui-fg',
-  solid: 'bg-holo-600 hover:bg-holo-500 text-white',
-}
+const variants = {
+  ghost: 'ui-btn-ghost hover:bg-ui-hover',
+  soft: 'bg-ui-sunken hover:bg-ui-hover text-ui-fg',
+  solid: 'text-[var(--ui-accent-on-filled)] hover:opacity-90',
+} as const
 
 export function IconButton({
-  label,
   children,
-  className,
+  label,
   variant = 'ghost',
-  size = 'md',
+  className,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & {
-  label: string
   children: ReactNode
-  variant?: Variant
-  size?: 'md' | 'lg'
+  label: string
+  variant?: keyof typeof variants
 }) {
-  const dim = size === 'lg' ? 'min-h-11 min-w-11' : 'min-h-10 min-w-10'
   return (
     <button
       type="button"
       aria-label={label}
-      title={label}
       className={cn(
-        'inline-flex shrink-0 items-center justify-center rounded-xl transition-colors disabled:opacity-50',
-        dim,
+        'inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl transition-colors',
+        variant === 'solid' && 'bg-[var(--ui-accent-fill)]',
         variants[variant],
         className,
       )}

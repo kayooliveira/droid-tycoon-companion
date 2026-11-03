@@ -1,19 +1,15 @@
-import type { HTMLAttributes, ReactNode } from 'react'
+import type { ElementType, HTMLAttributes } from 'react'
 import { cn } from '../../lib/utils'
 
-/** Solid content surface (not glass). Glass is reserved for chrome layers. */
 export function GlassCard({
-  children,
+  as,
   className,
-  as: Tag = 'div',
+  children,
   ...rest
-}: {
-  children: ReactNode
-  className?: string
-  as?: 'div' | 'section' | 'article'
-} & HTMLAttributes<HTMLElement>) {
+}: HTMLAttributes<HTMLElement> & { as?: ElementType }) {
+  const Tag = as ?? 'div'
   return (
-    <Tag className={cn('surface-card p-4 md:p-5', className)} {...rest}>
+    <Tag className={cn('inset-group', className)} {...rest}>
       {children}
     </Tag>
   )

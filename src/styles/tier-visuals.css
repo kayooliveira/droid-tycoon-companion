@@ -1,0 +1,507 @@
+/**
+ * Dynamic tier surfaces — gradients, starfields, readable label colors.
+ */
+
+:root {
+  --tier-default-gradient: linear-gradient(145deg, #64748b 0%, #475569 48%, #334155 100%);
+  --tier-default-fg: #f8fafc;
+  --tier-default-border: rgb(255 255 255 / 0.22);
+
+  --tier-gold-gradient: linear-gradient(
+    135deg,
+    #fde68a 0%,
+    #f5b942 35%,
+    #d97706 70%,
+    #92400e 100%
+  );
+  --tier-gold-fg: #1c1917;
+  --tier-gold-border: rgb(255 251 235 / 0.45);
+
+  --tier-diamond-gradient: linear-gradient(145deg, #93c5fd 0%, #3b82f6 45%, #1d4ed8 100%);
+  --tier-diamond-fg: #eff6ff;
+  --tier-diamond-border: rgb(191 219 254 / 0.55);
+
+  --tier-beskar-gradient: linear-gradient(
+    145deg,
+    #d6d3d1 0%,
+    #a8a29e 28%,
+    #78716c 55%,
+    #57534e 78%,
+    #44403c 100%
+  );
+  --tier-beskar-fg: #fafaf9;
+  --tier-beskar-border: rgb(255 255 255 / 0.28);
+
+  --tier-galactic-gradient: linear-gradient(160deg, #4c1d95 0%, #6d28d9 40%, #312e81 100%);
+  --tier-galactic-fg: #f5f3ff;
+  --tier-galactic-border: rgb(196 181 253 / 0.45);
+
+  --tier-stellar-gradient: linear-gradient(
+    145deg,
+    #fef3c7 0%,
+    #fbbf24 30%,
+    #f59e0b 55%,
+    #b45309 100%
+  );
+  --tier-stellar-fg: #1c1917;
+  --tier-stellar-border: rgb(255 251 235 / 0.5);
+
+  --tier-kyber-gradient: linear-gradient(
+    120deg,
+    #059669 0%,
+    #7c3aed 48%,
+    #2563eb 100%
+  );
+  --tier-kyber-fg: #ecfdf5;
+  --tier-kyber-border: rgb(167 243 208 / 0.35);
+
+  --tier-rainbow-gradient: linear-gradient(
+    90deg,
+    #ef4444 0%,
+    #f97316 16%,
+    #eab308 32%,
+    #22c55e 48%,
+    #3b82f6 64%,
+    #8b5cf6 80%,
+    #ec4899 100%
+  );
+  --tier-rainbow-fg: #ffffff;
+  --tier-rainbow-border: rgb(255 255 255 / 0.35);
+
+  --tier-scourge-gradient: linear-gradient(145deg, #881337 0%, #be123c 50%, #4c0519 100%);
+  --tier-scourge-fg: #ffe4e6;
+  --tier-scourge-border: rgb(254 205 211 / 0.4);
+
+  --tier-star-dot: radial-gradient(circle, rgb(255 255 255 / 0.95) 0.45px, transparent 0.55px);
+  --tier-star-size-a: 11px 13px;
+  --tier-star-size-b: 15px 17px;
+  --tier-star-pos-a: 0 0;
+  --tier-star-pos-b: 5px 7px;
+
+  /* Representative mid-tones for WCAG contrast checks (see themeContrast.test.ts) */
+  --tier-default-contrast-bg: #475569;
+  --tier-gold-contrast-bg: #d97706;
+  --tier-diamond-contrast-bg: #2563eb;
+  --tier-beskar-contrast-bg: #78716c;
+  --tier-galactic-contrast-bg: #5b21b6;
+  --tier-stellar-contrast-bg: #f59e0b;
+  --tier-kyber-contrast-bg: #6d28d9;
+  --tier-rainbow-contrast-bg: #1d4ed8;
+  --tier-scourge-contrast-bg: #be123c;
+}
+
+html.theme-light {
+  --tier-default-gradient: linear-gradient(145deg, #94a3b8 0%, #64748b 55%, #475569 100%);
+  --tier-default-fg: #0f172a;
+
+  --tier-gold-fg: #422006;
+  --tier-stellar-fg: #422006;
+
+  --tier-diamond-fg: #1e3a8a;
+  --tier-diamond-gradient: linear-gradient(145deg, #bfdbfe 0%, #60a5fa 45%, #2563eb 100%);
+
+  --tier-beskar-fg: #1c1917;
+
+  --tier-galactic-fg: #2e1065;
+  --tier-galactic-gradient: linear-gradient(160deg, #c4b5fd 0%, #8b5cf6 45%, #5b21b6 100%);
+
+  --tier-kyber-fg: #064e3b;
+  --tier-kyber-gradient: linear-gradient(120deg, #6ee7b7 0%, #a78bfa 50%, #93c5fd 100%);
+
+  --tier-rainbow-fg: #18181b;
+  --tier-rainbow-gradient: linear-gradient(
+    90deg,
+    #fca5a5 0%,
+    #fdba74 16%,
+    #fde047 32%,
+    #86efac 48%,
+    #93c5fd 64%,
+    #c4b5fd 80%,
+    #f9a8d4 100%
+  );
+
+  --tier-default-contrast-bg: #94a3b8;
+  --tier-gold-contrast-bg: #fbbf24;
+  --tier-diamond-contrast-bg: #93c5fd;
+  --tier-beskar-contrast-bg: #a8a29e;
+  --tier-galactic-contrast-bg: #c4b5fd;
+  --tier-stellar-contrast-bg: #fde68a;
+  --tier-kyber-contrast-bg: #34d399;
+  --tier-rainbow-contrast-bg: #fde047;
+  --tier-scourge-contrast-bg: #9f1239;
+}
+
+@keyframes tier-shimmer {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+@keyframes tier-twinkle {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.75;
+  }
+}
+
+@layer components {
+  .tier-badge {
+    position: relative;
+    display: inline-flex;
+    max-width: 100%;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: var(--radius-full);
+    border: 1px solid transparent;
+    padding: 0.2rem 0.55rem;
+    font-size: var(--text-xs-size);
+    line-height: var(--text-xs-leading);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.02em;
+    vertical-align: middle;
+  }
+
+  .tier-badge__text {
+    position: relative;
+    z-index: 2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tier-badge--default {
+    background: var(--tier-default-gradient);
+    color: var(--tier-default-fg);
+    border-color: var(--tier-default-border);
+  }
+
+  .tier-badge--gold {
+    background: var(--tier-gold-gradient);
+    color: var(--tier-gold-fg);
+    border-color: var(--tier-gold-border);
+  }
+
+  .tier-badge--diamond {
+    background: var(--tier-diamond-gradient);
+    color: var(--tier-diamond-fg);
+    border-color: var(--tier-diamond-border);
+  }
+
+  .tier-badge--beskar {
+    background: var(--tier-beskar-gradient);
+    color: var(--tier-beskar-fg);
+    border-color: var(--tier-beskar-border);
+  }
+
+  .tier-badge--galactic {
+    background: var(--tier-galactic-gradient);
+    color: var(--tier-galactic-fg);
+    border-color: var(--tier-galactic-border);
+  }
+
+  .tier-badge--stellar {
+    background: var(--tier-stellar-gradient);
+    color: var(--tier-stellar-fg);
+    border-color: var(--tier-stellar-border);
+  }
+
+  .tier-badge--kyber {
+    background: var(--tier-kyber-gradient);
+    color: var(--tier-kyber-fg);
+    border-color: var(--tier-kyber-border);
+  }
+
+  .tier-badge--rainbow {
+    background: var(--tier-rainbow-gradient);
+    color: var(--tier-rainbow-fg);
+    border-color: var(--tier-rainbow-border);
+  }
+
+  .tier-badge--scourge {
+    background: var(--tier-scourge-gradient);
+    color: var(--tier-scourge-fg);
+    border-color: var(--tier-scourge-border);
+  }
+
+  .tier-badge--galactic::before,
+  .tier-badge--stellar::before,
+  .tier-surface--galactic::before,
+  .tier-surface--stellar::before,
+  .tier-droid-backdrop.tier-surface--galactic::before,
+  .tier-droid-backdrop.tier-surface--stellar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background-image: var(--tier-star-dot), var(--tier-star-dot);
+    background-size: var(--tier-star-size-a), var(--tier-star-size-b);
+    background-position: var(--tier-star-pos-a), var(--tier-star-pos-b);
+    animation: tier-twinkle 4.5s ease-in-out infinite;
+  }
+
+  .tier-badge--gold::after,
+  .tier-badge--stellar::after,
+  .tier-badge--kyber::after,
+  .tier-surface--gold::after,
+  .tier-surface--stellar::after,
+  .tier-surface--kyber::after,
+  .tier-droid-backdrop.tier-surface--gold::after,
+  .tier-droid-backdrop.tier-surface--stellar::after,
+  .tier-droid-backdrop.tier-surface--kyber::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      105deg,
+      transparent 35%,
+      rgb(255 255 255 / 0.35) 50%,
+      transparent 65%
+    );
+    animation: tier-shimmer 5s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tier-badge--galactic::before,
+    .tier-badge--stellar::before,
+    .tier-surface--galactic::before,
+    .tier-surface--stellar::before,
+    .tier-badge--gold::after,
+    .tier-badge--stellar::after,
+    .tier-badge--kyber::after,
+    .tier-surface--gold::after,
+    .tier-surface--stellar::after,
+    .tier-surface--kyber::after,
+    .tier-droid-backdrop.tier-surface--galactic::before,
+    .tier-droid-backdrop.tier-surface--stellar::before,
+    .tier-droid-backdrop.tier-surface--gold::after,
+    .tier-droid-backdrop.tier-surface--stellar::after,
+    .tier-droid-backdrop.tier-surface--kyber::after {
+      animation: none;
+    }
+  }
+
+  .tier-droid-backdrop {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+    border-radius: var(--radius-ds-lg);
+    border: 1px solid transparent;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+  }
+
+  .tier-droid-backdrop__img {
+    position: relative;
+    z-index: 2;
+    height: 88%;
+    width: 88%;
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    object-position: center;
+    pointer-events: none;
+    user-select: none;
+    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.35));
+  }
+
+  .tier-droid-backdrop__placeholder {
+    color: var(--ui-secondary);
+  }
+
+  .tier-droid-backdrop__initials {
+    position: relative;
+    z-index: 2;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.04em;
+    opacity: 0.92;
+  }
+
+  .tier-surface {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-ds-xl);
+    border: 1px solid var(--ui-border);
+    padding: var(--space-4);
+    min-height: 5.5rem;
+  }
+
+  .tier-surface__label {
+    position: relative;
+    z-index: 2;
+    font-family: var(--font-display);
+    font-size: var(--text-sm-size);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.04em;
+  }
+
+  .tier-surface__body {
+    position: relative;
+    z-index: 2;
+    margin-top: var(--space-2);
+    font-size: var(--text-xs-size);
+    line-height: var(--text-xs-leading);
+    opacity: 0.92;
+  }
+
+  .tier-surface--default {
+    background: var(--tier-default-gradient);
+    color: var(--tier-default-fg);
+    border-color: var(--tier-default-border);
+  }
+  .tier-surface--gold {
+    background: var(--tier-gold-gradient);
+    color: var(--tier-gold-fg);
+    border-color: var(--tier-gold-border);
+  }
+  .tier-surface--diamond {
+    background: var(--tier-diamond-gradient);
+    color: var(--tier-diamond-fg);
+    border-color: var(--tier-diamond-border);
+  }
+  .tier-surface--beskar {
+    background: var(--tier-beskar-gradient);
+    color: var(--tier-beskar-fg);
+    border-color: var(--tier-beskar-border);
+  }
+  .tier-surface--galactic {
+    background: var(--tier-galactic-gradient);
+    color: var(--tier-galactic-fg);
+    border-color: var(--tier-galactic-border);
+  }
+  .tier-surface--stellar {
+    background: var(--tier-stellar-gradient);
+    color: var(--tier-stellar-fg);
+    border-color: var(--tier-stellar-border);
+  }
+  .tier-surface--kyber {
+    background: var(--tier-kyber-gradient);
+    color: var(--tier-kyber-fg);
+    border-color: var(--tier-kyber-border);
+  }
+  .tier-surface--rainbow {
+    background: var(--tier-rainbow-gradient);
+    color: var(--tier-rainbow-fg);
+    border-color: var(--tier-rainbow-border);
+  }
+  .tier-surface--scourge {
+    background: var(--tier-scourge-gradient);
+    color: var(--tier-scourge-fg);
+    border-color: var(--tier-scourge-border);
+  }
+
+  .tier-card-glow {
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 0.06),
+      0 8px 28px rgb(0 0 0 / 0.18);
+  }
+
+  html.theme-light .tier-card-glow {
+    box-shadow:
+      0 0 0 1px rgb(24 24 27 / 0.06),
+      0 8px 24px rgb(24 24 27 / 0.08);
+  }
+
+  .tier-card-glow--default {
+    box-shadow:
+      0 0 0 1px rgb(100 116 139 / 0.35),
+      0 6px 20px rgb(51 65 85 / 0.22);
+  }
+  .tier-card-glow--gold {
+    box-shadow:
+      0 0 0 1px rgb(251 191 36 / 0.45),
+      0 6px 22px rgb(217 119 6 / 0.28);
+  }
+  .tier-card-glow--diamond {
+    box-shadow:
+      0 0 0 1px rgb(147 197 253 / 0.5),
+      0 6px 22px rgb(37 99 235 / 0.28);
+  }
+  .tier-card-glow--beskar {
+    box-shadow:
+      0 0 0 1px rgb(214 211 209 / 0.35),
+      0 6px 20px rgb(87 83 78 / 0.25);
+  }
+  .tier-card-glow--galactic {
+    box-shadow:
+      0 0 0 1px rgb(196 181 253 / 0.45),
+      0 6px 24px rgb(91 33 182 / 0.32);
+  }
+  .tier-card-glow--stellar {
+    box-shadow:
+      0 0 0 1px rgb(253 224 71 / 0.45),
+      0 6px 24px rgb(180 83 9 / 0.28);
+  }
+  .tier-card-glow--kyber {
+    box-shadow:
+      0 0 0 1px rgb(167 243 208 / 0.35),
+      0 6px 24px rgb(124 58 237 / 0.28);
+  }
+  .tier-card-glow--rainbow {
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 0.2),
+      0 6px 22px rgb(59 130 246 / 0.22);
+  }
+  .tier-card-glow--scourge {
+    box-shadow:
+      0 0 0 1px rgb(254 205 211 / 0.35),
+      0 6px 22px rgb(190 18 60 / 0.28);
+  }
+
+  .tier-card-accent {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tier-card-accent::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    z-index: 1;
+    pointer-events: none;
+    border-radius: var(--radius-ds-xl) 0 0 var(--radius-ds-xl);
+  }
+
+  .tier-card-accent--default::before {
+    background: var(--tier-default-gradient);
+  }
+  .tier-card-accent--gold::before {
+    background: var(--tier-gold-gradient);
+  }
+  .tier-card-accent--diamond::before {
+    background: var(--tier-diamond-gradient);
+  }
+  .tier-card-accent--beskar::before {
+    background: var(--tier-beskar-gradient);
+  }
+  .tier-card-accent--galactic::before {
+    background: var(--tier-galactic-gradient);
+  }
+  .tier-card-accent--stellar::before {
+    background: var(--tier-stellar-gradient);
+  }
+  .tier-card-accent--kyber::before {
+    background: var(--tier-kyber-gradient);
+  }
+  .tier-card-accent--rainbow::before {
+    background: var(--tier-rainbow-gradient);
+  }
+  .tier-card-accent--scourge::before {
+    background: var(--tier-scourge-gradient);
+  }
+}

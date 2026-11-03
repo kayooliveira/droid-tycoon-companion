@@ -1,13 +1,8 @@
-import { Plus, X } from '@phosphor-icons/react'
 import { useTranslation } from 'react-i18next'
 import { formatTierName } from '../domain/tiers'
 import { useTierLabels } from '../i18n/useTierLabels'
 import { useProgressInventoryToast } from '../hooks/useProgressInventoryToast'
 import { useAppStore } from '../store/useAppStore'
-import { uiIconProps } from './ui/iconStyle'
-import { cn } from '../lib/utils'
-
-const TAP = 'inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-xl transition-colors'
 
 export function RequirementInventoryControls({
   droidId,
@@ -56,19 +51,16 @@ export function RequirementInventoryControls({
   if (!showPlus && !showRemove) return null
 
   return (
-    <div
-      data-testid="requirement-inventory-actions"
-      className="flex shrink-0 items-center gap-0.5"
-    >
+    <div data-testid="requirement-inventory-actions" className="dc-row-trail dc-row-trail--acts">
       {showPlus ? (
         <button
           type="button"
           data-testid="requirement-inventory-add"
           aria-label={addLabel}
           onClick={() => adjust(1)}
-          className={cn(TAP, 'text-ui-accent hover:bg-ui-hover')}
+          className="act-add"
         >
-          <Plus {...uiIconProps} />
+          +
         </button>
       ) : null}
       {showRemove ? (
@@ -77,13 +69,9 @@ export function RequirementInventoryControls({
           data-testid="requirement-inventory-remove"
           aria-label={removeLabel}
           onClick={() => adjust(-1)}
-          className={cn(
-            TAP,
-            'text-ui-muted hover:bg-ui-hover hover:text-ui-fg',
-            !showPlus && 'border border-ui-subtle bg-ui-field/60',
-          )}
+          className="act-remove"
         >
-          <X {...uiIconProps} />
+          ×
         </button>
       ) : null}
     </div>

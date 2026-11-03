@@ -1,4 +1,4 @@
-import { useMemo, type ReactNode } from 'react'
+import { useMemo } from 'react'
 import { Package } from '@phosphor-icons/react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
@@ -10,20 +10,10 @@ import { useTierLabels } from '../i18n/useTierLabels'
 import { PathProgressSwitcher } from '../components/PathProgressSwitcher'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { DroidImage } from '../components/DroidImage'
-import { Badge } from '../components/ui/Badge'
-import { Button } from '../components/ui/Button'
-import { GlassCard } from '../components/ui/GlassCard'
+import { InsetGroup } from '../components/ui/InsetGroup'
+import { TabScrollLayout } from '../components/layout/TabScrollLayout'
 import { uiIconProps } from '../components/ui/iconStyle'
 import { useAppStore } from '../store/useAppStore'
-
-function SectionCard({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <GlassCard className="space-y-3 p-4">
-      <h2 className="text-sm font-semibold text-ui-fg">{title}</h2>
-      {children}
-    </GlassCard>
-  )
-}
 
 export function SellCenterPage() {
   const { t, i18n } = useTranslation()
@@ -60,108 +50,89 @@ export function SellCenterPage() {
     groups.sellable.length === 0 &&
     groups.upgrade.length === 0
 
-  return (
-    <div className="space-y-5" data-testid="sell-page">
-      <div className="space-y-2">
-        <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('sell.title')}</h1>
-        <PathProgressSwitcher compact />
-        <p className="text-sm text-ui-muted">{t('sell.intro', { from: progress.nextRebirth, cycle: cycleName })}</p>
+  const renderItemRow = (item: (typeof items)[number], idx: number) => {
+    const droid = droidById.get(item.droidId)
+    if (!droid) return null
+    const plan = inventorySafeToSellNow(
+      progress.pathId,
+      completedRebirth,
+      item.droidId,
+      item.tier,
+    )
+    return (
+      <div key={`${item.unitId}-${idx}`} className="dc-row dc-row-droid">
+        <DroidImage droid={droid} tier={item.tier} size="sm" className="!h-[50px] !w-[50px] rounded-[11px]" />
+        <div className="dc-row-main">
+          <span className="dc-droid-name dc-row-label">{droid.name}</span>
+          <span className="dc-row-sub">
+            {`${formatTierName(item.tier, tierLabels)} · ${t('progress.qtyShort', { n: item.quantity })}`}
+          </span>
+          {plan?.disposition === 'fusionHold' ? (
+            <span className="dc-row-sub text-ui-warn">{t('sellAfter.fusionHold')}</span>
+          ) : null}
+        </div>
       </div>
+    )
+  }
+
+  return (
+    <TabScrollLayout title={t('sell.title')} testId="sell-page">
+      <InsetGroup footer={t('sell.intro', { from: progress.nextRebirth, cycle: cycleName })}>
+        <div className="dc-row">
+          <div className="dc-row-main">
+            <span className="dc-row-label">{t('settings.path')}</span>
+            <span className="dc-row-sub">
+              <PathProgressSwitcher compact />
+            </span>
+          </div>
+        </div>
+      </InsetGroup>
 
       {allEmpty ? (
-        <GlassCard className="p-6 flex flex-col items-center text-center gap-3" data-testid="sell-empty-state">
-          <Package {...uiIconProps} className="size-10 text-ui-accent" />
-          <p className="text-sm font-medium">{t('sell.emptyStateTitle')}</p>
-          <p className="text-xs text-ui-soft max-w-xs">{t('sell.emptyStateBody')}</p>
-          <Link to="/inventory">
-            <Button size="sm" icon={<Package {...uiIconProps} />}>
-              {t('sell.emptyStateCta')}
-            </Button>
+        <InsetGroup data-testid="sell-empty-state">
+          <div className="dc-row">
+            <Package {...uiIconProps} className="shrink-0 text-ui-accent" />
+            <div className="dc-row-main">
+              <span className="dc-row-label">{t('sell.emptyStateTitle')}</span>
+              <span className="dc-row-sub">{t('sell.emptyStateBody')}</span>
+            </div>
+          </div>
+          <Link to="/inventory" className="dc-row dc-row-chevron">
+            <span className="dc-row-label">{t('sell.emptyStateCta')}</span>
           </Link>
-        </GlassCard>
+        </InsetGroup>
       ) : (
         <>
           {safeNow.length > 0 ? (
-            <section className="space-y-3" data-testid="sell-center-safe-now">
-              <SectionCard title={t('sell.safeNowTitle')}>
-                <p className="text-xs text-ui-soft -mt-1">{t('sell.safeNowHint', { rebirth: completedRebirth })}</p>
-                <div className="space-y-2">
-                  {safeNow.map(({ item }, idx) => {
-                    const droid = droidById.get(item.droidId)
-                    if (!droid) return null
-                    return (
-                      <div key={`safe-${item.unitId}-${idx}`} className="flex gap-3 rounded-xl bg-ui-hover p-3">
-                        <DroidImage droid={droid} size="sm" />
-                        <div className="min-w-0">
-                          <div className="flex flex-wrap gap-2 items-center">
-                            <p className="font-medium text-sm">{droid.name}</p>
-                            <Badge tone="info">{formatTierName(item.tier, tierLabels)}</Badge>
-                            <Badge tone="success">×{item.quantity}</Badge>
-                          </div>
-                          <p className="text-xs text-ui-success/90 mt-1">{t('sell.safeNowLine')}</p>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </SectionCard>
+            <section data-testid="sell-center-safe-now">
+              <h2 className="dc-section-header">{t('sell.safeNowTitle')}</h2>
+              <InsetGroup footer={t('sell.safeNowHint', { rebirth: completedRebirth })}>
+                {safeNow.map(({ item }, idx) => renderItemRow(item, idx))}
+              </InsetGroup>
             </section>
           ) : null}
 
           {(['keep', 'upgrade', 'sellable'] as const).map((cat) => {
             if (groups[cat].length === 0) return null
+            const footerKey =
+              cat === 'keep'
+                ? 'sell.keepGroupFooter'
+                : cat === 'upgrade'
+                  ? 'sell.upgradeGroupFooter'
+                  : 'sell.sellableGroupFooter'
             return (
               <section key={cat}>
-                <SectionCard title={t(`sell.${cat}`)}>
-                  <div className="space-y-2">
-                    {groups[cat].map((item, idx) => {
-                      const droid = droidById.get(item.droidId)
-                      if (!droid) return null
-                      const name = droid.name
-                      const reason =
-                        item.category === 'upgrade' && item.upgradeTargetTier && item.nextNeededAtRebirth
-                          ? t('sell.keepForUpgrade', {
-                              tier: formatTierName(item.upgradeTargetTier, tierLabels),
-                              rebirth: item.nextNeededAtRebirth,
-                            })
-                          : t(item.reasonKey, {
-                              ...item.reasonParams,
-                              name,
-                              tier: item.upgradeTargetTier
-                                ? formatTierName(item.upgradeTargetTier, tierLabels)
-                                : item.reasonParams.tier,
-                              defaultValue: item.reasonKey,
-                            })
-                      const plan = inventorySafeToSellNow(
-                        progress.pathId,
-                        completedRebirth,
-                        item.droidId,
-                        item.tier,
-                      )
-                      return (
-                        <div key={`${item.unitId}-${idx}`} className="flex gap-3 rounded-xl bg-ui-hover p-3">
-                          <DroidImage droid={droid} size="sm" />
-                          <div className="min-w-0">
-                            <div className="flex flex-wrap gap-2 items-center">
-                              <p className="font-medium text-sm">{name}</p>
-                              <Badge tone="info">{formatTierName(item.tier, tierLabels)}</Badge>
-                              <Badge>×{item.quantity}</Badge>
-                              {plan?.disposition === 'fusionHold' ? (
-                                <Badge tone="warn">{t('sellAfter.fusionHold')}</Badge>
-                              ) : null}
-                            </div>
-                            <p className="text-xs text-ui-muted mt-1">{reason}</p>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </SectionCard>
+                <h2 className="dc-section-header">{t(`sell.${cat}`)}</h2>
+                <InsetGroup footer={t(footerKey)}>
+                  {groups[cat].map((item, idx) => renderItemRow(item, idx))}
+                </InsetGroup>
               </section>
             )
           })}
         </>
       )}
-    </div>
+
+      <div className="dc-scroll-spacer" aria-hidden />
+    </TabScrollLayout>
   )
 }

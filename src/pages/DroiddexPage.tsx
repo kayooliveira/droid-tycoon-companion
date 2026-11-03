@@ -5,11 +5,14 @@ import { formatTierName } from '../domain/tiers'
 import { formatBaseRarity } from '../i18n/tierLabels'
 import { useTierLabels } from '../i18n/useTierLabels'
 import { DroidImage } from '../components/DroidImage'
+import { showcaseTierForDroid } from '../components/ui/tierVisuals'
 import { Badge } from '../components/ui/Badge'
 import { Modal } from '../components/ui/Modal'
 import { droidMatchesQuery } from '../lib/droidNameMatch'
-import { cn } from '../lib/utils'
 import type { Droid } from '../domain/types'
+import { TabScrollLayout } from '../components/layout/TabScrollLayout'
+import { SearchInput } from '../components/ui/SearchInput'
+import { SegmentedControl } from '../components/ui/SegmentedControl'
 
 const DROID_CLASSES = ['Worker', 'Astromech', 'Battle', 'Protocol'] as const
 
@@ -31,42 +34,27 @@ export function DroiddexPage() {
   }, [search, classFilter])
 
   return (
-    <div className="space-y-5" data-testid="droiddex-page">
-      <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('droiddex.title')}</h1>
-      <input
-        className="w-full rounded-xl bg-ui-field border border-ui px-4 py-3 text-base min-h-11"
+    <TabScrollLayout title={t('droiddex.title')} testId="droiddex-page">
+      <div className="dc-search-wrap">
+      <SearchInput
+        className="dc-search"
         placeholder={t('droiddex.search')}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
+        onClear={() => setSearch('')}
+        clearLabel={t('progress.search.clear')}
+        aria-label={t('droiddex.search')}
       />
-      <div
-        className="flex flex-wrap gap-2"
-        role="radiogroup"
-        aria-label={t('droiddex.allClasses')}
-        data-testid="droiddex-class-chips"
-      >
-        {(['all', ...DROID_CLASSES] as const).map((c) => {
-          const active = classFilter === c
-          return (
-            <button
-              key={c}
-              type="button"
-              role="radio"
-              aria-checked={active}
-              data-testid={`droiddex-class-${c}`}
-              className={cn(
-                'rounded-full px-3 py-2 text-sm min-h-11 border font-medium',
-                active
-                  ? 'border-holo-400/70 bg-holo-600/25 text-holo-900'
-                  : 'border-ui bg-ui-hover text-ui-muted hover:text-ui-fg',
-              )}
-              onClick={() => setClassFilter(c)}
-            >
-              {c === 'all' ? t('droiddex.allClasses') : c}
-            </button>
-          )
-        })}
       </div>
+      <SegmentedControl
+        ariaLabel={t('droiddex.allClasses')}
+        value={classFilter}
+        onChange={setClassFilter}
+        options={[
+          { value: 'all', label: t('droiddex.allClasses') },
+          ...DROID_CLASSES.map((c) => ({ value: c, label: c })),
+        ]}
+      />
 
       <div
         className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3"
@@ -77,9 +65,9 @@ export function DroiddexPage() {
             key={d.id}
             type="button"
             onClick={() => setSelected(d)}
-            className="glass-panel rounded-2xl p-3 text-left hover:bg-ui-hover-strong transition-colors flex flex-col items-stretch"
+            className="collect-card flex flex-col items-stretch p-3"
           >
-            <DroidImage droid={d} className="self-center mb-2" />
+            <DroidImage droid={d} tier={showcaseTierForDroid(d)} className="self-center mb-2" />
             <p className="text-sm font-medium truncate w-full">{d.name}</p>
             <p className="text-[10px] text-ui-muted">{formatBaseRarity(d.baseRarity, t)}</p>
           </button>
@@ -95,7 +83,7 @@ export function DroiddexPage() {
         {selected ? (
           <div className="space-y-4">
             <div className="flex gap-4 items-start">
-              <DroidImage droid={selected} size="lg" />
+              <DroidImage droid={selected} tier={showcaseTierForDroid(selected)} size="lg" />
               <div className="space-y-2 text-sm">
                 <Badge>{selected.class}</Badge>
                 <Badge tone="info">{formatBaseRarity(selected.baseRarity, t)}</Badge>
@@ -141,6 +129,6 @@ export function DroiddexPage() {
           </div>
         ) : null}
       </Modal>
-    </div>
+    </TabScrollLayout>
   )
 }

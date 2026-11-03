@@ -64,6 +64,10 @@
     "undoConfirmShort": "Desfazer",
     "moreActionsTitle": "Mais ações",
     "listRebirthHeading": "Renascimento #{{n}}",
+    "badgeCanSell": "Pode vender",
+    "badgeDoNotSell": "Não venda",
+    "unifiedListFooter": "Badge verde: pode vender neste Ciclo. Badge vermelho: ainda necessário ou reservado.",
+    "qtyShort": "Qtd. {{n}}",
     "inventoryDeltaPlus": "+1 {{name}} {{tier}}",
     "inventoryRemovedUnit": "{{name}} {{tier}} removido.",
     "inventoryRestored": "Inventário restaurado.",
@@ -72,6 +76,7 @@
     "inventoryRemoveAria": "Remover {{name}} {{tier}}",
     "inventoryAddOne": "Adicionar um {{name}} {{tier}}",
     "inventoryRemoveOne": "Remover um {{name}} {{tier}}",
+    "rebirthListSection": "Renascimentos",
     "collapseAll": "Recolher todos",
     "expandAll": "Expandir todos",
     "collapseAllAria": "Recolher todos os renascimentos da lista",
@@ -173,7 +178,9 @@
     "add": "Adicionar",
     "inInventory": "{{owned}} / {{needed}} no inventário",
     "removeConfirmTitle": "Remover do inventário?",
-    "removeConfirmBody": "Remove {{name}} ({{tier}}) da sua lista. Você pode adicionar de novo depois."
+    "removeConfirmBody": "Remove {{name}} ({{tier}}) da sua lista. Você pode adicionar de novo depois.",
+    "viewGrid": "Visão em grade",
+    "viewList": "Visão em lista"
   },
   "sell": {
     "title": "Vender",
@@ -192,7 +199,10 @@
     "keepForUpgrade": "Guarda: vira {{tier}} no #{{rebirth}}",
     "safeNowTitle": "Pode vender agora",
     "safeNowHint": "Com base nos renascimentos concluídos até o #{{rebirth}} e no que ainda falta neste ciclo.",
-    "safeNowLine": "Está no seu inventário e pode vender antes do próximo renascimento."
+    "safeNowLine": "Está no seu inventário e pode vender antes do próximo renascimento.",
+    "keepGroupFooter": "Ainda entra em renascimentos que faltam neste ciclo.",
+    "upgradeGroupFooter": "Suba o tier antes do renascimento que pede.",
+    "sellableGroupFooter": "Não entra nos renascimentos que faltam; venda quando quiser."
   },
   "sellAfter": {
     "heading": "Vender depois:",
@@ -425,6 +435,12 @@
   "home": {
     "nowTitle": "Agora",
     "nextRenascimento": "Renascimento #{{n}}",
+    "nextRenascimentoSection": "Próximo Renascimento",
+    "creditsDisclaimer": "Confira no jogo antes de vender ou fundir.",
+    "sellCount": "{{n}} droids livres",
+    "sellInCycle": "Neste Ciclo",
+    "cycleSummaryTitle": "Resumo do Ciclo",
+    "superPending": "Ainda não",
     "primaryComplete": "Concluir renascimento",
     "primaryViewProgress": "Ver progresso",
     "sellTitle": "Pode vender agora",

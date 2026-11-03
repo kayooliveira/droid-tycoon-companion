@@ -1,22 +1,19 @@
-/**
- * Semantic UI tokens (dark default on :root, light on html.theme-light).
- * Components should prefer text-ui-fg, bg-ui-raised, border-ui, etc.
- */
-
 :root {
   color-scheme: dark;
 
-  --ui-bg: #070b12;
-  --ui-raised: #111827;
-  --ui-elevated: #0c121c;
+  --ui-bg: #000000;
+  --ui-raised: #1c1c1e;
+  --ui-elevated: #2c2c2e;
   --ui-sunken: rgb(0 0 0 / 0.22);
   --ui-modal: rgb(12 18 28 / 0.97);
   --ui-fg: #f4f4f5;
   --ui-secondary: #d4d4d8;
   --ui-muted: #a1a1aa;
   --ui-soft: #71717a;
-  --ui-border: rgb(255 255 255 / 0.1);
-  --ui-border-subtle: rgb(255 255 255 / 0.06);
+  --ui-border: var(--ui-control-border);
+  --ui-separator: rgb(84 84 88 / 0.36);
+  --ui-control-border: #6e6e73;
+  --ui-border-subtle: var(--ui-separator);
   --ui-hover: rgb(255 255 255 / 0.06);
   --ui-hover-strong: rgb(255 255 255 / 0.1);
   --ui-scrim: rgb(0 0 0 / 0.72);
@@ -30,8 +27,28 @@
   --color-ui-handle: var(--ui-handle);
   --ui-danger-fg: #fecaca;
   --ui-success-fg: #6ee7b7;
-  --ui-accent-fg: #7dd3fc;
+  --ui-accent-fg: #ff9f0a;
+  --ui-accent-soft: rgb(255 159 10 / 0.16);
+  --ui-accent-fill: #ff9f0a;
+  --ui-accent-on-filled: #000000;
+  --ui-search-bg: #1c1c1e;
+  --ui-sell-ok-bg: rgb(48 209 88 / 0.22);
+  --ui-sell-ok-text: #30d158;
+  --ui-sell-no-bg: rgb(255 69 58 / 0.22);
+  --ui-sell-no-text: #ff453a;
   --ui-warn-fg: #fde68a;
+  --ui-accent-solid: #ff9f0a;
+  --ui-accent-on: #000000;
+  --ui-success-solid: #30d158;
+  --ui-success-on: #000000;
+  --ui-warn-solid: #ff9f0a;
+  --ui-warn-on: #000000;
+  --ui-danger-solid: #ff453a;
+  --ui-danger-on: #000000;
+  --ui-segment-track: #2c2c2e;
+  --ui-segment-active-bg: #3a3a3c;
+  --ui-segment-active-fg: #ffffff;
+  --ui-segment-inactive-fg: #a1a1aa;
 
   --ui-badge-default-bg: rgb(255 255 255 / 0.1);
   --ui-badge-default-fg: var(--ui-secondary);
@@ -49,16 +66,16 @@
   --ui-badge-info-fg: #93c5fd;
   --ui-badge-info-border: rgb(96 165 250 / 0.25);
 
-  --ui-btn-secondary-bg: rgb(255 255 255 / 0.1);
+  --ui-btn-secondary-bg: #2c2c2e;
   --ui-btn-secondary-fg: var(--ui-fg);
   --ui-btn-secondary-border: rgb(255 255 255 / 0.15);
   --ui-btn-secondary-hover: rgb(255 255 255 / 0.15);
   --ui-btn-ghost-hover: rgb(255 255 255 / 0.1);
   --ui-btn-ghost-fg: var(--ui-secondary);
 
-  --ui-chip-active-bg: #1e40af;
-  --ui-chip-active-fg: #eff6ff;
-  --ui-chip-active-border: #93c5fd;
+  --ui-chip-active-bg: var(--ui-segment-active-bg);
+  --ui-chip-active-fg: var(--ui-segment-active-fg);
+  --ui-chip-active-border: var(--ui-control-border);
 
   --glass-bg: rgba(255, 255, 255, 0.08);
   --glass-nav-bg: rgba(14, 18, 28, 0.62);
@@ -105,17 +122,19 @@
 html.theme-light {
   color-scheme: light;
 
-  --ui-bg: #f4f4f5;
+  --ui-bg: #f2f2f7;
   --ui-raised: #ffffff;
-  --ui-elevated: #ffffff;
+  --ui-elevated: #f2f2f7;
   --ui-sunken: rgb(24 24 27 / 0.05);
   --ui-modal: rgb(255 255 255 / 0.98);
   --ui-fg: #18181b;
   --ui-secondary: #3f3f46;
   --ui-muted: #52525b;
   --ui-soft: #52525b;
-  --ui-border: rgb(24 24 27 / 0.12);
-  --ui-border-subtle: rgb(24 24 27 / 0.08);
+  --ui-separator: rgb(60 60 67 / 0.29);
+  --ui-control-border: #6e6e73;
+  --ui-border: var(--ui-control-border);
+  --ui-border-subtle: var(--ui-separator);
   --ui-hover: rgb(24 24 27 / 0.05);
   --ui-hover-strong: rgb(24 24 27 / 0.08);
   --ui-scrim: rgb(15 23 42 / 0.48);
@@ -128,8 +147,28 @@ html.theme-light {
   --ui-handle: rgb(24 24 27 / 0.15);
   --ui-danger-fg: #b91c1c;
   --ui-success-fg: #047857;
-  --ui-accent-fg: #1d4ed8;
+  --ui-accent-fg: #c24100;
+  --ui-accent-soft: rgb(255 149 0 / 0.14);
+  --ui-accent-fill: #ff9500;
+  --ui-accent-on-filled: #ffffff;
+  --ui-search-bg: #e5e5ea;
+  --ui-sell-ok-bg: #e8f9ec;
+  --ui-sell-ok-text: #248a3d;
+  --ui-sell-no-bg: #ffecea;
+  --ui-sell-no-text: #c41e12;
   --ui-warn-fg: #b45309;
+  --ui-accent-solid: #ff9500;
+  --ui-accent-on: #000000;
+  --ui-success-solid: #248a3d;
+  --ui-success-on: #000000;
+  --ui-warn-solid: #ff9500;
+  --ui-warn-on: #000000;
+  --ui-danger-solid: #c41e12;
+  --ui-danger-on: #ffffff;
+  --ui-segment-track: #e5e5ea;
+  --ui-segment-active-bg: #ffffff;
+  --ui-segment-active-fg: #000000;
+  --ui-segment-inactive-fg: #3c3c43;
 
   --ui-badge-default-bg: rgb(244 244 245 / 0.95);
   --ui-badge-default-fg: #27272a;
@@ -154,9 +193,9 @@ html.theme-light {
   --ui-btn-ghost-hover: rgb(24 24 27 / 0.06);
   --ui-btn-ghost-fg: #3f3f46;
 
-  --ui-chip-active-bg: #dbeafe;
-  --ui-chip-active-fg: #1e3a8a;
-  --ui-chip-active-border: #93c5fd;
+  --ui-chip-active-bg: var(--ui-segment-active-bg);
+  --ui-chip-active-fg: var(--ui-segment-active-fg);
+  --ui-chip-active-border: var(--ui-control-border);
 
   --glass-bg: rgba(255, 255, 255, 0.62);
   --glass-nav-bg: rgba(255, 255, 255, 0.72);
@@ -213,6 +252,7 @@ html.theme-light {
   --color-ui-scrim: var(--ui-scrim);
   --color-ui-success: var(--ui-success-fg);
   --color-ui-accent: var(--ui-accent-fg);
+  --color-ui-accent-soft: var(--ui-accent-soft);
   --color-ui-warn: var(--ui-warn-fg);
   --color-ui-danger: var(--ui-danger-fg);
   --color-ui-field: var(--ui-field);
@@ -258,6 +298,10 @@ html.theme-light {
 
   .text-ui-accent {
     color: var(--ui-accent-fg);
+  }
+
+  .bg-ui-accent-soft {
+    background-color: var(--ui-accent-soft);
   }
 
   .text-on-accent {
