@@ -21,6 +21,9 @@ test.describe('redesign 1c design system artifacts (pt-BR)', () => {
 
   test('light design catalog', async ({ page }) => {
     await openDesignCatalogSettled(page, 'light', 'pt-BR')
+    await expect(page.getByPlaceholder('Buscar exemplo')).toBeVisible()
+    await expect(page.getByText('Nada aqui ainda')).toBeVisible()
+    await expect(page.getByText('Ok').first()).toBeVisible()
     await page.screenshot({
       path: path.join(ARTIFACTS, 'design-system-light.png'),
       fullPage: true,
