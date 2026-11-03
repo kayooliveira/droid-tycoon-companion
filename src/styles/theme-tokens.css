@@ -6,17 +6,17 @@
 :root {
   color-scheme: dark;
 
-  --ui-bg: #04070d;
-  --ui-raised: #0e1624;
-  --ui-elevated: #172234;
-  --ui-sunken: rgb(0 0 0 / 0.28);
+  --ui-bg: #070b12;
+  --ui-raised: #111827;
+  --ui-elevated: #0c121c;
+  --ui-sunken: rgb(0 0 0 / 0.22);
   --ui-modal: rgb(12 18 28 / 0.97);
   --ui-fg: #f4f4f5;
   --ui-secondary: #d4d4d8;
   --ui-muted: #a1a1aa;
   --ui-soft: #71717a;
-  --ui-border: #5a6578;
-  --ui-border-subtle: #576476;
+  --ui-border: rgb(255 255 255 / 0.1);
+  --ui-border-subtle: rgb(255 255 255 / 0.06);
   --ui-hover: rgb(255 255 255 / 0.06);
   --ui-hover-strong: rgb(255 255 255 / 0.1);
   --ui-scrim: rgb(0 0 0 / 0.72);
@@ -28,25 +28,10 @@
   --ui-nav-lens-border: rgb(255 255 255 / 0.28);
   --ui-handle: rgb(255 255 255 / 0.2);
   --color-ui-handle: var(--ui-handle);
-  --ui-danger-fg: #fca5a5;
-  --ui-success-fg: #5eead4;
-  --ui-accent-fg: #93c5fd;
-  --ui-warn-fg: #fcd34d;
-
-  --ui-accent-solid: #2563eb;
-  --ui-accent-on: #eff6ff;
-  --ui-success-solid: #047857;
-  --ui-success-on: #ffffff;
-  --ui-warn-solid: #b45309;
-  --ui-warn-on: #ffffff;
-  --ui-danger-solid: #b91c1c;
-  --ui-danger-on: #ffffff;
-
-  --ui-list-row-bg: #0f1624;
-  --ui-segment-track: rgb(0 0 0 / 0.35);
-  --ui-segment-active-bg: #1c2738;
-  --ui-segment-active-fg: #f4f4f5;
-  --ui-segment-inactive-fg: #a1a1aa;
+  --ui-danger-fg: #fecaca;
+  --ui-success-fg: #6ee7b7;
+  --ui-accent-fg: #7dd3fc;
+  --ui-warn-fg: #fde68a;
 
   --ui-badge-default-bg: rgb(255 255 255 / 0.1);
   --ui-badge-default-fg: var(--ui-secondary);
@@ -64,18 +49,12 @@
   --ui-badge-info-fg: #93c5fd;
   --ui-badge-info-border: rgb(96 165 250 / 0.25);
 
-  --ui-btn-secondary-bg: #1a2436;
-  --ui-btn-secondary-fg: #f4f4f5;
-  --ui-btn-secondary-border: rgb(255 255 255 / 0.18);
-  --ui-btn-secondary-hover: #243047;
+  --ui-btn-secondary-bg: rgb(255 255 255 / 0.1);
+  --ui-btn-secondary-fg: var(--ui-fg);
+  --ui-btn-secondary-border: rgb(255 255 255 / 0.15);
+  --ui-btn-secondary-hover: rgb(255 255 255 / 0.15);
   --ui-btn-ghost-hover: rgb(255 255 255 / 0.1);
-  --ui-btn-ghost-fg: #e4e4e7;
-
-  --ui-icon-btn-inactive-bg: #1a2436;
-  --ui-icon-btn-inactive-fg: #e4e4e7;
-  --ui-icon-btn-inactive-border: rgb(255 255 255 / 0.18);
-  --ui-icon-btn-active-bg: #1d5ff5;
-  --ui-icon-btn-active-fg: #ffffff;
+  --ui-btn-ghost-fg: var(--ui-secondary);
 
   --glass-bg: rgba(255, 255, 255, 0.08);
   --glass-nav-bg: rgba(14, 18, 28, 0.62);
@@ -122,17 +101,17 @@
 html.theme-light {
   color-scheme: light;
 
-  --ui-bg: #e4e4e8;
+  --ui-bg: #f4f4f5;
   --ui-raised: #ffffff;
-  --ui-elevated: #f3f3f6;
-  --ui-sunken: rgb(24 24 27 / 0.07);
+  --ui-elevated: #ffffff;
+  --ui-sunken: rgb(24 24 27 / 0.05);
   --ui-modal: rgb(255 255 255 / 0.98);
   --ui-fg: #18181b;
   --ui-secondary: #3f3f46;
   --ui-muted: #52525b;
   --ui-soft: #52525b;
-  --ui-border: #71717a;
-  --ui-border-subtle: #868690;
+  --ui-border: rgb(24 24 27 / 0.12);
+  --ui-border-subtle: rgb(24 24 27 / 0.08);
   --ui-hover: rgb(24 24 27 / 0.05);
   --ui-hover-strong: rgb(24 24 27 / 0.08);
   --ui-scrim: rgb(15 23 42 / 0.48);
@@ -147,21 +126,6 @@ html.theme-light {
   --ui-success-fg: #047857;
   --ui-accent-fg: #1d4ed8;
   --ui-warn-fg: #b45309;
-
-  --ui-accent-solid: #1d4ed8;
-  --ui-accent-on: #eff6ff;
-  --ui-success-solid: #047857;
-  --ui-success-on: #ecfdf5;
-  --ui-warn-solid: #b45309;
-  --ui-warn-on: #fffbeb;
-  --ui-danger-solid: #991b1b;
-  --ui-danger-on: #ffffff;
-
-  --ui-list-row-bg: #ffffff;
-  --ui-segment-track: #dcdce0;
-  --ui-segment-active-bg: #ffffff;
-  --ui-segment-active-fg: #18181b;
-  --ui-segment-inactive-fg: #27272a;
 
   --ui-badge-default-bg: rgb(244 244 245 / 0.95);
   --ui-badge-default-fg: #27272a;
@@ -179,18 +143,12 @@ html.theme-light {
   --ui-badge-info-fg: #1e3a8a;
   --ui-badge-info-border: rgb(147 197 253 / 0.85);
 
-  --ui-btn-secondary-bg: #d4d4d8;
-  --ui-btn-secondary-fg: #18181b;
-  --ui-btn-secondary-border: rgb(24 24 27 / 0.18);
-  --ui-btn-secondary-hover: #c4c4c8;
+  --ui-btn-secondary-bg: rgb(244 244 245 / 0.95);
+  --ui-btn-secondary-fg: #27272a;
+  --ui-btn-secondary-border: rgb(161 161 170 / 0.45);
+  --ui-btn-secondary-hover: rgb(228 228 231 / 0.95);
   --ui-btn-ghost-hover: rgb(24 24 27 / 0.06);
-  --ui-btn-ghost-fg: #27272a;
-
-  --ui-icon-btn-inactive-bg: #c4c4c8;
-  --ui-icon-btn-inactive-fg: #18181b;
-  --ui-icon-btn-inactive-border: rgb(24 24 27 / 0.2);
-  --ui-icon-btn-active-bg: #1d5ff5;
-  --ui-icon-btn-active-fg: #ffffff;
+  --ui-btn-ghost-fg: #3f3f46;
 
   --glass-bg: rgba(255, 255, 255, 0.62);
   --glass-nav-bg: rgba(255, 255, 255, 0.72);
@@ -251,10 +209,6 @@ html.theme-light {
   --color-ui-danger: var(--ui-danger-fg);
   --color-ui-field: var(--ui-field);
   --color-ui-field-muted: var(--ui-field-muted);
-  --color-ui-accent-solid: var(--ui-accent-solid);
-  --color-ui-success-solid: var(--ui-success-solid);
-  --color-ui-warn-solid: var(--ui-warn-solid);
-  --color-ui-danger-solid: var(--ui-danger-solid);
 }
 
 @layer utilities {
@@ -348,111 +302,22 @@ html.theme-light {
     border-color: var(--ui-badge-info-border);
   }
 
-  button.ui-btn-secondary {
-    background-color: var(--ui-btn-secondary-bg);
+  .ui-btn-secondary {
+    background: var(--ui-btn-secondary-bg);
     color: var(--ui-btn-secondary-fg);
     border-color: var(--ui-btn-secondary-border);
   }
 
-  button.ui-btn-secondary .truncate {
-    color: inherit;
-    background-color: transparent;
+  .ui-btn-secondary:hover {
+    background: var(--ui-btn-secondary-hover);
   }
 
-  button.ui-btn-secondary:hover {
-    background-color: var(--ui-btn-secondary-hover);
-  }
-
-  button.ui-btn-ghost {
+  .ui-btn-ghost {
     color: var(--ui-btn-ghost-fg);
   }
 
-  button.ui-btn-ghost .truncate {
-    color: inherit;
-    background-color: transparent;
-  }
-
-  button.ui-btn-ghost:hover {
-    background-color: var(--ui-btn-ghost-hover);
-  }
-
-  button.ui-icon-btn-soft {
-    background-color: var(--ui-icon-btn-inactive-bg);
-    color: var(--ui-icon-btn-inactive-fg);
-    border: 1px solid var(--ui-icon-btn-inactive-border);
-  }
-
-  button.ui-icon-btn-soft:hover {
-    background-color: var(--ui-btn-secondary-hover);
-  }
-
-  button.ui-icon-btn-solid {
-    background-color: var(--ui-icon-btn-active-bg);
-    color: var(--ui-icon-btn-active-fg);
-  }
-
-  button.ui-icon-btn-solid:hover {
-    filter: brightness(1.08);
-  }
-
-  .ui-segment-track {
-    background: var(--ui-segment-track);
-  }
-
-  button.ui-segment-active {
-    background-color: var(--ui-segment-active-bg);
-    color: var(--ui-segment-active-fg);
-    border: 1px solid var(--ui-border-subtle);
-  }
-
-  button.ui-segment-active .text-pretty {
-    color: inherit;
-    background-color: transparent;
-  }
-
-  button[role='radio']:not(.ui-segment-active) {
-    color: var(--ui-segment-inactive-fg);
-  }
-
-  button[role='radio']:not(.ui-segment-active) .text-pretty {
-    color: inherit;
-    background-color: transparent;
-  }
-
-  .ui-list-row {
-    background-color: var(--ui-raised);
-  }
-
-  .text-on-accent-solid {
-    color: var(--ui-accent-on);
-  }
-
-  .text-on-success-solid {
-    color: var(--ui-success-on);
-  }
-
-  .text-on-warn-solid {
-    color: var(--ui-warn-on);
-  }
-
-  .text-on-danger-solid {
-    color: var(--ui-danger-on);
-  }
-
-  .bg-ui-accent-solid {
-    background-color: var(--ui-accent-solid);
-  }
-
-  .bg-ui-success-solid {
-    background-color: var(--ui-success-solid);
-  }
-
-  .bg-ui-warn-solid {
-    background-color: var(--ui-warn-solid);
-  }
-
-  .bg-ui-danger-solid {
-    background-color: var(--ui-danger-solid);
+  .ui-btn-ghost:hover {
+    background: var(--ui-btn-ghost-hover);
   }
 
   .toast-surface {
@@ -538,30 +403,5 @@ html.theme-light {
 
   .toast-progress-fill {
     background: var(--ui-toast-accent);
-  }
-
-  /* Runtime theme: override Tailwind compile-time color snapshots */
-  .bg-ui-bg {
-    background-color: var(--ui-bg) !important;
-  }
-
-  .bg-ui-raised {
-    background-color: var(--ui-raised) !important;
-  }
-
-  .bg-ui-elevated {
-    background-color: var(--ui-elevated) !important;
-  }
-
-  .text-ui-fg {
-    color: var(--ui-fg) !important;
-  }
-
-  .text-ui-secondary {
-    color: var(--ui-secondary) !important;
-  }
-
-  .text-ui-muted {
-    color: var(--ui-muted) !important;
   }
 }
