@@ -52,8 +52,8 @@ test.describe('progress minus artifacts', () => {
   test('stepper and undo toast viewport shots', async ({ page }) => {
     await seedOnboarded(page, 'dark')
     await openProgressFocus(page)
-    await page.getByTestId('requirement-inventory-inc').first().click()
-    await expect(page.getByTestId('requirement-inventory-stepper').first()).toBeVisible()
+    await page.getByTestId('requirement-inventory-add').first().click()
+    await expect(page.getByTestId('requirement-inventory-actions').first()).toBeVisible()
     await page.screenshot({ path: path.join(ARTIFACTS, 'mobile-dark-stepper.png'), fullPage: false })
 
     await expect(page.getByTestId('toast-item')).toBeVisible()
@@ -63,7 +63,7 @@ test.describe('progress minus artifacts', () => {
       { id: 'u1', droidId: 'hov-r', tier: 'diamond', quantity: 1 },
     ])
     await openProgressFocus(page)
-    await expect(page.getByTestId('requirement-inventory-stepper').first()).toBeVisible()
+    await expect(page.getByTestId('requirement-inventory-remove').first()).toBeVisible()
     await page.screenshot({ path: path.join(ARTIFACTS, 'mobile-light-stepper.png'), fullPage: false })
   })
 })

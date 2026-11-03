@@ -47,7 +47,7 @@ export function useProgressInventoryToast() {
       const message =
         context.delta > 0
           ? t('progress.inventoryDeltaPlus', { name: context.name, tier: context.tier })
-          : t('progress.inventoryDeltaMinus', { name: context.name, tier: context.tier })
+          : t('progress.inventoryRemovedUnit', { name: context.name, tier: context.tier })
 
       push(message, {
         variant: 'neutral',

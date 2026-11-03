@@ -35,26 +35,42 @@ describe('RequirementInventoryControls', () => {
     cleanup()
   })
 
-  it('decrements and removes unit at zero', () => {
+  it('shows add only when none owned', () => {
+    renderCard()
+    expect(screen.getByTestId('requirement-inventory-add')).toBeInTheDocument()
+    expect(screen.queryByTestId('requirement-inventory-remove')).not.toBeInTheDocument()
+  })
+
+  it('x removes unit and clears inventory row', () => {
     const req = getRebirth('path-1', 8)!.requirements[0]!
     useAppStore.getState().addInventoryUnit(req.droidId, req.rarity, 1)
     renderCard()
-    fireEvent.click(screen.getByTestId('requirement-inventory-dec'))
+    fireEvent.click(screen.getByTestId('requirement-inventory-remove'))
     expect(useAppStore.getState().inventory).toHaveLength(0)
   })
 
-  it('undo restores inventory after increment', () => {
+  it('undo restores inventory after add', () => {
     renderCard()
-    fireEvent.click(screen.getByTestId('requirement-inventory-inc'))
+    fireEvent.click(screen.getByTestId('requirement-inventory-add'))
     expect(useAppStore.getState().inventory.length).toBe(1)
     fireEvent.click(screen.getByTestId('toast-action'))
     expect(useAppStore.getState().inventory).toHaveLength(0)
   })
 
+  it('undo restores inventory after remove', () => {
+    const req = getRebirth('path-1', 8)!.requirements[0]!
+    useAppStore.getState().addInventoryUnit(req.droidId, req.rarity, 1)
+    renderCard()
+    fireEvent.click(screen.getByTestId('requirement-inventory-remove'))
+    expect(useAppStore.getState().inventory).toHaveLength(0)
+    fireEvent.click(screen.getByTestId('toast-action'))
+    expect(useAppStore.getState().inventory).toHaveLength(1)
+  })
+
   it('recomputes readiness after undo', () => {
     const entry = getRebirth('path-1', 8)!
     renderCard()
-    fireEvent.click(screen.getByTestId('requirement-inventory-inc'))
+    fireEvent.click(screen.getByTestId('requirement-inventory-add'))
     let checks = evaluateRequirements(entry.requirements, useAppStore.getState().inventory, true)
     expect(checks.some((c) => c.status === 'ready')).toBe(true)
     fireEvent.click(screen.getByTestId('toast-action'))

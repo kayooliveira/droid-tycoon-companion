@@ -56,7 +56,7 @@ test.describe('PR15 final viewport artifacts', () => {
 
     await page.getByTestId('progress-droid-search-input').fill('')
     await page.getByText('Renascimento #8 agora').scrollIntoViewIfNeeded()
-    await expect(page.getByTestId('requirement-inventory-stepper').first()).toBeVisible()
+    await expect(page.getByTestId('requirement-inventory-add').first()).toBeVisible()
     await page.screenshot({ path: path.join(ARTIFACTS, 'mobile-dark-steppers.png'), fullPage: false })
 
     await seedProgress(page, 'light', [
@@ -64,7 +64,7 @@ test.describe('PR15 final viewport artifacts', () => {
     ])
     await page.goto('/progress', { waitUntil: 'domcontentloaded' })
     await expect(page.getByTestId('progress-page')).toBeVisible({ timeout: 25_000 })
-    await expect(page.getByTestId('requirement-inventory-stepper').first()).toBeVisible()
+    await expect(page.getByTestId('requirement-inventory-remove').first()).toBeVisible()
     await page.screenshot({ path: path.join(ARTIFACTS, 'mobile-light-steppers.png'), fullPage: false })
   })
 })

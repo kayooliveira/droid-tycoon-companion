@@ -6,7 +6,7 @@ const TOAST_KEY_PATHS = [
   'progress.rebirthCompleted',
   'progress.rebirthUndone',
   'progress.inventoryDeltaPlus',
-  'progress.inventoryDeltaMinus',
+  'progress.inventoryRemovedUnit',
   'progress.inventoryRestored',
   'path.switched',
   'inventory.added',
