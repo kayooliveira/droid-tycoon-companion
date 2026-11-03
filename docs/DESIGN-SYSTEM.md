@@ -56,6 +56,13 @@ Defined in `src/index.css` `@theme`: content (1), sticky (40), nav (45), banner 
 | EmptyState, ListRow, Skeleton | `EmptyState.tsx`, `ListRow.tsx`, `Skeleton.tsx` |
 | SectionHeader | `SectionHeader.tsx` |
 
+## Contrast guardrails
+
+- Unit: `src/styles/themeContrast.test.ts` checks WCAG AA pairs (4.5:1 text, 3:1 borders, surface steps) for dark and light token blocks.
+- E2E: `e2e/design-system-a11y.spec.ts` runs axe `color-contrast` on `/design` components section in both themes.
+
+Semantic backgrounds use runtime CSS variables (see `theme-tokens.css` overrides) so light/dark switches stay in sync.
+
 ## Living catalog
 
 Open **`/design`** in the app (not linked from nav) to preview tokens and components in dark and light themes.

@@ -25,7 +25,7 @@ export function ListRow({
       data-testid={testId}
       onClick={onClick}
       className={cn(
-        'flex w-full min-h-11 items-center gap-3 rounded-xl border border-ui-subtle bg-ui-raised/80 px-3 py-2.5 text-left motion-standard transition-colors',
+        'ui-list-row flex w-full min-h-11 items-center gap-3 rounded-xl border border-ui-subtle px-3 py-2.5 text-left motion-standard transition-colors shadow-elevation-1',
         onClick && 'hover:bg-ui-hover active:scale-[0.99]',
         className,
       )}

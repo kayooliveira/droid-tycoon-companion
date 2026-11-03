@@ -18,13 +18,13 @@ export function SearchInput({
     <div className={cn('relative', className)}>
       <MagnifyingGlass
         {...uiIconProps}
-        className="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-ui-muted"
+        className="pointer-events-none absolute left-[var(--space-3)] top-1/2 size-[var(--ds-search-icon-size)] -translate-y-1/2 text-ui-muted"
         aria-hidden
       />
       <input
         type="search"
         enterKeyHint="search"
-        className={cn('ds-search-field pl-10', showClear ? 'pr-10' : undefined)}
+        className={cn('ds-search-field', showClear ? 'pr-10' : undefined)}
         value={value}
         {...props}
       />

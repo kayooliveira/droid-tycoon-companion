@@ -425,7 +425,8 @@
     "btnAccent": "Destaque",
     "btnDanger": "Perigo",
     "btnGhost": "Fantasma",
-    "chipLabel": "Chip",
+    "chipLabel": "Etiqueta",
+    "swatchOnColor": "Aa",
     "themeDark": "Tema escuro",
     "themeLight": "Tema claro",
     "swatch": {
@@ -433,7 +434,7 @@
       "raised": "Superfície",
       "elevated": "Elevado",
       "fg": "Texto",
-      "accent": "Accent",
+      "accent": "Destaque",
       "success": "Sucesso",
       "warn": "Aviso",
       "danger": "Erro"

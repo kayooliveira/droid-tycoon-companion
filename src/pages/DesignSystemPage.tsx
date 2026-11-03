@@ -18,15 +18,34 @@ import { uiIconProps } from '../components/ui/iconStyle'
 import { applyTheme, useAppStore } from '../store/useAppStore'
 import { useMemo, useState } from 'react'
 
-const SEMANTIC_SWATCHES = [
+const SURFACE_SWATCHES = [
   { key: 'bg', className: 'bg-ui-bg border border-ui' },
   { key: 'raised', className: 'bg-ui-raised border border-ui' },
   { key: 'elevated', className: 'bg-ui-elevated border border-ui' },
   { key: 'fg', className: 'bg-ui-fg' },
-  { key: 'accent', className: 'bg-ui-accent/30 border border-ui-accent' },
-  { key: 'success', className: 'bg-ui-success/25 border border-ui-success' },
-  { key: 'warn', className: 'bg-ui-warn/25 border border-ui-warn' },
-  { key: 'danger', className: 'bg-ui-danger/25 border border-ui-danger' },
+] as const
+
+const STATUS_SWATCHES = [
+  {
+    key: 'accent',
+    className: 'bg-ui-accent-solid',
+    textClass: 'text-on-accent-solid',
+  },
+  {
+    key: 'success',
+    className: 'bg-ui-success-solid',
+    textClass: 'text-on-success-solid',
+  },
+  {
+    key: 'warn',
+    className: 'bg-ui-warn-solid',
+    textClass: 'text-on-warn-solid',
+  },
+  {
+    key: 'danger',
+    className: 'bg-ui-danger-solid',
+    textClass: 'text-on-danger-solid',
+  },
 ] as const
 
 const TIER_KEYS = [
@@ -100,9 +119,21 @@ export function DesignSystemPage() {
         <section data-testid="design-section-colors">
           <SectionHeader title={t('designSystem.colorsTitle')} />
           <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {SEMANTIC_SWATCHES.map((s) => (
+            {SURFACE_SWATCHES.map((s) => (
               <div key={s.key} className="space-y-1">
                 <div className={`h-12 rounded-xl ${s.className}`} />
+                <p className="text-ds-xs text-ui-muted">{t(`designSystem.swatch.${s.key}`)}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {STATUS_SWATCHES.map((s) => (
+              <div key={s.key} className="space-y-1">
+                <div
+                  className={`flex h-12 items-center justify-center rounded-xl text-ds-xs font-semibold ${s.className} ${s.textClass}`}
+                >
+                  {t('designSystem.swatchOnColor')}
+                </div>
                 <p className="text-ds-xs text-ui-muted">{t(`designSystem.swatch.${s.key}`)}</p>
               </div>
             ))}
@@ -115,7 +146,7 @@ export function DesignSystemPage() {
             {TIER_KEYS.map((tier) => (
               <div key={tier} className="flex items-center gap-2 rounded-xl border border-ui px-2 py-1">
                 <span className={`size-4 rounded-full tier-swatch-${tier}`} />
-                <span className="text-ds-xs capitalize">{tier}</span>
+                <span className="text-ds-xs">{t(`tier.${tier}`)}</span>
               </div>
             ))}
           </div>

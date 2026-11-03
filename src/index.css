@@ -76,7 +76,8 @@
 @layer utilities {
   /* Solid content cards (not glass) */
   .surface-card {
-    @apply rounded-[var(--radius-glass)] bg-ui-raised shadow-sm;
+    @apply rounded-[var(--radius-glass)] shadow-sm;
+    background-color: var(--ui-raised);
     border: 1px solid var(--ui-border);
   }
 
