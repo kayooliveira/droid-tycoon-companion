@@ -76,17 +76,15 @@
       "pickDroid": "Matching droids",
       "currentCycle": "your cycle",
       "statusDone": "Done",
-      "statusCurrent": "Current step",
-      "statusUpcoming": "Upcoming",
       "nextNeed": "Next for you",
       "rebirthStep": "Rebirth #{{n}}",
       "requirementLine": "{{tier}} · qty {{qty}}",
       "fusionLine": "{{tier}} · qty {{qty}} · fusion for {{result}}",
       "disputed": "disputed requirement",
-      "openStep": "Open Ciclo {{ciclo}}, rebirth #{{n}}",
+      "openStepAria": "Open Ciclo {{ciclo}}, Renascimento #{{n}}",
+      "cycleSummary": "Ciclo {{ciclo}} · {{count}} rebirths",
       "neverNeeded": "You will not need {{name}} on any Cycle.",
-      "canSell": "You can sell it when your tier rules allow.",
-      "neverNeededHint": "It does not appear in rebirth or fusion requirements."
+      "canSell": "Safe to sell."
     },
     "superConfirmTitle": "Super Rebirth?",
     "superConfirmBody": "You leave {{currentCycle}} and start {{nextCycle}}. Rebirth #{{currentStep}} is closed in the app and the new Path begins at #1. This cannot be undone."

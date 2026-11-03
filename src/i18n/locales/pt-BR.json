@@ -76,17 +76,15 @@
       "pickDroid": "Droids encontrados",
       "currentCycle": "seu ciclo",
       "statusDone": "Feito",
-      "statusCurrent": "Passo atual",
-      "statusUpcoming": "Depois",
       "nextNeed": "Próximo para você",
       "rebirthStep": "Renascimento #{{n}}",
       "requirementLine": "{{tier}} · qtd. {{qty}}",
       "fusionLine": "{{tier}} · qtd. {{qty}} · fusão para {{result}}",
       "disputed": "requisito em disputa",
-      "openStep": "Abrir Ciclo {{ciclo}}, renascimento #{{n}}",
+      "openStepAria": "Abrir Ciclo {{ciclo}}, Renascimento #{{n}}",
+      "cycleSummary": "Ciclo {{ciclo}} · {{count}} renascimentos",
       "neverNeeded": "Você não vai precisar do {{name}} em nenhum Ciclo.",
-      "canSell": "Pode vender quando as regras de tier permitirem.",
-      "neverNeededHint": "Não aparece em renascimentos nem em fusões."
+      "canSell": "Pode vender sem medo."
     },
     "superConfirmTitle": "Super Renascimento?",
     "superConfirmBody": "Você sai do {{currentCycle}} e entra no {{nextCycle}}. O renascimento #{{currentStep}} fica fechado no app e o novo ciclo começa do #1. Não dá para desfazer."
