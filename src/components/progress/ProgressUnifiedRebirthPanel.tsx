@@ -6,11 +6,9 @@ import { unitsNewlySellableAfterRebirth } from '../../domain/rebirthSellPlan'
 import { formatTierName } from '../../domain/tiers'
 import { useTierLabels } from '../../i18n/useTierLabels'
 import type { InventoryUnit, TierId } from '../../domain/types'
-import { DroidImage } from '../DroidImage'
-import { RequirementInventoryControls } from '../RequirementInventoryControls'
 import { ScreenSection } from '../layout/ScreenSection'
 import { InsetGroup } from '../ui/InsetGroup'
-import { SellBadge } from '../ui/SellBadge'
+import { ProgressDroidRequirementRow } from './ProgressDroidRequirementRow'
 
 function ownedFor(
   inventory: InventoryUnit[],
@@ -62,40 +60,19 @@ export function ProgressUnifiedRebirthPanel({
           const tier = c.requirement.rarity
           const owned = ownedFor(inventory, c.requirement.droidId, tier, trackInventory)
           const needed = c.requirement.quantity
-          const sellable = false
           const subMeta = `${formatTierName(tier, tierLabels)} · ${owned}/${needed}`
           return (
-            <div
+            <ProgressDroidRequirementRow
               key={c.requirement.droidId}
-              className="dc-row dc-row-droid"
-              role="button"
-              tabIndex={0}
-              onClick={() => onOpenDroid(c.requirement.droidId, tier, sellable, owned)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  onOpenDroid(c.requirement.droidId, tier, sellable, owned)
-                }
-              }}
-            >
-              <DroidImage droid={d} tier={tier} size="sm" className="!h-[50px] !w-[50px] rounded-[11px]" />
-              <div className="dc-row-main">
-                <span className="dc-droid-name dc-row-label">{d.name}</span>
-                <span className="dc-row-sub dc-row-sub--badge">
-                  <span className="dc-row-sub-meta">{subMeta}</span>
-                  <SellBadge sellable={sellable} />
-                </span>
-              </div>
-              {trackInventory ? (
-                <RequirementInventoryControls
-                  droidId={c.requirement.droidId}
-                  droidName={d.name}
-                  tier={tier}
-                  ownedCount={owned}
-                  neededCount={needed}
-                />
-              ) : null}
-            </div>
+              droid={d}
+              tier={tier}
+              subMeta={subMeta}
+              sellable={false}
+              owned={owned}
+              needed={needed}
+              trackInventory={trackInventory}
+              onOpenDroid={() => onOpenDroid(c.requirement.droidId, tier, false, owned)}
+            />
           )
         })}
         {sellExtras
@@ -106,28 +83,17 @@ export function ProgressUnifiedRebirthPanel({
             const sellable = u.disposition === 'sellable'
             const subMeta = `${formatTierName(u.tier, tierLabels)} · ${t('progress.qtyShort', { n: u.quantity })}`
             return (
-              <div
+              <ProgressDroidRequirementRow
                 key={`${u.droidId}-${u.tier}`}
-                className="dc-row dc-row-droid"
-                role="button"
-                tabIndex={0}
-                onClick={() => onOpenDroid(u.droidId, u.tier, sellable, u.quantity)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    onOpenDroid(u.droidId, u.tier, sellable, u.quantity)
-                  }
-                }}
-              >
-                <DroidImage droid={d} tier={u.tier} size="sm" className="!h-[50px] !w-[50px] rounded-[11px]" />
-                <div className="dc-row-main">
-                  <span className="dc-droid-name dc-row-label">{d.name}</span>
-                  <span className="dc-row-sub dc-row-sub--badge">
-                    <span className="dc-row-sub-meta">{subMeta}</span>
-                    <SellBadge sellable={sellable} />
-                  </span>
-                </div>
-              </div>
+                droid={d}
+                tier={u.tier}
+                subMeta={subMeta}
+                sellable={sellable}
+                owned={u.quantity}
+                needed={0}
+                trackInventory={false}
+                onOpenDroid={() => onOpenDroid(u.droidId, u.tier, sellable, u.quantity)}
+              />
             )
           })}
       </InsetGroup>

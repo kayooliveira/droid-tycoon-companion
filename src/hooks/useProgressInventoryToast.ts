@@ -44,16 +44,15 @@ export function useProgressInventoryToast() {
         clearBurst()
       }, 4000)
 
+      const step = useAppStore.getState().progress.nextRebirth
       const message =
         context.delta > 0
-          ? t('progress.inventoryDeltaPlus', { name: context.name, tier: context.tier })
-          : t('progress.inventoryRemovedUnit', { name: context.name, tier: context.tier })
+          ? t('progress.inventoryAddedToStep', { name: context.name, n: step })
+          : t('progress.inventoryRemovedFromStep', { name: context.name, n: step })
 
       push(message, {
-        variant: 'neutral',
+        variant: context.delta > 0 ? 'success' : 'info',
         replaceKey: REPLACE_KEY,
-        durationMs: 4000,
-        showProgress: true,
         action: {
           label: t('progress.inventoryUndo'),
           onClick: () => {
@@ -61,7 +60,7 @@ export function useProgressInventoryToast() {
             const persisted = toPersisted()
             importState({ ...persisted, inventory: cloneInventory(snapshot) })
             clearBurst()
-            push(t('progress.inventoryRestored'), { variant: 'info' })
+            push(t('progress.inventoryRestored'), { variant: 'success' })
           },
         },
       })

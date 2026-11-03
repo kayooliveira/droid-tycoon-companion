@@ -28,28 +28,27 @@ describe('ToastProvider', () => {
     )
     const stack = screen.getByTestId('toast-stack')
     expect(stack.className).toMatch(/safe-area-inset-top/)
-    expect(stack.className).toMatch(/max-w-\[420px\]/)
-    expect(stack.className).toMatch(/calc\(100%-24px\)/)
+    expect(stack.className).toMatch(/max-w-\[360px\]/)
+    expect(stack.className).toMatch(/pointer-events-none/)
   })
 
-  it('renders variant data attribute and progress for undo toasts', () => {
+  it('renders variant data attribute and text action', () => {
     render(
       <ToastProvider>
         <PushOnMount
           message="Undo me"
           options={{
-            variant: 'neutral',
+            variant: 'success',
             action: { label: 'Undo', onClick: () => {} },
-            showProgress: true,
           }}
         />
       </ToastProvider>,
     )
     expect(screen.getByText('Undo me').closest('[data-testid="toast-item"]')).toHaveAttribute(
       'data-toast-variant',
-      'neutral',
+      'success',
     )
-    expect(screen.getByTestId('toast-progress-track')).toBeInTheDocument()
+    expect(screen.getByTestId('toast-action')).toBeInTheDocument()
   })
 
   it('uses assertive live region for error variant', () => {

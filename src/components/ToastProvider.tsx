@@ -3,7 +3,6 @@ import {
   Info,
   Warning,
   WarningCircle,
-  ArrowCounterClockwise,
   type Icon,
 } from '@phosphor-icons/react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
@@ -18,7 +17,6 @@ import {
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from 'react'
-import { Button } from './ui/Button'
 import { OverlayPortal } from './ui/OverlayPortal'
 import { UI_ICON_SIZE, UI_ICON_WEIGHT } from './ui/iconStyle'
 import { cn } from '../lib/utils'
@@ -30,42 +28,33 @@ type ToastAction = { label: string; onClick: () => void }
 type Toast = {
   id: string
   message: string
+  detail?: string
   variant: ToastVariant
   action?: ToastAction
   sticky?: boolean
   replaceKey?: string
   durationMs: number
-  showProgress: boolean
   live: 'polite' | 'assertive'
-  exiting?: boolean
 }
 
 export type ToastPushOptions = {
   variant?: ToastVariant
+  detail?: string
   action?: ToastAction
   sticky?: boolean
   replaceKey?: string
-  /** Auto-dismiss ms; defaults by variant unless sticky */
   durationMs?: number
-  /** Show countdown bar (default true when action is set) */
-  showProgress?: boolean
   live?: 'polite' | 'assertive'
 }
 
-const DEFAULT_DURATION: Record<ToastVariant, number> = {
-  success: 3800,
-  info: 3800,
-  warning: 5200,
-  error: 5200,
-  neutral: 4000,
-}
+const TOAST_DURATION_MS = 4000
 
-const VARIANT_STYLES: Record<ToastVariant, { surface: string; Icon: Icon }> = {
-  success: { surface: 'toast-surface--success', Icon: CheckCircle },
-  info: { surface: 'toast-surface--info', Icon: Info },
-  warning: { surface: 'toast-surface--warning', Icon: Warning },
-  error: { surface: 'toast-surface--error', Icon: WarningCircle },
-  neutral: { surface: 'toast-surface--neutral', Icon: ArrowCounterClockwise },
+const VARIANT_META: Record<ToastVariant, { Icon: Icon; iconClass: string }> = {
+  success: { Icon: CheckCircle, iconClass: 'toast-icon--success' },
+  info: { Icon: Info, iconClass: 'toast-icon--info' },
+  warning: { Icon: Warning, iconClass: 'toast-icon--warning' },
+  error: { Icon: WarningCircle, iconClass: 'toast-icon--error' },
+  neutral: { Icon: Info, iconClass: 'toast-icon--info' },
 }
 
 const LIVE_BY_VARIANT: Record<ToastVariant, 'polite' | 'assertive'> = {
@@ -80,6 +69,25 @@ const ToastContext = createContext<{
   push: (message: string, options?: ToastPushOptions) => void
 } | null>(null)
 
+function useOverlaySheetOpen() {
+  const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    const read = () => {
+      setOpen(document.documentElement.dataset.overlayOpen === 'true')
+    }
+    read()
+    const obs = new MutationObserver(read)
+    obs.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-overlay-open'],
+    })
+    return () => obs.disconnect()
+  }, [])
+
+  return open
+}
+
 function ToastItem({
   toast,
   onDismiss,
@@ -92,13 +100,12 @@ function ToastItem({
   const startY = useRef<number | null>(null)
   const dragY = useRef(0)
   const [offsetY, setOffsetY] = useState(0)
-  const styles = VARIANT_STYLES[toast.variant]
-  const VariantIcon = styles.Icon
+  const { Icon, iconClass } = VARIANT_META[toast.variant]
 
   const handlePointerDown = (e: ReactPointerEvent) => {
     startY.current = e.clientY
     dragY.current = 0
-    ;(e.target as HTMLElement).setPointerCapture?.(e.pointerId)
+    ;(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)
   }
 
   const handlePointerMove = (e: ReactPointerEvent) => {
@@ -110,7 +117,7 @@ function ToastItem({
     }
   }
 
-  const handlePointerUp = () => {
+  const finishPointer = () => {
     if (dragY.current < -48) {
       onDismiss(toast.id)
     } else {
@@ -123,64 +130,40 @@ function ToastItem({
   return (
     <motion.div
       layout={!reducedMotion}
-      initial={reducedMotion ? false : { opacity: 0, y: -12 }}
+      initial={reducedMotion ? false : { opacity: 0, y: -16 }}
       animate={reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-      exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
-      transition={{ duration: reducedMotion ? 0 : 0.22, ease: [0.22, 1, 0.36, 1] }}
+      exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -12 }}
+      transition={{ duration: reducedMotion ? 0 : 0.24, ease: [0.22, 1, 0.36, 1] }}
       style={{ transform: offsetY ? `translateY(${offsetY}px)` : undefined }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      onPointerCancel={handlePointerUp}
+      onPointerUp={finishPointer}
+      onPointerCancel={finishPointer}
       data-testid="toast-item"
       data-toast-variant={toast.variant}
       role="status"
       aria-live={toast.live}
-      className={cn(
-        'toast-surface pointer-events-auto relative touch-pan-y overflow-hidden rounded-2xl',
-        'flex flex-col gap-2 py-3 pl-4 pr-3 text-sm',
-        styles.surface,
-      )}
+      className="toast-surface pointer-events-auto touch-pan-y"
     >
-      <div className="flex flex-wrap items-start gap-3">
-        <span className="toast-icon-ring" aria-hidden>
-          <VariantIcon size={UI_ICON_SIZE + 2} weight={UI_ICON_WEIGHT} />
-        </span>
-        <span className="toast-message min-w-[10rem] flex-1 text-pretty font-medium leading-snug">
-          {toast.message}
-        </span>
-        {toast.action ? (
-          <Button
-            variant="secondary"
-            className="min-h-11 shrink-0 py-2 text-xs"
-            data-testid="toast-action"
-            onClick={() => {
-              toast.action?.onClick()
-              onDismiss(toast.id)
-            }}
-          >
-            {toast.action.label}
-          </Button>
-        ) : null}
+      <span className={cn('toast-icon', iconClass)} aria-hidden>
+        <Icon size={UI_ICON_SIZE + 2} weight={UI_ICON_WEIGHT} />
+      </span>
+      <div className="toast-copy min-w-0 flex-1">
+        <p className="toast-title">{toast.message}</p>
+        {toast.detail ? <p className="toast-detail">{toast.detail}</p> : null}
       </div>
-      {toast.showProgress && !toast.sticky ? (
-        <div
-          className="h-1 w-full overflow-hidden rounded-full bg-black/10 dark:bg-white/10"
-          aria-hidden
-          data-testid="toast-progress-track"
+      {toast.action ? (
+        <button
+          type="button"
+          className="toast-action"
+          data-testid="toast-action"
+          onClick={() => {
+            toast.action?.onClick()
+            onDismiss(toast.id)
+          }}
         >
-          <div
-            key={toast.id}
-            className="toast-progress-fill h-full origin-left rounded-full opacity-80"
-            style={
-              reducedMotion
-                ? { width: '100%' }
-                : {
-                    animation: `toast-progress ${toast.durationMs}ms linear forwards`,
-                  }
-            }
-          />
-        </div>
+          {toast.action.label}
+        </button>
       ) : null}
     </motion.div>
   )
@@ -190,6 +173,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([])
   const timers = useRef<Map<string, number>>(new Map())
   const reducedMotion = useReducedMotion()
+  const sheetOpen = useOverlaySheetOpen()
 
   const clearTimer = useCallback((id: string) => {
     const t = timers.current.get(id)
@@ -211,10 +195,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     (message: string, options?: ToastPushOptions) => {
       const variant = options?.variant ?? 'info'
       const durationMs =
-        options?.durationMs ??
-        (options?.sticky ? 0 : DEFAULT_DURATION[variant])
-      const showProgress =
-        options?.showProgress ?? Boolean(options?.action && !options?.sticky)
+        options?.durationMs ?? (options?.sticky ? 0 : TOAST_DURATION_MS)
       const live = options?.live ?? LIVE_BY_VARIANT[variant]
 
       const id = crypto.randomUUID()
@@ -228,12 +209,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           {
             id,
             message,
+            detail: options?.detail,
             variant,
             action: options?.action,
             sticky: options?.sticky,
             replaceKey: options?.replaceKey,
-            durationMs: durationMs || DEFAULT_DURATION[variant],
-            showProgress,
+            durationMs: durationMs || TOAST_DURATION_MS,
             live,
           },
         ]
@@ -250,11 +231,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   )
 
   useEffect(() => {
+    const timersMap = timers.current
     return () => {
-      for (const t of timers.current.values()) {
+      for (const t of timersMap.values()) {
         window.clearTimeout(t)
       }
-      timers.current.clear()
+      timersMap.clear()
     }
   }, [])
 
@@ -266,7 +248,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       <OverlayPortal>
         <div
           data-testid="toast-stack"
-          className="pointer-events-none fixed inset-x-0 top-[calc(env(safe-area-inset-top,0px)+0.625rem)] z-toast mx-auto flex w-[calc(100%-24px)] max-w-[420px] flex-col gap-2"
+          className={cn(
+            'toast-stack pointer-events-none fixed inset-x-0 z-toast mx-auto flex w-[calc(100%-24px)] max-w-[360px] flex-col gap-2 px-0',
+            'top-[calc(env(safe-area-inset-top,0px)+8px)]',
+            sheetOpen && 'toast-stack--sheet-open',
+          )}
         >
           <AnimatePresence mode="popLayout">
             {toasts.map((t) => (

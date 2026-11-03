@@ -5,8 +5,8 @@ import pt from './locales/pt-BR.json'
 const TOAST_KEY_PATHS = [
   'progress.rebirthCompleted',
   'progress.rebirthUndone',
-  'progress.inventoryDeltaPlus',
-  'progress.inventoryRemovedUnit',
+  'progress.inventoryAddedToStep',
+  'progress.inventoryRemovedFromStep',
   'progress.inventoryRestored',
   'path.switched',
   'inventory.added',

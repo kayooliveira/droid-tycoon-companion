@@ -48,16 +48,29 @@ export function RequirementInventoryControls({
     }, { name: droidName, tier: tierLabel, delta })
   }
 
+  const stopRowActivation = (e: { stopPropagation: () => void }) => {
+    e.stopPropagation()
+  }
+
   if (!showPlus && !showRemove) return null
 
   return (
-    <div data-testid="requirement-inventory-actions" className="dc-row-trail dc-row-trail--acts">
+    <div
+      data-testid="requirement-inventory-actions"
+      className="dc-row-trail dc-row-trail--acts"
+      onClick={stopRowActivation}
+      onPointerDown={stopRowActivation}
+    >
       {showPlus ? (
         <button
           type="button"
           data-testid="requirement-inventory-add"
           aria-label={addLabel}
-          onClick={() => adjust(1)}
+          onClick={(e) => {
+            stopRowActivation(e)
+            adjust(1)
+          }}
+          onPointerDown={stopRowActivation}
           className="act-add"
         >
           +
@@ -68,7 +81,11 @@ export function RequirementInventoryControls({
           type="button"
           data-testid="requirement-inventory-remove"
           aria-label={removeLabel}
-          onClick={() => adjust(-1)}
+          onClick={(e) => {
+            stopRowActivation(e)
+            adjust(-1)
+          }}
+          onPointerDown={stopRowActivation}
           className="act-remove"
         >
           ×

@@ -33,7 +33,7 @@ export function DroidDetailSheet({
   if (!droid) return null
 
   return (
-    <Sheet open={open} onClose={onClose} testId="droid-detail-sheet">
+    <Sheet open={open} onClose={onClose} testId="droid-detail-sheet" closeLabel={t('common.close')}>
       <div className="pb-2">
         <DroidImage droid={droid} tier={tier} size="lg" className="!h-auto !w-full max-w-sm mx-auto aspect-square rounded-2xl" />
         <h2 className="text-center text-[22px] font-bold leading-[26px] tracking-[-0.3px] mt-4 mb-3 px-1">

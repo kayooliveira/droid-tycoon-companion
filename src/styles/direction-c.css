@@ -254,10 +254,35 @@
 }
 
 .dc-row-droid {
-  cursor: pointer;
+  cursor: default;
   align-items: center;
   gap: 10px;
   padding: 9px 12px;
+}
+
+.dc-row-droid--split {
+  display: flex;
+  gap: var(--space-2);
+  padding: 0;
+}
+
+.dc-row-droid--split .dc-row-hit {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  margin: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dc-row-droid--split .dc-row-trail--acts {
+  padding-right: var(--space-2);
 }
 
 .dc-row-droid .dc-row-label {
@@ -690,19 +715,19 @@ html.theme-light .qty-badge {
   position: fixed;
   inset: 0;
   background: rgb(0 0 0 / 0.45);
-  z-index: calc(var(--z-index-overlay) - 2);
+  z-index: var(--z-index-overlay);
 }
 
 .dc-sheet {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 0;
-  z-index: calc(var(--z-index-overlay) - 1);
+  bottom: var(--mobile-nav-clearance);
+  z-index: var(--z-index-modal);
   background: var(--ui-raised);
   border-radius: 14px 14px 0 0;
   padding: 0 16px calc(20px + env(safe-area-inset-bottom, 0px));
-  max-height: min(88vh, calc(100dvh - 72px));
+  max-height: min(88vh, calc(100dvh - var(--mobile-nav-clearance) - 12px));
   overflow: auto;
   transform: translateY(100%);
   transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
