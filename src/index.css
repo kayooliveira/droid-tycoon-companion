@@ -19,10 +19,10 @@
   --z-index-sticky: 40;
   --z-index-nav: 45;
   --z-index-banner: 46;
-  --z-index-overlay: 100;
-  --z-index-modal: 101;
-  --z-index-popover: 102;
-  --z-index-toast: 110;
+  --z-index-overlay: 110;
+  --z-index-modal: 111;
+  --z-index-popover: 112;
+  --z-index-toast: 120;
 }
 
 @layer base {
