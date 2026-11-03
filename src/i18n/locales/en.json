@@ -63,6 +63,10 @@
     "undoConfirmShort": "Undo",
     "moreActionsTitle": "More actions",
     "listRebirthHeading": "Rebirth #{{n}}",
+    "collapseAll": "Collapse all",
+    "expandAll": "Expand all",
+    "collapseAllAria": "Collapse all rebirth steps in the list",
+    "expandAllAria": "Expand all rebirth steps in the list",
     "superConfirmTitle": "Super Rebirth?",
     "superConfirmBody": "You leave {{currentCycle}} and start {{nextCycle}}. Rebirth #{{currentStep}} is closed in the app and the new Path begins at #1. This cannot be undone."
   },

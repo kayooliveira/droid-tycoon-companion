@@ -1,6 +1,6 @@
 import { motion } from 'motion/react'
-import { useState } from 'react'
-import { ArrowCounterClockwise, CaretDown, Check, DotsThreeVertical, Sparkle } from '@phosphor-icons/react'
+import { useMemo, useState } from 'react'
+import { ArrowCounterClockwise, Check, DotsThreeVertical, Sparkle } from '@phosphor-icons/react'
 import { SegmentedControl } from '../components/ui/SegmentedControl'
 import { uiIconProps } from '../components/ui/iconStyle'
 import { useTranslation } from 'react-i18next'
@@ -19,7 +19,7 @@ import {
   isPathComplete,
   SUPER_REBIRTH_UNLOCK_AFTER,
 } from '../domain/progress'
-import { evaluateRequirements, metRequirementCount } from '../domain/requirements'
+import { evaluateRequirements } from '../domain/requirements'
 import { formatTierName } from '../domain/tiers'
 import { useTierLabels } from '../i18n/useTierLabels'
 import { gameData } from '../domain/gameData'
@@ -29,9 +29,9 @@ import { Badge } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
 import { GlassCard } from '../components/ui/GlassCard'
 import { Modal } from '../components/ui/Modal'
-import { ProgressBar } from '../components/ui/ProgressBar'
 import { useAppStore } from '../store/useAppStore'
 import { useToast } from '../components/ToastProvider'
+import { ProgressRebirthList } from '../components/progress/ProgressRebirthList'
 import { SellAfterRebirthList } from '../components/SellAfterRebirthList'
 import { ProgressPdfExport } from '../components/ProgressPdfExport'
 import { HelpHint } from '../components/ui/HelpHint'
@@ -96,6 +96,12 @@ export function ProgressPage() {
     setUndoOpen(false)
     push(t('progress.undoOne'))
   }
+
+  const rebirthNumbers = useMemo(
+    () =>
+      gameData.cycles.find((c) => c.id === progress.pathId)?.rebirths.map((r) => r.rebirth) ?? [],
+    [progress.pathId],
+  )
 
   return (
     <div className="space-y-5 pb-6 md:pb-0" data-testid="progress-page">
@@ -219,21 +225,13 @@ export function ProgressPage() {
           )}
         </GlassCard>
       ) : (
-        <div className="space-y-2">
-          {gameData.cycles
-            .find((c) => c.id === progress.pathId)
-            ?.rebirths.map((r) => (
-              <RebirthListItem
-                key={r.rebirth}
-                pathId={progress.pathId}
-                rebirth={r.rebirth}
-                active={r.rebirth === progress.nextRebirth}
-                nextRebirth={progress.nextRebirth}
-                inventory={inventory}
-                trackInventory={trackInventory}
-              />
-            ))}
-        </div>
+        <ProgressRebirthList
+          pathId={progress.pathId}
+          rebirthNumbers={rebirthNumbers}
+          nextRebirth={progress.nextRebirth}
+          inventory={inventory}
+          trackInventory={trackInventory}
+        />
       )}
 
       <ProgressPdfExport />
@@ -408,70 +406,3 @@ function DisputePanel({
   )
 }
 
-function RebirthListItem({
-  pathId,
-  rebirth,
-  active,
-  nextRebirth,
-  inventory,
-  trackInventory,
-}: {
-  pathId: string
-  rebirth: number
-  active: boolean
-  nextRebirth: number
-  inventory: ReturnType<typeof useAppStore.getState>['inventory']
-  trackInventory: boolean
-}) {
-  const { t } = useTranslation()
-  const [open, setOpen] = useState(active)
-  const entry = getRebirth(pathId, rebirth)
-  if (!entry) return null
-  const done = rebirth < nextRebirth
-  const checks = evaluateRequirements(entry.requirements, inventory, trackInventory)
-
-  return (
-    <GlassCard className={active ? 'ring-1 ring-holo-400/40' : ''}>
-      <button
-        type="button"
-        className="w-full flex items-center gap-3 text-left"
-        onClick={() => setOpen((v) => !v)}
-      >
-        <CaretDown
-          {...uiIconProps}
-          className={`transition-transform shrink-0 ${open ? 'rotate-180' : ''}`}
-        />
-        <div className="flex-1 min-w-0">
-          <p className="font-medium">
-            {t('progress.listRebirthHeading', { n: rebirth })}{' '}
-            {done ? <Badge tone="success">{t('progress.listDone')}</Badge> : null}
-            {active ? <Badge tone="info">{t('progress.listCurrent')}</Badge> : null}
-          </p>
-          <p className="text-xs text-ui-soft">{entry.credits}</p>
-        </div>
-        {trackInventory && !done ? (
-          <span className="text-xs text-ui-muted shrink-0">
-            {metRequirementCount(checks)}/3 {t('dashboard.statsReady').toLowerCase()}
-          </span>
-        ) : done ? (
-          <span className="text-xs text-emerald-400 shrink-0">{t('progress.listCompletedState')}</span>
-        ) : null}
-      </button>
-      {open ? (
-        <div className="mt-3 space-y-2 border-t border-ui pt-3">
-          {entry.note ? <p className="text-xs text-ui-warn/90">{entry.note}</p> : null}
-          {!done &&
-            checks.map((c) => <RequirementCard key={c.requirement.droidId} check={c} />)}
-          {!done && trackInventory ? (
-            <ProgressBar value={(metRequirementCount(checks) / 3) * 100} />
-          ) : null}
-          {done ? (
-            <SellAfterRebirthList pathId={pathId} afterRebirth={rebirth} compact />
-          ) : (
-            <SellAfterRebirthList pathId={pathId} afterRebirth={rebirth} />
-          )}
-        </div>
-      ) : null}
-    </GlassCard>
-  )
-}

@@ -8,6 +8,22 @@ describe('migrations', () => {
     expect(s.progress.pathId).toBe('path-1')
   })
 
+  it('defaults progress list to expanded when setting is missing', () => {
+    const s = migratePersistedState({
+      ...defaultPersistedState(),
+      settings: { ...defaultPersistedState().settings, progressListAllExpanded: undefined },
+    })
+    expect(s.settings.progressListAllExpanded).toBe(true)
+  })
+
+  it('keeps explicit collapse preference', () => {
+    const s = migratePersistedState({
+      ...defaultPersistedState(),
+      settings: { ...defaultPersistedState().settings, progressListAllExpanded: false },
+    })
+    expect(s.settings.progressListAllExpanded).toBe(false)
+  })
+
   it('clamps invalid rebirth values', () => {
     const s = migratePersistedState({
       ...defaultPersistedState(),

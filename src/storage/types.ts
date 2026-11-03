@@ -15,6 +15,8 @@ export interface UserSettings {
   localeSource: 'auto' | 'user'
   installBannerDismissed: boolean
   iosInstallHintDismissed: boolean
+  /** Progress list mode: when false, all rebirth rows start collapsed. Default expanded. */
+  progressListAllExpanded?: boolean
 }
 
 export interface PersistedProgress {
@@ -41,6 +43,7 @@ export const defaultSettings = (): UserSettings => ({
   localeSource: 'auto',
   installBannerDismissed: false,
   iosInstallHintDismissed: false,
+  progressListAllExpanded: true,
 })
 
 export function defaultPersistedState(): PersistedState {
