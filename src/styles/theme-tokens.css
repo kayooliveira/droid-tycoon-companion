@@ -15,8 +15,8 @@
   --ui-secondary: #d4d4d8;
   --ui-muted: #a1a1aa;
   --ui-soft: #71717a;
-  --ui-border: #556275;
-  --ui-border-subtle: #3f4d62;
+  --ui-border: #5a6578;
+  --ui-border-subtle: #576476;
   --ui-hover: rgb(255 255 255 / 0.06);
   --ui-hover-strong: rgb(255 255 255 / 0.1);
   --ui-scrim: rgb(0 0 0 / 0.72);
@@ -131,8 +131,8 @@ html.theme-light {
   --ui-secondary: #3f3f46;
   --ui-muted: #52525b;
   --ui-soft: #52525b;
-  --ui-border: #a1a1aa;
-  --ui-border-subtle: #d4d4d8;
+  --ui-border: #71717a;
+  --ui-border-subtle: #868690;
   --ui-hover: rgb(24 24 27 / 0.05);
   --ui-hover-strong: rgb(24 24 27 / 0.08);
   --ui-scrim: rgb(15 23 42 / 0.48);
