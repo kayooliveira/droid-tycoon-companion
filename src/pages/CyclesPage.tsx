@@ -1,21 +1,15 @@
 import { useMemo, useState } from 'react'
-import { CaretDown } from '@phosphor-icons/react'
 import { useTranslation } from 'react-i18next'
 import { CycleGuidePdfExport } from '../components/CycleGuidePdfExport'
 import { DroidImage } from '../components/DroidImage'
-import { Badge } from '../components/ui/Badge'
-import { TierBadge } from '../components/ui/TierBadge'
-import { GlassCard } from '../components/ui/GlassCard'
+import { TabScrollLayout } from '../components/layout/TabScrollLayout'
+import { InsetGroup } from '../components/ui/InsetGroup'
+import { SegmentedControl } from '../components/ui/SegmentedControl'
 import { cycleById, droidById, gameData, getRebirth } from '../domain/gameData'
 import { REBIRTHS_PER_PATH, SUPER_REBIRTH_UNLOCK_AFTER } from '../domain/progress'
 import { formatTierName } from '../domain/tiers'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { useTierLabels } from '../i18n/useTierLabels'
-import { cn } from '../lib/utils'
-import { uiIconProps } from '../components/ui/iconStyle'
-import { PageScreen } from '../components/layout/PageScreen'
-import { ScreenHero } from '../components/layout/ScreenHero'
-
 export function CyclesPage() {
   const { t, i18n } = useTranslation()
   const tierLabels = useTierLabels()
@@ -36,112 +30,102 @@ export function CyclesPage() {
     return list
   }, [pathId])
 
+  const cycleOptions = useMemo(
+    () =>
+      gameData.cycles.map((c) => ({
+        value: c.id,
+        label: formatCycleDisplayName(c.name, i18n.language),
+      })),
+    [i18n.language],
+  )
+
   return (
-    <PageScreen testId="cycles-page">
-      <ScreenHero
-        title={t('cycles.title')}
-        kicker={t('nav.cycles')}
-        description={t('cycles.referenceNote')}
-      />
-
-      <GlassCard className="p-4 space-y-3">
-        <p className="text-sm font-medium text-ui-fg">{t('cycles.pickCycle')}</p>
-        <div
-          className="flex flex-wrap gap-2"
-          role="radiogroup"
-          aria-label={t('cycles.pickCycle')}
-          data-testid="cycles-path-chips"
-        >
-          {gameData.cycles.map((c) => {
-            const selected = pathId === c.id
-            const label = formatCycleDisplayName(c.name, i18n.language)
-            return (
-              <button
-                key={c.id}
-                type="button"
-                role="radio"
-                aria-checked={selected}
-                data-testid={`cycles-chip-${c.id}`}
-                className={cn(
-                  'rounded-full px-3.5 py-2 text-sm min-h-11 border font-medium transition-colors',
-                  selected
-                    ? 'border-holo-400/70 bg-holo-600/25 text-holo-900'
-                    : 'border-ui bg-ui-hover text-ui-muted hover:text-ui-fg',
-                )}
-                onClick={() => {
-                  setPathId(c.id)
-                  setOpenRebirth(1)
-                }}
-              >
-                {label}
-              </button>
-            )
-          })}
+    <TabScrollLayout title={t('cycles.title')} testId="cycles-page">
+      <InsetGroup footer={t('cycles.referenceNote')}>
+        <div className="px-4 py-3">
+          <div data-testid="cycles-path-chips">
+            <SegmentedControl
+              compact
+              className="!mx-0 flex-wrap"
+              ariaLabel={t('cycles.pickCycle')}
+              value={pathId}
+              onChange={(id) => {
+                setPathId(id)
+                setOpenRebirth(1)
+              }}
+              options={cycleOptions}
+            />
+          </div>
         </div>
-        <CycleGuidePdfExport pathId={pathId} cycleName={cycleName} />
-      </GlassCard>
+        <div className="dc-row">
+          <CycleGuidePdfExport pathId={pathId} cycleName={cycleName} />
+        </div>
+      </InsetGroup>
 
-      <div className="space-y-2">
-        {rebirths.map((entry) => {
-          const open = openRebirth === entry.rebirth
-          return (
-            <GlassCard key={entry.rebirth} className="overflow-hidden">
-              <button
-                type="button"
-                className="w-full flex items-center gap-3 text-left px-4 py-3 min-h-11"
-                onClick={() => setOpenRebirth(open ? null : entry.rebirth)}
-                data-testid={`cycles-rebirth-${entry.rebirth}`}
-              >
-                <CaretDown
-                  {...uiIconProps}
-                  className={cn('shrink-0 transition-transform', open ? 'rotate-180' : '')}
-                />
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium">{t('cycles.rebirthN', { n: entry.rebirth })}</p>
-                  <p className="text-xs text-ui-soft">{entry.credits}</p>
-                </div>
-                <Badge tone={entry.confidence === 'confirmed' ? 'success' : 'warn'}>
-                  {t(`confidence.${entry.confidence}`)}
-                </Badge>
-              </button>
-              {open ? (
-                <div className="px-4 pb-4 space-y-2 border-t border-ui pt-3">
-                  {entry.note ? (
-                    <p className="text-xs text-ui-warn/90 text-pretty">{entry.note}</p>
-                  ) : null}
-                  {entry.requirements.map((req) => {
-                    const droid = droidById.get(req.droidId)
-                    return (
-                      <div key={req.droidId} className="flex items-center gap-3">
-                        {droid ? <DroidImage droid={droid} tier={req.rarity} size="sm" /> : null}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">{droid?.name ?? req.droidId}</p>
-                          <div className="mt-1 flex flex-wrap items-center gap-1.5">
-                            <TierBadge tier={req.rarity} className="text-[10px]">
-                              {formatTierName(req.rarity, tierLabels)}
-                            </TierBadge>
-                            {req.quantity > 1 ? (
-                              <span className="text-xs text-ui-soft">×{req.quantity}</span>
-                            ) : null}
-                          </div>
-                        </div>
+      {rebirths.map((entry) => {
+        const open = openRebirth === entry.rebirth
+        return (
+          <InsetGroup key={entry.rebirth} testId={`cycles-rebirth-group-${entry.rebirth}`}>
+            <button
+              type="button"
+              className="dc-row dc-row-chevron w-full"
+              onClick={() => setOpenRebirth(open ? null : entry.rebirth)}
+              data-testid={`cycles-rebirth-${entry.rebirth}`}
+              aria-expanded={open}
+            >
+              <div className="dc-row-main">
+                <span className="dc-row-label">{t('cycles.rebirthN', { n: entry.rebirth })}</span>
+                <span className="dc-row-sub">
+                  {entry.credits} · {t(`confidence.${entry.confidence}`)}
+                </span>
+              </div>
+            </button>
+            {open ? (
+              <>
+                {entry.note ? (
+                  <div className="dc-row">
+                    <span className="dc-row-sub text-ui-warn">{entry.note}</span>
+                  </div>
+                ) : null}
+                {entry.requirements.map((req) => {
+                  const droid = droidById.get(req.droidId)
+                  return (
+                    <div key={req.droidId} className="dc-row dc-row-droid">
+                      {droid ? (
+                        <DroidImage
+                          droid={droid}
+                          tier={req.rarity}
+                          size="sm"
+                          className="!h-[50px] !w-[50px] rounded-[11px]"
+                        />
+                      ) : null}
+                      <div className="dc-row-main">
+                        <span className="dc-droid-name dc-row-label">{droid?.name ?? req.droidId}</span>
+                        <span className="dc-row-sub">
+                          {formatTierName(req.rarity, tierLabels)}
+                          {req.quantity > 1 ? ` · ×${req.quantity}` : ''}
+                        </span>
                       </div>
-                    )
-                  })}
-                </div>
-              ) : null}
-            </GlassCard>
-          )
-        })}
-      </div>
+                    </div>
+                  )
+                })}
+              </>
+            ) : null}
+          </InsetGroup>
+        )
+      })}
 
-      <GlassCard className="p-4 space-y-2">
-        <h2 className="font-display text-lg">{t('cycles.superSection')}</h2>
-        <p className="text-sm text-ui-secondary text-pretty">
-          {t('cycles.superBody', { n: SUPER_REBIRTH_UNLOCK_AFTER })}
-        </p>
-        <Badge tone="info">{t('common.unconfirmed')}</Badge>
-      </GlassCard>
-    </PageScreen>
+      <h2 className="dc-section-header">{t('cycles.superSection')}</h2>
+      <InsetGroup>
+        <div className="dc-row">
+          <div className="dc-row-main">
+            <span className="dc-row-label">{t('cycles.superBody', { n: SUPER_REBIRTH_UNLOCK_AFTER })}</span>
+            <span className="dc-row-sub">{t('common.unconfirmed')}</span>
+          </div>
+        </div>
+      </InsetGroup>
+
+      <div className="dc-scroll-spacer" aria-hidden />
+    </TabScrollLayout>
   )
 }

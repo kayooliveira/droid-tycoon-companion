@@ -1,16 +1,11 @@
-import { Gear } from '@phosphor-icons/react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { Button } from '../components/ui/Button'
-import { uiIconProps } from '../components/ui/iconStyle'
 import { gameDataSource } from '../data/dataSource'
 import { gameData } from '../domain/gameData'
 import { APP_PUBLIC_URL } from '../lib/constants'
 import { FeedbackWhatsAppLink } from '../components/FeedbackWhatsAppLink'
-import { Badge } from '../components/ui/Badge'
-import { GlassCard } from '../components/ui/GlassCard'
-import { PageScreen } from '../components/layout/PageScreen'
-import { ScreenHero } from '../components/layout/ScreenHero'
+import { TabScrollLayout } from '../components/layout/TabScrollLayout'
+import { InsetGroup } from '../components/ui/InsetGroup'
 
 export function AboutPage() {
   const { t } = useTranslation()
@@ -18,49 +13,59 @@ export function AboutPage() {
   const stale = gameDataSource.isStale()
 
   return (
-    <PageScreen testId="about-page" className="max-w-2xl pb-4">
-      <ScreenHero title={t('about.title')} kicker={t('nav.about')} description={t('about.intro')} />
+    <TabScrollLayout title={t('about.title')} testId="about-page">
+      <InsetGroup footer={t('app.disclaimer')}>
+        <div className="dc-row">
+          <div className="dc-row-main">
+            <span className="dc-row-label">{t('about.intro')}</span>
+          </div>
+        </div>
+      </InsetGroup>
 
-      <GlassCard className="space-y-2 text-sm">
-        <h2 className="font-medium">{t('about.dataTitle')}</h2>
-        <p>
-          {t('about.dataLine', {
-            version: meta.dataVersion,
-            game: meta.gameVersion,
-            date: meta.lastUpdated,
-          })}
-        </p>
-        {stale ? (
-          <Badge tone="warn">{t('settings.dataStale', { days: gameData.staleAfterDays })}</Badge>
-        ) : (
-          <Badge tone="success">{t('settings.dataFresh')}</Badge>
-        )}
-        <p className="text-xs text-ui-soft">{t('about.disputedNote')}</p>
-      </GlassCard>
+      <h2 className="dc-section-header">{t('about.dataTitle')}</h2>
+      <InsetGroup footer={t('about.disputedNote')}>
+        <div className="dc-row">
+          <div className="dc-row-main">
+            <span className="dc-row-label">{t('about.dataLine', {
+              version: meta.dataVersion,
+              game: meta.gameVersion,
+              date: meta.lastUpdated,
+            })}</span>
+            <span className="dc-row-sub">
+              {stale
+                ? t('settings.dataStale', { days: gameData.staleAfterDays })
+                : t('settings.dataFresh')}
+            </span>
+          </div>
+        </div>
+      </InsetGroup>
 
-      <GlassCard className="space-y-3 text-sm">
-        <h2 className="font-medium">{t('about.feedbackTitle')}</h2>
-        <p className="text-ui-muted">{t('about.feedbackBody')}</p>
-        <FeedbackWhatsAppLink />
-      </GlassCard>
+      <h2 className="dc-section-header">{t('about.feedbackTitle')}</h2>
+      <InsetGroup>
+        <div className="dc-row">
+          <div className="dc-row-main">
+            <span className="dc-row-label">{t('about.feedbackBody')}</span>
+          </div>
+        </div>
+        <div className="dc-row">
+          <FeedbackWhatsAppLink />
+        </div>
+      </InsetGroup>
 
-      <Link to="/settings" className="block">
-        <Button
-          variant="secondary"
-          className="w-full justify-start min-h-12"
-          icon={<Gear {...uiIconProps} />}
-        >
-          {t('nav.settings')}
-        </Button>
-      </Link>
+      <InsetGroup>
+        <Link to="/settings" className="dc-row dc-row-chevron">
+          <div className="dc-row-main">
+            <span className="dc-row-label">{t('nav.settings')}</span>
+          </div>
+        </Link>
+      </InsetGroup>
 
       <footer
-        className="pt-6 space-y-2 text-[10px] leading-relaxed text-ui-soft"
+        className="px-4 pt-4 pb-8 space-y-2 text-[11px] leading-relaxed text-ui-muted"
         data-testid="about-credits-footer"
       >
         <p>{t('about.wikiCredits')}</p>
         <p>{t('about.dataSourcesBody')}</p>
-        <p>{t('app.disclaimer')}</p>
         <p>
           {t('about.url')}:{' '}
           <a href={APP_PUBLIC_URL} className="text-ui-accent hover:underline">
@@ -68,6 +73,6 @@ export function AboutPage() {
           </a>
         </p>
       </footer>
-    </PageScreen>
+    </TabScrollLayout>
   )
 }

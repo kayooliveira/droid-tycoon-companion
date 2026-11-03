@@ -2,18 +2,25 @@ import { useEffect, useState } from 'react'
 
 const STORAGE_KEY = 'droid-companion-inventory-filters'
 
+export type InventoryFilterMode = 'all' | 'rarity' | 'tier'
+export type InventoryViewMode = 'grid' | 'list'
+
 export type InventoryFilters = {
   search: string
+  filterMode: InventoryFilterMode
   rarityFilter: string
   tierFilter: string
   neededFilter: 'all' | 'needed' | 'not-needed'
+  viewMode: InventoryViewMode
 }
 
 const defaults: InventoryFilters = {
   search: '',
+  filterMode: 'all',
   rarityFilter: 'all',
   tierFilter: 'all',
   neededFilter: 'all',
+  viewMode: 'grid',
 }
 
 function readStored(): InventoryFilters {
@@ -23,6 +30,10 @@ function readStored(): InventoryFilters {
     const parsed = JSON.parse(raw) as Partial<InventoryFilters>
     return {
       search: typeof parsed.search === 'string' ? parsed.search : defaults.search,
+      filterMode:
+        parsed.filterMode === 'rarity' || parsed.filterMode === 'tier' || parsed.filterMode === 'all'
+          ? parsed.filterMode
+          : defaults.filterMode,
       rarityFilter:
         typeof parsed.rarityFilter === 'string' ? parsed.rarityFilter : defaults.rarityFilter,
       tierFilter: typeof parsed.tierFilter === 'string' ? parsed.tierFilter : defaults.tierFilter,
@@ -32,6 +43,10 @@ function readStored(): InventoryFilters {
         parsed.neededFilter === 'all'
           ? parsed.neededFilter
           : defaults.neededFilter,
+      viewMode:
+        parsed.viewMode === 'list' || parsed.viewMode === 'grid'
+          ? parsed.viewMode
+          : defaults.viewMode,
     }
   } catch {
     return defaults

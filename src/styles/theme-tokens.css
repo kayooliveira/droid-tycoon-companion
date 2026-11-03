@@ -10,7 +10,7 @@
   --ui-secondary: #d4d4d8;
   --ui-muted: #a1a1aa;
   --ui-soft: #71717a;
-  --ui-border: rgb(255 255 255 / 0.1);
+  --ui-border: #3a3a3c;
   --ui-border-subtle: rgb(255 255 255 / 0.06);
   --ui-hover: rgb(255 255 255 / 0.06);
   --ui-hover-strong: rgb(255 255 255 / 0.1);
@@ -28,6 +28,12 @@
   --ui-accent-fg: #ff9f0a;
   --ui-accent-soft: rgb(255 159 10 / 0.16);
   --ui-accent-fill: #ff9f0a;
+  --ui-accent-on-filled: #000000;
+  --ui-search-bg: #1c1c1e;
+  --ui-sell-ok-bg: rgb(48 209 88 / 0.22);
+  --ui-sell-ok-text: #30d158;
+  --ui-sell-no-bg: rgb(255 69 58 / 0.22);
+  --ui-sell-no-text: #ff453a;
   --ui-warn-fg: #fde68a;
   --ui-accent-solid: #ff9f0a;
   --ui-accent-on: #000000;
@@ -140,6 +146,12 @@ html.theme-light {
   --ui-accent-fg: #c24100;
   --ui-accent-soft: rgb(255 149 0 / 0.14);
   --ui-accent-fill: #ff9500;
+  --ui-accent-on-filled: #ffffff;
+  --ui-search-bg: #e5e5ea;
+  --ui-sell-ok-bg: #e8f9ec;
+  --ui-sell-ok-text: #248a3d;
+  --ui-sell-no-bg: #ffecea;
+  --ui-sell-no-text: #c41e12;
   --ui-warn-fg: #b45309;
   --ui-accent-solid: #ff9500;
   --ui-accent-on: #ffffff;

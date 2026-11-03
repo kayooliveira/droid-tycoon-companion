@@ -5,19 +5,17 @@ type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'accent'
 type Size = 'sm' | 'md' | 'icon'
 
 const variants: Record<Variant, string> = {
-  primary:
-    'bg-gradient-to-r from-holo-600 to-cyan-600 hover:from-holo-500 hover:to-cyan-500 text-white shadow-lg shadow-holo-900/25 border border-white/10 disabled:!bg-zinc-700/90 disabled:!from-zinc-700 disabled:!to-zinc-700 disabled:!text-zinc-400/90 disabled:!shadow-none disabled:!border-zinc-600/40',
-  accent:
-    'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-zinc-950 font-semibold shadow-lg shadow-amber-900/30 border border-amber-200/20',
-  secondary: 'ui-btn-secondary border',
-  ghost: 'ui-btn-ghost',
-  danger: 'bg-red-600/90 hover:bg-red-500 text-white',
+  primary: 'btn-filled',
+  accent: 'btn-filled',
+  secondary: 'ui-btn-secondary border rounded-xl',
+  ghost: 'ui-btn-ghost rounded-xl',
+  danger: 'bg-red-600/90 hover:bg-red-500 text-white rounded-xl',
 }
 
 const sizes: Record<Size, string> = {
-  sm: 'min-h-11 px-3.5 py-2 text-xs gap-1.5 rounded-xl',
-  md: 'min-h-11 px-4 py-2.5 text-sm gap-2 rounded-xl',
-  icon: 'min-h-11 min-w-11 p-0 rounded-xl',
+  sm: 'min-h-11 px-3.5 py-2 text-sm gap-1.5',
+  md: 'min-h-11 px-4 py-2.5 text-base gap-2',
+  icon: 'min-h-11 min-w-11 p-0',
 }
 
 export function Button({
@@ -36,13 +34,15 @@ export function Button({
   icon?: ReactNode
   iconOnly?: boolean
 }) {
+  const isFilled = variant === 'primary' || variant === 'accent'
   return (
     <button
       aria-label={iconOnly ? ariaLabel : undefined}
       className={cn(
         'inline-flex items-center justify-center font-medium transition-all active:scale-[0.98] disabled:opacity-45 disabled:pointer-events-none disabled:active:scale-100 max-w-full min-w-0',
         variants[variant],
-        iconOnly || size === 'icon' ? sizes.icon : sizes[size],
+        !isFilled && (iconOnly || size === 'icon' ? sizes.icon : sizes[size]),
+        isFilled && size === 'sm' && 'text-sm px-3.5 py-2 min-h-11',
         className,
       )}
       {...props}

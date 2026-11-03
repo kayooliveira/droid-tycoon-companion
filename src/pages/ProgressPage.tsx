@@ -1,8 +1,6 @@
-import { motion } from 'motion/react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { ArrowCounterClockwise, Check, DotsThreeVertical, Sparkle } from '@phosphor-icons/react'
-import { SegmentedControl } from '../components/ui/SegmentedControl'
 import { uiIconProps } from '../components/ui/iconStyle'
 import { useTranslation } from 'react-i18next'
 import {
@@ -20,15 +18,11 @@ import {
   isPathComplete,
   SUPER_REBIRTH_UNLOCK_AFTER,
 } from '../domain/progress'
-import { evaluateRequirements } from '../domain/requirements'
 import { formatTierName } from '../domain/tiers'
 import { useTierLabels } from '../i18n/useTierLabels'
 import { gameData } from '../domain/gameData'
 import { PathProgressSwitcher, ProgressSummaryLine } from '../components/PathProgressSwitcher'
-import { RequirementCard } from '../components/RequirementCard'
-import { Badge } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
-import { GlassCard } from '../components/ui/GlassCard'
 import { Modal } from '../components/ui/Modal'
 import { useAppStore } from '../store/useAppStore'
 import { useToast } from '../components/ToastProvider'
@@ -37,26 +31,33 @@ import {
   type ProgressNavTarget,
 } from '../components/progress/ProgressDroidSearch'
 import { ProgressRebirthList } from '../components/progress/ProgressRebirthList'
+import { ProgressUnifiedRebirthPanel } from '../components/progress/ProgressUnifiedRebirthPanel'
 import {
   cycleNumberFromPathId,
   pathIdFromCycleNumber,
 } from '../domain/progressDroidSearch'
-import { SellAfterRebirthList } from '../components/SellAfterRebirthList'
 import { ProgressPdfExport } from '../components/ProgressPdfExport'
 import { HelpHint } from '../components/ui/HelpHint'
 import { IconButton } from '../components/ui/IconButton'
 import { hapticTap } from '../lib/haptics'
-import { PageScreen } from '../components/layout/PageScreen'
-import { ScreenHero } from '../components/layout/ScreenHero'
+import { TabScrollLayout } from '../components/layout/TabScrollLayout'
+import { DroidDetailSheet } from '../components/droid/DroidDetailSheet'
+import type { TierId } from '../domain/types'
+import { InsetGroup } from '../components/ui/InsetGroup'
 
 export function ProgressPage() {
   const { t, i18n } = useTranslation()
   const tierLabels = useTierLabels()
-  const [mode, setMode] = useState<'list' | 'focus'>('focus')
   const [forceCompleteOpen, setForceCompleteOpen] = useState(false)
   const [undoOpen, setUndoOpen] = useState(false)
   const [moreOpen, setMoreOpen] = useState(false)
   const [superConfirmOpen, setSuperConfirmOpen] = useState(false)
+  const [droidDetail, setDroidDetail] = useState<{
+    droidId: string
+    tier: TierId
+    sellable: boolean
+    qty?: number
+  } | null>(null)
   const progress = useAppStore((s) => s.progress)
   const inventory = useAppStore((s) => s.inventory)
   const trackInventory = useAppStore((s) => s.settings.trackInventory)
@@ -64,7 +65,6 @@ export function ProgressPage() {
   const completeRebirthAdvance = useAppStore((s) => s.completeRebirthAdvance)
   const undoRebirthStep = useAppStore((s) => s.undoRebirthStep)
   const superRebirthAdvance = useAppStore((s) => s.superRebirthAdvance)
-  const animations = useAppStore((s) => s.settings.animationsEnabled)
   const { push } = useToast()
   const [searchParams, setSearchParams] = useSearchParams()
   const [navTarget, setNavTarget] = useState<ProgressNavTarget | null>(null)
@@ -136,7 +136,6 @@ export function ProgressPage() {
       if (target.pathId !== progress.pathId) {
         switchPath(target.pathId)
       }
-      setMode('list')
       setNavTarget(target)
       setHighlightRebirth(target.rebirth)
       window.setTimeout(() => setHighlightRebirth(null), 2600)
@@ -158,147 +157,137 @@ export function ProgressPage() {
     goToRebirthStep({ pathId, rebirth: passo })
   }, [goToRebirthStep, searchParams])
 
+  const openDroidDetail = (droidId: string, tier: TierId, sellable: boolean, qty?: number) => {
+    setDroidDetail({ droidId, tier, sellable, qty })
+  }
+
   return (
-    <PageScreen testId="progress-page" className="md:pb-0">
-      <ScreenHero
-        title={t('nav.progress')}
-        kicker={cycleLabel(progress.pathId)}
-        description={t('progress.workingOn', { n: progress.nextRebirth })}
-      />
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="space-y-2 min-w-0 flex-1">
-          <PathProgressSwitcher compact />
-          <ProgressSummaryLine />
+    <TabScrollLayout title={t('nav.progress')} testId="progress-page">
+      <InsetGroup footer={t('progress.workingOn', { n: progress.nextRebirth })}>
+        <div className="dc-row">
+          <div className="dc-row-main">
+            <span className="dc-row-label">{cycleLabel(progress.pathId)}</span>
+            <span className="dc-row-sub">
+              <PathProgressSwitcher compact />
+            </span>
+          </div>
         </div>
-        <SegmentedControl
-          ariaLabel={t('progress.viewMode')}
-          value={mode}
-          onChange={setMode}
-          options={[
-            { value: 'focus', label: t('progress.focus') },
-            { value: 'list', label: t('progress.list') },
-          ]}
-        />
-      </div>
+        <div className="dc-row">
+          <div className="dc-row-main">
+            <span className="dc-row-label">{t('progress.pathProgress')}</span>
+            <span className="dc-row-sub">
+              <ProgressSummaryLine />
+            </span>
+          </div>
+        </div>
+      </InsetGroup>
 
       <ProgressDroidSearch initialQuery={searchQueryFromUrl} onNavigateToStep={goToRebirthStep} />
 
-      {mode === 'focus' ? (
-        <GlassCard className="space-y-4">
-          {current ? (
-            <>
-              <div className="flex items-center justify-between flex-wrap gap-2">
-                <h2 className="font-display text-lg">
-                  {t('progress.workingOn', { n: current.rebirth })}
-                </h2>
-                <Badge tone={current.confidence === 'confirmed' ? 'success' : 'warn'}>
-                  {t(`confidence.${current.confidence}`)}
-                </Badge>
-              </div>
-              {getDisputeKey(progress.pathId, current.rebirth) ? (
-                <DisputePanel
-                  pathId={progress.pathId}
-                  rebirth={current.rebirth}
-                  tierLabels={tierLabels}
-                />
-              ) : null}
-              <div className="space-y-2">
-                {evaluateRequirements(current.requirements, inventory, trackInventory).map(
-                  (c) => (
-                    <RequirementCard key={c.requirement.droidId} check={c} />
-                  ),
-                )}
-              </div>
-              {canSuperRebirth(progress) ? (
-                <div className="flex flex-col gap-2 pt-1 w-full min-w-0" data-testid="progress-super-actions">
+      {current ? (
+        <>
+          {getDisputeKey(progress.pathId, current.rebirth) ? (
+            <DisputePanel
+              pathId={progress.pathId}
+              rebirth={current.rebirth}
+              tierLabels={tierLabels}
+            />
+          ) : null}
+          <ProgressUnifiedRebirthPanel
+            pathId={progress.pathId}
+            rebirth={progress.nextRebirth}
+            inventory={inventory}
+            trackInventory={trackInventory}
+            onOpenDroid={openDroidDetail}
+          />
+          {canSuperRebirth(progress) ? (
+            <div className="flex flex-col gap-2 px-4 w-full min-w-0" data-testid="progress-super-actions">
+              <Button
+                variant="accent"
+                className="w-full min-h-12"
+                data-testid="progress-super-cta"
+                icon={<Sparkle {...uiIconProps} />}
+                onClick={() => setSuperConfirmOpen(true)}
+              >
+                {t('progress.superRebirthCta')}
+              </Button>
+              <div className="flex items-center gap-2 w-full min-w-0">
+                {!isPathComplete(progress) ? (
                   <Button
-                    variant="accent"
-                    size="md"
-                    className="w-full min-h-12 max-w-full"
-                    data-testid="progress-super-cta"
-                    icon={<Sparkle {...uiIconProps} />}
-                    onClick={() => setSuperConfirmOpen(true)}
-                  >
-                    {t('progress.superRebirthCta')}
-                  </Button>
-                  <div className="flex items-center gap-2 w-full min-w-0">
-                    {!isPathComplete(progress) ? (
-                      <Button
-                        size="sm"
-                        icon={<Check {...uiIconProps} />}
-                        onClick={handleCompleteClick}
-                        disabled={trackInventory && !canComplete}
-                        className="flex-1 min-w-0 max-w-full"
-                      >
-                        {t('progress.completeShort')}
-                      </Button>
-                    ) : null}
-                    <IconButton
-                      variant="soft"
-                      className="shrink-0"
-                      data-testid="progress-more-trigger"
-                      label={t('progress.moreActionsTitle')}
-                      onClick={() => setMoreOpen(true)}
-                    >
-                      <DotsThreeVertical {...uiIconProps} />
-                    </IconButton>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 pt-1 w-full min-w-0">
-                  <Button
-                    size="sm"
                     icon={<Check {...uiIconProps} />}
                     onClick={handleCompleteClick}
                     disabled={trackInventory && !canComplete}
-                    className="flex-1 min-w-0 max-w-full sm:flex-none"
+                    className="flex-1 min-w-0"
                   >
                     {t('progress.completeShort')}
                   </Button>
-                  <HelpHint
-                    testId="progress-super-hint"
-                    label={t('progress.superShort')}
-                    text={t('progress.superHint', { n: SUPER_REBIRTH_UNLOCK_AFTER })}
-                  />
-                  <IconButton
-                    variant="soft"
-                    className="shrink-0"
-                    data-testid="progress-more-trigger"
-                    label={t('progress.moreActionsTitle')}
-                    onClick={() => setMoreOpen(true)}
-                  >
-                    <DotsThreeVertical {...uiIconProps} />
-                  </IconButton>
-                </div>
-              )}
-              <SellAfterRebirthList
-                pathId={progress.pathId}
-                afterRebirth={current.rebirth}
-              />
-              {animations ? (
-                <motion.div layout className="h-1 rounded-full bg-gradient-to-r from-holo-600 to-accent-cyan" />
-              ) : null}
-            </>
+                ) : null}
+                <IconButton
+                  variant="soft"
+                  className="shrink-0"
+                  data-testid="progress-more-trigger"
+                  label={t('progress.moreActionsTitle')}
+                  onClick={() => setMoreOpen(true)}
+                >
+                  <DotsThreeVertical {...uiIconProps} />
+                </IconButton>
+              </div>
+            </div>
           ) : (
-            <p className="text-sm text-ui-muted">
-              {isPathComplete(progress) ? t('progress.pathComplete') : t('progress.listCurrent')}
-            </p>
+            <div className="flex items-center gap-2 px-4 w-full min-w-0">
+              <Button
+                className="btn-wide !mx-0 flex-1"
+                icon={<Check {...uiIconProps} />}
+                onClick={handleCompleteClick}
+                disabled={trackInventory && !canComplete}
+                data-testid="progress-complete-main"
+              >
+                {t('progress.completeShort')}
+              </Button>
+              <HelpHint
+                testId="progress-super-hint"
+                label={t('progress.superShort')}
+                text={t('progress.superHint', { n: SUPER_REBIRTH_UNLOCK_AFTER })}
+              />
+              <IconButton
+                variant="soft"
+                className="shrink-0"
+                data-testid="progress-more-trigger"
+                label={t('progress.moreActionsTitle')}
+                onClick={() => setMoreOpen(true)}
+              >
+                <DotsThreeVertical {...uiIconProps} />
+              </IconButton>
+            </div>
           )}
-        </GlassCard>
+        </>
       ) : (
-        <ProgressRebirthList
-          pathId={progress.pathId}
-          rebirthNumbers={rebirthNumbers}
-          nextRebirth={progress.nextRebirth}
-          inventory={inventory}
-          trackInventory={trackInventory}
-          navTarget={navTarget}
-          highlightRebirth={highlightRebirth}
-          onNavHandled={() => setNavTarget(null)}
-        />
+        <p className="text-sm text-ui-muted px-4">
+          {isPathComplete(progress) ? t('progress.pathComplete') : t('progress.listCurrent')}
+        </p>
       )}
 
+      <ProgressRebirthList
+        pathId={progress.pathId}
+        rebirthNumbers={rebirthNumbers}
+        nextRebirth={progress.nextRebirth}
+        inventory={inventory}
+        trackInventory={trackInventory}
+        navTarget={navTarget}
+        highlightRebirth={highlightRebirth}
+        onNavHandled={() => setNavTarget(null)}
+      />
+
       <ProgressPdfExport />
+
+      <DroidDetailSheet
+        open={droidDetail != null}
+        onClose={() => setDroidDetail(null)}
+        droidId={droidDetail?.droidId ?? null}
+        tier={droidDetail?.tier ?? 'default'}
+        quantity={droidDetail?.qty}
+        sellable={droidDetail?.sellable}
+      />
 
       <Modal
         open={moreOpen}
@@ -430,7 +419,9 @@ export function ProgressPage() {
       >
         <p className="text-xs text-ui-muted text-pretty">{t('progress.undoConfirm')}</p>
       </Modal>
-    </PageScreen>
+
+      <div className="dc-scroll-spacer" aria-hidden />
+    </TabScrollLayout>
   )
 }
 
@@ -448,14 +439,18 @@ function DisputePanel({
   if (!key) return null
   const dispute = DISPUTED_REBIRTH_ALTERNATIVES[key]
   return (
-    <div className="rounded-xl border border-amber-400/25 bg-amber-500/5 p-3 text-xs space-y-2">
-      <p className="text-amber-100 font-medium">{t('dispute.title')}</p>
-      <p className="text-ui-warn/80">
-        {key === 'path-2:17' ? t('dispute.path2r17') : t('dispute.path6r19')}
-      </p>
-      <ul className="space-y-1">
-        {dispute.alternatives.map((alt) => (
-          <li key={alt.labelKey} className="text-ui-secondary">
+    <InsetGroup>
+      <div className="dc-row">
+        <div className="dc-row-main">
+          <span className="dc-row-label">{t('dispute.title')}</span>
+          <span className="dc-row-sub">
+            {key === 'path-2:17' ? t('dispute.path2r17') : t('dispute.path6r19')}
+          </span>
+        </div>
+      </div>
+      {dispute.alternatives.map((alt) => (
+        <div key={alt.labelKey} className="dc-row">
+          <span className="dc-row-sub">
             <span className="text-ui-muted">{t(alt.labelKey)}: </span>
             {alt.requirements
               .map(
@@ -463,10 +458,9 @@ function DisputePanel({
                   `${droidById.get(req.droidId)?.name ?? req.droidId} ${formatTierName(req.rarity, tierLabels)}`,
               )
               .join(', ')}
-          </li>
-        ))}
-      </ul>
-    </div>
+          </span>
+        </div>
+      ))}
+    </InsetGroup>
   )
 }
-

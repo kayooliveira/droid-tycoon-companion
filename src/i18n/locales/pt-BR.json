@@ -64,6 +64,10 @@
     "undoConfirmShort": "Desfazer",
     "moreActionsTitle": "Mais ações",
     "listRebirthHeading": "Renascimento #{{n}}",
+    "badgeCanSell": "Pode vender",
+    "badgeDoNotSell": "Não venda",
+    "unifiedListFooter": "Badge verde: pode vender neste Ciclo. Badge vermelho: ainda necessário ou reservado.",
+    "qtyShort": "Qtd. {{n}}",
     "inventoryDeltaPlus": "+1 {{name}} {{tier}}",
     "inventoryRemovedUnit": "{{name}} {{tier}} removido.",
     "inventoryRestored": "Inventário restaurado.",
@@ -173,7 +177,9 @@
     "add": "Adicionar",
     "inInventory": "{{owned}} / {{needed}} no inventário",
     "removeConfirmTitle": "Remover do inventário?",
-    "removeConfirmBody": "Remove {{name}} ({{tier}}) da sua lista. Você pode adicionar de novo depois."
+    "removeConfirmBody": "Remove {{name}} ({{tier}}) da sua lista. Você pode adicionar de novo depois.",
+    "viewGrid": "Visão em grade",
+    "viewList": "Visão em lista"
   },
   "sell": {
     "title": "Vender",
@@ -425,6 +431,12 @@
   "home": {
     "nowTitle": "Agora",
     "nextRenascimento": "Renascimento #{{n}}",
+    "nextRenascimentoSection": "Próximo Renascimento",
+    "creditsDisclaimer": "Confira no jogo antes de vender ou fundir.",
+    "sellCount": "{{n}} droids livres",
+    "sellInCycle": "Neste Ciclo",
+    "cycleSummaryTitle": "Resumo do Ciclo",
+    "superPending": "Ainda não",
     "primaryComplete": "Concluir renascimento",
     "primaryViewProgress": "Ver progresso",
     "sellTitle": "Pode vender agora",

@@ -64,6 +64,10 @@
     "undoConfirmShort": "Undo",
     "moreActionsTitle": "More actions",
     "listRebirthHeading": "Rebirth #{{n}}",
+    "badgeCanSell": "Can sell",
+    "badgeDoNotSell": "Do not sell",
+    "unifiedListFooter": "Green badge: safe to sell in this Cycle. Red badge: still needed or reserved.",
+    "qtyShort": "Qty. {{n}}",
     "inventoryDeltaPlus": "+1 {{name}} {{tier}}",
     "inventoryRemovedUnit": "{{name}} {{tier}} removed.",
     "inventoryRestored": "Inventory restored.",
@@ -173,7 +177,9 @@
     "add": "Add",
     "inInventory": "{{owned}} / {{needed}} in inventory",
     "removeConfirmTitle": "Remove from inventory?",
-    "removeConfirmBody": "Removes {{name}} ({{tier}}) from your list. You can add it again later."
+    "removeConfirmBody": "Removes {{name}} ({{tier}}) from your list. You can add it again later.",
+    "viewGrid": "Grid view",
+    "viewList": "List view"
   },
   "sell": {
     "title": "Sell Center",
@@ -425,6 +431,12 @@
   "home": {
     "nowTitle": "Now",
     "nextRenascimento": "Rebirth #{{n}}",
+    "nextRenascimentoSection": "Next rebirth",
+    "creditsDisclaimer": "Double-check in-game before selling or fusing.",
+    "sellCount": "{{n}} droids free to sell",
+    "sellInCycle": "This Cycle",
+    "cycleSummaryTitle": "Cycle summary",
+    "superPending": "Not yet",
     "primaryComplete": "Complete rebirth",
     "primaryViewProgress": "View progress",
     "sellTitle": "Safe to sell now",

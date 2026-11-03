@@ -1,18 +1,33 @@
 import { ArrowsIn, ArrowsOut } from '@phosphor-icons/react'
 import { memo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { getRebirth } from '../../domain/gameData'
+import { droidById, getRebirth } from '../../domain/gameData'
 import { evaluateRequirements, metRequirementCount } from '../../domain/requirements'
+import { unitsNewlySellableAfterRebirth } from '../../domain/rebirthSellPlan'
+import { formatTierName } from '../../domain/tiers'
+import { useTierLabels } from '../../i18n/useTierLabels'
 import { useProgressListExpansion } from '../../hooks/useProgressListExpansion'
-import type { InventoryUnit } from '../../domain/types'
-import { SellAfterRebirthList } from '../SellAfterRebirthList'
-import { RequirementCard } from '../RequirementCard'
-import { Badge } from '../ui/Badge'
-import { GlassCard } from '../ui/GlassCard'
+import type { InventoryUnit, TierId } from '../../domain/types'
+import { DroidImage } from '../DroidImage'
+import { RequirementInventoryControls } from '../RequirementInventoryControls'
+import { InsetGroup } from '../ui/InsetGroup'
 import { ProgressBar } from '../ui/ProgressBar'
+import { SellBadge } from '../ui/SellBadge'
 import { uiIconProps } from '../ui/iconStyle'
-import { CaretDown } from '@phosphor-icons/react'
 import { useAppStore } from '../../store/useAppStore'
+import { cn } from '../../lib/utils'
+
+function ownedFor(
+  inventory: InventoryUnit[],
+  droidId: string,
+  tier: TierId,
+  trackInventory: boolean,
+) {
+  if (!trackInventory) return 0
+  return inventory
+    .filter((u) => u.droidId === droidId && u.tier === tier)
+    .reduce((s, u) => s + u.quantity, 0)
+}
 
 type RebirthListItemProps = {
   pathId: string
@@ -38,68 +53,116 @@ const RebirthListItem = memo(function RebirthListItem({
   highlighted,
 }: RebirthListItemProps) {
   const { t } = useTranslation()
+  const tierLabels = useTierLabels()
   const entry = getRebirth(pathId, rebirth)
   if (!entry) return null
   const done = rebirth < nextRebirth
   const checks = evaluateRequirements(entry.requirements, inventory, trackInventory)
+  const reqKeys = new Set(checks.map((c) => `${c.requirement.droidId}:${c.requirement.rarity}`))
+  const sellExtras = done ? [] : unitsNewlySellableAfterRebirth(pathId, rebirth)
 
   return (
-    <GlassCard
+    <div
       id={`progress-step-${rebirth}`}
       data-highlighted={highlighted ? 'true' : undefined}
-      className={
-        highlighted
-          ? 'ring-2 ring-holo-400/70 bg-holo-500/10 transition-colors duration-500'
-          : active
-            ? 'ring-1 ring-holo-400/40'
-            : ''
-      }
+      className={cn(
+        highlighted && 'ring-2 ring-[var(--ui-accent-fill)]/50 rounded-xl',
+        active && !highlighted && 'ring-1 ring-[var(--ui-accent-fill)]/30 rounded-xl',
+      )}
     >
+    <InsetGroup>
       <button
         type="button"
-        className="w-full flex items-center gap-3 text-left"
+        className="dc-row dc-row-chevron w-full"
         aria-expanded={open}
         onClick={onToggle}
         data-testid={`progress-list-item-${rebirth}`}
       >
-        <CaretDown
-          {...uiIconProps}
-          className={`transition-transform shrink-0 ${open ? 'rotate-180' : ''}`}
-        />
-        <div className="flex-1 min-w-0">
-          <p className="font-medium">
-            {t('progress.listRebirthHeading', { n: rebirth })}{' '}
-            {done ? <Badge tone="success">{t('progress.listDone')}</Badge> : null}
-            {active ? <Badge tone="info">{t('progress.listCurrent')}</Badge> : null}
-          </p>
-          <p className="text-xs text-ui-soft">{entry.credits}</p>
+        <div className="dc-row-main">
+          <span className="dc-row-label">
+            {t('progress.listRebirthHeading', { n: rebirth })}
+            {done ? ` · ${t('progress.listDone')}` : ''}
+            {active ? ` · ${t('progress.listCurrent')}` : ''}
+          </span>
+          <span className="dc-row-sub">{entry.credits}</span>
         </div>
         {trackInventory && !done ? (
-          <span className="text-xs text-ui-muted shrink-0">
-            {metRequirementCount(checks)}/3 {t('dashboard.statsReady').toLowerCase()}
+          <span className="dc-row-trail text-xs text-ui-muted shrink-0">
+            {metRequirementCount(checks)}/3
           </span>
         ) : done ? (
-          <span className="text-xs text-ui-success shrink-0">{t('progress.listCompletedState')}</span>
+          <span className="dc-row-trail text-xs text-ui-success shrink-0">
+            {t('progress.listCompletedState')}
+          </span>
         ) : null}
       </button>
       {open ? (
-        <div className="mt-3 space-y-2 border-t border-ui pt-3">
-          {entry.note ? <p className="text-xs text-ui-warn/90">{entry.note}</p> : null}
-          {!done &&
-            checks.map((c) => (
-              <RequirementCard key={c.requirement.droidId} check={c} trackInventory={trackInventory} />
-            ))}
-          {!done && trackInventory ? (
-            <ProgressBar value={(metRequirementCount(checks) / 3) * 100} />
+        <>
+          {entry.note ? (
+            <div className="dc-row">
+              <span className="dc-row-sub text-ui-warn">{entry.note}</span>
+            </div>
           ) : null}
-          {done ? (
-            <SellAfterRebirthList pathId={pathId} afterRebirth={rebirth} compact />
-          ) : (
-            <SellAfterRebirthList pathId={pathId} afterRebirth={rebirth} />
-          )}
-        </div>
+          {!done &&
+            checks.map((c) => {
+              const d = droidById.get(c.requirement.droidId)
+              if (!d) return null
+              const tier = c.requirement.rarity
+              const owned = ownedFor(inventory, c.requirement.droidId, tier, trackInventory)
+              const needed = c.requirement.quantity
+              const subMeta = `${formatTierName(tier, tierLabels)} · ${owned}/${needed}`
+              return (
+                <div key={c.requirement.droidId} className="dc-row dc-row-droid">
+                  <DroidImage droid={d} tier={tier} size="sm" className="!h-[50px] !w-[50px] rounded-[11px]" />
+                  <div className="dc-row-main">
+                    <span className="dc-droid-name dc-row-label">{d.name}</span>
+                    <span className="dc-row-sub dc-row-sub--badge">
+                      <span className="dc-row-sub-meta">{subMeta}</span>
+                      <SellBadge sellable={false} />
+                    </span>
+                  </div>
+                  {trackInventory ? (
+                    <RequirementInventoryControls
+                      droidId={c.requirement.droidId}
+                      droidName={d.name}
+                      tier={tier}
+                      ownedCount={owned}
+                      neededCount={needed}
+                    />
+                  ) : null}
+                </div>
+              )
+            })}
+          {!done &&
+            sellExtras
+              .filter((u) => !reqKeys.has(`${u.droidId}:${u.tier}`))
+              .map((u) => {
+                const d = droidById.get(u.droidId)
+                if (!d) return null
+                const sellable = u.disposition === 'sellable'
+                const subMeta = `${formatTierName(u.tier, tierLabels)} · ${t('progress.qtyShort', { n: u.quantity })}`
+                return (
+                  <div key={`${u.droidId}-${u.tier}`} className="dc-row dc-row-droid">
+                    <DroidImage droid={d} tier={u.tier} size="sm" className="!h-[50px] !w-[50px] rounded-[11px]" />
+                    <div className="dc-row-main">
+                      <span className="dc-droid-name dc-row-label">{d.name}</span>
+                      <span className="dc-row-sub dc-row-sub--badge">
+                        <span className="dc-row-sub-meta">{subMeta}</span>
+                        <SellBadge sellable={sellable} />
+                      </span>
+                    </div>
+                  </div>
+                )
+              })}
+          {!done && trackInventory ? (
+            <div className="px-4 pb-3">
+              <ProgressBar value={(metRequirementCount(checks) / 3) * 100} />
+            </div>
+          ) : null}
+        </>
       ) : null}
-    </GlassCard>
+    </InsetGroup>
+    </div>
   )
 })
 
@@ -149,15 +212,15 @@ export function ProgressRebirthList({
   const toggleAria = allExpanded ? t('progress.collapseAllAria') : t('progress.expandAllAria')
 
   return (
-    <div className="space-y-2" data-testid="progress-rebirth-list">
-      <div className="flex justify-end">
+    <div className="space-y-3" data-testid="progress-rebirth-list">
+      <div className="flex justify-end px-4">
         <button
           type="button"
           data-testid="progress-list-expand-all"
           aria-expanded={allExpanded}
           aria-label={toggleAria}
           onClick={toggleAll}
-          className="inline-flex items-center gap-1.5 rounded-full border border-ui bg-ui-hover/80 backdrop-blur-md px-3 py-1.5 text-xs font-medium text-ui-secondary hover:bg-ui-hover-strong hover:text-ui-fg transition-colors min-h-9"
+          className="inline-flex items-center gap-1.5 rounded-full border border-ui bg-ui-hover px-3 py-1.5 text-xs font-medium text-ui-secondary min-h-9"
         >
           {allExpanded ? (
             <ArrowsIn {...uiIconProps} className="size-4 shrink-0" />
