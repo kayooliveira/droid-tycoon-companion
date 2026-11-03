@@ -76,9 +76,19 @@ export function ProgressPage() {
     : false
 
   const advanceWithToast = () => {
+    const completedStep = progress.nextRebirth
     completeRebirthAdvance()
     hapticTap()
-    push(t('progress.rebirthCompleted'))
+    push(t('progress.rebirthCompleted', { n: completedStep }), {
+      variant: 'success',
+      action: {
+        label: t('progress.undoConfirmShort'),
+        onClick: () => {
+          undoRebirthStep()
+          push(t('progress.rebirthUndone', { n: completedStep }), { variant: 'success' })
+        },
+      },
+    })
   }
 
   const cycleLabel = (pathId: string) =>
@@ -103,13 +113,14 @@ export function ProgressPage() {
     superRebirthAdvance()
     hapticTap()
     setSuperConfirmOpen(false)
-    push(t('path.switched', { name: cycleLabel(nextPathId) }))
+    push(t('path.switched', { name: cycleLabel(nextPathId) }), { variant: 'info' })
   }
 
   const confirmUndo = () => {
+    const undoneStep = Math.max(1, progress.nextRebirth - 1)
     undoRebirthStep()
     setUndoOpen(false)
-    push(t('progress.undoOne'))
+    push(t('progress.rebirthUndone', { n: undoneStep }), { variant: 'success' })
   }
 
   const rebirthNumbers = useMemo(
@@ -199,7 +210,7 @@ export function ProgressPage() {
                     size="md"
                     className="w-full min-h-12 max-w-full"
                     data-testid="progress-super-cta"
-                    icon={<Sparkle {...uiIconProps} weight="fill" />}
+                    icon={<Sparkle {...uiIconProps} />}
                     onClick={() => setSuperConfirmOpen(true)}
                   >
                     {t('progress.superRebirthCta')}
@@ -208,7 +219,7 @@ export function ProgressPage() {
                     {!isPathComplete(progress) ? (
                       <Button
                         size="sm"
-                        icon={<Check {...uiIconProps} weight="fill" />}
+                        icon={<Check {...uiIconProps} />}
                         onClick={handleCompleteClick}
                         disabled={trackInventory && !canComplete}
                         className="flex-1 min-w-0 max-w-full"
@@ -223,7 +234,7 @@ export function ProgressPage() {
                       label={t('progress.moreActionsTitle')}
                       onClick={() => setMoreOpen(true)}
                     >
-                      <DotsThreeVertical {...uiIconProps} weight="fill" />
+                      <DotsThreeVertical {...uiIconProps} />
                     </IconButton>
                   </div>
                 </div>
@@ -231,7 +242,7 @@ export function ProgressPage() {
                 <div className="flex items-center gap-2 pt-1 w-full min-w-0">
                   <Button
                     size="sm"
-                    icon={<Check {...uiIconProps} weight="fill" />}
+                    icon={<Check {...uiIconProps} />}
                     onClick={handleCompleteClick}
                     disabled={trackInventory && !canComplete}
                     className="flex-1 min-w-0 max-w-full sm:flex-none"
@@ -250,7 +261,7 @@ export function ProgressPage() {
                     label={t('progress.moreActionsTitle')}
                     onClick={() => setMoreOpen(true)}
                   >
-                    <DotsThreeVertical {...uiIconProps} weight="fill" />
+                    <DotsThreeVertical {...uiIconProps} />
                   </IconButton>
                 </div>
               )}
@@ -329,7 +340,7 @@ export function ProgressPage() {
             <Button
               size="sm"
               variant="accent"
-              icon={<Sparkle {...uiIconProps} weight="fill" />}
+              icon={<Sparkle {...uiIconProps} />}
               onClick={() => {
                 setMoreOpen(false)
                 setSuperConfirmOpen(true)

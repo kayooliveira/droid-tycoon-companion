@@ -74,14 +74,14 @@ export function SettingsPage() {
   const confirmImport = () => {
     if (!pendingImport) return
     importState(pendingImport)
-    push(t('settings.importOk'))
+    push(t('settings.importOk'), { variant: 'success' })
     setPendingImport(null)
     setImportOpen(false)
   }
 
   const confirmReset = () => {
     resetAll()
-    push(t('settings.resetDone'))
+    push(t('settings.resetDone'), { variant: 'warning' })
     setResetOpen(false)
     navigate('/onboarding')
   }
@@ -211,7 +211,7 @@ export function SettingsPage() {
               const text = await file.text()
               const result = parseImportJson(text)
               if (!result.ok) {
-                push(t('settings.importFail'))
+                push(t('settings.importFail'), { variant: 'error' })
                 return
               }
               setPendingImport(result.state)

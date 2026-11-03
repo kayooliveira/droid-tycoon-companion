@@ -282,7 +282,7 @@ export function InventoryPage() {
             onClick={() => {
               addInventoryUnit(newDroidId, newTier, newQty)
               const name = droidById.get(newDroidId)?.name ?? newDroidId
-              push(t('inventory.added', { name }))
+              push(t('inventory.added', { name }), { variant: 'success' })
               setAddOpen(false)
               setNewQty(1)
             }}
@@ -312,8 +312,10 @@ export function InventoryPage() {
               variant="danger"
               data-testid="inventory-remove-confirm"
               onClick={() => {
-                if (removeTarget) removeInventoryUnit(removeTarget.unitId)
-                push(t('inventory.removed'))
+                if (!removeTarget) return
+                const { name, unitId } = removeTarget
+                removeInventoryUnit(unitId)
+                push(t('inventory.removed', { name }), { variant: 'info' })
                 setRemoveTarget(null)
               }}
             >

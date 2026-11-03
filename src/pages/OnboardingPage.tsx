@@ -250,7 +250,7 @@ export function OnboardingPage() {
                           </p>
                         </div>
                         {selected ? (
-                          <CheckCircle {...uiIconProps} className="text-ui-accent shrink-0" weight="fill" />
+                          <CheckCircle {...uiIconProps} className="text-ui-accent shrink-0" />
                         ) : null}
                       </button>
                     )

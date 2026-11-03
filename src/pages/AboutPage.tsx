@@ -47,7 +47,7 @@ export function AboutPage() {
         <Button
           variant="secondary"
           className="w-full justify-start min-h-12"
-          icon={<Gear {...uiIconProps} weight="fill" />}
+          icon={<Gear {...uiIconProps} />}
         >
           {t('nav.settings')}
         </Button>

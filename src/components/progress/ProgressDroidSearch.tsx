@@ -97,7 +97,7 @@ export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: Pro
       <div className="relative">
         <MagnifyingGlass
           {...uiIconProps}
-          weight="fill"
+         
           className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-ui-muted pointer-events-none"
           aria-hidden
         />
@@ -123,7 +123,7 @@ export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: Pro
             onClick={() => setQuery('')}
             className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex size-7 items-center justify-center rounded-full text-ui-muted hover:text-ui-fg hover:bg-ui-hover/80 transition-colors"
           >
-            <X {...uiIconProps} weight="fill" className="size-4" />
+            <X {...uiIconProps} className="size-4" />
           </button>
         ) : null}
       </div>
@@ -348,7 +348,7 @@ function NeedRow({
             {highlight ? <Badge tone="warn">{t('progress.search.nextNeed')}</Badge> : null}
           </div>
         </div>
-        <CaretRight {...uiIconProps} weight="fill" className="size-4 shrink-0 text-ui-muted" />
+        <CaretRight {...uiIconProps} className="size-4 shrink-0 text-ui-muted" />
       </button>
     </li>
   )

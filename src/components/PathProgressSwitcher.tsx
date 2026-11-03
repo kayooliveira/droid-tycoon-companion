@@ -35,7 +35,7 @@ export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
       return
     }
     switchPath(targetPath, { resetProgress })
-    push(t('path.switched', { name: cycleLabel(targetPath) }))
+    push(t('path.switched', { name: cycleLabel(targetPath) }), { variant: 'info' })
     setOpen(false)
   }
 

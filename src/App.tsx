@@ -49,11 +49,12 @@ function PwaRefreshListener() {
   useEffect(() => {
     const promptRefresh = () => {
       push(t('pwa.update'), {
+        variant: 'info',
         sticky: true,
         action: { label: t('pwa.updateAction'), onClick: reloadForPwaUpdate },
       })
     }
-    const autoUpdated = () => push(t('pwa.updatedToast'))
+    const autoUpdated = () => push(t('pwa.updatedToast'), { variant: 'success' })
     window.addEventListener('pwa-need-refresh', promptRefresh)
     window.addEventListener('pwa-updated', autoUpdated)
     return () => {

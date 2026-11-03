@@ -53,7 +53,7 @@ export function ShareExportCard() {
       }
     }
     await navigator.clipboard.writeText(`${shareText}\n${APP_PUBLIC_URL}`)
-    push(t('share.linkCopied'))
+    push(t('share.linkCopied'), { variant: 'success' })
   }
 
   const shareWhatsApp = () => {
@@ -78,13 +78,13 @@ export function ShareExportCard() {
           title: t('share.cardTitle'),
           text: APP_PUBLIC_URL,
         })
-        push(t('share.cardShared'))
+        push(t('share.cardShared'), { variant: 'success' })
         return
       }
       await downloadOrShare(blob, 'droid-tycoon-progress.png', 'image/png')
-      push(t('share.cardDownloaded'))
+      push(t('share.cardDownloaded'), { variant: 'success' })
     } catch {
-      push(t('share.cardFailed'))
+      push(t('share.cardFailed'), { variant: 'error' })
     } finally {
       setBusy(null)
     }

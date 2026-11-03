@@ -266,6 +266,17 @@
   .glass-panel {
     @apply rounded-[var(--radius-glass)] bg-ui-raised shadow-sm text-ui-fg;
     border: 1px solid var(--ui-border);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+  }
+
+  @keyframes toast-progress {
+    from {
+      transform: scaleX(1);
+    }
+    to {
+      transform: scaleX(0);
+    }
   }
 
   .font-display {

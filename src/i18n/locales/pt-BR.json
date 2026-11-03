@@ -44,7 +44,7 @@
     "completeRebirth": "Concluir renascimento",
     "completeAnyway": "Concluir mesmo assim",
     "completeBlocked": "Ainda faltam droids neste renascimento. Atualize o inventário ou conclua mesmo assim se você não registra tudo aqui.",
-    "undoOne": "Desfazer renascimento",
+    "undoOne": "Desfazer",
     "undoConfirm": "Voltar um renascimento neste ciclo? O inventário não muda.",
     "superRebirth": "Super Renascimento (próximo ciclo)",
     "superRebirthCta": "Super Renascimento",
@@ -53,7 +53,8 @@
     "listCurrent": "Atual",
     "listCompletedState": "Concluído",
     "pathComplete": "Ciclo completo. Use Super Renascimento para seguir.",
-    "rebirthCompleted": "Renascimento marcado como concluído.",
+    "rebirthCompleted": "Renascimento #{{n}} concluído.",
+    "rebirthUndone": "Renascimento #{{n}} desfeito.",
     "focus": "Foco",
     "list": "Lista",
     "viewMode": "Visão",
@@ -63,7 +64,8 @@
     "undoConfirmShort": "Desfazer",
     "moreActionsTitle": "Mais ações",
     "listRebirthHeading": "Renascimento #{{n}}",
-    "inventoryUpdated": "Inventário atualizado.",
+    "inventoryUpdated": "{{name}} · {{tier}}: inventário atualizado.",
+    "inventoryRestored": "Inventário restaurado.",
     "inventoryUndo": "Desfazer",
     "inventoryAddOne": "Adicionar um {{name}} {{tier}}",
     "inventoryRemoveOne": "Remover um {{name}} {{tier}}",
@@ -102,7 +104,7 @@
     "resetRebirthOnSwitch": "Zerar renascimentos no novo ciclo (começar no #1)",
     "confirmSwitch": "Trocar ciclo",
     "cancel": "Cancelar",
-    "switched": "Agora em {{name}}"
+    "switched": "Ciclo {{name}} selecionado."
   },
   "status": {
     "missing": "Falta",
@@ -151,8 +153,8 @@
     "notNeededFilter": "Não usa",
     "empty": "Nenhum droid ainda.",
     "emptyHint": "Cadastre os droids da sua base pra comparar com o próximo renascimento.",
-    "added": "{{name}} adicionado ao inventário.",
-    "removed": "Removido do inventário.",
+    "added": "{{name}} entrou no inventário.",
+    "removed": "{{name}} saiu do inventário.",
     "modalTitle": "Adicionar droid",
     "quantity": "Quantidade",
     "decreaseQuantity": "Diminuir quantidade",
@@ -204,7 +206,7 @@
     "pdfDone": "PDF do ciclo pronto.",
     "pngDone_one": "{{count}} arquivo PNG pronto.",
     "pngDone_other": "{{count}} arquivos PNG prontos.",
-    "failed": "Não deu pra gerar o export. Tenta de novo."
+    "failed": "Não deu para gerar o export. Tente de novo."
   },
   "shareExport": {
     "title": "Compartilhar",
@@ -323,8 +325,8 @@
     "backup": "Backup",
     "export": "Exportar progresso (JSON)",
     "import": "Importar progresso",
-    "importOk": "Progresso importado",
-    "importFail": "JSON inválido",
+    "importOk": "Progresso importado com sucesso.",
+    "importFail": "Arquivo inválido. Confira o JSON e tente de novo.",
     "danger": "Zona de risco",
     "reset": "Apagar tudo",
     "resetConfirm": "Confirmar apagar",
@@ -332,7 +334,7 @@
     "resetConfirmBody": "Remove progresso, inventário e ajustes deste aparelho. Não dá para desfazer.",
     "importConfirmTitle": "Importar progresso?",
     "importConfirmBody": "Substitui inventário, ciclo e renascimentos pelos dados do arquivo. Não dá para desfazer.",
-    "resetDone": "Dados apagados",
+    "resetDone": "Progresso e inventário apagados neste aparelho.",
     "credits": "Créditos e imagens",
     "creditsBody": "Imagens da Star Wars Droid Tycoon Wiki (Fandom), CC BY-SA. Veja public/assets/droids/ATTRIBUTION.md."
   },
@@ -357,11 +359,11 @@
     "whatsapp": "WhatsApp",
     "progressCard": "Card de progresso",
     "message": "DroidDeck · plano de renascimento da ilha: {{url}}",
-    "linkCopied": "Link copiado.",
+    "linkCopied": "Link copiado para a área de transferência.",
     "cardTitle": "Meu progresso no Droid Tycoon",
-    "cardShared": "Card enviado.",
-    "cardDownloaded": "Card salvo. Manda no chat.",
-    "cardFailed": "Não deu pra gerar o card. Tenta de novo."
+    "cardShared": "Card de progresso compartilhado.",
+    "cardDownloaded": "Card salvo no aparelho.",
+    "cardFailed": "Não deu para gerar o card. Tente de novo."
   },
   "about": {
     "title": "Sobre",
@@ -379,8 +381,8 @@
     "feedbackUnset": "Link de feedback não configurado nesta build. Peça ao responsável pelo site para definir VITE_REPORT_FEEDBACK_URL."
   },
   "pwa": {
-    "updatedToast": "App atualizado. Você está na versão mais recente.",
-    "update": "Tem versão nova.",
+    "updatedToast": "DroidDeck atualizado para a versão mais recente.",
+    "update": "Nova versão do app disponível.",
     "updateAction": "Atualizar",
     "installTitle": "Instalar no celular",
     "installBody": "Atalho na tela inicial enquanto joga.",

@@ -37,9 +37,9 @@ export function CycleGuidePdfExport({
       })
       const slug = pathId.replace(/[^a-z0-9]+/gi, '-')
       await downloadBlob(blob, `droiddeck-ciclo-guia-${slug}.pdf`)
-      push(t('cycles.exportGuideDone'))
+      push(t('cycles.exportGuideDone'), { variant: 'success' })
     } catch {
-      push(t('exportCycle.failed'))
+      push(t('exportCycle.failed'), { variant: 'error' })
     } finally {
       setBusy(false)
     }
