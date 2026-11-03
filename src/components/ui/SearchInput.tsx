@@ -8,10 +8,12 @@ export function SearchInput({
   onClear,
   value,
   clearLabel,
+  clearTestId,
   ...props
 }: InputHTMLAttributes<HTMLInputElement> & {
   onClear?: () => void
   clearLabel?: string
+  clearTestId?: string
 }) {
   const showClear = onClear && value && String(value).length > 0
   return (
@@ -32,6 +34,7 @@ export function SearchInput({
         <button
           type="button"
           aria-label={clearLabel}
+          data-testid={clearTestId}
           onClick={onClear}
           className="absolute right-2 top-1/2 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-full text-ui-muted hover:bg-ui-hover hover:text-ui-fg"
         >

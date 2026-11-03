@@ -13,6 +13,7 @@ import { InsetGroup } from '../ui/InsetGroup'
 import { ProgressBar } from '../ui/ProgressBar'
 import { SellBadge } from '../ui/SellBadge'
 import { useAppStore } from '../../store/useAppStore'
+import { ScreenSection } from '../layout/ScreenSection'
 import { cn } from '../../lib/utils'
 
 function ownedFor(
@@ -188,7 +189,8 @@ export function ProgressRebirthList({
   const updateSettings = useAppStore((s) => s.updateSettings)
   const persisted = listAllExpanded !== false
 
-  const { isExpanded, toggleOne, toggleAll, allExpanded, expandOne } = useProgressListExpansion(
+  const { isExpanded, toggleOne, toggleAll, anyExpanded, expandOne } =
+    useProgressListExpansion(
     rebirthNumbers,
     pathId,
     persisted,
@@ -206,17 +208,17 @@ export function ProgressRebirthList({
     return () => window.cancelAnimationFrame(id)
   }, [navTarget, pathId, expandOne, onNavHandled])
 
-  const toggleLabel = allExpanded ? t('progress.collapseAll') : t('progress.expandAll')
-  const toggleAria = allExpanded ? t('progress.collapseAllAria') : t('progress.expandAllAria')
+  const toggleLabel = anyExpanded ? t('progress.collapseAll') : t('progress.expandAll')
+  const toggleAria = anyExpanded ? t('progress.collapseAllAria') : t('progress.expandAllAria')
 
   return (
-    <div className="space-y-3" data-testid="progress-rebirth-list">
+    <ScreenSection testId="progress-rebirth-list">
       <div className="dc-section-header-row">
         <h2 className="dc-section-header">{t('progress.rebirthListSection')}</h2>
         <button
           type="button"
           data-testid="progress-list-expand-all"
-          aria-expanded={allExpanded}
+          aria-expanded={anyExpanded}
           aria-label={toggleAria}
           onClick={toggleAll}
           className="dc-section-header-action"
@@ -238,6 +240,6 @@ export function ProgressRebirthList({
           highlighted={highlightRebirth === rebirth}
         />
       ))}
-    </div>
+    </ScreenSection>
   )
 }

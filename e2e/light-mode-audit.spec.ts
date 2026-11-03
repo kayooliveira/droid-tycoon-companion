@@ -217,10 +217,10 @@ test.describe('light mode audit', () => {
     await shot(page, 'light-overlay-path-switch')
     await page.getByTestId('path-switch-modal-close').click()
 
-    await page.getByTestId('progress-more-trigger').click()
-    await expect(page.getByTestId('progress-more-modal')).toBeVisible()
-    await shot(page, 'light-overlay-progress-more')
-    await page.getByTestId('progress-more-cancel').click()
+    await page.getByTestId('progress-undo-inline').click()
+    await expect(page.getByTestId('progress-undo-modal')).toBeVisible()
+    await shot(page, 'light-overlay-progress-undo')
+    await page.getByTestId('progress-undo-cancel').click()
 
     await page.evaluate(() => {
       window.dispatchEvent(new CustomEvent('pwa-need-refresh'))

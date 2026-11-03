@@ -1,10 +1,11 @@
 import { useLayoutEffect, useRef, useState } from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Backpack, List, MapTrifold, SquaresFour, TreeStructure } from '@phosphor-icons/react'
 import { UI_ICON_WEIGHT } from './ui/iconStyle'
 import { Glass } from './ui/Glass'
 import { cn } from '../lib/utils'
+import { persistLastTab } from '../hooks/useLastTab'
 
 const INDICATOR_INSET_X = 3
 const INDICATOR_INSET_Y = 4
@@ -17,21 +18,35 @@ const tabs = [
   { to: 'more', labelKey: 'nav.more', icon: List, isMore: true as const },
 ] as const
 
-export function MobileFloatingNav({ onMore }: { onMore: () => void }) {
+export function MobileFloatingNav({
+  moreOpen,
+  onMoreToggle,
+  onCloseMore,
+}: {
+  moreOpen: boolean
+  onMoreToggle: () => void
+  onCloseMore: () => void
+}) {
   const { t } = useTranslation()
   const location = useLocation()
+  const navigate = useNavigate()
   const gridRef = useRef<HTMLDivElement>(null)
   const slotRefs = useRef<Array<HTMLDivElement | null>>([])
   const [indicator, setIndicator] = useState({ left: 0, width: 0 })
 
-  const activeIndex = tabs.findIndex((tab) => {
-    if ('isMore' in tab && tab.isMore) {
-      return ['/droiddex', '/fusion', '/about', '/settings', '/sell'].includes(location.pathname)
+  const activeIndex = (() => {
+    if (moreOpen) {
+      return tabs.findIndex((tab) => 'isMore' in tab && tab.isMore)
     }
-    if ('end' in tab && tab.end) return location.pathname === tab.to
-    if (typeof tab.to === 'string' && !('isMore' in tab)) return location.pathname === tab.to
-    return false
-  })
+    return tabs.findIndex((tab) => {
+      if ('isMore' in tab && tab.isMore) {
+        return ['/droiddex', '/fusion', '/about', '/settings', '/sell'].includes(location.pathname)
+      }
+      if ('end' in tab && tab.end) return location.pathname === tab.to
+      if (typeof tab.to === 'string' && !('isMore' in tab)) return location.pathname === tab.to
+      return false
+    })
+  })()
 
   useLayoutEffect(() => {
     const grid = gridRef.current
@@ -59,11 +74,11 @@ export function MobileFloatingNav({ onMore }: { onMore: () => void }) {
       ro.disconnect()
       window.removeEventListener('resize', measure)
     }
-  }, [activeIndex, location.pathname])
+  }, [activeIndex, location.pathname, moreOpen])
 
   return (
     <nav
-      className="md:hidden fixed z-nav inset-x-3 bottom-[calc(env(safe-area-inset-bottom,0px)+12px)]"
+      className="md:hidden fixed z-nav inset-x-3 bottom-[calc(env(safe-area-inset-bottom,0px)+12px)] pointer-events-auto"
       aria-label={t('a11y.mainNav')}
       data-testid="mobile-floating-nav"
     >
@@ -105,21 +120,34 @@ export function MobileFloatingNav({ onMore }: { onMore: () => void }) {
                     type="button"
                     data-testid="mobile-more-nav"
                     aria-label={t('a11y.openMoreNav')}
+                    aria-expanded={moreOpen}
                     className={cn(slotClass, 'w-full')}
-                    onClick={onMore}
+                    onClick={onMoreToggle}
                   >
                     <Icon size={20} weight={isActive ? 'fill' : UI_ICON_WEIGHT} />
                     <span className="leading-tight px-0.5 truncate max-w-full">{t(tab.labelKey)}</span>
                   </button>
                 ) : (
-                  <NavLink
-                    to={tab.to}
-                    end={'end' in tab ? tab.end : false}
-                    className={cn(slotClass, 'w-full')}
+                  <button
+                    type="button"
+                    data-testid={
+                      tab.to === '/'
+                        ? 'mobile-nav-home'
+                        : `mobile-nav-${String(tab.to).slice(1)}`
+                    }
+                    aria-current={isActive ? 'page' : undefined}
+                    className={cn(slotClass, 'w-full relative z-20 touch-manipulation border-0 bg-transparent')}
+                    onClick={() => {
+                      onCloseMore()
+                      if (typeof tab.to === 'string') {
+                        persistLastTab(tab.to)
+                        navigate(tab.to)
+                      }
+                    }}
                   >
                     <Icon size={20} weight={isActive ? 'fill' : UI_ICON_WEIGHT} />
                     <span className="leading-tight px-0.5 truncate max-w-full">{t(tab.labelKey)}</span>
-                  </NavLink>
+                  </button>
                 )}
               </div>
             )

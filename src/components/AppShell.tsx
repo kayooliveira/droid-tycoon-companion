@@ -46,6 +46,7 @@ export function AppShell() {
 
   useEffect(() => {
     persistLastTab(location.pathname)
+    setMoreOpen(false)
   }, [location.pathname])
 
   return (
@@ -84,9 +85,19 @@ export function AppShell() {
         </div>
       </main>
 
-      <MobileFloatingNav onMore={() => setMoreOpen(true)} />
+      <MobileFloatingNav
+        moreOpen={moreOpen}
+        onMoreToggle={() => setMoreOpen((open) => !open)}
+        onCloseMore={() => setMoreOpen(false)}
+      />
 
-      <Modal open={moreOpen} onClose={() => setMoreOpen(false)} title={t('nav.more')} testId="nav-more-modal">
+      <Modal
+        open={moreOpen}
+        onClose={() => setMoreOpen(false)}
+        title={t('nav.more')}
+        testId="nav-more-modal"
+        anchorAboveMobileNav
+      >
         <div className="grid gap-1">
           {moreMobile.map((item) => (
             <NavLink

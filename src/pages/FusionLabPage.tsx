@@ -9,6 +9,7 @@ import { droidMatchesQuery } from '../lib/droidNameMatch'
 import { useAppStore } from '../store/useAppStore'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
 import { InsetGroup } from '../components/ui/InsetGroup'
+import { SearchInput } from '../components/ui/SearchInput'
 
 const FUSION_RULE_KEY: Record<string, string> = {
   'tier-up': 'fusion.rules.tierUp',
@@ -47,8 +48,9 @@ export function FusionLabPage() {
 
   return (
     <TabScrollLayout title={t('fusion.title')} testId="fusion-page">
-      <h2 className="dc-section-header">{t('fusion.rulesTitle')}</h2>
-      <InsetGroup testId="fusion-rules-card" footer={t('fusion.rulesFootnote')}>
+      <section className="dc-section">
+        <h2 className="dc-section-header">{t('fusion.rulesTitle')}</h2>
+        <InsetGroup testId="fusion-rules-card" footer={t('fusion.rulesFootnote')}>
         {gameData.fusionRules.map((rule) => {
           const key = fusionRuleKey(rule)
           const text = key ? t(key) : (rule.description ?? rule.summary ?? rule.text ?? '')
@@ -68,42 +70,46 @@ export function FusionLabPage() {
             </div>
           </div>
         ) : null}
-      </InsetGroup>
-
-      <h2 className="dc-section-header">{t('fusion.helpsNext')}</h2>
-      {helpful.length > 0 ? (
-        helpful.map((f) => <RecipeCard key={f.id} fusion={f} />)
-      ) : (
-        <InsetGroup>
-          <div className="dc-row">
-            <div className="dc-row-main">
-              <span className="dc-row-sub">{t('fusion.helpsNextEmpty')}</span>
-            </div>
-          </div>
         </InsetGroup>
-      )}
+      </section>
 
-      <h2 className="dc-section-header">{t('fusion.recipes')}</h2>
-      <div className="dc-search-wrap">
-        <input
-          className="dc-search"
-          placeholder={t('fusion.search')}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          aria-label={t('fusion.search')}
-        />
-      </div>
-      {recipes.length === 0 ? (
-        <InsetGroup>
-          <div className="dc-row">
-            <div className="dc-row-main">
-              <span className="dc-row-sub">{t('fusion.emptySearch')}</span>
+      <section className="dc-section">
+        <h2 className="dc-section-header">{t('fusion.helpsNext')}</h2>
+        {helpful.length > 0 ? (
+          helpful.map((f) => <RecipeCard key={f.id} fusion={f} />)
+        ) : (
+          <InsetGroup>
+            <div className="dc-row">
+              <div className="dc-row-main">
+                <span className="dc-row-sub">{t('fusion.helpsNextEmpty')}</span>
+              </div>
             </div>
-          </div>
-        </InsetGroup>
-      ) : (
-        recipes.map((f) => <RecipeCard key={f.id} fusion={f} />)
-      )}
+          </InsetGroup>
+        )}
+      </section>
+
+      <section className="dc-section">
+        <h2 className="dc-section-header">{t('fusion.recipes')}</h2>
+        <div className="dc-search-wrap !px-0">
+          <SearchInput
+            placeholder={t('fusion.search')}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            aria-label={t('fusion.search')}
+          />
+        </div>
+        {recipes.length === 0 ? (
+          <InsetGroup>
+            <div className="dc-row">
+              <div className="dc-row-main">
+                <span className="dc-row-sub">{t('fusion.emptySearch')}</span>
+              </div>
+            </div>
+          </InsetGroup>
+        ) : (
+          recipes.map((f) => <RecipeCard key={f.id} fusion={f} />)
+        )}
+      </section>
     </TabScrollLayout>
   )
 }
@@ -112,7 +118,7 @@ function RecipeCard({ fusion }: { fusion: FusionRecipe }) {
   const { t } = useTranslation()
   const result = droidById.get(fusion.resultDroidId)
   return (
-    <InsetGroup className="mb-3">
+    <InsetGroup>
       <div className="dc-row dc-row-droid">
         {result ? (
           <DroidImage droid={result} tier={showcaseTierForDroid(result)} size="sm" className="!h-[50px] !w-[50px] rounded-[11px]" />

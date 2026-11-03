@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AppShell } from './components/AppShell'
 import { GlassFilters } from './components/GlassFilters'
-import { PageSkeleton } from './components/PageSkeleton'
+import { TabScreenSkeleton } from './components/layout/TabScreenSkeleton'
 import { SeoManager } from './components/SeoManager'
 import { OverlayStackProvider } from './components/OverlayStackProvider'
 import { ToastProvider, useToast } from './components/ToastProvider'
@@ -76,7 +76,7 @@ function LocaleSync() {
 }
 
 function LazyPage({ children }: { children: ReactNode }) {
-  return <Suspense fallback={<PageSkeleton />}>{children}</Suspense>
+  return <Suspense fallback={<TabScreenSkeleton />}>{children}</Suspense>
 }
 
 export default function App() {

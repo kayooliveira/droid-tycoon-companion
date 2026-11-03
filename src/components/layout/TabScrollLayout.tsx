@@ -39,7 +39,7 @@ export function TabScrollLayout({
         <h1 className="dc-large-title flex-1">{title}</h1>
         {headerExtra ? <div className="shrink-0 pr-4 pt-2">{headerExtra}</div> : null}
       </div>
-      {children}
+      <div className="dc-screen-stack">{children}</div>
     </div>
   )
 }

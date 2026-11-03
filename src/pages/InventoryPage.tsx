@@ -14,6 +14,7 @@ import { Button } from '../components/ui/Button'
 import { ChipRadioGroup } from '../components/ui/ChipRadioGroup'
 import { InsetGroup } from '../components/ui/InsetGroup'
 import { QuantityStepper } from '../components/ui/QuantityStepper'
+import { SearchInput } from '../components/ui/SearchInput'
 import { SegmentedControl } from '../components/ui/SegmentedControl'
 import { Sheet } from '../components/ui/Sheet'
 import { SellBadge } from '../components/ui/SellBadge'
@@ -181,11 +182,11 @@ export function InventoryPage() {
     >
       <div className="dc-inv-pin">
         <div className="dc-search-wrap">
-          <input
-            className="dc-search"
+          <SearchInput
             placeholder={t('inventory.search')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            aria-label={t('inventory.search')}
           />
         </div>
         <div className="dc-inv-toolbar">
@@ -363,11 +364,11 @@ export function InventoryPage() {
       <Sheet open={addOpen} onClose={() => setAddOpen(false)} testId="inventory-add-modal">
         <h2 className="text-[20px] font-bold mb-4">{t('inventory.modalTitle')}</h2>
         <div className="space-y-4">
-          <input
-            className="dc-search"
+          <SearchInput
             placeholder={t('inventory.searchDroids')}
             value={pickerSearch}
             onChange={(e) => setPickerSearch(e.target.value)}
+            aria-label={t('inventory.searchDroids')}
           />
           <div className="max-h-48 overflow-auto grid grid-cols-2 gap-2">
             {pickerDroids.map((d) => (

@@ -8,6 +8,7 @@ import { useTierLabels } from '../../i18n/useTierLabels'
 import type { InventoryUnit, TierId } from '../../domain/types'
 import { DroidImage } from '../DroidImage'
 import { RequirementInventoryControls } from '../RequirementInventoryControls'
+import { ScreenSection } from '../layout/ScreenSection'
 import { InsetGroup } from '../ui/InsetGroup'
 import { SellBadge } from '../ui/SellBadge'
 
@@ -50,14 +51,11 @@ export function ProgressUnifiedRebirthPanel({
   const reqKeys = new Set(checks.map((c) => `${c.requirement.droidId}:${c.requirement.rarity}`))
 
   return (
-    <>
+    <ScreenSection testId="progress-unified-section">
       <h2 className="dc-section-header">
         {t('progress.listRebirthHeading', { n: rebirth })}
       </h2>
-      <InsetGroup
-        footer={t('progress.unifiedListFooter')}
-        testId="progress-unified-group"
-      >
+      <InsetGroup testId="progress-unified-group">
         {checks.map((c) => {
           const d = droidById.get(c.requirement.droidId)
           if (!d) return null
@@ -133,6 +131,6 @@ export function ProgressUnifiedRebirthPanel({
             )
           })}
       </InsetGroup>
-    </>
+    </ScreenSection>
   )
 }
