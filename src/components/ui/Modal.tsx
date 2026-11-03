@@ -102,9 +102,10 @@ export function Modal({
         data-overlay-root
         data-testid={testId}
         className={cn(
-          'fixed inset-0 z-overlay',
+          'fixed inset-0',
           anchorAboveMobileNav && 'pointer-events-none',
-          !anchorAboveMobileNav && 'flex items-end sm:items-center justify-center overlay-scrim backdrop-blur-md p-0 sm:p-4',
+          !anchorAboveMobileNav &&
+            'z-overlay flex items-end sm:items-center justify-center overlay-scrim backdrop-blur-md p-0 sm:p-4',
         )}
         role="presentation"
         onMouseDown={
@@ -117,7 +118,8 @@ export function Modal({
       >
         {anchorAboveMobileNav ? (
           <div
-            className="modal-above-mobile-nav-scrim overlay-scrim backdrop-blur-md"
+            data-testid={`${testId}-scrim`}
+            className="modal-above-mobile-nav-scrim overlay-scrim backdrop-blur-md z-[100] pointer-events-auto"
             role="presentation"
             onMouseDown={(e) => {
               if (e.target === e.currentTarget) onClose()
@@ -127,7 +129,7 @@ export function Modal({
         <div
           className={cn(
             anchorAboveMobileNav
-              ? 'modal-above-mobile-nav-panel flex justify-center pointer-events-none'
+              ? 'modal-above-mobile-nav-panel z-[110] flex justify-center pointer-events-none'
               : 'contents',
           )}
         >
@@ -135,7 +137,8 @@ export function Modal({
             as="div"
             variant="regular"
             className={cn(
-              'relative z-modal w-full overflow-auto pointer-events-auto',
+              'relative w-full overflow-auto pointer-events-auto',
+              !anchorAboveMobileNav && 'z-modal',
               anchorAboveMobileNav
                 ? 'max-h-[min(70dvh,calc(100dvh-var(--mobile-nav-clearance)-24px))] rounded-t-2xl'
                 : 'sm:max-w-md max-h-[88dvh] rounded-t-2xl sm:rounded-2xl pb-[calc(env(safe-area-inset-bottom,0px)+12px)] sm:pb-[calc(env(safe-area-inset-bottom,0px)+12px)]',

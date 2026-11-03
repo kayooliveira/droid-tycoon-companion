@@ -34,14 +34,19 @@ export function MobileFloatingNav({
   const slotRefs = useRef<Array<HTMLDivElement | null>>([])
   const [indicator, setIndicator] = useState({ left: 0, width: 0 })
 
-  const activeIndex = tabs.findIndex((tab) => {
-    if ('isMore' in tab && tab.isMore) {
-      return ['/droiddex', '/fusion', '/about', '/settings', '/sell'].includes(location.pathname)
+  const activeIndex = (() => {
+    if (moreOpen) {
+      return tabs.findIndex((tab) => 'isMore' in tab && tab.isMore)
     }
-    if ('end' in tab && tab.end) return location.pathname === tab.to
-    if (typeof tab.to === 'string' && !('isMore' in tab)) return location.pathname === tab.to
-    return false
-  })
+    return tabs.findIndex((tab) => {
+      if ('isMore' in tab && tab.isMore) {
+        return ['/droiddex', '/fusion', '/about', '/settings', '/sell'].includes(location.pathname)
+      }
+      if ('end' in tab && tab.end) return location.pathname === tab.to
+      if (typeof tab.to === 'string' && !('isMore' in tab)) return location.pathname === tab.to
+      return false
+    })
+  })()
 
   useLayoutEffect(() => {
     const grid = gridRef.current
@@ -69,7 +74,7 @@ export function MobileFloatingNav({
       ro.disconnect()
       window.removeEventListener('resize', measure)
     }
-  }, [activeIndex, location.pathname])
+  }, [activeIndex, location.pathname, moreOpen])
 
   return (
     <nav

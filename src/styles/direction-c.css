@@ -118,10 +118,7 @@
 
 .modal-above-mobile-nav-scrim {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: var(--mobile-nav-clearance);
+  inset: 0;
 }
 
 .modal-above-mobile-nav-panel {
