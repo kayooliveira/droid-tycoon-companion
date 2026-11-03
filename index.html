@@ -35,10 +35,14 @@
     <script>
       (function () {
         try {
-          var raw = localStorage.getItem('droid-tycoon-companion-store');
+          var raw =
+            localStorage.getItem('droiddeck:boot') ||
+            localStorage.getItem('droid-tycoon-companion-store');
           if (!raw) return;
           var parsed = JSON.parse(raw);
-          var theme = parsed && parsed.state && parsed.state.settings && parsed.state.settings.theme;
+          var theme =
+            parsed.theme ||
+            (parsed.state && parsed.state.settings && parsed.state.settings.theme);
           var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
           var light = theme === 'light' || (theme === 'system' && !prefersDark);
           if (light) {
