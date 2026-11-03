@@ -60,6 +60,25 @@ describe('ProgressDroidSearch', () => {
     })
   })
 
+  it('clears results immediately when input is cleared', async () => {
+    render(
+      <I18nextProvider i18n={i18n}>
+        <MemoryRouter>
+          <ProgressDroidSearch onNavigateToStep={vi.fn()} />
+        </MemoryRouter>
+      </I18nextProvider>,
+    )
+    fireEvent.change(screen.getByTestId('progress-droid-search-input'), {
+      target: { value: 'motrak' },
+    })
+    await waitFor(() => {
+      expect(screen.getByTestId('progress-search-path-path-1')).toBeInTheDocument()
+    })
+    fireEvent.click(screen.getByTestId('progress-droid-search-clear'))
+    expect(screen.queryByTestId('progress-search-path-path-1')).not.toBeInTheDocument()
+    expect(screen.queryByText('MO-TRAK')).not.toBeInTheDocument()
+  })
+
   it('navigates when tapping a result row', async () => {
     const onNav = vi.fn()
     render(

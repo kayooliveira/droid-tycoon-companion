@@ -35,30 +35,39 @@ export function RequirementCard({
   const showStepper = trackInventory
 
   return (
-    <GlassCard className="flex gap-3 items-center flex-nowrap">
+    <GlassCard className="flex gap-3 items-start" data-testid="requirement-card">
       <DroidImage droid={droid} className="shrink-0" />
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2 min-w-0">
-          <p className="font-medium truncate min-w-0">{droid.name}</p>
-          <Badge tone="info" className="shrink-0">
-            {formatTierName(check.requirement.rarity, tierLabels)}
-          </Badge>
-          {trackInventory && !showStepper ? (
-            <Badge tone={statusTone[check.status] ?? 'default'} className="shrink-0">
-              {t(`status.${check.status}`)}
+      <div className="min-w-0 flex-1 flex flex-col gap-2">
+        <div className="min-w-0">
+          <p
+            className="font-medium line-clamp-2 text-pretty break-words leading-snug"
+            data-testid="requirement-droid-name"
+          >
+            {droid.name}
+          </p>
+          <div className="mt-1.5 flex flex-wrap items-center gap-2">
+            <Badge tone="info" className="shrink-0">
+              {formatTierName(check.requirement.rarity, tierLabels)}
             </Badge>
-          ) : null}
+            {trackInventory && !showStepper ? (
+              <Badge tone={statusTone[check.status] ?? 'default'} className="shrink-0">
+                {t(`status.${check.status}`)}
+              </Badge>
+            ) : null}
+          </div>
         </div>
+        {showStepper ? (
+          <div className="flex justify-end">
+            <RequirementInventoryControls
+              droidId={check.requirement.droidId}
+              droidName={droid.name}
+              tier={check.requirement.rarity}
+              ownedCount={check.ownedCount}
+              neededCount={check.neededCount}
+            />
+          </div>
+        ) : null}
       </div>
-      {showStepper ? (
-        <RequirementInventoryControls
-          droidId={check.requirement.droidId}
-          droidName={droid.name}
-          tier={check.requirement.rarity}
-          ownedCount={check.ownedCount}
-          neededCount={check.neededCount}
-        />
-      ) : null}
     </GlassCard>
   )
 }

@@ -40,19 +40,20 @@ export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: Pro
   const [query, setQuery] = useState(initialQuery)
   const [expandedPaths, setExpandedPaths] = useState<Record<string, boolean>>({})
 
-  const debouncedQuery = useDebouncedValue(query, 200)
+  const trimmedQuery = query.trim()
+  const debouncedQuery = useDebouncedValue(trimmedQuery, 200)
+  /** Cleared input hides results immediately; debounce only applies while typing. */
+  const effectiveQuery = trimmedQuery.length === 0 ? '' : debouncedQuery
 
   const matchedDroids = useMemo(() => {
-    const q = debouncedQuery.trim()
-    if (q.length < 1) return []
-    return findMatchingDroids(q, gameData.droids, 6)
-  }, [debouncedQuery])
+    if (effectiveQuery.length < 1) return []
+    return findMatchingDroids(effectiveQuery, gameData.droids, 6)
+  }, [effectiveQuery])
 
   const selectedDroid = useMemo(() => {
-    const q = debouncedQuery.trim()
-    if (!q) return null
-    return pickBestDroidMatch(q, gameData.droids)
-  }, [debouncedQuery])
+    if (effectiveQuery.length < 1) return null
+    return pickBestDroidMatch(effectiveQuery, gameData.droids)
+  }, [effectiveQuery])
 
   const needs = useMemo(() => {
     if (!selectedDroid) return []
@@ -110,7 +111,7 @@ export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: Pro
           onChange={(e) => setQuery(e.target.value)}
           placeholder={t('progress.search.placeholder')}
           aria-controls="progress-droid-search-results"
-          aria-expanded={debouncedQuery.trim().length > 0}
+          aria-expanded={effectiveQuery.length > 0}
           className={SEARCH_INPUT_CLASS}
           data-testid="progress-droid-search-input"
         />
@@ -128,7 +129,7 @@ export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: Pro
       </div>
 
       <div id="progress-droid-search-results" className="space-y-3">
-        {debouncedQuery.trim().length > 0 && !selectedDroid ? (
+        {effectiveQuery.length > 0 && !selectedDroid ? (
           <p className="text-sm text-ui-muted" data-testid="progress-droid-search-empty">
             {t('progress.search.noMatch')}
           </p>
@@ -146,7 +147,7 @@ export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: Pro
           </div>
         ) : null}
 
-        {matchedDroids.length > 1 && debouncedQuery.trim().length > 0 ? (
+        {matchedDroids.length > 1 && effectiveQuery.length > 0 ? (
           <div className="flex flex-wrap gap-2" role="listbox" aria-label={t('progress.search.pickDroid')}>
             {matchedDroids.map((d) => (
               <button
