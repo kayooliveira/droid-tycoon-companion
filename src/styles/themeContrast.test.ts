@@ -4,12 +4,27 @@ import { describe, expect, it } from 'vitest'
 import {
   blendOver,
   contrastRatio,
+  extractCssVarsBlock,
   extractThemeBlock,
+  mergeThemeVars,
   resolveColor,
   type ThemeVars,
 } from './themeContrast'
 
 const THEME_CSS = readFileSync(join(import.meta.dirname, 'theme-tokens.css'), 'utf8')
+const TIER_CSS = readFileSync(join(import.meta.dirname, 'tier-visuals.css'), 'utf8')
+
+const TIER_CONTRAST_IDS = [
+  'default',
+  'gold',
+  'diamond',
+  'beskar',
+  'galactic',
+  'stellar',
+  'kyber',
+  'rainbow',
+  'scourge',
+] as const
 
 const TEXT_PAIRS: Array<[string, string]> = [
   ['--ui-fg', '--ui-bg'],
@@ -67,9 +82,32 @@ function assertTheme(name: string, vars: ThemeVars) {
   expect(contrastRatio(elevated, raised), `${name} elevated vs raised`).toBeGreaterThanOrEqual(1.06)
 }
 
+function assertTierLabels(name: string, vars: ThemeVars) {
+  for (const id of TIER_CONTRAST_IDS) {
+    const fgKey = `--tier-${id}-fg`
+    const bgKey = `--tier-${id}-contrast-bg`
+    const fg = resolveColor(fgKey, vars)
+    const bg = resolveColor(bgKey, vars)
+    expect(fg, `${name} ${fgKey}`).not.toBeNull()
+    expect(bg, `${name} ${bgKey}`).not.toBeNull()
+    const ratio = contrastRatio(fg!, bg!)
+    expect(
+      ratio,
+      `${name} tier ${id} label ${fgKey} on ${bgKey} = ${ratio.toFixed(2)} (need ≥4.5)`,
+    ).toBeGreaterThanOrEqual(4.5)
+  }
+}
+
 describe('theme token contrast', () => {
   it('meets WCAG AA for dark and light semantic pairs', () => {
     assertTheme('dark', extractThemeBlock(THEME_CSS, ':root'))
     assertTheme('light', extractThemeBlock(THEME_CSS, 'html.theme-light'))
+  })
+
+  it('meets WCAG AA for tier label colors on representative tier backgrounds', () => {
+    const tierRoot = extractCssVarsBlock(TIER_CSS, ':root')
+    const tierLight = extractCssVarsBlock(TIER_CSS, 'html.theme-light')
+    assertTierLabels('tier-dark', tierRoot)
+    assertTierLabels('tier-light', mergeThemeVars(tierRoot, tierLight))
   })
 })

@@ -14,11 +14,12 @@ import { formatTierName } from '../../domain/tiers'
 import { buildI18nTierLabelMapForLocale } from '../../i18n/tierLabels'
 import { getPdfCopy } from '../pdfCopy'
 import type { ExportCycleInput } from '../exportCycle'
-import type { InventoryUnit } from '../../domain/types'
+import type { InventoryUnit, TierId } from '../../domain/types'
 
 export interface PdfDroidReq {
   droidId: string
   name: string
+  tierId: TierId
   tier: string
   imageSrc: string
   imageMissing?: boolean
@@ -121,6 +122,7 @@ function mapRebirthRow(
       return {
         droidId: req.droidId,
         name: droid?.name ?? req.droidId,
+        tierId: req.rarity,
         tier: formatTierName(req.rarity, tierLabels),
         imageMissing: missing,
         imageSrc: missing
@@ -317,6 +319,7 @@ export function progressRebirthCards(
         return {
           droidId: req.droidId,
           name: droid?.name ?? req.droidId,
+          tierId: req.rarity,
           tier: formatTierName(req.rarity, tierLabels),
           imageMissing: missing,
           imageSrc: missing

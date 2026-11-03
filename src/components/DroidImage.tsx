@@ -1,6 +1,7 @@
 import { droidImageSrc, isMissingImageFlag } from '../lib/images'
 import { cn } from '../lib/utils'
-import type { Droid } from '../domain/types'
+import type { Droid, TierId } from '../domain/types'
+import { tierFrameClass } from './ui/tierVisuals'
 
 function initialsFor(name: string, id: string): string {
   const fromName = name.replace(/[^a-zA-Z0-9]/g, '').slice(0, 2)
@@ -10,11 +11,13 @@ function initialsFor(name: string, id: string): string {
 
 export function DroidImage({
   droid,
+  tier,
   size = 'md',
   className,
   priority,
 }: {
   droid: Pick<Droid, 'id' | 'imageLocal' | 'imageMissing' | 'name'>
+  tier?: TierId
   size?: 'sm' | 'md' | 'lg'
   className?: string
   priority?: boolean
@@ -24,16 +27,22 @@ export function DroidImage({
   const missing = isMissingImageFlag(droid) || !droid.imageLocal
   const src = missing ? null : droidImageSrc(droid.id, droid.imageLocal)
 
+  const frameClass = tier ? cn('tier-frame', tierFrameClass(tier)) : undefined
+  const innerClass = cn(
+    tier ? 'tier-frame__inner relative shrink-0' : 'relative shrink-0 overflow-hidden rounded-xl ring-1 ring-ui',
+    !tier && 'overflow-hidden rounded-xl ring-1 ring-ui',
+    sizes[size],
+    className,
+  )
+
   if (missing || !src) {
     const initials = initialsFor(droid.name, droid.id)
-    return (
+    const placeholder = (
       <div
         className={cn(
-          'relative shrink-0 overflow-hidden rounded-xl ring-1 ring-ui',
+          innerClass,
           'bg-gradient-to-br from-surface-800 via-holo-900/40 to-cyan-900/30',
           'flex items-center justify-center',
-          sizes[size],
-          className,
         )}
         role="img"
         aria-label={droid.name}
@@ -54,16 +63,11 @@ export function DroidImage({
         />
       </div>
     )
+    return frameClass ? <div className={frameClass}>{placeholder}</div> : placeholder
   }
 
-  return (
-    <div
-      className={cn(
-        'relative shrink-0 overflow-hidden rounded-xl bg-ui-field ring-1 ring-ui',
-        sizes[size],
-        className,
-      )}
-    >
+  const imgBlock = (
+    <div className={cn(innerClass, 'bg-ui-field')}>
       <img
         src={src}
         alt={droid.name}
@@ -76,4 +80,5 @@ export function DroidImage({
       />
     </div>
   )
+  return frameClass ? <div className={frameClass}>{imgBlock}</div> : imgBlock
 }

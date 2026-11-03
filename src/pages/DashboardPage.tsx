@@ -12,6 +12,7 @@ import { PathProgressSwitcher } from '../components/PathProgressSwitcher'
 import { ShareExportCard } from '../components/ShareExportCard'
 import { DroidImage } from '../components/DroidImage'
 import { Badge } from '../components/ui/Badge'
+import { TierBadge } from '../components/ui/TierBadge'
 import { Button } from '../components/ui/Button'
 import { GlassCard } from '../components/ui/GlassCard'
 import { uiIconProps } from '../components/ui/iconStyle'
@@ -111,15 +112,19 @@ export function DashboardPage() {
           <div className="flex flex-wrap gap-1.5">
             {sellSamples.map((row) => {
               const d = droidById.get(row.droidId)
-              const tier = formatTierName(row.tier, tierLabels)
+              const tierLabel = formatTierName(row.tier, tierLabels)
               return (
                 <span
                   key={row.droidId}
-                  className="inline-flex items-center gap-1 rounded-full bg-ui-hover border border-ui px-2 py-1 text-[11px]"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-ui-hover border border-ui px-2 py-1 text-[11px]"
                 >
-                  {d ? <DroidImage droid={d} size="sm" className="!h-6 !w-6" /> : null}
-                  {d?.name ?? row.droidId}
-                  <span className="text-ui-soft">· {tier}</span>
+                  {d ? (
+                    <DroidImage droid={d} tier={row.tier} size="sm" className="!h-6 !w-6" />
+                  ) : null}
+                  <span className="font-medium">{d?.name ?? row.droidId}</span>
+                  <TierBadge tier={row.tier} className="text-[10px] py-0">
+                    {tierLabel}
+                  </TierBadge>
                 </span>
               )
             })}

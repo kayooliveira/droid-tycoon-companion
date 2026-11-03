@@ -10,6 +10,9 @@ import { useTierLabels } from '../i18n/useTierLabels'
 import type { TierId } from '../domain/types'
 import { DroidImage } from '../components/DroidImage'
 import { Badge } from '../components/ui/Badge'
+import { TierBadge } from '../components/ui/TierBadge'
+import { tierCardAccentClass } from '../components/ui/tierVisuals'
+import { cn } from '../lib/utils'
 import { Button } from '../components/ui/Button'
 import { ChipRadioGroup } from '../components/ui/ChipRadioGroup'
 import { GlassCard } from '../components/ui/GlassCard'
@@ -186,13 +189,16 @@ export function InventoryPage() {
           if (!droid) return null
           const needed = droidHasFutureNeedOnPath(progress.pathId, progress.nextRebirth, unit.droidId)
           return (
-            <GlassCard key={unit.id} className="flex gap-3 items-center">
-              <DroidImage droid={droid} />
+            <GlassCard
+              key={unit.id}
+              className={cn('flex gap-3 items-center', tierCardAccentClass(unit.tier))}
+            >
+              <DroidImage droid={droid} tier={unit.tier} />
               <div className="flex-1 min-w-0">
                 <p className="font-medium truncate">{droid.name}</p>
                 <div className="flex flex-wrap gap-2 mt-1">
                   <Badge>{formatBaseRarity(droid.baseRarity, t)}</Badge>
-                  <Badge tone="info">{formatTierName(unit.tier, tierLabels)}</Badge>
+                  <TierBadge tier={unit.tier}>{formatTierName(unit.tier, tierLabels)}</TierBadge>
                   <Badge tone={needed ? 'warn' : 'success'}>
                     {needed ? t('inventory.neededLater') : t('inventory.notNeeded')}
                   </Badge>

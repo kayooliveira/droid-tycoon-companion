@@ -398,6 +398,8 @@
     "subtitle": "Tokens e componentes base do DroidDeck",
     "colorsTitle": "Cores semânticas",
     "tiersTitle": "Níveis de droid",
+    "tierShowcaseHint": "Badges e superfícies com gradientes, estrelas e brilho sutil (respeita reduzir movimento).",
+    "tierSurfaceSample": "Texto legível sobre o gradiente do nível.",
     "typeTitle": "Tipografia",
     "spacingTitle": "Espaçamento",
     "componentsTitle": "Componentes",

@@ -7,6 +7,7 @@ import { PdfFooter } from './PdfFooter'
 import { PdfSellChipLine } from './PdfSellSection'
 import { pdfTheme as c } from '../pdfTheme'
 import { pdfStyles as s } from './styles'
+import { tierPdfChipStyle } from './tierPdfColors'
 
 function ProgressHeader({ model }: { model: CyclePdfModel }) {
   const L = model.labels
@@ -84,7 +85,11 @@ function RebirthCard({
           <DroidThumb req={req} style={{ width: 14, height: 14, marginRight: 4 }} />
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 8 }}>{req.name}</Text>
-            <Text style={s.tierText}>{req.tier}</Text>
+            <View style={[s.tierChip, tierPdfChipStyle(req.tierId)]}>
+              <Text style={[s.tierText, { color: tierPdfChipStyle(req.tierId).color }]}>
+                {req.tier}
+              </Text>
+            </View>
           </View>
         </View>
       ))}

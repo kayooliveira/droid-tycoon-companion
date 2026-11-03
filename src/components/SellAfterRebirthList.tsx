@@ -6,6 +6,7 @@ import { formatTierName } from '../domain/tiers'
 import { useTierLabels } from '../i18n/useTierLabels'
 import { DroidImage } from './DroidImage'
 import { Badge } from './ui/Badge'
+import { TierBadge } from './ui/TierBadge'
 
 function earliestOtherPathId(pathIds: string[]): string | null {
   const order = getPathIds()
@@ -38,11 +39,11 @@ function UnitRow({ unit }: { unit: RebirthUnitUsage }) {
 
   return (
     <li className="flex gap-2 items-center min-w-0">
-      <DroidImage droid={droid} size="sm" />
+      <DroidImage droid={droid} tier={unit.tier} size="sm" />
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap gap-1.5 items-center">
           <span className="text-sm font-medium truncate">{droid.name}</span>
-          <Badge tone="info">{formatTierName(unit.tier, tierLabels)}</Badge>
+          <TierBadge tier={unit.tier}>{formatTierName(unit.tier, tierLabels)}</TierBadge>
           {unit.quantity > 1 ? <Badge>×{unit.quantity}</Badge> : null}
           {unit.disposition !== 'sellable' ? (
             <Badge tone={tone}>{t(`sellAfter.${unit.disposition}`)}</Badge>

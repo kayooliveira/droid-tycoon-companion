@@ -11,6 +11,7 @@ import { PathProgressSwitcher } from '../components/PathProgressSwitcher'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { DroidImage } from '../components/DroidImage'
 import { Badge } from '../components/ui/Badge'
+import { TierBadge } from '../components/ui/TierBadge'
 import { Button } from '../components/ui/Button'
 import { GlassCard } from '../components/ui/GlassCard'
 import { uiIconProps } from '../components/ui/iconStyle'
@@ -95,11 +96,11 @@ export function SellCenterPage() {
                     if (!droid) return null
                     return (
                       <div key={`safe-${item.unitId}-${idx}`} className="flex gap-3 rounded-xl bg-ui-hover p-3">
-                        <DroidImage droid={droid} size="sm" />
+                        <DroidImage droid={droid} tier={item.tier} size="sm" />
                         <div className="min-w-0">
                           <div className="flex flex-wrap gap-2 items-center">
                             <p className="font-medium text-sm">{droid.name}</p>
-                            <Badge tone="info">{formatTierName(item.tier, tierLabels)}</Badge>
+                            <TierBadge tier={item.tier}>{formatTierName(item.tier, tierLabels)}</TierBadge>
                             <Badge tone="success">×{item.quantity}</Badge>
                           </div>
                           <p className="text-xs text-ui-success/90 mt-1">{t('sell.safeNowLine')}</p>
@@ -144,11 +145,11 @@ export function SellCenterPage() {
                       )
                       return (
                         <div key={`${item.unitId}-${idx}`} className="flex gap-3 rounded-xl bg-ui-hover p-3">
-                          <DroidImage droid={droid} size="sm" />
+                          <DroidImage droid={droid} tier={item.tier} size="sm" />
                           <div className="min-w-0">
                             <div className="flex flex-wrap gap-2 items-center">
                               <p className="font-medium text-sm">{name}</p>
-                              <Badge tone="info">{formatTierName(item.tier, tierLabels)}</Badge>
+                              <TierBadge tier={item.tier}>{formatTierName(item.tier, tierLabels)}</TierBadge>
                               <Badge>×{item.quantity}</Badge>
                               {plan?.disposition === 'fusionHold' ? (
                                 <Badge tone="warn">{t('sellAfter.fusionHold')}</Badge>

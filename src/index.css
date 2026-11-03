@@ -3,6 +3,7 @@
 @import './styles/theme-tokens.css';
 @import './styles/design-tokens.css';
 @import './styles/deck-chrome.css';
+@import './styles/tier-visuals.css';
 
 @theme {
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;

@@ -11,6 +11,9 @@ import { ListRow } from '../components/ui/ListRow'
 import { Modal } from '../components/ui/Modal'
 import { SearchInput } from '../components/ui/SearchInput'
 import { SectionHeader } from '../components/ui/SectionHeader'
+import { TierBadge } from '../components/ui/TierBadge'
+import { TierSurface } from '../components/ui/TierSurface'
+import { TIER_SHOWCASE_IDS } from '../components/ui/tierVisuals'
 import { SegmentedControl } from '../components/ui/SegmentedControl'
 import { SkeletonStack } from '../components/ui/Skeleton'
 import { Switch } from '../components/ui/Switch'
@@ -46,17 +49,6 @@ const STATUS_SWATCHES = [
     className: 'bg-ui-danger-solid',
     textClass: 'text-on-danger-solid',
   },
-] as const
-
-const TIER_KEYS = [
-  'default',
-  'gold',
-  'diamond',
-  'rainbow',
-  'beskar',
-  'galactic',
-  'stellar',
-  'kyber',
 ] as const
 
 export function DesignSystemPage() {
@@ -140,14 +132,29 @@ export function DesignSystemPage() {
           </div>
         </section>
 
-        <section data-testid="design-section-tiers">
+        <section data-testid="design-section-tier-showcase">
           <SectionHeader title={t('designSystem.tiersTitle')} />
-          <div className="mt-3 flex flex-wrap gap-2">
-            {TIER_KEYS.map((tier) => (
-              <div key={tier} className="flex items-center gap-2 rounded-xl border border-ui px-2 py-1">
-                <span className={`size-4 rounded-full tier-swatch-${tier}`} />
-                <span className="text-ds-xs">{t(`tier.${tier}`)}</span>
-              </div>
+          <p className="text-ds-xs text-ui-muted -mt-1 mb-3">{t('designSystem.tierShowcaseHint')}</p>
+          <div
+            className="mt-3 flex flex-wrap gap-2"
+            data-testid="design-tier-badges-row"
+          >
+            {TIER_SHOWCASE_IDS.map((tier) => (
+              <TierBadge key={tier} tier={tier} testId={`design-tier-badge-${tier}`}>
+                {t(`tier.${tier}`)}
+              </TierBadge>
+            ))}
+          </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2" data-testid="design-tier-surfaces-grid">
+            {TIER_SHOWCASE_IDS.map((tier) => (
+              <TierSurface
+                key={tier}
+                tier={tier}
+                title={t(`tier.${tier}`)}
+                testId={`design-tier-surface-${tier}`}
+              >
+                {t('designSystem.tierSurfaceSample')}
+              </TierSurface>
             ))}
           </div>
         </section>

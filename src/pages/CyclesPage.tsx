@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { CycleGuidePdfExport } from '../components/CycleGuidePdfExport'
 import { DroidImage } from '../components/DroidImage'
 import { Badge } from '../components/ui/Badge'
+import { TierBadge } from '../components/ui/TierBadge'
 import { GlassCard } from '../components/ui/GlassCard'
 import { cycleById, droidById, gameData, getRebirth } from '../domain/gameData'
 import { REBIRTHS_PER_PATH, SUPER_REBIRTH_UNLOCK_AFTER } from '../domain/progress'
@@ -112,13 +113,17 @@ export function CyclesPage() {
                     const droid = droidById.get(req.droidId)
                     return (
                       <div key={req.droidId} className="flex items-center gap-3">
-                        {droid ? <DroidImage droid={droid} size="sm" /> : null}
+                        {droid ? <DroidImage droid={droid} tier={req.rarity} size="sm" /> : null}
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium truncate">{droid?.name ?? req.droidId}</p>
-                          <p className="text-xs text-ui-soft">
-                            {formatTierName(req.rarity, tierLabels)}
-                            {req.quantity > 1 ? ` ×${req.quantity}` : ''}
-                          </p>
+                          <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                            <TierBadge tier={req.rarity} className="text-[10px]">
+                              {formatTierName(req.rarity, tierLabels)}
+                            </TierBadge>
+                            {req.quantity > 1 ? (
+                              <span className="text-xs text-ui-soft">×{req.quantity}</span>
+                            ) : null}
+                          </div>
                         </div>
                       </div>
                     )

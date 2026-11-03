@@ -66,10 +66,16 @@ export function contrastRatio(fg: Rgb, bg: Rgb): number {
 export type ThemeVars = Record<string, string>
 
 export function extractThemeBlock(css: string, selector: ':root' | 'html.theme-light'): ThemeVars {
-  const re =
-    selector === ':root'
-      ? /:root\s*\{([^}]+)\}/s
-      : /html\.theme-light\s*\{([^}]+)\}/s
+  return extractCssVarsBlock(
+    css,
+    selector === ':root' ? ':root' : 'html.theme-light',
+  )
+}
+
+/** First `{...}` block for a selector (e.g. `:root`, `html.theme-light`). */
+export function extractCssVarsBlock(css: string, selector: string): ThemeVars {
+  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const re = new RegExp(`${escaped}\\s*\\{([^}]+)\\}`, 's')
   const m = re.exec(css)
   if (!m) return {}
   const vars: ThemeVars = {}
@@ -78,6 +84,10 @@ export function extractThemeBlock(css: string, selector: ':root' | 'html.theme-l
     if (vm) vars[`--${vm[1]}`] = vm[2].trim()
   }
   return vars
+}
+
+export function mergeThemeVars(base: ThemeVars, override: ThemeVars): ThemeVars {
+  return { ...base, ...override }
 }
 
 export function resolveVar(name: string, vars: ThemeVars, depth = 0): string | null {

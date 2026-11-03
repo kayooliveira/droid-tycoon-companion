@@ -20,6 +20,7 @@ import { cn } from '../../lib/utils'
 import { useAppStore } from '../../store/useAppStore'
 import { DroidImage } from '../DroidImage'
 import { Badge } from '../ui/Badge'
+import { TierBadge } from '../ui/TierBadge'
 import { GlassCard } from '../ui/GlassCard'
 import { uiIconProps } from '../ui/iconStyle'
 
@@ -334,6 +335,9 @@ function NeedRow({
             {t('progress.search.rebirthStep', { n: hit.rebirth })}
           </p>
           <div className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-ui-secondary">
+            <TierBadge tier={hit.tier} className="shrink-0 text-[10px]">
+              {tierLabel}
+            </TierBadge>
             <span className="min-w-0">
               {hit.kind === 'fusion' && fusionResult
                 ? t('progress.search.fusionLine', {

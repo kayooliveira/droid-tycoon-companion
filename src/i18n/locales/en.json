@@ -398,6 +398,8 @@
     "subtitle": "DroidDeck foundation tokens and components",
     "colorsTitle": "Semantic colors",
     "tiersTitle": "Droid tiers",
+    "tierShowcaseHint": "Badges and surfaces with gradients, starfields, and subtle shimmer (respects reduced motion).",
+    "tierSurfaceSample": "Readable copy on the tier gradient.",
     "typeTitle": "Typography",
     "spacingTitle": "Spacing",
     "componentsTitle": "Components",

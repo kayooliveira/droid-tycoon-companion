@@ -5,6 +5,7 @@ import { DroidThumb } from './DroidThumb'
 import { PdfFooter } from './PdfFooter'
 import { PdfSellCompactLines } from './PdfSellSection'
 import { pdfStyles as s } from './styles'
+import { tierPdfChipStyle } from './tierPdfColors'
 import { SUPER_REBIRTH_UNLOCK_AFTER } from '../../domain/progress'
 
 function GuideCover({ model }: { model: CyclePdfModel }) {
@@ -58,12 +59,13 @@ function GuideFixedTableHead({ model }: { model: CyclePdfModel }) {
 }
 
 function DroidCell({ req }: { req: PdfRebirthRow['requirements'][0] }) {
+  const tierStyle = tierPdfChipStyle(req.tierId)
   return (
     <View style={s.droidCell}>
       <DroidThumb req={req} style={s.thumb} />
       <Text style={s.droidName}>{req.name}</Text>
-      <View style={s.tierChip}>
-        <Text style={s.tierText}>{req.tier}</Text>
+      <View style={[s.tierChip, tierStyle]}>
+        <Text style={[s.tierText, { color: tierStyle.color }]}>{req.tier}</Text>
       </View>
     </View>
   )
