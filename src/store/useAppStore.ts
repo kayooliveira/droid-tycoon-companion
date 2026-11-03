@@ -4,6 +4,7 @@ import { createInitialProgress } from '../domain/progress'
 import type { InventoryUnit, TierId } from '../domain/types'
 import type { AppLocale } from '../i18n/detectLocale'
 import { migratePersistedState } from '../storage/migrations'
+import { idbPersistStorage } from '../storage/persistStorage'
 import {
   defaultPersistedState,
   PERSIST_SCHEMA_VERSION,
@@ -156,7 +157,7 @@ export const useAppStore = create<AppStore>()(
     }),
     {
       name: storageName,
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => idbPersistStorage),
       merge: (persisted, current) => ({
         ...current,
         ...migratePersistedState(persisted),

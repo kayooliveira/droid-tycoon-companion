@@ -38,7 +38,9 @@ const SettingsPage = lazy(() =>
 const AboutPage = lazy(() => import('./pages/AboutPage').then((m) => ({ default: m.AboutPage })))
 
 function OnboardingGate({ children }: { children: ReactNode }) {
+  const hydrated = useAppStore((s) => s._hydrated)
   const onboardingComplete = useAppStore((s) => s.onboardingComplete)
+  if (!hydrated) return <PageSkeleton />
   if (!onboardingComplete) return <Navigate to="/onboarding" replace />
   return children
 }

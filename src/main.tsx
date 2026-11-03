@@ -8,17 +8,20 @@ import { detectBrowserLocale } from './i18n/detectLocale.ts'
 import { applyTheme, useAppStore } from './store/useAppStore.ts'
 import './index.css'
 
-const stored = localStorage.getItem('droid-tycoon-companion-store')
+const bootRaw = localStorage.getItem('droiddeck:boot')
+const stored = bootRaw ?? localStorage.getItem('droid-tycoon-companion-store')
 let initialLocale = detectBrowserLocale()
 let initialTheme: 'dark' | 'light' | 'system' = 'system'
 try {
   if (stored) {
     const parsed = JSON.parse(stored) as {
+      locale?: string
+      theme?: 'dark' | 'light' | 'system'
       state?: { settings?: { locale?: string; localeSource?: string; theme?: 'dark' | 'light' | 'system' } }
     }
-    const loc = parsed?.state?.settings?.locale
+    const loc = parsed.locale ?? parsed?.state?.settings?.locale
     if (loc === 'pt-BR' || loc === 'en') initialLocale = loc
-    const th = parsed?.state?.settings?.theme
+    const th = parsed.theme ?? parsed?.state?.settings?.theme
     if (th === 'dark' || th === 'light' || th === 'system') initialTheme = th
   }
 } catch {

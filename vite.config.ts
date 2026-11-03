@@ -12,7 +12,7 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       includeAssets: [
         'favicon.svg',
         'favicon.ico',
@@ -94,7 +94,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,webp,json,woff2,svg,ttf}'],
+        globPatterns: ['**/*.{js,css,html,webp,json,woff2,svg,ttf,png}'],
         globIgnores: [
           '**/manifest.webmanifest',
           '**/pwa-*.png',
@@ -104,9 +104,10 @@ export default defineConfig({
           '**/og-image.png',
           '**/screenshots/**',
         ],
+        maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
         navigateFallback: '/index.html',
         cleanupOutdatedCaches: true,
-        skipWaiting: true,
+        skipWaiting: false,
         clientsClaim: true,
       },
     }),
