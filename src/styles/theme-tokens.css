@@ -382,7 +382,7 @@ html.theme-light {
 
   .toast-stack--sheet-open {
     top: auto;
-    bottom: min(88vh, calc(100dvh - 72px));
+    bottom: calc(var(--mobile-nav-clearance) + min(70dvh, calc(100dvh - var(--mobile-nav-clearance) - 24px)) + var(--space-2));
     padding-bottom: var(--space-2);
   }
 

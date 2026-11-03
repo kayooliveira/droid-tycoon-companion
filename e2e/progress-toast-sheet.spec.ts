@@ -56,6 +56,12 @@ test.describe('Progresso inventory toasts and sheet', () => {
     await expect(page.getByTestId('droid-detail-sheet')).toBeVisible({ timeout: 5000 })
   })
 
+  test('toast auto-dismisses after about 4 seconds', async ({ page }) => {
+    await page.getByTestId('requirement-inventory-add').first().click()
+    await expect(page.getByTestId('toast-item')).toBeVisible({ timeout: 5000 })
+    await expect(page.getByTestId('toast-item')).toHaveCount(0, { timeout: 6000 })
+  })
+
   test('sheet close stays clickable when toast is visible', async ({ page }) => {
     await page.getByTestId('requirement-inventory-add').first().click()
     await expect(page.getByTestId('toast-item')).toBeVisible()
