@@ -81,7 +81,7 @@ export function DashboardPage() {
               const ok = c.status === 'ready'
               return (
                 <li key={c.requirement.droidId} className="flex items-center gap-2 text-sm">
-                  <DroidImage droid={d} size="sm" />
+                  <DroidImage droid={d} tier={c.requirement.rarity} size="sm" />
                   <span className="flex-1 truncate">{d.name}</span>
                   <Badge tone={ok ? 'success' : 'danger'}>{t(`status.${c.status}`)}</Badge>
                 </li>

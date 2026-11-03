@@ -21,6 +21,7 @@ import { useAppStore } from '../../store/useAppStore'
 import { DroidImage } from '../DroidImage'
 import { Badge } from '../ui/Badge'
 import { TierBadge } from '../ui/TierBadge'
+import { showcaseTierForDroid } from '../ui/tierVisuals'
 import { GlassCard } from '../ui/GlassCard'
 import { uiIconProps } from '../ui/iconStyle'
 
@@ -87,6 +88,8 @@ export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: Pro
 
   const neverNeeded = selectedDroid ? isDroidNeverNeededForProgress(selectedDroid.id) : false
 
+  const selectedTier = needs[0]?.tier ?? (selectedDroid ? showcaseTierForDroid(selectedDroid) : 'default')
+
   const cycleLabel = (pathId: string) =>
     cycleDisplayNameForId(pathId, cycleById.get(pathId)?.name ?? pathId, i18n.language)
 
@@ -140,7 +143,7 @@ export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: Pro
 
         {selectedDroid && !neverNeeded ? (
           <div className="flex items-center gap-3">
-            <DroidImage droid={selectedDroid} size="sm" />
+            <DroidImage droid={selectedDroid} tier={selectedTier} size="sm" />
             <div className="min-w-0">
               <p className="font-medium truncate">{selectedDroid.name}</p>
               <p className="text-xs text-ui-muted">{t('progress.search.needsSummary')}</p>
@@ -164,29 +167,37 @@ export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: Pro
                 )}
                 onClick={() => setQuery(d.name)}
               >
-                <DroidImage droid={d} size="sm" className="!h-6 !w-6" />
+                <DroidImage
+                  droid={d}
+                  tier={showcaseTierForDroid(d)}
+                  size="sm"
+                  className="!h-6 !w-6"
+                />
                 {d.name}
               </button>
             ))}
           </div>
         ) : null}
 
-        {grouped.map(({ pathId, hits }) => (
-          <CycleNeedGroup
-            key={pathId}
-            pathId={pathId}
-            hits={hits}
-            cycleLabel={cycleLabel(pathId)}
-            isCurrent={pathId === progress.pathId}
-            expanded={expandedPaths[pathId] ?? pathId === progress.pathId}
-            onToggleExpanded={() =>
-              setExpandedPaths((p) => ({ ...p, [pathId]: !p[pathId] }))
-            }
-            nextHit={nextHit}
-            tierLabels={tierLabels}
-            onNavigateToStep={onNavigateToStep}
-          />
-        ))}
+        {selectedDroid
+          ? grouped.map(({ pathId, hits }) => (
+              <CycleNeedGroup
+                key={pathId}
+                pathId={pathId}
+                hits={hits}
+                cycleLabel={cycleLabel(pathId)}
+                isCurrent={pathId === progress.pathId}
+                expanded={expandedPaths[pathId] ?? pathId === progress.pathId}
+                onToggleExpanded={() =>
+                  setExpandedPaths((p) => ({ ...p, [pathId]: !p[pathId] }))
+                }
+                nextHit={nextHit}
+                tierLabels={tierLabels}
+                droid={selectedDroid}
+                onNavigateToStep={onNavigateToStep}
+              />
+            ))
+          : null}
       </div>
     </GlassCard>
   )
@@ -196,7 +207,7 @@ function NeverNeededCard({ droid }: { droid: NonNullable<ReturnType<typeof droid
   const { t } = useTranslation()
   return (
     <div className="flex gap-3 items-start" data-testid="progress-droid-search-never">
-      <DroidImage droid={droid} size="sm" />
+      <DroidImage droid={droid} tier={showcaseTierForDroid(droid)} size="sm" />
       <div className="space-y-1 text-sm">
         <p className="font-medium">{t('progress.search.neverNeeded', { name: droid.name })}</p>
         <p className="text-ui-muted text-xs">{t('progress.search.canSell')}</p>
@@ -214,6 +225,7 @@ function CycleNeedGroup({
   onToggleExpanded,
   nextHit,
   tierLabels,
+  droid,
   onNavigateToStep,
 }: {
   pathId: string
@@ -224,6 +236,7 @@ function CycleNeedGroup({
   onToggleExpanded: () => void
   nextHit: ProgressDroidNeedHit | null
   tierLabels: Map<string, string>
+  droid: NonNullable<ReturnType<typeof droidById.get>>
   onNavigateToStep: (target: ProgressNavTarget) => void
 }) {
   const { t } = useTranslation()
@@ -273,6 +286,7 @@ function CycleNeedGroup({
           <NeedRow
             key={`${hit.pathId}-${hit.rebirth}-${hit.tier}-${hit.kind}-${hit.fusionId ?? ''}`}
             hit={hit}
+            droid={droid}
             highlight={
               nextHit?.pathId === hit.pathId &&
               nextHit.rebirth === hit.rebirth &&
@@ -295,11 +309,13 @@ function CycleNeedGroup({
 
 function NeedRow({
   hit,
+  droid,
   highlight,
   tierLabels,
   onGo,
 }: {
   hit: ProgressDroidNeedHit
+  droid: NonNullable<ReturnType<typeof droidById.get>>
   highlight: boolean
   tierLabels: Map<string, string>
   onGo: () => void
@@ -326,10 +342,11 @@ function NeedRow({
         aria-label={openLabel}
         data-testid={`progress-search-hit-${hit.pathId}-${hit.rebirth}`}
         className={cn(
-          'w-full text-left rounded-xl border border-ui bg-ui-hover/50 px-3 py-2.5 text-sm hover:bg-ui-hover-strong transition-colors flex items-center gap-2',
+          'w-full text-left rounded-xl border border-ui bg-ui-hover/50 px-3 py-2.5 text-sm hover:bg-ui-hover-strong transition-colors flex items-center gap-2.5',
           highlight && 'ring-2 ring-holo-400/50 bg-holo-500/10',
         )}
       >
+        <DroidImage droid={droid} tier={hit.tier} size="sm" className="shrink-0" />
         <div className="flex-1 min-w-0">
           <p className="font-medium truncate whitespace-nowrap">
             {t('progress.search.rebirthStep', { n: hit.rebirth })}

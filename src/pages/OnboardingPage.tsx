@@ -17,6 +17,8 @@ import { setDocumentLanguage, initI18n } from '../i18n/index'
 import { cycleById, droidById, gameData, getRebirth } from '../domain/gameData'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { DroidImage } from '../components/DroidImage'
+import { ONBOARDING_HERO_TIERS } from '../components/ui/tierVisuals'
+import type { TierId } from '../domain/types'
 import { Logo } from '../components/Logo'
 import { Button } from '../components/ui/Button'
 import { Switch } from '../components/ui/Switch'
@@ -194,9 +196,10 @@ export function OnboardingPage() {
                       <DroidImage
                         key={d.id}
                         droid={d}
+                        tier={ONBOARDING_HERO_TIERS[i] ?? 'default'}
                         size="lg"
                         priority
-                        className={cn('ring-2 ring-surface-950 rounded-2xl', fanStyles[i])}
+                        className={cn('rounded-2xl', fanStyles[i])}
                       />
                     ))}
                   </div>
@@ -239,7 +242,14 @@ export function OnboardingPage() {
                         )}
                       >
                         {hero ? (
-                          <DroidImage droid={hero} size="md" className="shrink-0 ring-1 ring-ui" />
+                          <DroidImage
+                            droid={hero}
+                            tier={
+                              (getRebirth(c.id, 1)?.requirements[0]?.rarity ?? 'default') as TierId
+                            }
+                            size="md"
+                            className="shrink-0"
+                          />
                         ) : null}
                         <div className="flex-1 min-w-0">
                           <p className="font-semibold text-base">
@@ -343,7 +353,7 @@ export function OnboardingPage() {
                             key={req.droidId}
                             className="flex items-center gap-2 text-xs bg-ui-sunken rounded-lg px-2 py-1.5"
                           >
-                            <DroidImage droid={d} size="sm" />
+                            <DroidImage droid={d} tier={req.rarity} size="sm" />
                             <span className="font-medium text-ui-fg">{d.name}</span>
                           </div>
                         )

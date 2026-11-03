@@ -11,7 +11,7 @@ import type { TierId } from '../domain/types'
 import { DroidImage } from '../components/DroidImage'
 import { Badge } from '../components/ui/Badge'
 import { TierBadge } from '../components/ui/TierBadge'
-import { tierCardAccentClass } from '../components/ui/tierVisuals'
+import { showcaseTierForDroid, tierCardAccentClass, tierCardGlowClass } from '../components/ui/tierVisuals'
 import { cn } from '../lib/utils'
 import { Button } from '../components/ui/Button'
 import { ChipRadioGroup } from '../components/ui/ChipRadioGroup'
@@ -191,7 +191,11 @@ export function InventoryPage() {
           return (
             <GlassCard
               key={unit.id}
-              className={cn('flex gap-3 items-center', tierCardAccentClass(unit.tier))}
+              className={cn(
+                'flex gap-3 items-center',
+                tierCardAccentClass(unit.tier),
+                tierCardGlowClass(unit.tier),
+              )}
             >
               <DroidImage droid={droid} tier={unit.tier} />
               <div className="flex-1 min-w-0">
@@ -264,7 +268,12 @@ export function InventoryPage() {
                   newDroidId === d.id ? 'border-holo-400/50 bg-holo-600/10' : 'border-ui'
                 }`}
               >
-                <DroidImage droid={d} size="sm" className="!h-8 !w-8" />
+                <DroidImage
+                  droid={d}
+                  tier={newDroidId === d.id ? newTier : showcaseTierForDroid(d)}
+                  size="sm"
+                  className="!h-8 !w-8"
+                />
                 <span className="truncate">{d.name}</span>
               </button>
             ))}

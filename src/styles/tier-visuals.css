@@ -234,7 +234,9 @@ html.theme-light {
   .tier-badge--galactic::before,
   .tier-badge--stellar::before,
   .tier-surface--galactic::before,
-  .tier-surface--stellar::before {
+  .tier-surface--stellar::before,
+  .tier-droid-backdrop.tier-surface--galactic::before,
+  .tier-droid-backdrop.tier-surface--stellar::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -251,7 +253,10 @@ html.theme-light {
   .tier-badge--kyber::after,
   .tier-surface--gold::after,
   .tier-surface--stellar::after,
-  .tier-surface--kyber::after {
+  .tier-surface--kyber::after,
+  .tier-droid-backdrop.tier-surface--gold::after,
+  .tier-droid-backdrop.tier-surface--stellar::after,
+  .tier-droid-backdrop.tier-surface--kyber::after {
     content: '';
     position: absolute;
     inset: 0;
@@ -276,9 +281,48 @@ html.theme-light {
     .tier-badge--kyber::after,
     .tier-surface--gold::after,
     .tier-surface--stellar::after,
-    .tier-surface--kyber::after {
+    .tier-surface--kyber::after,
+    .tier-droid-backdrop.tier-surface--galactic::before,
+    .tier-droid-backdrop.tier-surface--stellar::before,
+    .tier-droid-backdrop.tier-surface--gold::after,
+    .tier-droid-backdrop.tier-surface--stellar::after,
+    .tier-droid-backdrop.tier-surface--kyber::after {
       animation: none;
     }
+  }
+
+  .tier-droid-backdrop {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+    border-radius: var(--radius-ds-lg);
+    border: 1px solid transparent;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+  }
+
+  .tier-droid-backdrop__img {
+    position: relative;
+    z-index: 2;
+    height: 88%;
+    width: 88%;
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    object-position: center;
+    pointer-events: none;
+    user-select: none;
+    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.35));
+  }
+
+  .tier-droid-backdrop__initials {
+    position: relative;
+    z-index: 2;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.04em;
+    opacity: 0.92;
   }
 
   .tier-surface {
@@ -354,44 +398,62 @@ html.theme-light {
     border-color: var(--tier-scourge-border);
   }
 
-  .tier-frame {
-    border-radius: var(--radius-ds-lg);
-    padding: 2px;
-    background: var(--tier-default-gradient);
+  .tier-card-glow {
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 0.06),
+      0 8px 28px rgb(0 0 0 / 0.18);
   }
 
-  .tier-frame--default {
-    background: var(--tier-default-gradient);
-  }
-  .tier-frame--gold {
-    background: var(--tier-gold-gradient);
-  }
-  .tier-frame--diamond {
-    background: var(--tier-diamond-gradient);
-  }
-  .tier-frame--beskar {
-    background: var(--tier-beskar-gradient);
-  }
-  .tier-frame--galactic {
-    background: var(--tier-galactic-gradient);
-  }
-  .tier-frame--stellar {
-    background: var(--tier-stellar-gradient);
-  }
-  .tier-frame--kyber {
-    background: var(--tier-kyber-gradient);
-  }
-  .tier-frame--rainbow {
-    background: var(--tier-rainbow-gradient);
-  }
-  .tier-frame--scourge {
-    background: var(--tier-scourge-gradient);
+  html.theme-light .tier-card-glow {
+    box-shadow:
+      0 0 0 1px rgb(24 24 27 / 0.06),
+      0 8px 24px rgb(24 24 27 / 0.08);
   }
 
-  .tier-frame__inner {
-    border-radius: calc(var(--radius-ds-lg) - 2px);
-    overflow: hidden;
-    background: var(--ui-field);
+  .tier-card-glow--default {
+    box-shadow:
+      0 0 0 1px rgb(100 116 139 / 0.35),
+      0 6px 20px rgb(51 65 85 / 0.22);
+  }
+  .tier-card-glow--gold {
+    box-shadow:
+      0 0 0 1px rgb(251 191 36 / 0.45),
+      0 6px 22px rgb(217 119 6 / 0.28);
+  }
+  .tier-card-glow--diamond {
+    box-shadow:
+      0 0 0 1px rgb(147 197 253 / 0.5),
+      0 6px 22px rgb(37 99 235 / 0.28);
+  }
+  .tier-card-glow--beskar {
+    box-shadow:
+      0 0 0 1px rgb(214 211 209 / 0.35),
+      0 6px 20px rgb(87 83 78 / 0.25);
+  }
+  .tier-card-glow--galactic {
+    box-shadow:
+      0 0 0 1px rgb(196 181 253 / 0.45),
+      0 6px 24px rgb(91 33 182 / 0.32);
+  }
+  .tier-card-glow--stellar {
+    box-shadow:
+      0 0 0 1px rgb(253 224 71 / 0.45),
+      0 6px 24px rgb(180 83 9 / 0.28);
+  }
+  .tier-card-glow--kyber {
+    box-shadow:
+      0 0 0 1px rgb(167 243 208 / 0.35),
+      0 6px 24px rgb(124 58 237 / 0.28);
+  }
+  .tier-card-glow--rainbow {
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 0.2),
+      0 6px 22px rgb(59 130 246 / 0.22);
+  }
+  .tier-card-glow--scourge {
+    box-shadow:
+      0 0 0 1px rgb(254 205 211 / 0.35),
+      0 6px 22px rgb(190 18 60 / 0.28);
   }
 
   .tier-card-accent {

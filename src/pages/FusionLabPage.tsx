@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { droidById, gameData, getRebirth } from '../domain/gameData'
 import type { FusionRecipe } from '../domain/types'
 import { DroidImage } from '../components/DroidImage'
+import { showcaseTierForDroid } from '../components/ui/tierVisuals'
 import { Badge } from '../components/ui/Badge'
 import { GlassCard } from '../components/ui/GlassCard'
 import { droidMatchesQuery } from '../lib/droidNameMatch'
@@ -119,7 +120,9 @@ function RecipeCard({ fusion }: { fusion: FusionRecipe }) {
   return (
     <GlassCard className="py-3 px-4">
       <div className="flex items-center gap-3 flex-wrap">
-        {result ? <DroidImage droid={result} size="sm" /> : null}
+        {result ? (
+          <DroidImage droid={result} tier={showcaseTierForDroid(result)} size="sm" />
+        ) : null}
         <div className="min-w-0 flex-1">
           <p className="font-medium text-sm">{result?.name ?? fusion.resultDroidId}</p>
         </div>
@@ -135,7 +138,14 @@ function RecipeCard({ fusion }: { fusion: FusionRecipe }) {
               key={ing.droidId}
               className="inline-flex items-center gap-2 rounded-lg bg-ui-hover px-2 py-1 text-xs"
             >
-              {d ? <DroidImage droid={d} size="sm" className="!h-8 !w-8" /> : null}
+              {d ? (
+                <DroidImage
+                  droid={d}
+                  tier={showcaseTierForDroid(d)}
+                  size="sm"
+                  className="!h-8 !w-8"
+                />
+              ) : null}
               {d?.name ?? ing.droidId} {t('common.quantity', { n: ing.quantity })}
             </span>
           )

@@ -1,4 +1,5 @@
-import type { TierId } from '../../domain/types'
+import { compareTiers } from '../../domain/tiers'
+import type { Droid, TierId } from '../../domain/types'
 
 /** Tiers with full visual treatment in the redesign set (excludes scourge styling reuse). */
 export const TIER_SHOWCASE_IDS = [
@@ -22,10 +23,21 @@ export function tierSurfaceClass(tier: TierId): string {
   return `tier-surface--${tier}`
 }
 
-export function tierFrameClass(tier: TierId): string {
-  return `tier-frame--${tier}`
-}
-
 export function tierCardAccentClass(tier: TierId): string {
   return `tier-card-accent tier-card-accent--${tier}`
 }
+
+export function tierCardGlowClass(tier: TierId): string {
+  return `tier-card-glow tier-card-glow--${tier}`
+}
+
+/** Highest tier a droid can appear as (for catalog / neutral contexts). */
+export function showcaseTierForDroid(d: Pick<Droid, 'tiersAvailable'>): TierId {
+  let best: TierId = 'default'
+  for (const id of d.tiersAvailable ?? []) {
+    if (compareTiers(id, best) > 0) best = id
+  }
+  return best
+}
+
+export const ONBOARDING_HERO_TIERS = ['default', 'gold', 'diamond'] as const satisfies readonly TierId[]

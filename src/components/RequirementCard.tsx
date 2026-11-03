@@ -8,7 +8,7 @@ import { DroidImage } from './DroidImage'
 import { RequirementInventoryControls } from './RequirementInventoryControls'
 import { Badge } from './ui/Badge'
 import { TierBadge } from './ui/TierBadge'
-import { tierCardAccentClass } from './ui/tierVisuals'
+import { tierCardAccentClass, tierCardGlowClass } from './ui/tierVisuals'
 import { cn } from '../lib/utils'
 import { GlassCard } from './ui/GlassCard'
 
@@ -40,7 +40,11 @@ export function RequirementCard({
 
   return (
     <GlassCard
-      className={cn('flex gap-3 items-start', tierCardAccentClass(check.requirement.rarity))}
+      className={cn(
+        'flex gap-3 items-start',
+        tierCardAccentClass(check.requirement.rarity),
+        tierCardGlowClass(check.requirement.rarity),
+      )}
       data-testid="requirement-card"
     >
       <DroidImage droid={droid} tier={check.requirement.rarity} className="shrink-0" />

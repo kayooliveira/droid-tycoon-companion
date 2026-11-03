@@ -5,6 +5,7 @@ import { formatTierName } from '../domain/tiers'
 import { formatBaseRarity } from '../i18n/tierLabels'
 import { useTierLabels } from '../i18n/useTierLabels'
 import { DroidImage } from '../components/DroidImage'
+import { showcaseTierForDroid } from '../components/ui/tierVisuals'
 import { Badge } from '../components/ui/Badge'
 import { Modal } from '../components/ui/Modal'
 import { droidMatchesQuery } from '../lib/droidNameMatch'
@@ -84,7 +85,7 @@ export function DroiddexPage() {
             onClick={() => setSelected(d)}
             className="glass-panel rounded-2xl p-3 text-left hover:bg-ui-hover-strong transition-colors flex flex-col items-stretch"
           >
-            <DroidImage droid={d} className="self-center mb-2" />
+            <DroidImage droid={d} tier={showcaseTierForDroid(d)} className="self-center mb-2" />
             <p className="text-sm font-medium truncate w-full">{d.name}</p>
             <p className="text-[10px] text-ui-muted">{formatBaseRarity(d.baseRarity, t)}</p>
           </button>
@@ -100,7 +101,7 @@ export function DroiddexPage() {
         {selected ? (
           <div className="space-y-4">
             <div className="flex gap-4 items-start">
-              <DroidImage droid={selected} size="lg" />
+              <DroidImage droid={selected} tier={showcaseTierForDroid(selected)} size="lg" />
               <div className="space-y-2 text-sm">
                 <Badge>{selected.class}</Badge>
                 <Badge tone="info">{formatBaseRarity(selected.baseRarity, t)}</Badge>
