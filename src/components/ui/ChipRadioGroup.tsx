@@ -21,8 +21,10 @@ export function ChipRadioGroup<T extends string>({
       aria-label={ariaLabel}
       data-testid={testId}
       className={cn(
-        'flex gap-2',
-        scrollX ? 'overflow-x-auto pb-1 -mx-1 px-1 snap-x snap-mandatory scrollbar-thin' : 'flex-wrap',
+        'flex w-full min-w-0 max-w-full gap-2',
+        scrollX
+          ? 'overflow-x-auto overscroll-x-contain pb-1 snap-x snap-mandatory scrollbar-thin'
+          : 'flex-wrap',
       )}
     >
       {options.map((opt) => {

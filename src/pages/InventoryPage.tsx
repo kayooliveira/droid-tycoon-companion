@@ -126,7 +126,7 @@ export function InventoryPage() {
   }
 
   return (
-    <div className="space-y-5" data-testid="inventory-page">
+    <div className="min-w-0 max-w-full space-y-5 overflow-x-hidden" data-testid="inventory-page">
       <div className="flex flex-wrap gap-3 items-center justify-between">
         <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('inventory.title')}</h1>
         <Button data-testid="inventory-add-open" onClick={() => setAddOpen(true)}>
@@ -139,8 +139,8 @@ export function InventoryPage() {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
-      <div className="space-y-3">
-        <div className="space-y-1.5">
+      <div className="min-w-0 max-w-full space-y-3">
+        <div className="min-w-0 space-y-1.5">
           <p className="text-base text-ui-muted">{t('inventory.filterRarity')}</p>
           <ChipRadioGroup
             ariaLabel={t('inventory.filterRarity')}
@@ -151,7 +151,7 @@ export function InventoryPage() {
             options={rarityOptions}
           />
         </div>
-        <div className="space-y-1.5">
+        <div className="min-w-0 space-y-1.5">
           <p className="text-base text-ui-muted">{t('inventory.filterTier')}</p>
           <ChipRadioGroup
             ariaLabel={t('inventory.filterTier')}
@@ -180,9 +180,9 @@ export function InventoryPage() {
           if (!droid) return null
           const needed = droidHasFutureNeedOnPath(progress.pathId, progress.nextRebirth, unit.droidId)
           return (
-            <GlassCard key={unit.id} className="flex gap-3 items-center">
-              <DroidImage droid={droid} />
-              <div className="flex-1 min-w-0">
+            <GlassCard key={unit.id} className="flex min-w-0 max-w-full gap-3 items-center">
+              <DroidImage droid={droid} className="shrink-0" />
+              <div className="min-w-0 flex-1">
                 <p className="font-medium truncate">{droid.name}</p>
                 <div className="flex flex-wrap gap-2 mt-1">
                   <Badge>{formatBaseRarity(droid.baseRarity, t)}</Badge>
@@ -192,7 +192,7 @@ export function InventoryPage() {
                   </Badge>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex shrink-0 items-center gap-1">
                 <QuantityStepper
                   compact
                   value={unit.quantity}

@@ -86,7 +86,7 @@ export function AppShell() {
         </nav>
       </aside>
 
-      <main className="flex-1 md:ml-64 shell-main-pad md:pb-6">
+      <main className="shell-main-pad min-w-0 flex-1 overflow-x-hidden md:ml-64 md:pb-6">
         <Glass
           as="header"
           variant="regular"
@@ -98,7 +98,7 @@ export function AppShell() {
             <p className="text-[10px] text-ui-soft truncate">{t('app.shortName')}</p>
           </div>
         </Glass>
-        <div className="mx-auto max-w-6xl px-4 py-5 md:py-8 pt-[max(0.75rem,env(safe-area-inset-top))]">
+        <div className="mx-auto min-w-0 max-w-6xl px-4 py-5 pt-[max(0.75rem,env(safe-area-inset-top))] md:py-8">
           <Outlet />
         </div>
       </main>

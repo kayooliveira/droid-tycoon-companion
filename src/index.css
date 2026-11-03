@@ -47,10 +47,14 @@
 @layer base {
   html {
     @apply antialiased;
+    overflow-x: hidden;
+    max-width: 100%;
   }
 
   body {
     @apply min-h-dvh font-sans bg-ui-bg text-ui-fg;
+    overflow-x: hidden;
+    max-width: 100%;
   }
 
   :focus-visible {
