@@ -238,7 +238,7 @@ function CycleNeedGroup({
           aria-expanded={false}
           className="w-full flex items-center justify-between gap-2 rounded-xl border border-ui bg-ui-hover/40 px-3 py-2.5 text-sm text-ui-secondary hover:bg-ui-hover-strong transition-colors"
         >
-          <span>{t('progress.search.cycleSummary', { ciclo, count: rebirthCount })}</span>
+          <span>{t('progress.search.cycleSummary', { ciclo, count: rebirthCount, defaultValue: '' })}</span>
           <CaretRight {...uiIconProps} className="size-4 shrink-0 opacity-60" />
         </button>
       </section>
@@ -329,24 +329,24 @@ function NeedRow({
         )}
       >
         <div className="flex-1 min-w-0">
-          <p className="font-medium">{t('progress.search.rebirthStep', { n: hit.rebirth })}</p>
-          <p className="text-xs text-ui-secondary mt-0.5">
-            {hit.kind === 'fusion' && fusionResult
-              ? t('progress.search.fusionLine', {
-                  tier: tierLabel,
-                  qty: hit.quantity,
-                  result: fusionResult,
-                })
-              : t('progress.search.requirementLine', { tier: tierLabel, qty: hit.quantity })}
-            {hit.kind === 'disputed' ? ` · ${t('progress.search.disputed')}` : null}
+          <p className="font-medium truncate whitespace-nowrap">
+            {t('progress.search.rebirthStep', { n: hit.rebirth })}
           </p>
-        </div>
-        {showDone || highlight ? (
-          <div className="flex shrink-0 flex-col items-end gap-1">
+          <div className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-ui-secondary">
+            <span className="min-w-0">
+              {hit.kind === 'fusion' && fusionResult
+                ? t('progress.search.fusionLine', {
+                    tier: tierLabel,
+                    qty: hit.quantity,
+                    result: fusionResult,
+                  })
+                : t('progress.search.requirementLine', { tier: tierLabel, qty: hit.quantity })}
+              {hit.kind === 'disputed' ? ` · ${t('progress.search.disputed')}` : null}
+            </span>
             {showDone ? <Badge tone="success">{t('progress.search.statusDone')}</Badge> : null}
             {highlight ? <Badge tone="warn">{t('progress.search.nextNeed')}</Badge> : null}
           </div>
-        ) : null}
+        </div>
         <CaretRight {...uiIconProps} weight="fill" className="size-4 shrink-0 text-ui-muted" />
       </button>
     </li>

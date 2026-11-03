@@ -86,7 +86,8 @@
       "fusionLine": "{{tier}} · qtd. {{qty}} · fusão para {{result}}",
       "disputed": "requisito em disputa",
       "openStepAria": "Abrir Ciclo {{ciclo}}, Renascimento #{{n}}",
-      "cycleSummary": "Ciclo {{ciclo}} · {{count}} renascimentos",
+      "cycleSummary_one": "Ciclo {{ciclo}} · {{count}} renascimento",
+      "cycleSummary_other": "Ciclo {{ciclo}} · {{count}} renascimentos",
       "neverNeeded": "Você não vai precisar do {{name}} em nenhum Ciclo.",
       "canSell": "Pode vender sem medo."
     },

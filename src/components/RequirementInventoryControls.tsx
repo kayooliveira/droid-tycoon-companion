@@ -7,22 +7,20 @@ import { useAppStore } from '../store/useAppStore'
 import { uiIconProps } from './ui/iconStyle'
 import { cn } from '../lib/utils'
 
+const STEPPER_WIDTH = 'w-[8.75rem]'
+
 export function RequirementInventoryControls({
   droidId,
   droidName,
   tier,
   ownedCount,
   neededCount,
-  showDecrement,
-  allowIncrement,
 }: {
   droidId: string
   droidName: string
   tier: Parameters<typeof formatTierName>[0]
   ownedCount: number
   neededCount: number
-  showDecrement: boolean
-  allowIncrement: boolean
 }) {
   const { t } = useTranslation()
   const tierLabels = useTierLabels()
@@ -52,27 +50,13 @@ export function RequirementInventoryControls({
     })
   }
 
-  if (!showDecrement && ownedCount <= 0) {
-    return (
-      <button
-        type="button"
-        data-testid="requirement-inventory-inc"
-        aria-label={incLabel}
-        onClick={() => adjust(1)}
-        className={cn(
-          'inline-flex shrink-0 min-h-11 min-w-11 items-center justify-center rounded-xl',
-          'border border-ui bg-ui-hover-strong text-ui-fg hover:bg-ui-hover transition-colors',
-        )}
-      >
-        <Plus {...uiIconProps} weight="fill" />
-      </button>
-    )
-  }
-
   return (
     <div
       data-testid="requirement-inventory-stepper"
-      className="flex shrink-0 items-center gap-0.5 rounded-xl border border-ui bg-ui-field/80 p-0.5"
+      className={cn(
+        'flex shrink-0 items-center justify-between gap-0.5 rounded-xl border border-ui bg-ui-field/80 p-0.5',
+        STEPPER_WIDTH,
+      )}
     >
       <button
         type="button"
@@ -88,28 +72,24 @@ export function RequirementInventoryControls({
         <Minus {...uiIconProps} weight="fill" />
       </button>
       <span
-        className="min-w-[2.75rem] px-1 text-center text-sm font-semibold tabular-nums text-ui-fg"
+        className="flex-1 text-center text-sm font-semibold tabular-nums text-ui-fg"
         data-testid="requirement-inventory-count"
         aria-live="polite"
       >
         {ownedCount}/{neededCount}
       </span>
-      {allowIncrement ? (
-        <button
-          type="button"
-          data-testid="requirement-inventory-inc"
-          aria-label={incLabel}
-          onClick={() => adjust(1)}
-          className={cn(
-            'inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg',
-            'text-ui-fg hover:bg-ui-hover transition-colors',
-          )}
-        >
-          <Plus {...uiIconProps} weight="fill" />
-        </button>
-      ) : (
-        <span className="min-w-11" aria-hidden />
-      )}
+      <button
+        type="button"
+        data-testid="requirement-inventory-inc"
+        aria-label={incLabel}
+        onClick={() => adjust(1)}
+        className={cn(
+          'inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg',
+          'text-ui-fg hover:bg-ui-hover transition-colors',
+        )}
+      >
+        <Plus {...uiIconProps} weight="fill" />
+      </button>
     </div>
   )
 }

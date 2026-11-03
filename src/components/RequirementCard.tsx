@@ -32,37 +32,31 @@ export function RequirementCard({
   const droid = droidById.get(check.requirement.droidId)
   if (!droid) return null
 
-  const showControls = trackInventory && (check.status !== 'ready' || check.ownedCount > 0)
+  const showStepper = trackInventory
 
   return (
-    <GlassCard className="flex gap-3 items-center">
-      <DroidImage droid={droid} />
+    <GlassCard className="flex gap-3 items-center flex-nowrap">
+      <DroidImage droid={droid} className="shrink-0" />
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2 flex-wrap">
-          <p className="font-medium truncate">{droid.name}</p>
-          <Badge tone="info">{formatTierName(check.requirement.rarity, tierLabels)}</Badge>
+        <div className="flex items-center gap-2 min-w-0">
+          <p className="font-medium truncate min-w-0">{droid.name}</p>
+          <Badge tone="info" className="shrink-0">
+            {formatTierName(check.requirement.rarity, tierLabels)}
+          </Badge>
           {trackInventory ? (
-            <Badge tone={statusTone[check.status] ?? 'default'}>{t(`status.${check.status}`)}</Badge>
+            <Badge tone={statusTone[check.status] ?? 'default'} className="shrink-0">
+              {t(`status.${check.status}`)}
+            </Badge>
           ) : null}
         </div>
-        {trackInventory ? (
-          <p className="text-xs text-ui-muted mt-1">
-            {t('inventory.inInventory', {
-              owned: check.ownedCount,
-              needed: check.neededCount,
-            })}
-          </p>
-        ) : null}
       </div>
-      {showControls ? (
+      {showStepper ? (
         <RequirementInventoryControls
           droidId={check.requirement.droidId}
           droidName={droid.name}
           tier={check.requirement.rarity}
           ownedCount={check.ownedCount}
           neededCount={check.neededCount}
-          showDecrement={check.ownedCount > 0}
-          allowIncrement={check.status !== 'ready'}
         />
       ) : null}
     </GlassCard>

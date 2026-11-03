@@ -86,7 +86,8 @@
       "fusionLine": "{{tier}} · qty {{qty}} · fusion for {{result}}",
       "disputed": "disputed requirement",
       "openStepAria": "Open Ciclo {{ciclo}}, Renascimento #{{n}}",
-      "cycleSummary": "Ciclo {{ciclo}} · {{count}} rebirths",
+      "cycleSummary_one": "Ciclo {{ciclo}} · {{count}} rebirth",
+      "cycleSummary_other": "Ciclo {{ciclo}} · {{count}} rebirths",
       "neverNeeded": "You will not need {{name}} on any Cycle.",
       "canSell": "Safe to sell."
     },
