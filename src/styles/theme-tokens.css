@@ -56,6 +56,10 @@
   --ui-btn-ghost-hover: rgb(255 255 255 / 0.1);
   --ui-btn-ghost-fg: var(--ui-secondary);
 
+  --ui-chip-active-bg: #1e40af;
+  --ui-chip-active-fg: #eff6ff;
+  --ui-chip-active-border: #93c5fd;
+
   --glass-bg: rgba(255, 255, 255, 0.08);
   --glass-nav-bg: rgba(14, 18, 28, 0.62);
   --glass-solid: #161f2e;
@@ -149,6 +153,10 @@ html.theme-light {
   --ui-btn-secondary-hover: rgb(228 228 231 / 0.95);
   --ui-btn-ghost-hover: rgb(24 24 27 / 0.06);
   --ui-btn-ghost-fg: #3f3f46;
+
+  --ui-chip-active-bg: #dbeafe;
+  --ui-chip-active-fg: #1e3a8a;
+  --ui-chip-active-border: #93c5fd;
 
   --glass-bg: rgba(255, 255, 255, 0.62);
   --glass-nav-bg: rgba(255, 255, 255, 0.72);
@@ -266,6 +274,12 @@ html.theme-light {
 
   .bg-ui-handle {
     background-color: var(--ui-handle);
+  }
+
+  .ui-chip-active {
+    background: var(--ui-chip-active-bg);
+    color: var(--ui-chip-active-fg);
+    border-color: var(--ui-chip-active-border);
   }
 
   .ui-badge {

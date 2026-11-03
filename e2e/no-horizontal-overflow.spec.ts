@@ -1,11 +1,13 @@
 import { expect, test } from '@playwright/test'
 import path from 'node:path'
 import {
+  auditInventoryCards,
   collectHorizontalOverflow,
   seedHeavyStore,
 } from './overflowHelpers'
 
 const ARTIFACTS = '/opt/cursor/artifacts/overflow'
+const INVENTORY_FIX_ARTIFACTS = '/opt/cursor/artifacts/inventory-fix'
 
 const ROUTES: Array<{ path: string; testId: string; wait?: (page: import('@playwright/test').Page) => Promise<void> }> = [
   { path: '/', testId: 'home-hub' },
@@ -71,11 +73,22 @@ test.describe('no horizontal overflow (heavy state)', () => {
               .join('; '),
           ).toEqual([])
 
-          if (route.path === '/inventory' && vp.width === 360) {
-            await page.screenshot({
-              path: path.join(ARTIFACTS, `inventory-heavy-${theme}-360.png`),
-              fullPage: true,
-            })
+          if (route.path === '/inventory') {
+            const cardIssues = await auditInventoryCards(page)
+            expect(
+              cardIssues,
+              cardIssues.map((i) => `${i.kind}: ${i.detail}`).join('; '),
+            ).toEqual([])
+
+            if (vp.width === 360 || vp.width === 390) {
+              await page.screenshot({
+                path: path.join(
+                  INVENTORY_FIX_ARTIFACTS,
+                  `inventory-top-${theme}-${vp.width}.png`,
+                ),
+                fullPage: false,
+              })
+            }
           }
         })
       }
