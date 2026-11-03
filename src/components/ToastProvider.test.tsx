@@ -27,7 +27,7 @@ describe('ToastProvider', () => {
       </ToastProvider>,
     )
     const stack = screen.getByTestId('toast-stack')
-    expect(stack.className).toMatch(/safe-area-inset-top/)
+    expect(stack.className).toMatch(/z-toast/)
     expect(stack.className).toMatch(/max-w-\[360px\]/)
     expect(stack.className).toMatch(/pointer-events-none/)
   })

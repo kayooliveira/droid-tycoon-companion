@@ -329,7 +329,10 @@ export function SettingsPage() {
             const text = await file.text()
             const result = parseImportJson(text)
             if (!result.ok) {
-              push(t('settings.importFail'), { variant: 'error' })
+              push(t('settings.importFailTitle'), {
+                variant: 'error',
+                detail: t('settings.importFailDetail'),
+              })
               return
             }
             setPendingImport(result.state)

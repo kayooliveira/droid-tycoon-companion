@@ -47,11 +47,12 @@ export function useProgressInventoryToast() {
       const step = useAppStore.getState().progress.nextRebirth
       const message =
         context.delta > 0
-          ? t('progress.inventoryAddedToStep', { name: context.name, n: step })
-          : t('progress.inventoryRemovedFromStep', { name: context.name, n: step })
+          ? t('progress.inventoryAddedShort', { name: context.name })
+          : t('progress.inventoryRemovedShort', { name: context.name })
 
       push(message, {
         variant: context.delta > 0 ? 'success' : 'info',
+        detail: t('progress.rebirthStepDetail', { n: step }),
         replaceKey: REPLACE_KEY,
         action: {
           label: t('progress.inventoryUndo'),

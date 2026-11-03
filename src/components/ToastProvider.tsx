@@ -11,6 +11,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -88,6 +89,58 @@ function useOverlaySheetOpen() {
   return open
 }
 
+function useToastStackTop(sheetOpen: boolean, toastCount: number) {
+  useLayoutEffect(() => {
+    const root = document.documentElement
+    const baseTop = 'calc(env(safe-area-inset-top, 0px) + 8px)'
+
+    if (!sheetOpen) {
+      root.style.removeProperty('--toast-stack-top')
+      return
+    }
+
+    const measure = () => {
+      const sheet = document.querySelector('.dc-sheet.dc-sheet-open') as HTMLElement | null
+      const stack = document.querySelector('[data-testid="toast-stack"]') as HTMLElement | null
+      if (!sheet || !stack) {
+        root.style.setProperty('--toast-stack-top', baseTop)
+        return
+      }
+
+      const safeProbe = document.createElement('div')
+      safeProbe.style.cssText =
+        'position:fixed;top:0;left:0;padding-top:env(safe-area-inset-top,0px);visibility:hidden;pointer-events:none'
+      document.body.appendChild(safeProbe)
+      const safeTop = safeProbe.getBoundingClientRect().height
+      safeProbe.remove()
+
+      const sheetTop = sheet.getBoundingClientRect().top
+      const toast = stack.querySelector('[data-testid="toast-item"]') as HTMLElement | null
+      const toastHeight = toast?.getBoundingClientRect().height ?? 52
+      const gap = 8
+      const aboveSheet = sheetTop - toastHeight - gap
+      const minTop = safeTop + 8
+      const nextTop = Math.max(minTop, aboveSheet)
+      root.style.setProperty('--toast-stack-top', `${nextTop}px`)
+    }
+
+    measure()
+    const raf = requestAnimationFrame(measure)
+    const delayed = window.setTimeout(measure, 64)
+    const sheet = document.querySelector('.dc-sheet.dc-sheet-open')
+    const ro = sheet ? new ResizeObserver(measure) : null
+    if (sheet && ro) ro.observe(sheet)
+    window.addEventListener('resize', measure)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.clearTimeout(delayed)
+      ro?.disconnect()
+      window.removeEventListener('resize', measure)
+      root.style.removeProperty('--toast-stack-top')
+    }
+  }, [sheetOpen, toastCount])
+}
+
 function ToastItem({
   toast,
   onDismiss,
@@ -143,14 +196,23 @@ function ToastItem({
       data-toast-variant={toast.variant}
       role="status"
       aria-live={toast.live}
-      className="toast-surface pointer-events-auto touch-pan-y"
+      className={cn(
+        'toast-surface pointer-events-auto touch-pan-y',
+        toast.detail && 'toast-surface--has-detail',
+      )}
     >
       <span className={cn('toast-icon', iconClass)} aria-hidden>
         <Icon size={UI_ICON_SIZE + 2} weight={UI_ICON_WEIGHT} />
       </span>
       <div className="toast-copy min-w-0 flex-1">
-        <p className="toast-title">{toast.message}</p>
-        {toast.detail ? <p className="toast-detail">{toast.detail}</p> : null}
+        <p className="toast-title" data-testid="toast-title">
+          {toast.message}
+        </p>
+        {toast.detail ? (
+          <p className="toast-detail" data-testid="toast-detail">
+            {toast.detail}
+          </p>
+        ) : null}
       </div>
       {toast.action ? (
         <button
@@ -174,6 +236,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const timers = useRef<Map<string, number>>(new Map())
   const reducedMotion = useReducedMotion()
   const sheetOpen = useOverlaySheetOpen()
+  useToastStackTop(sheetOpen, toasts.length)
 
   const clearTimer = useCallback((id: string) => {
     const t = timers.current.get(id)
@@ -249,9 +312,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         <div
           data-testid="toast-stack"
           className={cn(
-            'toast-stack pointer-events-none fixed inset-x-0 mx-auto flex w-[calc(100%-24px)] max-w-[360px] flex-col gap-2 px-0',
-            'top-[calc(env(safe-area-inset-top,0px)+8px)]',
-            sheetOpen ? 'toast-stack--sheet-open' : 'z-toast',
+            'toast-stack pointer-events-none fixed inset-x-0 z-toast mx-auto flex w-full max-w-[360px] flex-col items-center gap-2 px-3',
+            sheetOpen && 'toast-stack--sheet-open',
           )}
         >
           <AnimatePresence mode="popLayout">

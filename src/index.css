@@ -269,6 +269,15 @@
     font-family: var(--font-display);
   }
 
+  .toast-surface {
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+  }
+
+  @supports (backdrop-filter: blur(1px)) {
+    .toast-surface {
+      backdrop-filter: blur(20px) saturate(180%);
+    }
+  }
 
   .help-hint-popover {
     @apply bg-ui-raised text-ui-secondary shadow-lg;
