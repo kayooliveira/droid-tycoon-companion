@@ -60,35 +60,12 @@ const DEFAULT_DURATION: Record<ToastVariant, number> = {
   neutral: 4000,
 }
 
-const VARIANT_STYLES: Record<
-  ToastVariant,
-  { panel: string; icon: string; Icon: Icon }
-> = {
-  success: {
-    panel: 'border-[var(--ui-badge-success-border)] bg-[var(--ui-badge-success-bg)]',
-    icon: 'text-[var(--ui-badge-success-fg)]',
-    Icon: CheckCircle,
-  },
-  info: {
-    panel: 'border-[var(--ui-badge-info-border)] bg-[var(--ui-badge-info-bg)]',
-    icon: 'text-[var(--ui-badge-info-fg)]',
-    Icon: Info,
-  },
-  warning: {
-    panel: 'border-[var(--ui-badge-warn-border)] bg-[var(--ui-badge-warn-bg)]',
-    icon: 'text-[var(--ui-badge-warn-fg)]',
-    Icon: Warning,
-  },
-  error: {
-    panel: 'border-[var(--ui-badge-danger-border)] bg-[var(--ui-badge-danger-bg)]',
-    icon: 'text-[var(--ui-badge-danger-fg)]',
-    Icon: WarningCircle,
-  },
-  neutral: {
-    panel: 'border-ui bg-ui-raised/95',
-    icon: 'text-ui-secondary',
-    Icon: ArrowCounterClockwise,
-  },
+const VARIANT_STYLES: Record<ToastVariant, { surface: string; Icon: Icon }> = {
+  success: { surface: 'toast-surface--success', Icon: CheckCircle },
+  info: { surface: 'toast-surface--info', Icon: Info },
+  warning: { surface: 'toast-surface--warning', Icon: Warning },
+  error: { surface: 'toast-surface--error', Icon: WarningCircle },
+  neutral: { surface: 'toast-surface--neutral', Icon: ArrowCounterClockwise },
 }
 
 const LIVE_BY_VARIANT: Record<ToastVariant, 'polite' | 'assertive'> = {
@@ -160,19 +137,18 @@ function ToastItem({
       role="status"
       aria-live={toast.live}
       className={cn(
-        'glass-panel pointer-events-auto touch-pan-y overflow-hidden rounded-xl shadow-lg',
-        'flex flex-col gap-2 px-3 py-3 text-sm',
-        styles.panel,
+        'toast-surface pointer-events-auto relative touch-pan-y overflow-hidden rounded-2xl',
+        'flex flex-col gap-2 py-3 pl-4 pr-3 text-sm',
+        styles.surface,
       )}
     >
       <div className="flex flex-wrap items-start gap-3">
-        <VariantIcon
-          size={UI_ICON_SIZE + 2}
-          weight={UI_ICON_WEIGHT}
-          className={cn('mt-0.5 shrink-0', styles.icon)}
-          aria-hidden
-        />
-        <span className="min-w-[10rem] flex-1 text-pretty text-ui-fg">{toast.message}</span>
+        <span className="toast-icon-ring" aria-hidden>
+          <VariantIcon size={UI_ICON_SIZE + 2} weight={UI_ICON_WEIGHT} />
+        </span>
+        <span className="toast-message min-w-[10rem] flex-1 text-pretty font-medium leading-snug">
+          {toast.message}
+        </span>
         {toast.action ? (
           <Button
             variant="secondary"
@@ -189,13 +165,13 @@ function ToastItem({
       </div>
       {toast.showProgress && !toast.sticky ? (
         <div
-          className="h-0.5 w-full overflow-hidden rounded-full bg-ui-chart-track"
+          className="h-1 w-full overflow-hidden rounded-full bg-black/10 dark:bg-white/10"
           aria-hidden
           data-testid="toast-progress-track"
         >
           <div
             key={toast.id}
-            className="h-full origin-left rounded-full bg-current opacity-40"
+            className="toast-progress-fill h-full origin-left rounded-full opacity-80"
             style={
               reducedMotion
                 ? { width: '100%' }
@@ -290,7 +266,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       <OverlayPortal>
         <div
           data-testid="toast-stack"
-          className="pointer-events-none fixed left-3 right-3 top-[calc(env(safe-area-inset-top,0px)+0.75rem)] z-toast flex max-w-sm flex-col gap-2 md:left-auto md:right-4 md:ml-auto"
+          className="pointer-events-none fixed inset-x-0 top-[calc(env(safe-area-inset-top,0px)+0.625rem)] z-toast mx-auto flex w-[calc(100%-24px)] max-w-[420px] flex-col gap-2"
         >
           <AnimatePresence mode="popLayout">
             {toasts.map((t) => (

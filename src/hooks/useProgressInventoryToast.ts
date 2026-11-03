@@ -27,7 +27,10 @@ export function useProgressInventoryToast() {
   }, [])
 
   const runWithUndoToast = useCallback(
-    (apply: () => void, context: { name: string; tier: string }) => {
+    (
+      apply: () => void,
+      context: { name: string; tier: string; delta: 1 | -1 },
+    ) => {
       if (burstSnapshot.current == null) {
         burstSnapshot.current = cloneInventory(useAppStore.getState().inventory)
       }
@@ -41,7 +44,12 @@ export function useProgressInventoryToast() {
         clearBurst()
       }, 4000)
 
-      push(t('progress.inventoryUpdated', { name: context.name, tier: context.tier }), {
+      const message =
+        context.delta > 0
+          ? t('progress.inventoryDeltaPlus', { name: context.name, tier: context.tier })
+          : t('progress.inventoryDeltaMinus', { name: context.name, tier: context.tier })
+
+      push(message, {
         variant: 'neutral',
         replaceKey: REPLACE_KEY,
         durationMs: 4000,

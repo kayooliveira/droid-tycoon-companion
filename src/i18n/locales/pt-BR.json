@@ -64,7 +64,8 @@
     "undoConfirmShort": "Desfazer",
     "moreActionsTitle": "Mais ações",
     "listRebirthHeading": "Renascimento #{{n}}",
-    "inventoryUpdated": "{{name}} · {{tier}}: inventário atualizado.",
+    "inventoryDeltaPlus": "+1 {{name}} {{tier}}",
+    "inventoryDeltaMinus": "-1 {{name}} {{tier}}",
     "inventoryRestored": "Inventário restaurado.",
     "inventoryUndo": "Desfazer",
     "inventoryAddOne": "Adicionar um {{name}} {{tier}}",
@@ -104,7 +105,7 @@
     "resetRebirthOnSwitch": "Zerar renascimentos no novo ciclo (começar no #1)",
     "confirmSwitch": "Trocar ciclo",
     "cancel": "Cancelar",
-    "switched": "Ciclo {{name}} selecionado."
+    "switched": "Agora você tá no {{name}}."
   },
   "status": {
     "missing": "Falta",
@@ -206,7 +207,7 @@
     "pdfDone": "PDF do ciclo pronto.",
     "pngDone_one": "{{count}} arquivo PNG pronto.",
     "pngDone_other": "{{count}} arquivos PNG prontos.",
-    "failed": "Não deu para gerar o export. Tente de novo."
+    "failed": "Não deu pra gerar o export. Tenta de novo."
   },
   "shareExport": {
     "title": "Compartilhar",
@@ -326,7 +327,7 @@
     "export": "Exportar progresso (JSON)",
     "import": "Importar progresso",
     "importOk": "Progresso importado com sucesso.",
-    "importFail": "Arquivo inválido. Confira o JSON e tente de novo.",
+    "importFail": "Arquivo inválido. Confira o JSON e tenta de novo.",
     "danger": "Zona de risco",
     "reset": "Apagar tudo",
     "resetConfirm": "Confirmar apagar",
@@ -359,11 +360,11 @@
     "whatsapp": "WhatsApp",
     "progressCard": "Card de progresso",
     "message": "DroidDeck · plano de renascimento da ilha: {{url}}",
-    "linkCopied": "Link copiado para a área de transferência.",
+    "linkCopied": "Link copiado.",
     "cardTitle": "Meu progresso no Droid Tycoon",
     "cardShared": "Card de progresso compartilhado.",
     "cardDownloaded": "Card salvo no aparelho.",
-    "cardFailed": "Não deu para gerar o card. Tente de novo."
+    "cardFailed": "Não deu pra gerar o card. Tenta de novo."
   },
   "about": {
     "title": "Sobre",

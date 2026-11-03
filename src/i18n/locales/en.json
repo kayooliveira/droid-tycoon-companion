@@ -64,7 +64,8 @@
     "undoConfirmShort": "Undo",
     "moreActionsTitle": "More actions",
     "listRebirthHeading": "Rebirth #{{n}}",
-    "inventoryUpdated": "{{name}} · {{tier}}: inventory updated.",
+    "inventoryDeltaPlus": "+1 {{name}} {{tier}}",
+    "inventoryDeltaMinus": "-1 {{name}} {{tier}}",
     "inventoryRestored": "Inventory restored.",
     "inventoryUndo": "Undo",
     "inventoryAddOne": "Add one {{name}} {{tier}}",
@@ -104,7 +105,7 @@
     "resetRebirthOnSwitch": "Reset rebirth progress on the new Path (start at rebirth #1)",
     "confirmSwitch": "Switch Path",
     "cancel": "Cancel",
-    "switched": "Switched to {{name}}."
+    "switched": "Now on {{name}}."
   },
   "status": {
     "missing": "Missing",
@@ -359,7 +360,7 @@
     "whatsapp": "WhatsApp",
     "progressCard": "Progress card (image)",
     "message": "DroidDeck rebirth planner for our island: {{url}}",
-    "linkCopied": "Link copied to clipboard.",
+    "linkCopied": "Link copied.",
     "cardTitle": "My Droid Tycoon progress",
     "cardShared": "Progress card shared.",
     "cardDownloaded": "Progress card saved. Attach it in your chat.",

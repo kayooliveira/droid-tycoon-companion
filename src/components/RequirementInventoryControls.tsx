@@ -47,7 +47,7 @@ export function RequirementInventoryControls({
           updateInventoryUnit(unit.id, { quantity: unit.quantity - 1 })
         }
       }
-    }, { name: droidName, tier: tierLabel })
+    }, { name: droidName, tier: tierLabel, delta: delta > 0 ? 1 : -1 })
   }
 
   return (

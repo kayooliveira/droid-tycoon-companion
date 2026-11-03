@@ -28,7 +28,8 @@ describe('ToastProvider', () => {
     )
     const stack = screen.getByTestId('toast-stack')
     expect(stack.className).toMatch(/safe-area-inset-top/)
-    expect(stack.className).toMatch(/top-\[/)
+    expect(stack.className).toMatch(/max-w-\[420px\]/)
+    expect(stack.className).toMatch(/calc\(100%-24px\)/)
   })
 
   it('renders variant data attribute and progress for undo toasts', () => {
