@@ -1,4 +1,4 @@
-import { Minus, Plus } from '@phosphor-icons/react'
+import { Plus, X } from '@phosphor-icons/react'
 import { useTranslation } from 'react-i18next'
 import { formatTierName } from '../domain/tiers'
 import { useTierLabels } from '../i18n/useTierLabels'
@@ -7,7 +7,7 @@ import { useAppStore } from '../store/useAppStore'
 import { uiIconProps } from './ui/iconStyle'
 import { cn } from '../lib/utils'
 
-const STEPPER_WIDTH = 'w-[8.75rem]'
+const TAP = 'inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-xl transition-colors'
 
 export function RequirementInventoryControls({
   droidId,
@@ -30,10 +30,13 @@ export function RequirementInventoryControls({
   const { runWithUndoToast } = useProgressInventoryToast()
 
   const tierLabel = formatTierName(tier, tierLabels)
-  const incLabel = t('progress.inventoryAddOne', { name: droidName, tier: tierLabel })
-  const decLabel = t('progress.inventoryRemoveOne', { name: droidName, tier: tierLabel })
+  const addLabel = t('progress.inventoryAddAria', { name: droidName, tier: tierLabel })
+  const removeLabel = t('progress.inventoryRemoveAria', { name: droidName, tier: tierLabel })
 
-  const adjust = (delta: number) => {
+  const showPlus = ownedCount < neededCount
+  const showRemove = ownedCount >= 1
+
+  const adjust = (delta: 1 | -1) => {
     runWithUndoToast(() => {
       const unit = useAppStore
         .getState()
@@ -47,49 +50,42 @@ export function RequirementInventoryControls({
           updateInventoryUnit(unit.id, { quantity: unit.quantity - 1 })
         }
       }
-    }, { name: droidName, tier: tierLabel, delta: delta > 0 ? 1 : -1 })
+    }, { name: droidName, tier: tierLabel, delta })
   }
+
+  if (!showPlus && !showRemove) return null
 
   return (
     <div
-      data-testid="requirement-inventory-stepper"
-      className={cn(
-        'flex shrink-0 items-center justify-between gap-0.5 rounded-xl border border-ui bg-ui-field/80 p-0.5',
-        STEPPER_WIDTH,
-      )}
+      data-testid="requirement-inventory-actions"
+      className="flex shrink-0 items-center gap-0.5"
     >
-      <button
-        type="button"
-        data-testid="requirement-inventory-dec"
-        aria-label={decLabel}
-        disabled={ownedCount <= 0}
-        onClick={() => adjust(-1)}
-        className={cn(
-          'inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg',
-          'text-ui-fg hover:bg-ui-hover disabled:opacity-40 disabled:pointer-events-none transition-colors',
-        )}
-      >
-        <Minus {...uiIconProps} />
-      </button>
-      <span
-        className="flex-1 text-center text-sm font-semibold tabular-nums text-ui-fg"
-        data-testid="requirement-inventory-count"
-        aria-live="polite"
-      >
-        {ownedCount}/{neededCount}
-      </span>
-      <button
-        type="button"
-        data-testid="requirement-inventory-inc"
-        aria-label={incLabel}
-        onClick={() => adjust(1)}
-        className={cn(
-          'inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg',
-          'text-ui-fg hover:bg-ui-hover transition-colors',
-        )}
-      >
-        <Plus {...uiIconProps} />
-      </button>
+      {showPlus ? (
+        <button
+          type="button"
+          data-testid="requirement-inventory-add"
+          aria-label={addLabel}
+          onClick={() => adjust(1)}
+          className={cn(TAP, 'text-ui-accent hover:bg-ui-hover')}
+        >
+          <Plus {...uiIconProps} />
+        </button>
+      ) : null}
+      {showRemove ? (
+        <button
+          type="button"
+          data-testid="requirement-inventory-remove"
+          aria-label={removeLabel}
+          onClick={() => adjust(-1)}
+          className={cn(
+            TAP,
+            'text-ui-muted hover:bg-ui-hover hover:text-ui-fg',
+            !showPlus && 'border border-ui-subtle bg-ui-field/60',
+          )}
+        >
+          <X {...uiIconProps} />
+        </button>
+      ) : null}
     </div>
   )
 }

@@ -32,41 +32,54 @@ export function RequirementCard({
   const droid = droidById.get(check.requirement.droidId)
   if (!droid) return null
 
-  const showStepper = trackInventory
+  const { ownedCount, neededCount } = check
+  const showInventoryActions = trackInventory
 
   return (
     <GlassCard className="flex gap-3 items-start" data-testid="requirement-card">
       <DroidImage droid={droid} className="shrink-0" />
-      <div className="min-w-0 flex-1 flex flex-col gap-2">
-        <div className="min-w-0">
+      <div className="min-w-0 flex-1">
+        <div className="flex items-start gap-2 min-w-0">
           <p
-            className="font-medium line-clamp-2 text-pretty break-words leading-snug"
+            className="min-w-0 flex-1 font-medium line-clamp-2 text-pretty break-words leading-snug"
             data-testid="requirement-droid-name"
           >
             {droid.name}
           </p>
-          <div className="mt-1.5 flex flex-wrap items-center gap-2">
-            <Badge tone="info" className="shrink-0">
-              {formatTierName(check.requirement.rarity, tierLabels)}
-            </Badge>
-            {trackInventory && !showStepper ? (
-              <Badge tone={statusTone[check.status] ?? 'default'} className="shrink-0">
-                {t(`status.${check.status}`)}
-              </Badge>
-            ) : null}
-          </div>
-        </div>
-        {showStepper ? (
-          <div className="flex justify-end">
+          {showInventoryActions ? (
             <RequirementInventoryControls
               droidId={check.requirement.droidId}
               droidName={droid.name}
               tier={check.requirement.rarity}
-              ownedCount={check.ownedCount}
-              neededCount={check.neededCount}
+              ownedCount={ownedCount}
+              neededCount={neededCount}
             />
-          </div>
-        ) : null}
+          ) : null}
+        </div>
+        <div className="mt-1.5 flex flex-wrap items-center gap-2">
+          <Badge tone="info" className="shrink-0">
+            {formatTierName(check.requirement.rarity, tierLabels)}
+          </Badge>
+          {trackInventory ? (
+            <>
+              <span
+                className="text-xs font-medium tabular-nums text-ui-muted shrink-0"
+                data-testid="requirement-inventory-count"
+              >
+                {ownedCount}/{neededCount}
+              </span>
+              {check.status === 'ready' || check.status === 'missing' ? (
+                <Badge tone={statusTone[check.status] ?? 'default'} className="shrink-0">
+                  {t(`status.${check.status}`)}
+                </Badge>
+              ) : null}
+            </>
+          ) : (
+            <Badge tone={statusTone[check.status] ?? 'default'} className="shrink-0">
+              {t(`status.${check.status}`)}
+            </Badge>
+          )}
+        </div>
       </div>
     </GlassCard>
   )
