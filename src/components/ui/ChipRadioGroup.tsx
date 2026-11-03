@@ -37,10 +37,8 @@ export function ChipRadioGroup<T extends string>({
             aria-checked={active}
             data-testid={testId ? `${testId}-${opt.value}` : undefined}
             className={cn(
-              'rounded-full px-3 py-2 text-base min-h-11 border font-medium shrink-0 snap-start',
-              active
-                ? 'border-holo-400/70 bg-holo-600/25 text-holo-900'
-                : 'border-ui bg-ui-hover text-ui-muted hover:text-ui-fg',
+              'rounded-full px-3 py-2 text-base min-h-11 border font-medium shrink-0 snap-start whitespace-nowrap',
+              active ? 'ui-chip-active' : 'border-ui bg-ui-hover text-ui-muted hover:text-ui-fg',
             )}
             onClick={() => onChange(opt.value)}
           >

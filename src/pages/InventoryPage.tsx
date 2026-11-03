@@ -54,7 +54,7 @@ export function InventoryPage() {
 
   const rarityOptions = useMemo(
     () => [
-      { value: 'all', label: t('inventory.allRarities') },
+      { value: 'all', label: t('inventory.allRaritiesShort') },
       ...gameData.baseRarities.map((r) => ({
         value: r.id,
         label: rarityLabel(t, r.id),
@@ -65,7 +65,7 @@ export function InventoryPage() {
 
   const tierOptions = useMemo(
     () => [
-      { value: 'all', label: t('inventory.allTiers') },
+      { value: 'all', label: t('inventory.allTiersShort') },
       ...gameData.rarities.map((tier) => ({
         value: tier.id,
         label: formatTierName(tier.id, tierLabels),
@@ -167,6 +167,7 @@ export function InventoryPage() {
           <ChipRadioGroup
             ariaLabel={t('inventory.filterNeed')}
             testId="inventory-needed-chips"
+            scrollX
             value={neededFilter}
             onChange={(v) => setNeededFilter(v as InventoryFilters['neededFilter'])}
             options={neededOptions}
@@ -180,19 +181,40 @@ export function InventoryPage() {
           if (!droid) return null
           const needed = droidHasFutureNeedOnPath(progress.pathId, progress.nextRebirth, unit.droidId)
           return (
-            <GlassCard key={unit.id} className="flex min-w-0 max-w-full gap-3 items-center">
-              <DroidImage droid={droid} className="shrink-0" />
-              <div className="min-w-0 flex-1">
-                <p className="font-medium truncate">{droid.name}</p>
-                <div className="flex flex-wrap gap-2 mt-1">
-                  <Badge>{formatBaseRarity(droid.baseRarity, t)}</Badge>
-                  <Badge tone="info">{formatTierName(unit.tier, tierLabels)}</Badge>
-                  <Badge tone={needed ? 'warn' : 'success'}>
-                    {needed ? t('inventory.neededLater') : t('inventory.notNeeded')}
-                  </Badge>
+            <GlassCard
+              key={unit.id}
+              data-testid="inventory-unit-card"
+              className="flex min-w-0 max-w-full flex-col gap-3 md:flex-row md:items-center md:gap-3"
+            >
+              <div className="flex min-w-0 flex-1 gap-3">
+                <DroidImage droid={droid} className="shrink-0" />
+                <div className="flex min-w-0 flex-1 flex-col gap-2">
+                  <p
+                    className="min-w-0 font-medium leading-snug line-clamp-2 break-words"
+                    data-testid="inventory-unit-name"
+                  >
+                    {droid.name}
+                  </p>
+                  <div
+                    className="flex min-w-0 flex-wrap gap-2"
+                    data-testid="inventory-unit-badges"
+                  >
+                    <Badge className="whitespace-nowrap">
+                      {formatBaseRarity(droid.baseRarity, t)}
+                    </Badge>
+                    <Badge tone="info" className="whitespace-nowrap">
+                      {formatTierName(unit.tier, tierLabels)}
+                    </Badge>
+                    <Badge tone={needed ? 'warn' : 'success'} className="whitespace-nowrap">
+                      {needed ? t('inventory.neededLater') : t('inventory.notNeededShort')}
+                    </Badge>
+                  </div>
                 </div>
               </div>
-              <div className="flex shrink-0 items-center gap-1">
+              <div
+                className="flex shrink-0 items-center justify-end gap-1 md:ml-auto"
+                data-testid="inventory-unit-actions"
+              >
                 <QuantityStepper
                   compact
                   value={unit.quantity}
