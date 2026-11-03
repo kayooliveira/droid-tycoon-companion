@@ -7,6 +7,7 @@ import { useTierLabels } from '../i18n/useTierLabels'
 import { DroidImage } from '../components/DroidImage'
 import { Badge } from '../components/ui/Badge'
 import { Modal } from '../components/ui/Modal'
+import { droidMatchesQuery } from '../lib/droidNameMatch'
 import { cn } from '../lib/utils'
 import type { Droid } from '../domain/types'
 
@@ -23,7 +24,7 @@ export function DroiddexPage() {
     return gameData.droids
       .filter((d) => {
         if (classFilter !== 'all' && d.class !== classFilter) return false
-        if (search && !d.name.toLowerCase().includes(search.toLowerCase())) return false
+        if (search && !droidMatchesQuery(search, d.name, d.id)) return false
         return true
       })
       .sort((a, b) => a.name.localeCompare(b.name))
@@ -33,7 +34,7 @@ export function DroiddexPage() {
     <div className="space-y-5" data-testid="droiddex-page">
       <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('droiddex.title')}</h1>
       <input
-        className="w-full rounded-xl bg-ui-field border border-ui px-4 py-3 min-h-11"
+        className="w-full rounded-xl bg-ui-field border border-ui px-4 py-3 text-base min-h-11"
         placeholder={t('droiddex.search')}
         value={search}
         onChange={(e) => setSearch(e.target.value)}

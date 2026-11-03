@@ -5,6 +5,7 @@ import type { FusionRecipe } from '../domain/types'
 import { DroidImage } from '../components/DroidImage'
 import { Badge } from '../components/ui/Badge'
 import { GlassCard } from '../components/ui/GlassCard'
+import { droidMatchesQuery } from '../lib/droidNameMatch'
 import { useAppStore } from '../store/useAppStore'
 
 const FUSION_RULE_KEY: Record<string, string> = {
@@ -28,8 +29,9 @@ export function FusionLabPage() {
     return gameData.fusions.filter((f) => {
       const d = droidById.get(f.resultDroidId)
       if (search) {
-        const q = search.toLowerCase()
-        if (!d?.name.toLowerCase().includes(q) && !f.id.toLowerCase().includes(q)) return false
+        if (!droidMatchesQuery(search, d?.name ?? '', f.resultDroidId) && !f.id.toLowerCase().includes(search.toLowerCase())) {
+          return false
+        }
       }
       return true
     })
@@ -94,7 +96,7 @@ export function FusionLabPage() {
         <div className="flex gap-2 items-center flex-wrap">
           <h2 className="font-display text-lg">{t('fusion.recipes')}</h2>
           <input
-            className="ml-auto rounded-lg bg-ui-field border border-ui px-3 py-1.5 text-sm min-w-[8rem]"
+            className="ml-auto rounded-lg bg-ui-field border border-ui px-3 py-1.5 text-base min-w-[8rem] min-h-11"
             placeholder={t('fusion.search')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}

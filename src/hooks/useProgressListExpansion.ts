@@ -52,5 +52,9 @@ export function useProgressListExpansion(
     [expanded],
   )
 
-  return { isExpanded, toggleOne, toggleAll, allExpanded }
+  const expandOne = useCallback((rebirth: number) => {
+    setExpanded((prev) => ({ ...prev, [rebirth]: true }))
+  }, [])
+
+  return { isExpanded, toggleOne, toggleAll, allExpanded, expandOne }
 }
