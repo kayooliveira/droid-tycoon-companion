@@ -7,7 +7,8 @@ import { Badge } from '../components/ui/Badge'
 import { GlassCard } from '../components/ui/GlassCard'
 import { droidMatchesQuery } from '../lib/droidNameMatch'
 import { useAppStore } from '../store/useAppStore'
-
+import { PageScreen } from '../components/layout/PageScreen'
+import { ScreenHero } from '../components/layout/ScreenHero'
 const FUSION_RULE_KEY: Record<string, string> = {
   'tier-up': 'fusion.rules.tierUp',
   random: 'fusion.rules.random',
@@ -41,13 +42,12 @@ export function FusionLabPage() {
   const showResultTierRule = gameData.fusions.some((f) => f.resultTierRule)
 
   return (
-    <div className="space-y-6" data-testid="fusion-page">
-      <div>
-        <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('fusion.title')}</h1>
-        <Badge tone="warn" className="mt-2">
-          {t('fusion.partialBadge')}
-        </Badge>
-      </div>
+    <PageScreen testId="fusion-page" className="space-y-6">
+      <ScreenHero
+        title={t('fusion.title')}
+        kicker={t('nav.fusion')}
+        action={<Badge tone="warn">{t('fusion.partialBadge')}</Badge>}
+      />
 
       <GlassCard className="space-y-3 text-sm" data-testid="fusion-rules-card">
         <p className="font-medium text-ui-fg">{t('fusion.rulesTitle')}</p>
@@ -109,7 +109,7 @@ export function FusionLabPage() {
           recipes.map((f) => <RecipeCard key={f.id} fusion={f} />)
         )}
       </section>
-    </div>
+    </PageScreen>
   )
 }
 

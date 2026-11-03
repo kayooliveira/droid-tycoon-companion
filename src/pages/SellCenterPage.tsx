@@ -15,11 +15,14 @@ import { Button } from '../components/ui/Button'
 import { GlassCard } from '../components/ui/GlassCard'
 import { uiIconProps } from '../components/ui/iconStyle'
 import { useAppStore } from '../store/useAppStore'
+import { PageScreen } from '../components/layout/PageScreen'
+import { ScreenHero } from '../components/layout/ScreenHero'
+import { SectionHeader } from '../components/ui/SectionHeader'
 
 function SectionCard({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <GlassCard className="space-y-3 p-4">
-      <h2 className="text-sm font-semibold text-ui-fg">{title}</h2>
+    <GlassCard className="space-y-3">
+      <SectionHeader title={title} />
       {children}
     </GlassCard>
   )
@@ -61,12 +64,13 @@ export function SellCenterPage() {
     groups.upgrade.length === 0
 
   return (
-    <div className="space-y-5" data-testid="sell-page">
-      <div className="space-y-2">
-        <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('sell.title')}</h1>
-        <PathProgressSwitcher compact />
-        <p className="text-sm text-ui-muted">{t('sell.intro', { from: progress.nextRebirth, cycle: cycleName })}</p>
-      </div>
+    <PageScreen testId="sell-page">
+      <ScreenHero
+        title={t('sell.title')}
+        kicker={t('nav.sell')}
+        description={t('sell.intro', { from: progress.nextRebirth, cycle: cycleName })}
+      />
+      <PathProgressSwitcher compact />
 
       {allEmpty ? (
         <GlassCard className="p-6 flex flex-col items-center text-center gap-3" data-testid="sell-empty-state">
@@ -162,6 +166,6 @@ export function SellCenterPage() {
           })}
         </>
       )}
-    </div>
+    </PageScreen>
   )
 }

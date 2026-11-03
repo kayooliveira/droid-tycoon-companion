@@ -86,16 +86,16 @@ export function AppShell() {
         </nav>
       </aside>
 
-      <main className="flex-1 md:ml-64 shell-main-pad md:pb-6">
+      <main className="flex-1 md:ml-64 shell-main-pad md:pb-6 deck-app-canvas">
         <Glass
           as="header"
           variant="regular"
-          className="glass-nav md:hidden sticky top-0 z-sticky mx-3 mt-2 rounded-2xl px-4 py-3 flex items-center gap-3 min-h-[3.25rem]"
+          className="glass-nav deck-mobile-header md:hidden sticky top-0 z-sticky mx-3 mt-2 rounded-2xl px-4 py-3 flex items-center gap-3 min-h-[3.25rem]"
         >
           <Logo className="h-8 w-8" />
           <div className="min-w-0 flex-1">
-            <h1 className="font-display text-sm tracking-wide truncate">{t(titleKey)}</h1>
-            <p className="text-[10px] text-ui-soft truncate">{t('app.shortName')}</p>
+            <h1 className="font-display text-ds-sm tracking-wide truncate text-ui-fg">{t(titleKey)}</h1>
+            <p className="text-ds-xs text-ui-muted truncate">{t('app.shortName')}</p>
           </div>
         </Glass>
         <div className="mx-auto max-w-6xl px-4 py-5 md:py-8 pt-[max(0.75rem,env(safe-area-inset-top))]">

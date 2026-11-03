@@ -12,6 +12,8 @@ import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { useTierLabels } from '../i18n/useTierLabels'
 import { cn } from '../lib/utils'
 import { uiIconProps } from '../components/ui/iconStyle'
+import { PageScreen } from '../components/layout/PageScreen'
+import { ScreenHero } from '../components/layout/ScreenHero'
 
 export function CyclesPage() {
   const { t, i18n } = useTranslation()
@@ -34,11 +36,12 @@ export function CyclesPage() {
   }, [pathId])
 
   return (
-    <div className="space-y-5 pb-6" data-testid="cycles-page">
-      <div className="space-y-2">
-        <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('cycles.title')}</h1>
-        <p className="text-sm text-ui-muted text-pretty">{t('cycles.referenceNote')}</p>
-      </div>
+    <PageScreen testId="cycles-page">
+      <ScreenHero
+        title={t('cycles.title')}
+        kicker={t('nav.cycles')}
+        description={t('cycles.referenceNote')}
+      />
 
       <GlassCard className="p-4 space-y-3">
         <p className="text-sm font-medium text-ui-fg">{t('cycles.pickCycle')}</p>
@@ -134,6 +137,6 @@ export function CyclesPage() {
         </p>
         <Badge tone="info">{t('common.unconfirmed')}</Badge>
       </GlassCard>
-    </div>
+    </PageScreen>
   )
 }

@@ -22,6 +22,8 @@ import {
   type InventoryFilters,
 } from '../hooks/usePersistedInventoryFilters'
 import { useAppStore } from '../store/useAppStore'
+import { PageScreen } from '../components/layout/PageScreen'
+import { ScreenHero } from '../components/layout/ScreenHero'
 
 export function InventoryPage() {
   const { t } = useTranslation()
@@ -126,13 +128,17 @@ export function InventoryPage() {
   }
 
   return (
-    <div className="space-y-5" data-testid="inventory-page">
-      <div className="flex flex-wrap gap-3 items-center justify-between">
-        <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('inventory.title')}</h1>
-        <Button data-testid="inventory-add-open" onClick={() => setAddOpen(true)}>
-          {t('inventory.addDroid')}
-        </Button>
-      </div>
+    <PageScreen testId="inventory-page">
+      <ScreenHero
+        title={t('inventory.title')}
+        kicker={t('nav.inventory')}
+        description={t('inventory.emptyHint')}
+        action={
+          <Button data-testid="inventory-add-open" onClick={() => setAddOpen(true)}>
+            {t('inventory.addDroid')}
+          </Button>
+        }
+      />
       <input
         className="w-full rounded-xl bg-ui-field border border-ui px-4 py-3 text-base min-h-11"
         placeholder={t('inventory.search')}
@@ -333,6 +339,6 @@ export function InventoryPage() {
           </p>
         ) : null}
       </Modal>
-    </div>
+    </PageScreen>
   )
 }

@@ -10,6 +10,9 @@ import { Modal } from '../components/ui/Modal'
 import { droidMatchesQuery } from '../lib/droidNameMatch'
 import { cn } from '../lib/utils'
 import type { Droid } from '../domain/types'
+import { PageScreen } from '../components/layout/PageScreen'
+import { ScreenHero } from '../components/layout/ScreenHero'
+import { SearchInput } from '../components/ui/SearchInput'
 
 const DROID_CLASSES = ['Worker', 'Astromech', 'Battle', 'Protocol'] as const
 
@@ -31,13 +34,15 @@ export function DroiddexPage() {
   }, [search, classFilter])
 
   return (
-    <div className="space-y-5" data-testid="droiddex-page">
-      <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('droiddex.title')}</h1>
-      <input
-        className="w-full rounded-xl bg-ui-field border border-ui px-4 py-3 text-base min-h-11"
+    <PageScreen testId="droiddex-page">
+      <ScreenHero title={t('droiddex.title')} kicker={t('nav.droiddex')} />
+      <SearchInput
         placeholder={t('droiddex.search')}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
+        onClear={() => setSearch('')}
+        clearLabel={t('progress.search.clear')}
+        aria-label={t('droiddex.search')}
       />
       <div
         className="flex flex-wrap gap-2"
@@ -141,6 +146,6 @@ export function DroiddexPage() {
           </div>
         ) : null}
       </Modal>
-    </div>
+    </PageScreen>
   )
 }
