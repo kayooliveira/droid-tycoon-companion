@@ -88,7 +88,7 @@ export function DesignSystemPage() {
       className="min-h-dvh bg-ui-bg text-ui-fg pb-16"
       data-testid="design-system-page"
     >
-      <header className="sticky top-0 z-sticky border-b border-ui bg-ui-elevated/95 backdrop-blur-md px-4 py-4">
+      <header className="sticky top-0 z-sticky border-b border-ui bg-ui-elevated px-4 py-4">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3">
           <div>
             <h1 className="text-ds-display-sm">{t('designSystem.title')}</h1>

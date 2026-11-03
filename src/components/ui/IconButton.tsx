@@ -4,9 +4,9 @@ import { cn } from '../../lib/utils'
 type Variant = 'ghost' | 'soft' | 'solid'
 
 const variants: Record<Variant, string> = {
-  ghost: 'hover:bg-ui-hover-strong text-ui-secondary',
-  soft: 'ui-btn-secondary bg-ui-hover-strong hover:bg-ui-hover-strong border border-ui text-ui-fg',
-  solid: 'bg-holo-600 hover:bg-holo-500 text-white',
+  ghost: 'ui-btn-ghost hover:bg-ui-hover',
+  soft: 'ui-icon-btn-soft',
+  solid: 'ui-icon-btn-solid',
 }
 
 export function IconButton({

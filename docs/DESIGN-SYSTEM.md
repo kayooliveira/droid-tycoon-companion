@@ -63,6 +63,10 @@ Defined in `src/index.css` `@theme`: content (1), sticky (40), nav (45), banner 
 
 Semantic backgrounds use runtime CSS variables (see `theme-tokens.css` overrides) so light/dark switches stay in sync.
 
+Button/segment styles apply **background only on the `<button>`**, never on inner `.truncate` / `.text-pretty` spans (avoids “label chip” glitches in full-page screenshots).
+
+E2E catalog captures use `openDesignCatalogSettled()` (`e2e/designSystemHelpers.ts`): pt-BR store seed, theme from settings (no toggle flicker), fonts ready, `design-capture-ready` (zero transitions), then full page + component crops.
+
 ## Living catalog
 
 Open **`/design`** in the app (not linked from nav) to preview tokens and components in dark and light themes.

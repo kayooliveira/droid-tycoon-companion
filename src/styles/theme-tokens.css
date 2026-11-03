@@ -71,6 +71,12 @@
   --ui-btn-ghost-hover: rgb(255 255 255 / 0.1);
   --ui-btn-ghost-fg: #e4e4e7;
 
+  --ui-icon-btn-inactive-bg: #1a2436;
+  --ui-icon-btn-inactive-fg: #e4e4e7;
+  --ui-icon-btn-inactive-border: rgb(255 255 255 / 0.18);
+  --ui-icon-btn-active-bg: #1d5ff5;
+  --ui-icon-btn-active-fg: #ffffff;
+
   --glass-bg: rgba(255, 255, 255, 0.08);
   --glass-nav-bg: rgba(14, 18, 28, 0.62);
   --glass-solid: #161f2e;
@@ -179,6 +185,12 @@ html.theme-light {
   --ui-btn-secondary-hover: #c4c4c8;
   --ui-btn-ghost-hover: rgb(24 24 27 / 0.06);
   --ui-btn-ghost-fg: #27272a;
+
+  --ui-icon-btn-inactive-bg: #c4c4c8;
+  --ui-icon-btn-inactive-fg: #18181b;
+  --ui-icon-btn-inactive-border: rgb(24 24 27 / 0.2);
+  --ui-icon-btn-active-bg: #1d5ff5;
+  --ui-icon-btn-active-fg: #ffffff;
 
   --glass-bg: rgba(255, 255, 255, 0.62);
   --glass-nav-bg: rgba(255, 255, 255, 0.72);
@@ -336,40 +348,75 @@ html.theme-light {
     border-color: var(--ui-badge-info-border);
   }
 
-  button.ui-btn-secondary,
-  button.ui-btn-secondary .truncate {
+  button.ui-btn-secondary {
     background-color: var(--ui-btn-secondary-bg);
     color: var(--ui-btn-secondary-fg);
     border-color: var(--ui-btn-secondary-border);
+  }
+
+  button.ui-btn-secondary .truncate {
+    color: inherit;
+    background-color: transparent;
   }
 
   button.ui-btn-secondary:hover {
     background-color: var(--ui-btn-secondary-hover);
   }
 
-  button.ui-btn-ghost,
-  button.ui-btn-ghost .truncate {
+  button.ui-btn-ghost {
     color: var(--ui-btn-ghost-fg);
+  }
+
+  button.ui-btn-ghost .truncate {
+    color: inherit;
+    background-color: transparent;
   }
 
   button.ui-btn-ghost:hover {
     background-color: var(--ui-btn-ghost-hover);
   }
 
+  button.ui-icon-btn-soft {
+    background-color: var(--ui-icon-btn-inactive-bg);
+    color: var(--ui-icon-btn-inactive-fg);
+    border: 1px solid var(--ui-icon-btn-inactive-border);
+  }
+
+  button.ui-icon-btn-soft:hover {
+    background-color: var(--ui-btn-secondary-hover);
+  }
+
+  button.ui-icon-btn-solid {
+    background-color: var(--ui-icon-btn-active-bg);
+    color: var(--ui-icon-btn-active-fg);
+  }
+
+  button.ui-icon-btn-solid:hover {
+    filter: brightness(1.08);
+  }
+
   .ui-segment-track {
     background: var(--ui-segment-track);
   }
 
-  button.ui-segment-active,
-  button.ui-segment-active .text-pretty {
+  button.ui-segment-active {
     background-color: var(--ui-segment-active-bg);
     color: var(--ui-segment-active-fg);
     border: 1px solid var(--ui-border-subtle);
   }
 
-  button[role='radio']:not(.ui-segment-active),
-  button[role='radio']:not(.ui-segment-active) .text-pretty {
+  button.ui-segment-active .text-pretty {
+    color: inherit;
+    background-color: transparent;
+  }
+
+  button[role='radio']:not(.ui-segment-active) {
     color: var(--ui-segment-inactive-fg);
+  }
+
+  button[role='radio']:not(.ui-segment-active) .text-pretty {
+    color: inherit;
+    background-color: transparent;
   }
 
   .ui-list-row {

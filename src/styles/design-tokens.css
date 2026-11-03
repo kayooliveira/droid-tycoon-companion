@@ -110,6 +110,13 @@ html.theme-light {
   }
 }
 
+html.design-capture-ready *,
+html.design-capture-ready *::before,
+html.design-capture-ready *::after {
+  transition-duration: 0ms !important;
+  animation-duration: 0ms !important;
+}
+
 @theme inline {
   --spacing-ds-1: var(--space-1);
   --spacing-ds-2: var(--space-2);
