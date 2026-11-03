@@ -11,7 +11,6 @@ import { PathProgressSwitcher } from '../components/PathProgressSwitcher'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { DroidImage } from '../components/DroidImage'
 import { InsetGroup } from '../components/ui/InsetGroup'
-import { SellBadge } from '../components/ui/SellBadge'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
 import { uiIconProps } from '../components/ui/iconStyle'
 import { useAppStore } from '../store/useAppStore'
@@ -51,47 +50,23 @@ export function SellCenterPage() {
     groups.sellable.length === 0 &&
     groups.upgrade.length === 0
 
-  const renderItemRow = (
-    item: (typeof items)[number],
-    idx: number,
-    sellableHint: boolean,
-  ) => {
+  const renderItemRow = (item: (typeof items)[number], idx: number) => {
     const droid = droidById.get(item.droidId)
     if (!droid) return null
-    const name = droid.name
-    const reason =
-      item.category === 'upgrade' && item.upgradeTargetTier && item.nextNeededAtRebirth
-        ? t('sell.keepForUpgrade', {
-            tier: formatTierName(item.upgradeTargetTier, tierLabels),
-            rebirth: item.nextNeededAtRebirth,
-          })
-        : t(item.reasonKey, {
-            ...item.reasonParams,
-            name,
-            tier: item.upgradeTargetTier
-              ? formatTierName(item.upgradeTargetTier, tierLabels)
-              : item.reasonParams.tier,
-            defaultValue: item.reasonKey,
-          })
     const plan = inventorySafeToSellNow(
       progress.pathId,
       completedRebirth,
       item.droidId,
       item.tier,
     )
-    const sellable = sellableHint && plan?.disposition === 'sellable'
     return (
       <div key={`${item.unitId}-${idx}`} className="dc-row dc-row-droid">
         <DroidImage droid={droid} tier={item.tier} size="sm" className="!h-[50px] !w-[50px] rounded-[11px]" />
         <div className="dc-row-main">
-          <span className="dc-droid-name dc-row-label">{name}</span>
-          <span className="dc-row-sub dc-row-sub--badge">
-            <span className="dc-row-sub-meta">
-              {`${formatTierName(item.tier, tierLabels)} · ${t('progress.qtyShort', { n: item.quantity })}`}
-            </span>
-            <SellBadge sellable={sellable} />
+          <span className="dc-droid-name dc-row-label">{droid.name}</span>
+          <span className="dc-row-sub">
+            {`${formatTierName(item.tier, tierLabels)} · ${t('progress.qtyShort', { n: item.quantity })}`}
           </span>
-          <span className="dc-row-sub">{reason}</span>
           {plan?.disposition === 'fusionHold' ? (
             <span className="dc-row-sub text-ui-warn">{t('sellAfter.fusionHold')}</span>
           ) : null}
@@ -132,20 +107,24 @@ export function SellCenterPage() {
             <section data-testid="sell-center-safe-now">
               <h2 className="dc-section-header">{t('sell.safeNowTitle')}</h2>
               <InsetGroup footer={t('sell.safeNowHint', { rebirth: completedRebirth })}>
-                {safeNow.map(({ item }, idx) => renderItemRow(item, idx, true))}
+                {safeNow.map(({ item }, idx) => renderItemRow(item, idx))}
               </InsetGroup>
             </section>
           ) : null}
 
           {(['keep', 'upgrade', 'sellable'] as const).map((cat) => {
             if (groups[cat].length === 0) return null
+            const footerKey =
+              cat === 'keep'
+                ? 'sell.keepGroupFooter'
+                : cat === 'upgrade'
+                  ? 'sell.upgradeGroupFooter'
+                  : 'sell.sellableGroupFooter'
             return (
               <section key={cat}>
                 <h2 className="dc-section-header">{t(`sell.${cat}`)}</h2>
-                <InsetGroup>
-                  {groups[cat].map((item, idx) =>
-                    renderItemRow(item, idx, cat === 'sellable'),
-                  )}
+                <InsetGroup footer={t(footerKey)}>
+                  {groups[cat].map((item, idx) => renderItemRow(item, idx))}
                 </InsetGroup>
               </section>
             )

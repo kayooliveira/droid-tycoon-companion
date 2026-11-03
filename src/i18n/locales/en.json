@@ -76,6 +76,7 @@
     "inventoryRemoveAria": "Remove {{name}} {{tier}}",
     "inventoryAddOne": "Add one {{name}} {{tier}}",
     "inventoryRemoveOne": "Remove one {{name}} {{tier}}",
+    "rebirthListSection": "All rebirths",
     "collapseAll": "Collapse all",
     "expandAll": "Expand all",
     "collapseAllAria": "Collapse all rebirth steps in the list",
@@ -198,7 +199,10 @@
     "keepForUpgrade": "Keep: upgrade to {{tier}} at #{{rebirth}}",
     "safeNowTitle": "Safe to sell right now",
     "safeNowHint": "Based on rebirths you've finished through #{{rebirth}} and what's left on this Path.",
-    "safeNowLine": "In your inventory and clear to sell before the next rebirth."
+    "safeNowLine": "In your inventory and clear to sell before the next rebirth.",
+    "keepGroupFooter": "Still needed in a later rebirth on this cycle.",
+    "upgradeGroupFooter": "Raise tier before the rebirth that requires it.",
+    "sellableGroupFooter": "Not needed in remaining rebirths; sell when you're ready."
   },
   "sellAfter": {
     "heading": "Sell later:",

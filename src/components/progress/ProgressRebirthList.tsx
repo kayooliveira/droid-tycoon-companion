@@ -1,4 +1,3 @@
-import { ArrowsIn, ArrowsOut } from '@phosphor-icons/react'
 import { memo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { droidById, getRebirth } from '../../domain/gameData'
@@ -13,7 +12,6 @@ import { RequirementInventoryControls } from '../RequirementInventoryControls'
 import { InsetGroup } from '../ui/InsetGroup'
 import { ProgressBar } from '../ui/ProgressBar'
 import { SellBadge } from '../ui/SellBadge'
-import { uiIconProps } from '../ui/iconStyle'
 import { useAppStore } from '../../store/useAppStore'
 import { cn } from '../../lib/utils'
 
@@ -213,20 +211,16 @@ export function ProgressRebirthList({
 
   return (
     <div className="space-y-3" data-testid="progress-rebirth-list">
-      <div className="flex justify-end px-4">
+      <div className="dc-section-header-row">
+        <h2 className="dc-section-header">{t('progress.rebirthListSection')}</h2>
         <button
           type="button"
           data-testid="progress-list-expand-all"
           aria-expanded={allExpanded}
           aria-label={toggleAria}
           onClick={toggleAll}
-          className="inline-flex items-center gap-1.5 rounded-full border border-ui bg-ui-hover px-3 py-1.5 text-xs font-medium text-ui-secondary min-h-9"
+          className="dc-section-header-action"
         >
-          {allExpanded ? (
-            <ArrowsIn {...uiIconProps} className="size-4 shrink-0" />
-          ) : (
-            <ArrowsOut {...uiIconProps} className="size-4 shrink-0" />
-          )}
           {toggleLabel}
         </button>
       </div>

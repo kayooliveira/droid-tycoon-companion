@@ -12,8 +12,8 @@ const INDICATOR_INSET_Y = 4
 const tabs = [
   { to: '/', labelKey: 'nav.dashboard', icon: SquaresFour, end: true as const },
   { to: '/progress', labelKey: 'nav.progress', icon: TreeStructure },
-  { to: '/cycles', labelKey: 'nav.cycles', icon: MapTrifold },
   { to: '/inventory', labelKey: 'nav.inventory', icon: Backpack },
+  { to: '/cycles', labelKey: 'nav.cycles', icon: MapTrifold },
   { to: 'more', labelKey: 'nav.more', icon: List, isMore: true as const },
 ] as const
 

@@ -3,15 +3,17 @@
 
   --ui-bg: #000000;
   --ui-raised: #1c1c1e;
-  --ui-elevated: #1c1c1e;
+  --ui-elevated: #2c2c2e;
   --ui-sunken: rgb(0 0 0 / 0.22);
   --ui-modal: rgb(12 18 28 / 0.97);
   --ui-fg: #f4f4f5;
   --ui-secondary: #d4d4d8;
   --ui-muted: #a1a1aa;
   --ui-soft: #71717a;
-  --ui-border: #3a3a3c;
-  --ui-border-subtle: rgb(255 255 255 / 0.06);
+  --ui-border: var(--ui-control-border);
+  --ui-separator: rgb(84 84 88 / 0.36);
+  --ui-control-border: #6e6e73;
+  --ui-border-subtle: var(--ui-separator);
   --ui-hover: rgb(255 255 255 / 0.06);
   --ui-hover-strong: rgb(255 255 255 / 0.1);
   --ui-scrim: rgb(0 0 0 / 0.72);
@@ -71,9 +73,9 @@
   --ui-btn-ghost-hover: rgb(255 255 255 / 0.1);
   --ui-btn-ghost-fg: var(--ui-secondary);
 
-  --ui-chip-active-bg: #1e40af;
-  --ui-chip-active-fg: #eff6ff;
-  --ui-chip-active-border: #93c5fd;
+  --ui-chip-active-bg: var(--ui-segment-active-bg);
+  --ui-chip-active-fg: var(--ui-segment-active-fg);
+  --ui-chip-active-border: var(--ui-control-border);
 
   --glass-bg: rgba(255, 255, 255, 0.08);
   --glass-nav-bg: rgba(14, 18, 28, 0.62);
@@ -122,15 +124,17 @@ html.theme-light {
 
   --ui-bg: #f2f2f7;
   --ui-raised: #ffffff;
-  --ui-elevated: #ffffff;
+  --ui-elevated: #f2f2f7;
   --ui-sunken: rgb(24 24 27 / 0.05);
   --ui-modal: rgb(255 255 255 / 0.98);
   --ui-fg: #18181b;
   --ui-secondary: #3f3f46;
   --ui-muted: #52525b;
   --ui-soft: #52525b;
-  --ui-border: rgb(24 24 27 / 0.12);
-  --ui-border-subtle: rgb(24 24 27 / 0.08);
+  --ui-separator: rgb(60 60 67 / 0.29);
+  --ui-control-border: #6e6e73;
+  --ui-border: var(--ui-control-border);
+  --ui-border-subtle: var(--ui-separator);
   --ui-hover: rgb(24 24 27 / 0.05);
   --ui-hover-strong: rgb(24 24 27 / 0.08);
   --ui-scrim: rgb(15 23 42 / 0.48);
@@ -154,9 +158,9 @@ html.theme-light {
   --ui-sell-no-text: #c41e12;
   --ui-warn-fg: #b45309;
   --ui-accent-solid: #ff9500;
-  --ui-accent-on: #ffffff;
+  --ui-accent-on: #000000;
   --ui-success-solid: #248a3d;
-  --ui-success-on: #ffffff;
+  --ui-success-on: #000000;
   --ui-warn-solid: #ff9500;
   --ui-warn-on: #000000;
   --ui-danger-solid: #c41e12;
@@ -189,9 +193,9 @@ html.theme-light {
   --ui-btn-ghost-hover: rgb(24 24 27 / 0.06);
   --ui-btn-ghost-fg: #3f3f46;
 
-  --ui-chip-active-bg: #dbeafe;
-  --ui-chip-active-fg: #1e3a8a;
-  --ui-chip-active-border: #93c5fd;
+  --ui-chip-active-bg: var(--ui-segment-active-bg);
+  --ui-chip-active-fg: var(--ui-segment-active-fg);
+  --ui-chip-active-border: var(--ui-control-border);
 
   --glass-bg: rgba(255, 255, 255, 0.62);
   --glass-nav-bg: rgba(255, 255, 255, 0.72);

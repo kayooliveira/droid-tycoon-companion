@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { ArrowCounterClockwise, Check, DotsThreeVertical, Sparkle } from '@phosphor-icons/react'
+import { ArrowCounterClockwise, DotsThreeVertical } from '@phosphor-icons/react'
 import { uiIconProps } from '../components/ui/iconStyle'
 import { useTranslation } from 'react-i18next'
 import {
@@ -206,7 +206,6 @@ export function ProgressPage() {
                 variant="accent"
                 className="w-full min-h-12"
                 data-testid="progress-super-cta"
-                icon={<Sparkle {...uiIconProps} />}
                 onClick={() => setSuperConfirmOpen(true)}
               >
                 {t('progress.superRebirthCta')}
@@ -214,7 +213,6 @@ export function ProgressPage() {
               <div className="flex items-center gap-2 w-full min-w-0">
                 {!isPathComplete(progress) ? (
                   <Button
-                    icon={<Check {...uiIconProps} />}
                     onClick={handleCompleteClick}
                     disabled={trackInventory && !canComplete}
                     className="flex-1 min-w-0"
@@ -237,7 +235,6 @@ export function ProgressPage() {
             <div className="flex items-center gap-2 px-4 w-full min-w-0">
               <Button
                 className="btn-wide !mx-0 flex-1"
-                icon={<Check {...uiIconProps} />}
                 onClick={handleCompleteClick}
                 disabled={trackInventory && !canComplete}
                 data-testid="progress-complete-main"
@@ -335,7 +332,6 @@ export function ProgressPage() {
             <Button
               size="sm"
               variant="accent"
-              icon={<Sparkle {...uiIconProps} />}
               onClick={() => {
                 setMoreOpen(false)
                 setSuperConfirmOpen(true)

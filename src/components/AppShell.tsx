@@ -24,8 +24,8 @@ import { MobileFloatingNav } from './MobileFloatingNav'
 const desktopNav = [
   { to: '/', labelKey: 'nav.dashboard', icon: SquaresFour, end: true as const },
   { to: '/progress', labelKey: 'nav.progress', icon: TreeStructure },
-  { to: '/cycles', labelKey: 'nav.cycles', icon: MapTrifold },
   { to: '/inventory', labelKey: 'nav.inventory', icon: Backpack },
+  { to: '/cycles', labelKey: 'nav.cycles', icon: MapTrifold },
   { to: '/sell', labelKey: 'nav.sell', icon: Storefront },
   { to: '/droiddex', labelKey: 'nav.droiddex', icon: Sparkle },
   { to: '/fusion', labelKey: 'nav.fusion', icon: Flask },

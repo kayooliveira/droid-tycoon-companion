@@ -42,10 +42,11 @@ const TEXT_PAIRS: Array<[string, string]> = [
   ['--ui-danger-on', '--ui-danger-solid'],
 ]
 
-const UI_BOUNDARY_PAIRS: Array<[string, string]> = [
-  ['--ui-border', '--ui-bg'],
-  ['--ui-border', '--ui-raised'],
-  ['--ui-border-subtle', '--ui-raised'],
+/** Interactive control edges (inputs, segments, toggles off-state) — not decorative hairlines. */
+const UI_CONTROL_BOUNDARY_PAIRS: Array<[string, string]> = [
+  ['--ui-control-border', '--ui-bg'],
+  ['--ui-control-border', '--ui-raised'],
+  ['--ui-control-border', '--ui-search-bg'],
 ]
 
 function assertTheme(name: string, vars: ThemeVars) {
@@ -61,7 +62,7 @@ function assertTheme(name: string, vars: ThemeVars) {
     ).toBeGreaterThanOrEqual(4.5)
   }
 
-  for (const [edgeKey, surfaceKey] of UI_BOUNDARY_PAIRS) {
+  for (const [edgeKey, surfaceKey] of UI_CONTROL_BOUNDARY_PAIRS) {
     const edge = resolveColor(edgeKey, vars)
     const surface = resolveColor(surfaceKey, vars)
     expect(edge, `${name} ${edgeKey}`).not.toBeNull()

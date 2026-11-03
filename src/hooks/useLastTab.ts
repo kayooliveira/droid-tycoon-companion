@@ -7,7 +7,7 @@ const TAB_PATHS = new Set(['/', '/progress', '/inventory', '/cycles'])
 
 function pathToTab(pathname: string): string | null {
   if (TAB_PATHS.has(pathname)) return pathname
-  if (['/sell', '/droiddex', '/fusion', '/about', '/settings'].includes(pathname)) return '/cycles'
+  if (['/sell', '/droiddex', '/fusion', '/about', '/settings'].includes(pathname)) return '/settings'
   return null
 }
 

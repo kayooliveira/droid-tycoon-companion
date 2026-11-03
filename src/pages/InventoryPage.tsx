@@ -246,16 +246,14 @@ export function InventoryPage() {
           </div>
         ) : null}
         {filterMode === 'all' ? (
-          <div className="px-4 pb-2">
-            <ChipRadioGroup
-              ariaLabel={t('inventory.filterNeed')}
-              testId="inventory-needed-chips"
-              scrollX
-              value={neededFilter}
-              onChange={(v) => setNeededFilter(v as InventoryFilters['neededFilter'])}
-              options={neededOptions}
-            />
-          </div>
+          <SegmentedControl
+            compact
+            className="!mx-4 !mb-3"
+            ariaLabel={t('inventory.filterNeed')}
+            value={neededFilter}
+            onChange={setNeededFilter}
+            options={neededOptions}
+          />
         ) : null}
       </div>
 

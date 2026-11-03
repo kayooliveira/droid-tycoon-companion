@@ -317,6 +317,10 @@ html.theme-light {
     filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.35));
   }
 
+  .tier-droid-backdrop__placeholder {
+    color: var(--ui-secondary);
+  }
+
   .tier-droid-backdrop__initials {
     position: relative;
     z-index: 2;

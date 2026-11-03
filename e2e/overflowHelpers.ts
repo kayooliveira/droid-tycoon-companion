@@ -275,11 +275,7 @@ export async function auditInventoryCards(page: Page): Promise<InventoryCardIssu
       }
     }
 
-    for (const testId of [
-      'inventory-rarity-chips-all',
-      'inventory-tier-chips-all',
-      'inventory-needed-chips-all',
-    ]) {
+    for (const testId of ['inventory-rarity-chips-all', 'inventory-tier-chips-all']) {
       const chip = document.querySelector(`[data-testid="${testId}"]`) as HTMLElement | null
       if (!chip) continue
       const style = getComputedStyle(chip)
