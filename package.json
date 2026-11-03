@@ -12,6 +12,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "preview": "vite preview --host",
+    "preview:e2e": "npm run build && vite preview --host 127.0.0.1 --port 4173",
     "generate:icons": "node scripts/generate-icons.mjs",
     "sync:wiki-images": "node scripts/sync-wiki-images.mjs",
     "generate:ux-screenshots": "UX_ARTIFACTS_DIR=/opt/cursor/artifacts playwright test e2e/ux-screenshots.spec.ts",

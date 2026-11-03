@@ -1,5 +1,5 @@
 import { ArrowsIn, ArrowsOut } from '@phosphor-icons/react'
-import { memo } from 'react'
+import { memo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getRebirth } from '../../domain/gameData'
 import { evaluateRequirements, metRequirementCount } from '../../domain/requirements'
@@ -23,6 +23,7 @@ type RebirthListItemProps = {
   trackInventory: boolean
   open: boolean
   onToggle: () => void
+  highlighted: boolean
 }
 
 const RebirthListItem = memo(function RebirthListItem({
@@ -34,6 +35,7 @@ const RebirthListItem = memo(function RebirthListItem({
   trackInventory,
   open,
   onToggle,
+  highlighted,
 }: RebirthListItemProps) {
   const { t } = useTranslation()
   const entry = getRebirth(pathId, rebirth)
@@ -42,7 +44,17 @@ const RebirthListItem = memo(function RebirthListItem({
   const checks = evaluateRequirements(entry.requirements, inventory, trackInventory)
 
   return (
-    <GlassCard className={active ? 'ring-1 ring-holo-400/40' : ''}>
+    <GlassCard
+      id={`progress-step-${rebirth}`}
+      data-highlighted={highlighted ? 'true' : undefined}
+      className={
+        highlighted
+          ? 'ring-2 ring-holo-400/70 bg-holo-500/10 transition-colors duration-500'
+          : active
+            ? 'ring-1 ring-holo-400/40'
+            : ''
+      }
+    >
       <button
         type="button"
         className="w-full flex items-center gap-3 text-left"
@@ -73,7 +85,10 @@ const RebirthListItem = memo(function RebirthListItem({
       {open ? (
         <div className="mt-3 space-y-2 border-t border-ui pt-3">
           {entry.note ? <p className="text-xs text-ui-warn/90">{entry.note}</p> : null}
-          {!done && checks.map((c) => <RequirementCard key={c.requirement.droidId} check={c} />)}
+          {!done &&
+            checks.map((c) => (
+              <RequirementCard key={c.requirement.droidId} check={c} trackInventory={trackInventory} />
+            ))}
           {!done && trackInventory ? (
             <ProgressBar value={(metRequirementCount(checks) / 3) * 100} />
           ) : null}
@@ -94,24 +109,41 @@ export function ProgressRebirthList({
   nextRebirth,
   inventory,
   trackInventory,
+  navTarget,
+  highlightRebirth,
+  onNavHandled,
 }: {
   pathId: string
   rebirthNumbers: number[]
   nextRebirth: number
   inventory: InventoryUnit[]
   trackInventory: boolean
+  navTarget?: { pathId: string; rebirth: number } | null
+  highlightRebirth?: number | null
+  onNavHandled?: () => void
 }) {
   const { t } = useTranslation()
   const listAllExpanded = useAppStore((s) => s.settings.progressListAllExpanded)
   const updateSettings = useAppStore((s) => s.updateSettings)
   const persisted = listAllExpanded !== false
 
-  const { isExpanded, toggleOne, toggleAll, allExpanded } = useProgressListExpansion(
+  const { isExpanded, toggleOne, toggleAll, allExpanded, expandOne } = useProgressListExpansion(
     rebirthNumbers,
     pathId,
     persisted,
     (value) => updateSettings({ progressListAllExpanded: value }),
   )
+
+  useEffect(() => {
+    if (!navTarget || navTarget.pathId !== pathId) return
+    expandOne(navTarget.rebirth)
+    const id = window.requestAnimationFrame(() => {
+      const el = document.getElementById(`progress-step-${navTarget.rebirth}`)
+      el?.scrollIntoView?.({ behavior: 'smooth', block: 'center' })
+      onNavHandled?.()
+    })
+    return () => window.cancelAnimationFrame(id)
+  }, [navTarget, pathId, expandOne, onNavHandled])
 
   const toggleLabel = allExpanded ? t('progress.collapseAll') : t('progress.expandAll')
   const toggleAria = allExpanded ? t('progress.collapseAllAria') : t('progress.expandAllAria')
@@ -146,6 +178,7 @@ export function ProgressRebirthList({
           trackInventory={trackInventory}
           open={isExpanded(rebirth)}
           onToggle={() => toggleOne(rebirth)}
+          highlighted={highlightRebirth === rebirth}
         />
       ))}
     </div>

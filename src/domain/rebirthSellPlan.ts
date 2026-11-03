@@ -57,7 +57,7 @@ export function lastRebirthNeedingUnit(
   return lastRebirthBlockingSell(pathId, droidId, tier)
 }
 
-function lastRebirthNeedingDroidOnPath(pathId: string, droidId: string): number | null {
+export function lastRebirthNeedingDroidOnPath(pathId: string, droidId: string): number | null {
   const cycle = cycleById.get(pathId)
   if (!cycle) return null
   let last = 0
@@ -81,7 +81,7 @@ function pathsNeedingDroidAfter(
   })
 }
 
-function fusionNeedsForIngredient(
+export function fusionNeedsForIngredient(
   droidId: string,
   pathId: string,
   afterRebirth: number,

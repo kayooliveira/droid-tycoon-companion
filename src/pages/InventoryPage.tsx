@@ -16,6 +16,7 @@ import { GlassCard } from '../components/ui/GlassCard'
 import { Modal } from '../components/ui/Modal'
 import { QuantityStepper } from '../components/ui/QuantityStepper'
 import { useToast } from '../components/ToastProvider'
+import { droidMatchesQuery } from '../lib/droidNameMatch'
 import {
   usePersistedInventoryFilters,
   type InventoryFilters,
@@ -95,7 +96,7 @@ export function InventoryPage() {
     return inventory
       .filter((u) => {
         const d = droidById.get(u.droidId)
-        if (search && !d?.name.toLowerCase().includes(search.toLowerCase())) return false
+        if (search && d && !droidMatchesQuery(search, d.name, d.id)) return false
         if (rarityFilter !== 'all' && d?.baseRarity.toLowerCase() !== rarityFilter) return false
         if (tierFilter !== 'all' && u.tier !== tierFilter) return false
         const needed = droidHasFutureNeedOnPath(progress.pathId, progress.nextRebirth, u.droidId)
@@ -111,7 +112,7 @@ export function InventoryPage() {
   const pickerDroids = useMemo(() => {
     const q = pickerSearch.toLowerCase()
     return gameData.droids
-      .filter((d) => !q || d.name.toLowerCase().includes(q))
+      .filter((d) => !q || droidMatchesQuery(q, d.name, d.id))
       .slice(0, 40)
   }, [pickerSearch])
 

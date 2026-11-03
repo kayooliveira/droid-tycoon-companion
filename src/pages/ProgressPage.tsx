@@ -1,5 +1,6 @@
 import { motion } from 'motion/react'
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { ArrowCounterClockwise, Check, DotsThreeVertical, Sparkle } from '@phosphor-icons/react'
 import { SegmentedControl } from '../components/ui/SegmentedControl'
 import { uiIconProps } from '../components/ui/iconStyle'
@@ -31,7 +32,15 @@ import { GlassCard } from '../components/ui/GlassCard'
 import { Modal } from '../components/ui/Modal'
 import { useAppStore } from '../store/useAppStore'
 import { useToast } from '../components/ToastProvider'
+import {
+  ProgressDroidSearch,
+  type ProgressNavTarget,
+} from '../components/progress/ProgressDroidSearch'
 import { ProgressRebirthList } from '../components/progress/ProgressRebirthList'
+import {
+  cycleNumberFromPathId,
+  pathIdFromCycleNumber,
+} from '../domain/progressDroidSearch'
 import { SellAfterRebirthList } from '../components/SellAfterRebirthList'
 import { ProgressPdfExport } from '../components/ProgressPdfExport'
 import { HelpHint } from '../components/ui/HelpHint'
@@ -49,11 +58,17 @@ export function ProgressPage() {
   const progress = useAppStore((s) => s.progress)
   const inventory = useAppStore((s) => s.inventory)
   const trackInventory = useAppStore((s) => s.settings.trackInventory)
+  const switchPath = useAppStore((s) => s.switchPath)
   const completeRebirthAdvance = useAppStore((s) => s.completeRebirthAdvance)
   const undoRebirthStep = useAppStore((s) => s.undoRebirthStep)
   const superRebirthAdvance = useAppStore((s) => s.superRebirthAdvance)
   const animations = useAppStore((s) => s.settings.animationsEnabled)
   const { push } = useToast()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [navTarget, setNavTarget] = useState<ProgressNavTarget | null>(null)
+  const [highlightRebirth, setHighlightRebirth] = useState<number | null>(null)
+  const deepLinkHandled = useRef(false)
+  const searchQueryFromUrl = searchParams.get('q') ?? ''
 
   const current = getRebirth(progress.pathId, progress.nextRebirth)
   const canComplete = current
@@ -103,6 +118,33 @@ export function ProgressPage() {
     [progress.pathId],
   )
 
+  const goToRebirthStep = useCallback(
+    (target: ProgressNavTarget) => {
+      if (target.pathId !== progress.pathId) {
+        switchPath(target.pathId)
+      }
+      setMode('list')
+      setNavTarget(target)
+      setHighlightRebirth(target.rebirth)
+      window.setTimeout(() => setHighlightRebirth(null), 2600)
+      const next = new URLSearchParams(searchParams)
+      next.set('ciclo', String(cycleNumberFromPathId(target.pathId)))
+      next.set('passo', String(target.rebirth))
+      setSearchParams(next, { replace: false })
+    },
+    [progress.pathId, searchParams, setSearchParams, switchPath],
+  )
+
+  useEffect(() => {
+    if (deepLinkHandled.current) return
+    const ciclo = Number(searchParams.get('ciclo'))
+    const passo = Number(searchParams.get('passo'))
+    if (!Number.isFinite(ciclo) || !Number.isFinite(passo) || ciclo < 1 || passo < 1) return
+    deepLinkHandled.current = true
+    const pathId = pathIdFromCycleNumber(ciclo)
+    goToRebirthStep({ pathId, rebirth: passo })
+  }, [goToRebirthStep, searchParams])
+
   return (
     <div className="space-y-5 pb-6 md:pb-0" data-testid="progress-page">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -121,6 +163,8 @@ export function ProgressPage() {
           ]}
         />
       </div>
+
+      <ProgressDroidSearch initialQuery={searchQueryFromUrl} onNavigateToStep={goToRebirthStep} />
 
       {mode === 'focus' ? (
         <GlassCard className="space-y-4">
@@ -231,6 +275,9 @@ export function ProgressPage() {
           nextRebirth={progress.nextRebirth}
           inventory={inventory}
           trackInventory={trackInventory}
+          navTarget={navTarget}
+          highlightRebirth={highlightRebirth}
+          onNavHandled={() => setNavTarget(null)}
         />
       )}
 
