@@ -81,13 +81,13 @@ export function DashboardPage() {
         <div className="flex flex-wrap gap-2 pt-1">
           {canComplete || !trackInventory ? (
             <Link to="/progress">
-              <Button icon={<TreeStructure {...uiIconProps} weight="fill" />}>
+              <Button icon={<TreeStructure {...uiIconProps} />}>
                 {t('home.primaryComplete')}
               </Button>
             </Link>
           ) : (
             <Link to="/progress">
-              <Button variant="secondary" icon={<TreeStructure {...uiIconProps} weight="fill" />}>
+              <Button variant="secondary" icon={<TreeStructure {...uiIconProps} />}>
                 {t('home.primaryViewProgress')}
               </Button>
             </Link>
@@ -121,7 +121,7 @@ export function DashboardPage() {
           <p className="text-xs text-ui-soft">{t('home.sellEmpty')}</p>
         )}
         <Link to="/sell" className="inline-block pt-1">
-          <Button size="sm" variant="secondary" icon={<Storefront {...uiIconProps} weight="fill" />}>
+          <Button size="sm" variant="secondary" icon={<Storefront {...uiIconProps} />}>
             {t('home.sellLink')}
           </Button>
         </Link>
@@ -154,7 +154,7 @@ export function DashboardPage() {
               to={to}
               className="surface-card p-3 flex flex-col items-center gap-2 text-center min-h-[5.5rem] justify-center hover:bg-ui-hover transition-colors"
             >
-              <Icon {...uiIconProps} className="text-ui-accent" weight="fill" />
+              <Icon {...uiIconProps} className="text-ui-accent" />
               <span className="text-[11px] font-medium leading-tight">{label}</span>
             </Link>
           ))}

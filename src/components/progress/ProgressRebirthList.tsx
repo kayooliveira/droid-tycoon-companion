@@ -160,9 +160,9 @@ export function ProgressRebirthList({
           className="inline-flex items-center gap-1.5 rounded-full border border-ui bg-ui-hover/80 backdrop-blur-md px-3 py-1.5 text-xs font-medium text-ui-secondary hover:bg-ui-hover-strong hover:text-ui-fg transition-colors min-h-9"
         >
           {allExpanded ? (
-            <ArrowsIn {...uiIconProps} weight="fill" className="size-4 shrink-0" />
+            <ArrowsIn {...uiIconProps} className="size-4 shrink-0" />
           ) : (
-            <ArrowsOut {...uiIconProps} weight="fill" className="size-4 shrink-0" />
+            <ArrowsOut {...uiIconProps} className="size-4 shrink-0" />
           )}
           {toggleLabel}
         </button>

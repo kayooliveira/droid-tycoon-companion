@@ -70,11 +70,11 @@ export function SellCenterPage() {
 
       {allEmpty ? (
         <GlassCard className="p-6 flex flex-col items-center text-center gap-3" data-testid="sell-empty-state">
-          <Package {...uiIconProps} weight="fill" className="size-10 text-ui-accent" />
+          <Package {...uiIconProps} className="size-10 text-ui-accent" />
           <p className="text-sm font-medium">{t('sell.emptyStateTitle')}</p>
           <p className="text-xs text-ui-soft max-w-xs">{t('sell.emptyStateBody')}</p>
           <Link to="/inventory">
-            <Button size="sm" icon={<Package {...uiIconProps} weight="fill" />}>
+            <Button size="sm" icon={<Package {...uiIconProps} />}>
               {t('sell.emptyStateCta')}
             </Button>
           </Link>

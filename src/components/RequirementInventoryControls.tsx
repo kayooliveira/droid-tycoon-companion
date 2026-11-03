@@ -47,7 +47,7 @@ export function RequirementInventoryControls({
           updateInventoryUnit(unit.id, { quantity: unit.quantity - 1 })
         }
       }
-    })
+    }, { name: droidName, tier: tierLabel, delta: delta > 0 ? 1 : -1 })
   }
 
   return (
@@ -69,7 +69,7 @@ export function RequirementInventoryControls({
           'text-ui-fg hover:bg-ui-hover disabled:opacity-40 disabled:pointer-events-none transition-colors',
         )}
       >
-        <Minus {...uiIconProps} weight="fill" />
+        <Minus {...uiIconProps} />
       </button>
       <span
         className="flex-1 text-center text-sm font-semibold tabular-nums text-ui-fg"
@@ -88,7 +88,7 @@ export function RequirementInventoryControls({
           'text-ui-fg hover:bg-ui-hover transition-colors',
         )}
       >
-        <Plus {...uiIconProps} weight="fill" />
+        <Plus {...uiIconProps} />
       </button>
     </div>
   )

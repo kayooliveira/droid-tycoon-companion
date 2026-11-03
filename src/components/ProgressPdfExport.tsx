@@ -46,9 +46,9 @@ export function ProgressPdfExport() {
         locale: locale === 'pt-BR' ? 'pt-BR' : 'en',
       })
       await downloadOrShare(blob, `droiddeck-meu-progresso-${progress.pathId}.pdf`)
-      push(t('exportProgress.pdfDone'))
+      push(t('exportProgress.pdfDone'), { variant: 'success' })
     } catch {
-      push(t('exportCycle.failed'))
+      push(t('exportCycle.failed'), { variant: 'error' })
     } finally {
       setBusy(false)
     }

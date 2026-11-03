@@ -28,7 +28,7 @@ export function DownloadCycleMenu({ compact }: { compact?: boolean }) {
           locale: locale === 'pt-BR' ? 'pt-BR' : 'en',
         })
         await downloadOrShare(blob, `droid-ciclo-${progress.pathId}.pdf`, 'application/pdf')
-        push(t('exportCycle.pdfDone'))
+        push(t('exportCycle.pdfDone'), { variant: 'success' })
       } else {
         const blobs = await exportCyclePngChunks({
           pathId: progress.pathId,
@@ -44,10 +44,10 @@ export function DownloadCycleMenu({ compact }: { compact?: boolean }) {
             'image/png',
           )
         }
-        push(t('exportCycle.pngDone', { count: blobs.length }))
+        push(t('exportCycle.pngDone', { count: blobs.length }), { variant: 'success' })
       }
     } catch {
-      push(t('exportCycle.failed'))
+      push(t('exportCycle.failed'), { variant: 'error' })
     } finally {
       setBusy(null)
     }
