@@ -105,7 +105,7 @@ export function SellCenterPage() {
         <>
           {safeNow.length > 0 ? (
             <section className="dc-section" data-testid="sell-center-safe-now">
-              <h2 className="dc-section-header !mb-0">{t('sell.safeNowTitle')}</h2>
+              <h2 className="dc-section-header">{t('sell.safeNowTitle')}</h2>
               <InsetGroup footer={t('sell.safeNowHint', { rebirth: completedRebirth })}>
                 {safeNow.map(({ item }, idx) => renderItemRow(item, idx))}
               </InsetGroup>
@@ -122,7 +122,7 @@ export function SellCenterPage() {
                   : 'sell.sellableGroupFooter'
             return (
               <section key={cat} className="dc-section">
-                <h2 className="dc-section-header !mb-0">{t(`sell.${cat}`)}</h2>
+                <h2 className="dc-section-header">{t(`sell.${cat}`)}</h2>
                 <InsetGroup footer={t(footerKey)}>
                   {groups[cat].map((item, idx) => renderItemRow(item, idx))}
                 </InsetGroup>

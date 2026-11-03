@@ -22,13 +22,21 @@ async function seed(page: import('@playwright/test').Page) {
   await expect(page.getByTestId('home-hub')).toBeVisible({ timeout: 25_000 })
 }
 
+const tabTestId = (path: string) =>
+  path === '/' ? 'mobile-nav-home' : `mobile-nav-${path.slice(1)}`
+
+async function clickTabAtCoordinates(page: import('@playwright/test').Page, testId: string) {
+  const locator = page.getByTestId(testId)
+  await expect(locator).toBeVisible()
+  const box = await locator.boundingBox()
+  expect(box).toBeTruthy()
+  await page.mouse.click(box!.x + box!.width / 2, box!.y + box!.height / 2)
+}
+
 test('mobile tab bar navigates reliably under rapid taps', async ({ page }) => {
   test.setTimeout(120_000)
   await page.setViewportSize({ width: 390, height: 844 })
   await seed(page)
-
-  const tabTestId = (path: string) =>
-    path === '/' ? 'mobile-nav-home' : `mobile-nav-${path.slice(1)}`
 
   for (const start of TABS) {
     await page.goto(start.path)
@@ -36,7 +44,7 @@ test('mobile tab bar navigates reliably under rapid taps', async ({ page }) => {
 
     for (let round = 0; round < 2; round++) {
       for (const tab of TABS) {
-        await page.getByTestId(tabTestId(tab.path)).click()
+        await clickTabAtCoordinates(page, tabTestId(tab.path))
         if (tab.path === '/') {
           await expect(page).toHaveURL(/\/$/, { timeout: 10_000 })
         } else {
@@ -46,7 +54,7 @@ test('mobile tab bar navigates reliably under rapid taps', async ({ page }) => {
       }
     }
 
-    await page.getByTestId('mobile-nav-home').click()
+    await clickTabAtCoordinates(page, 'mobile-nav-home')
     await expect(page).toHaveURL(/\/$/, { timeout: 10_000 })
     await expect(page.getByTestId('home-hub')).toBeVisible({ timeout: 15_000 })
   }
@@ -56,18 +64,6 @@ test('tab bar navigates while Mais sheet is open', async ({ page }) => {
   test.setTimeout(60_000)
   await page.setViewportSize({ width: 390, height: 844 })
   await seed(page)
-
-  const tabTestId = (path: string) =>
-    path === '/' ? 'mobile-nav-home' : `mobile-nav-${path.slice(1)}`
-
-  const tapTab = async (path: string) => {
-    const id = tabTestId(path)
-    await page.waitForSelector(`[data-testid="${id}"]`, { state: 'attached' })
-    await page.evaluate((testId) => {
-      const el = document.querySelector(`[data-testid="${testId}"]`) as HTMLButtonElement | null
-      el?.click()
-    }, id)
-  }
 
   const tabsWithSheetOpen = [
     { path: '/progress', hub: 'progress-page' },
@@ -80,7 +76,7 @@ test('tab bar navigates while Mais sheet is open', async ({ page }) => {
     await page.getByTestId('mobile-more-nav').click()
     await expect(page.getByTestId('nav-more-modal')).toBeVisible()
 
-    await tapTab(tab.path)
+    await clickTabAtCoordinates(page, tabTestId(tab.path))
     await expect(page.getByTestId('nav-more-modal')).toHaveCount(0, { timeout: 8000 })
     await expect(page).not.toHaveURL(/\/settings/)
     await expect(page).toHaveURL(new RegExp(`${tab.path}(\\?|$)`), { timeout: 10_000 })
@@ -90,18 +86,16 @@ test('tab bar navigates while Mais sheet is open', async ({ page }) => {
   await page.goto('/cycles')
   await page.getByTestId('mobile-more-nav').click()
   await expect(page.getByTestId('nav-more-modal')).toBeVisible()
-  await tapTab('/')
+  await clickTabAtCoordinates(page, 'mobile-nav-home')
   await expect(page.getByTestId('nav-more-modal')).toHaveCount(0, { timeout: 8000 })
   await expect(page).toHaveURL(/\/$/)
   await expect(page.getByTestId('home-hub')).toBeVisible()
 
   await page.goto('/inventory')
-  const tapMore = () =>
-    page.evaluate(() => {
-      ;(document.querySelector('[data-testid="mobile-more-nav"]') as HTMLButtonElement | null)?.click()
-    })
-  await tapMore()
+  await page.getByTestId('mobile-more-nav').click()
   await expect(page.getByTestId('nav-more-modal')).toBeVisible()
-  await tapMore()
+  const moreBox = await page.getByTestId('mobile-more-nav').boundingBox()
+  expect(moreBox).toBeTruthy()
+  await page.mouse.click(moreBox!.x + moreBox!.width / 2, moreBox!.y + moreBox!.height / 2)
   await expect(page.getByTestId('nav-more-modal')).toHaveCount(0, { timeout: 8000 })
 })

@@ -52,7 +52,7 @@ export function ProgressUnifiedRebirthPanel({
 
   return (
     <ScreenSection testId="progress-unified-section">
-      <h2 className="dc-section-header !mb-0">
+      <h2 className="dc-section-header">
         {t('progress.listRebirthHeading', { n: rebirth })}
       </h2>
       <InsetGroup testId="progress-unified-group">

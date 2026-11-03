@@ -291,11 +291,6 @@
     bottom: calc(var(--e2e-safe-bottom) + 12px);
   }
 
-  html[data-overlay-open] nav[data-testid='mobile-floating-nav'] {
-    visibility: hidden;
-    pointer-events: none;
-  }
-
   html {
     scroll-padding-top: calc(3.5rem + env(safe-area-inset-top, 0px));
   }

@@ -49,7 +49,7 @@ export function FusionLabPage() {
   return (
     <TabScrollLayout title={t('fusion.title')} testId="fusion-page">
       <section className="dc-section">
-        <h2 className="dc-section-header !mb-0">{t('fusion.rulesTitle')}</h2>
+        <h2 className="dc-section-header">{t('fusion.rulesTitle')}</h2>
         <InsetGroup testId="fusion-rules-card" footer={t('fusion.rulesFootnote')}>
         {gameData.fusionRules.map((rule) => {
           const key = fusionRuleKey(rule)
@@ -74,7 +74,7 @@ export function FusionLabPage() {
       </section>
 
       <section className="dc-section">
-        <h2 className="dc-section-header !mb-0">{t('fusion.helpsNext')}</h2>
+        <h2 className="dc-section-header">{t('fusion.helpsNext')}</h2>
         {helpful.length > 0 ? (
           helpful.map((f) => <RecipeCard key={f.id} fusion={f} />)
         ) : (
@@ -89,7 +89,7 @@ export function FusionLabPage() {
       </section>
 
       <section className="dc-section">
-        <h2 className="dc-section-header !mb-0">{t('fusion.recipes')}</h2>
+        <h2 className="dc-section-header">{t('fusion.recipes')}</h2>
         <div className="dc-search-wrap !px-0">
           <SearchInput
             placeholder={t('fusion.search')}
@@ -118,7 +118,7 @@ function RecipeCard({ fusion }: { fusion: FusionRecipe }) {
   const { t } = useTranslation()
   const result = droidById.get(fusion.resultDroidId)
   return (
-    <InsetGroup className="mb-3">
+    <InsetGroup>
       <div className="dc-row dc-row-droid">
         {result ? (
           <DroidImage droid={result} tier={showcaseTierForDroid(result)} size="sm" className="!h-[50px] !w-[50px] rounded-[11px]" />

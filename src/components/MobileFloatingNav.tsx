@@ -73,7 +73,7 @@ export function MobileFloatingNav({
 
   return (
     <nav
-      className="md:hidden fixed z-[120] inset-x-3 bottom-[calc(env(safe-area-inset-bottom,0px)+12px)]"
+      className="md:hidden fixed z-[120] inset-x-3 bottom-[calc(env(safe-area-inset-bottom,0px)+12px)] pointer-events-auto"
       aria-label={t('a11y.mainNav')}
       data-testid="mobile-floating-nav"
     >

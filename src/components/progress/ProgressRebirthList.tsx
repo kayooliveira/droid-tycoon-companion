@@ -212,9 +212,9 @@ export function ProgressRebirthList({
   const toggleAria = anyExpanded ? t('progress.collapseAllAria') : t('progress.expandAllAria')
 
   return (
-    <ScreenSection className="gap-[var(--space-3)]" testId="progress-rebirth-list">
-      <div className="dc-section-header-row !mb-0">
-        <h2 className="dc-section-header !mb-0">{t('progress.rebirthListSection')}</h2>
+    <ScreenSection testId="progress-rebirth-list">
+      <div className="dc-section-header-row">
+        <h2 className="dc-section-header">{t('progress.rebirthListSection')}</h2>
         <button
           type="button"
           data-testid="progress-list-expand-all"

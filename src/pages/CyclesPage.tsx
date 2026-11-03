@@ -62,6 +62,7 @@ export function CyclesPage() {
         </div>
       </InsetGroup>
 
+      <div className="dc-card-list">
       {rebirths.map((entry) => {
         const open = openRebirth === entry.rebirth
         return (
@@ -114,8 +115,11 @@ export function CyclesPage() {
           </InsetGroup>
         )
       })}
+      </div>
 
-      <h2 className="dc-section-header">{t('cycles.superSection')}</h2>
+      <h2 className="dc-section-header" data-testid="cycles-super-section-header">
+        {t('cycles.superSection')}
+      </h2>
       <InsetGroup>
         <div className="dc-row">
           <div className="dc-row-main">
