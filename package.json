@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "oxlint && eslint src && bash scripts/check-theme-tokens.sh",
+    "lint": "oxlint && eslint src && bash scripts/check-theme-tokens.sh && bash scripts/check-design-tokens.sh",
     "typecheck": "tsc -b --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",

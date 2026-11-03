@@ -10,6 +10,7 @@ import { ToastProvider, useToast } from './components/ToastProvider'
 import { DashboardPage } from './pages/DashboardPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { OnboardingPage } from './pages/OnboardingPage'
+import { DesignSystemPage } from './pages/DesignSystemPage'
 import { setDocumentLanguage } from './i18n'
 import { reloadForPwaUpdate } from './lib/pwaUpdate'
 import { applyTheme, useAppStore } from './store/useAppStore'
@@ -119,6 +120,7 @@ export default function App() {
         <PwaRefreshListener />
         <Routes>
           <Route path="/onboarding" element={<OnboardingPage />} />
+          <Route path="/design" element={<DesignSystemPage />} />
           <Route
             path="/"
             element={
