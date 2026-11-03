@@ -3,11 +3,13 @@ import { useTranslation } from 'react-i18next'
 import { droidById, gameData, getRebirth } from '../domain/gameData'
 import type { FusionRecipe } from '../domain/types'
 import { DroidImage } from '../components/DroidImage'
+import { showcaseTierForDroid } from '../components/ui/tierVisuals'
 import { Badge } from '../components/ui/Badge'
 import { GlassCard } from '../components/ui/GlassCard'
 import { droidMatchesQuery } from '../lib/droidNameMatch'
 import { useAppStore } from '../store/useAppStore'
-
+import { PageScreen } from '../components/layout/PageScreen'
+import { ScreenHero } from '../components/layout/ScreenHero'
 const FUSION_RULE_KEY: Record<string, string> = {
   'tier-up': 'fusion.rules.tierUp',
   random: 'fusion.rules.random',
@@ -41,13 +43,12 @@ export function FusionLabPage() {
   const showResultTierRule = gameData.fusions.some((f) => f.resultTierRule)
 
   return (
-    <div className="space-y-6" data-testid="fusion-page">
-      <div>
-        <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('fusion.title')}</h1>
-        <Badge tone="warn" className="mt-2">
-          {t('fusion.partialBadge')}
-        </Badge>
-      </div>
+    <PageScreen testId="fusion-page" className="space-y-6">
+      <ScreenHero
+        title={t('fusion.title')}
+        kicker={t('nav.fusion')}
+        action={<Badge tone="warn">{t('fusion.partialBadge')}</Badge>}
+      />
 
       <GlassCard className="space-y-3 text-sm" data-testid="fusion-rules-card">
         <p className="font-medium text-ui-fg">{t('fusion.rulesTitle')}</p>
@@ -109,7 +110,7 @@ export function FusionLabPage() {
           recipes.map((f) => <RecipeCard key={f.id} fusion={f} />)
         )}
       </section>
-    </div>
+    </PageScreen>
   )
 }
 
@@ -119,7 +120,9 @@ function RecipeCard({ fusion }: { fusion: FusionRecipe }) {
   return (
     <GlassCard className="py-3 px-4">
       <div className="flex items-center gap-3 flex-wrap">
-        {result ? <DroidImage droid={result} size="sm" /> : null}
+        {result ? (
+          <DroidImage droid={result} tier={showcaseTierForDroid(result)} size="sm" />
+        ) : null}
         <div className="min-w-0 flex-1">
           <p className="font-medium text-sm">{result?.name ?? fusion.resultDroidId}</p>
         </div>
@@ -135,7 +138,14 @@ function RecipeCard({ fusion }: { fusion: FusionRecipe }) {
               key={ing.droidId}
               className="inline-flex items-center gap-2 rounded-lg bg-ui-hover px-2 py-1 text-xs"
             >
-              {d ? <DroidImage droid={d} size="sm" className="!h-8 !w-8" /> : null}
+              {d ? (
+                <DroidImage
+                  droid={d}
+                  tier={showcaseTierForDroid(d)}
+                  size="sm"
+                  className="!h-8 !w-8"
+                />
+              ) : null}
               {d?.name ?? ing.droidId} {t('common.quantity', { n: ing.quantity })}
             </span>
           )

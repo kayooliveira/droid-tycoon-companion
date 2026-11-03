@@ -7,6 +7,9 @@ import { useAppStore } from '../store/useAppStore'
 import { DroidImage } from './DroidImage'
 import { RequirementInventoryControls } from './RequirementInventoryControls'
 import { Badge } from './ui/Badge'
+import { TierBadge } from './ui/TierBadge'
+import { tierCardAccentClass, tierCardGlowClass } from './ui/tierVisuals'
+import { cn } from '../lib/utils'
 import { GlassCard } from './ui/GlassCard'
 
 const statusTone: Record<string, 'success' | 'warn' | 'danger' | 'info' | 'default'> = {
@@ -36,8 +39,15 @@ export function RequirementCard({
   const showInventoryActions = trackInventory
 
   return (
-    <GlassCard className="flex gap-3 items-start" data-testid="requirement-card">
-      <DroidImage droid={droid} className="shrink-0" />
+    <GlassCard
+      className={cn(
+        'flex gap-3 items-start',
+        tierCardAccentClass(check.requirement.rarity),
+        tierCardGlowClass(check.requirement.rarity),
+      )}
+      data-testid="requirement-card"
+    >
+      <DroidImage droid={droid} tier={check.requirement.rarity} className="shrink-0" />
       <div className="min-w-0 flex-1">
         <div className="flex items-start gap-2 min-w-0">
           <p
@@ -57,9 +67,9 @@ export function RequirementCard({
           ) : null}
         </div>
         <div className="mt-1.5 flex flex-wrap items-center gap-2">
-          <Badge tone="info" className="shrink-0">
+          <TierBadge tier={check.requirement.rarity} className="shrink-0">
             {formatTierName(check.requirement.rarity, tierLabels)}
-          </Badge>
+          </TierBadge>
           {trackInventory ? (
             <>
               <span

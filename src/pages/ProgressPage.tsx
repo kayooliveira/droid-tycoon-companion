@@ -46,6 +46,8 @@ import { ProgressPdfExport } from '../components/ProgressPdfExport'
 import { HelpHint } from '../components/ui/HelpHint'
 import { IconButton } from '../components/ui/IconButton'
 import { hapticTap } from '../lib/haptics'
+import { PageScreen } from '../components/layout/PageScreen'
+import { ScreenHero } from '../components/layout/ScreenHero'
 
 export function ProgressPage() {
   const { t, i18n } = useTranslation()
@@ -157,10 +159,14 @@ export function ProgressPage() {
   }, [goToRebirthStep, searchParams])
 
   return (
-    <div className="space-y-5 pb-6 md:pb-0" data-testid="progress-page">
+    <PageScreen testId="progress-page" className="md:pb-0">
+      <ScreenHero
+        title={t('nav.progress')}
+        kicker={cycleLabel(progress.pathId)}
+        description={t('progress.workingOn', { n: progress.nextRebirth })}
+      />
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="space-y-2">
-          <h1 className="hidden md:block font-display text-xl tracking-wide text-balance">{t('nav.progress')}</h1>
+        <div className="space-y-2 min-w-0 flex-1">
           <PathProgressSwitcher compact />
           <ProgressSummaryLine />
         </div>
@@ -424,7 +430,7 @@ export function ProgressPage() {
       >
         <p className="text-xs text-ui-muted text-pretty">{t('progress.undoConfirm')}</p>
       </Modal>
-    </div>
+    </PageScreen>
   )
 }
 

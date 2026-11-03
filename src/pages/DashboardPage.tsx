@@ -12,6 +12,7 @@ import { PathProgressSwitcher } from '../components/PathProgressSwitcher'
 import { ShareExportCard } from '../components/ShareExportCard'
 import { DroidImage } from '../components/DroidImage'
 import { Badge } from '../components/ui/Badge'
+import { TierBadge } from '../components/ui/TierBadge'
 import { Button } from '../components/ui/Button'
 import { GlassCard } from '../components/ui/GlassCard'
 import { uiIconProps } from '../components/ui/iconStyle'
@@ -25,6 +26,9 @@ import { canCompleteRebirth } from '../domain/progress'
 import { evaluateRequirements } from '../domain/requirements'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { useAppStore } from '../store/useAppStore'
+import { PageScreen } from '../components/layout/PageScreen'
+import { ScreenHero } from '../components/layout/ScreenHero'
+import { SectionHeader } from '../components/ui/SectionHeader'
 
 export function DashboardPage() {
   const { t, i18n } = useTranslation()
@@ -48,12 +52,19 @@ export function DashboardPage() {
     .slice(0, 3)
 
   return (
-    <div className="space-y-4 md:pb-8" data-testid="home-hub">
-      <GlassCard className="space-y-3 p-4" data-testid="home-now">
+    <PageScreen testId="home-hub" className="space-y-4">
+      <ScreenHero
+        title={t('nav.dashboard')}
+        kicker={t('app.shortName')}
+        description={t('home.nowTitle')}
+      />
+      <GlassCard className="space-y-3" data-testid="home-now">
         <div className="flex items-start justify-between gap-2 flex-wrap">
           <div>
-            <p className="text-[10px] uppercase tracking-widest text-ui-soft">{t('home.nowTitle')}</p>
-            <p className="font-display text-lg font-semibold mt-0.5">
+            <p className="text-ds-xs uppercase tracking-[0.16em] font-display text-ui-accent">
+              {t('home.nowTitle')}
+            </p>
+            <p className="font-display text-ds-lg font-semibold mt-1">
               {cycle ? formatCycleDisplayName(cycle.name, i18n.language) : progress.pathId}
             </p>
             <p className="text-sm text-ui-muted">
@@ -70,7 +81,7 @@ export function DashboardPage() {
               const ok = c.status === 'ready'
               return (
                 <li key={c.requirement.droidId} className="flex items-center gap-2 text-sm">
-                  <DroidImage droid={d} size="sm" />
+                  <DroidImage droid={d} tier={c.requirement.rarity} size="sm" />
                   <span className="flex-1 truncate">{d.name}</span>
                   <Badge tone={ok ? 'success' : 'danger'}>{t(`status.${c.status}`)}</Badge>
                 </li>
@@ -95,24 +106,25 @@ export function DashboardPage() {
         </div>
       </GlassCard>
 
-      <GlassCard className="p-4 space-y-2" data-testid="home-sell">
-        <div className="flex items-center justify-between gap-2">
-          <h2 className="text-sm font-semibold">{t('home.sellTitle')}</h2>
-          <Badge tone="info">{sell.sellable}</Badge>
-        </div>
+      <GlassCard className="space-y-2" data-testid="home-sell">
+        <SectionHeader title={t('home.sellTitle')} action={<Badge tone="info">{sell.sellable}</Badge>} />
         {sell.sellable > 0 ? (
           <div className="flex flex-wrap gap-1.5">
             {sellSamples.map((row) => {
               const d = droidById.get(row.droidId)
-              const tier = formatTierName(row.tier, tierLabels)
+              const tierLabel = formatTierName(row.tier, tierLabels)
               return (
                 <span
                   key={row.droidId}
-                  className="inline-flex items-center gap-1 rounded-full bg-ui-hover border border-ui px-2 py-1 text-[11px]"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-ui-hover border border-ui px-2 py-1 text-[11px]"
                 >
-                  {d ? <DroidImage droid={d} size="sm" className="!h-6 !w-6" /> : null}
-                  {d?.name ?? row.droidId}
-                  <span className="text-ui-soft">· {tier}</span>
+                  {d ? (
+                    <DroidImage droid={d} tier={row.tier} size="sm" className="!h-6 !w-6" />
+                  ) : null}
+                  <span className="font-medium">{d?.name ?? row.droidId}</span>
+                  <TierBadge tier={row.tier} className="text-[10px] py-0">
+                    {tierLabel}
+                  </TierBadge>
                 </span>
               )
             })}
@@ -131,9 +143,9 @@ export function DashboardPage() {
         <CycleTimeline completed={progress.completedOnPath} />
       </GlassCard>
 
-      <GlassCard className="p-4 space-y-2" data-testid="home-news">
-        <h2 className="text-sm font-semibold">{t('home.newsTitle')}</h2>
-        <p className="text-xs text-ui-muted">
+      <GlassCard className="space-y-2" data-testid="home-news">
+        <SectionHeader title={t('home.newsTitle')} />
+        <p className="text-ds-sm text-ui-muted">
           {t('home.newsGameLine', { game: meta.gameVersion, date: meta.lastUpdated })}
         </p>
         <Link to="/about#app-changelog" className="text-xs text-ui-accent hover:underline">
@@ -141,8 +153,8 @@ export function DashboardPage() {
         </Link>
       </GlassCard>
 
-      <div className="space-y-2">
-        <h2 className="text-sm font-semibold px-0.5">{t('home.toolsTitle')}</h2>
+      <div className="space-y-3">
+        <SectionHeader title={t('home.toolsTitle')} />
         <div className="grid grid-cols-3 gap-2">
           {[
             { to: '/fusion', label: t('home.toolFusion'), icon: Flask },
@@ -152,10 +164,10 @@ export function DashboardPage() {
             <Link
               key={label}
               to={to}
-              className="surface-card p-3 flex flex-col items-center gap-2 text-center min-h-[5.5rem] justify-center hover:bg-ui-hover transition-colors"
+              className="surface-card deck-panel deck-tool-tile p-3 flex flex-col items-center gap-2 text-center min-h-[5.5rem] justify-center hover:bg-ui-hover"
             >
               <Icon {...uiIconProps} className="text-ui-accent" />
-              <span className="text-[11px] font-medium leading-tight">{label}</span>
+              <span className="text-ds-xs font-medium leading-tight">{label}</span>
             </Link>
           ))}
         </div>
@@ -163,6 +175,6 @@ export function DashboardPage() {
           <ShareExportCard />
         </div>
       </div>
-    </div>
+    </PageScreen>
   )
 }

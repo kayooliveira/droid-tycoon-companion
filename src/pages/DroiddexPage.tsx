@@ -5,11 +5,15 @@ import { formatTierName } from '../domain/tiers'
 import { formatBaseRarity } from '../i18n/tierLabels'
 import { useTierLabels } from '../i18n/useTierLabels'
 import { DroidImage } from '../components/DroidImage'
+import { showcaseTierForDroid } from '../components/ui/tierVisuals'
 import { Badge } from '../components/ui/Badge'
 import { Modal } from '../components/ui/Modal'
 import { droidMatchesQuery } from '../lib/droidNameMatch'
 import { cn } from '../lib/utils'
 import type { Droid } from '../domain/types'
+import { PageScreen } from '../components/layout/PageScreen'
+import { ScreenHero } from '../components/layout/ScreenHero'
+import { SearchInput } from '../components/ui/SearchInput'
 
 const DROID_CLASSES = ['Worker', 'Astromech', 'Battle', 'Protocol'] as const
 
@@ -31,13 +35,15 @@ export function DroiddexPage() {
   }, [search, classFilter])
 
   return (
-    <div className="space-y-5" data-testid="droiddex-page">
-      <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('droiddex.title')}</h1>
-      <input
-        className="w-full rounded-xl bg-ui-field border border-ui px-4 py-3 text-base min-h-11"
+    <PageScreen testId="droiddex-page">
+      <ScreenHero title={t('droiddex.title')} kicker={t('nav.droiddex')} />
+      <SearchInput
         placeholder={t('droiddex.search')}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
+        onClear={() => setSearch('')}
+        clearLabel={t('progress.search.clear')}
+        aria-label={t('droiddex.search')}
       />
       <div
         className="flex flex-wrap gap-2"
@@ -79,7 +85,7 @@ export function DroiddexPage() {
             onClick={() => setSelected(d)}
             className="glass-panel rounded-2xl p-3 text-left hover:bg-ui-hover-strong transition-colors flex flex-col items-stretch"
           >
-            <DroidImage droid={d} className="self-center mb-2" />
+            <DroidImage droid={d} tier={showcaseTierForDroid(d)} className="self-center mb-2" />
             <p className="text-sm font-medium truncate w-full">{d.name}</p>
             <p className="text-[10px] text-ui-muted">{formatBaseRarity(d.baseRarity, t)}</p>
           </button>
@@ -95,7 +101,7 @@ export function DroiddexPage() {
         {selected ? (
           <div className="space-y-4">
             <div className="flex gap-4 items-start">
-              <DroidImage droid={selected} size="lg" />
+              <DroidImage droid={selected} tier={showcaseTierForDroid(selected)} size="lg" />
               <div className="space-y-2 text-sm">
                 <Badge>{selected.class}</Badge>
                 <Badge tone="info">{formatBaseRarity(selected.baseRarity, t)}</Badge>
@@ -141,6 +147,6 @@ export function DroiddexPage() {
           </div>
         ) : null}
       </Modal>
-    </div>
+    </PageScreen>
   )
 }

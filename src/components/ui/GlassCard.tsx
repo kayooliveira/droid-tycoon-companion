@@ -13,7 +13,7 @@ export function GlassCard({
   as?: 'div' | 'section' | 'article'
 } & HTMLAttributes<HTMLElement>) {
   return (
-    <Tag className={cn('surface-card p-4 md:p-5', className)} {...rest}>
+    <Tag className={cn('surface-card deck-panel p-4 md:p-5', className)} {...rest}>
       {children}
     </Tag>
   )

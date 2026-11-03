@@ -9,6 +9,8 @@ import { APP_PUBLIC_URL } from '../lib/constants'
 import { FeedbackWhatsAppLink } from '../components/FeedbackWhatsAppLink'
 import { Badge } from '../components/ui/Badge'
 import { GlassCard } from '../components/ui/GlassCard'
+import { PageScreen } from '../components/layout/PageScreen'
+import { ScreenHero } from '../components/layout/ScreenHero'
 
 export function AboutPage() {
   const { t } = useTranslation()
@@ -16,9 +18,8 @@ export function AboutPage() {
   const stale = gameDataSource.isStale()
 
   return (
-    <div className="space-y-5 max-w-2xl pb-4" data-testid="about-page">
-      <h1 className="hidden md:block font-display text-2xl tracking-wide">{t('about.title')}</h1>
-      <p className="text-sm text-ui-muted">{t('about.intro')}</p>
+    <PageScreen testId="about-page" className="max-w-2xl pb-4">
+      <ScreenHero title={t('about.title')} kicker={t('nav.about')} description={t('about.intro')} />
 
       <GlassCard className="space-y-2 text-sm">
         <h2 className="font-medium">{t('about.dataTitle')}</h2>
@@ -67,6 +68,6 @@ export function AboutPage() {
           </a>
         </p>
       </footer>
-    </div>
+    </PageScreen>
   )
 }

@@ -33,6 +33,8 @@ import { useToast } from '../components/ToastProvider'
 import { setDocumentLanguage } from '../i18n'
 import { initI18n } from '../i18n/index'
 import { uiIconProps } from '../components/ui/iconStyle'
+import { PageScreen } from '../components/layout/PageScreen'
+import { ScreenHero } from '../components/layout/ScreenHero'
 
 export function SettingsPage() {
   const { t, i18n } = useTranslation()
@@ -87,8 +89,8 @@ export function SettingsPage() {
   }
 
   return (
-    <div className="space-y-4 max-w-2xl pb-10" data-testid="settings-page">
-      <h1 className="hidden md:block font-display text-xl tracking-wide text-balance">{t('settings.title')}</h1>
+    <PageScreen testId="settings-page" className="max-w-2xl space-y-4 pb-10">
+      <ScreenHero title={t('settings.title')} kicker={t('nav.settings')} />
 
       <GlassCard className="p-4">
         <SectionHeader icon={<Palette {...uiIconProps} />} title={t('settings.appearance')} />
@@ -298,6 +300,6 @@ export function SettingsPage() {
       >
         <p className="text-sm text-ui-secondary text-pretty">{t('settings.resetConfirmBody')}</p>
       </Modal>
-    </div>
+    </PageScreen>
   )
 }

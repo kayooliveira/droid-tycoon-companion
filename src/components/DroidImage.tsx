@@ -1,6 +1,7 @@
 import { droidImageSrc, isMissingImageFlag } from '../lib/images'
 import { cn } from '../lib/utils'
-import type { Droid } from '../domain/types'
+import type { Droid, TierId } from '../domain/types'
+import { tierSurfaceClass } from './ui/tierVisuals'
 
 function initialsFor(name: string, id: string): string {
   const fromName = name.replace(/[^a-zA-Z0-9]/g, '').slice(0, 2)
@@ -10,11 +11,13 @@ function initialsFor(name: string, id: string): string {
 
 export function DroidImage({
   droid,
+  tier = 'default',
   size = 'md',
   className,
   priority,
 }: {
   droid: Pick<Droid, 'id' | 'imageLocal' | 'imageMissing' | 'name'>
+  tier?: TierId
   size?: 'sm' | 'md' | 'lg'
   className?: string
   priority?: boolean
@@ -24,52 +27,32 @@ export function DroidImage({
   const missing = isMissingImageFlag(droid) || !droid.imageLocal
   const src = missing ? null : droidImageSrc(droid.id, droid.imageLocal)
 
+  const backdropClass = cn(
+    'tier-droid-backdrop',
+    tierSurfaceClass(tier),
+    sizes[size],
+    className,
+  )
+
   if (missing || !src) {
     const initials = initialsFor(droid.name, droid.id)
     return (
-      <div
-        className={cn(
-          'relative shrink-0 overflow-hidden rounded-xl ring-1 ring-ui',
-          'bg-gradient-to-br from-surface-800 via-holo-900/40 to-cyan-900/30',
-          'flex items-center justify-center',
-          sizes[size],
-          className,
-        )}
-        role="img"
-        aria-label={droid.name}
-      >
-        <span
-          className={cn('font-bold text-holo-200/90 select-none', textSizes[size])}
-          aria-hidden
-        >
+      <div className={backdropClass} role="img" aria-label={droid.name}>
+        <span className={cn('tier-droid-backdrop__initials', textSizes[size])} aria-hidden>
           {initials}
         </span>
-        <span
-          className="pointer-events-none absolute inset-0 opacity-30"
-          aria-hidden
-          style={{
-            background:
-              'radial-gradient(circle at 30% 25%, rgba(255,255,255,0.35), transparent 55%)',
-          }}
-        />
       </div>
     )
   }
 
   return (
-    <div
-      className={cn(
-        'relative shrink-0 overflow-hidden rounded-xl bg-ui-field ring-1 ring-ui',
-        sizes[size],
-        className,
-      )}
-    >
+    <div className={backdropClass}>
       <img
         src={src}
         alt={droid.name}
         width={size === 'lg' ? 96 : size === 'md' ? 56 : 40}
         height={size === 'lg' ? 96 : size === 'md' ? 56 : 40}
-        className="h-full w-full object-cover bg-ui-field"
+        className="tier-droid-backdrop__img"
         loading={priority ? 'eager' : 'lazy'}
         decoding="async"
         fetchPriority={priority ? 'high' : 'auto'}
