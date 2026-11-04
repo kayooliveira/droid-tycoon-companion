@@ -2,7 +2,10 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { droidById, getRebirth } from '../../domain/gameData'
 import { evaluateRequirements } from '../../domain/requirements'
-import { unitsNewlySellableAfterRebirth } from '../../domain/rebirthSellPlan'
+import {
+  isProgressRequirementSellable,
+  unitsNewlySellableAfterRebirth,
+} from '../../domain/rebirthSellPlan'
 import { formatTierName } from '../../domain/tiers'
 import { useTierLabels } from '../../i18n/useTierLabels'
 import type { InventoryUnit, TierId } from '../../domain/types'
@@ -61,17 +64,23 @@ export function ProgressUnifiedRebirthPanel({
           const owned = ownedFor(inventory, c.requirement.droidId, tier, trackInventory)
           const needed = c.requirement.quantity
           const subMeta = `${formatTierName(tier, tierLabels)} · ${owned}/${needed}`
+          const sellable = isProgressRequirementSellable(
+            pathId,
+            c.requirement.droidId,
+            tier,
+            rebirth,
+          )
           return (
             <ProgressDroidRequirementRow
               key={c.requirement.droidId}
               droid={d}
               tier={tier}
               subMeta={subMeta}
-              sellable={false}
+              sellable={sellable}
               owned={owned}
               needed={needed}
               trackInventory={trackInventory}
-              onOpenDroid={() => onOpenDroid(c.requirement.droidId, tier, false, owned)}
+              onOpenDroid={() => onOpenDroid(c.requirement.droidId, tier, sellable, owned)}
             />
           )
         })}

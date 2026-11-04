@@ -2,12 +2,14 @@ import { describe, expect, it } from 'vitest'
 import { getRebirth } from './gameData'
 import { gameData } from './gameData'
 import {
+  isProgressRequirementSellable,
   lastRebirthNeedingUnit,
   resultDroidStillNeededAfter,
   sellableUnitsByRebirth,
   unitsNewlySellableAfterRebirth,
   unitsSellableAfterRebirth,
 } from './rebirthSellPlan'
+import { lastRebirthBlockingSell } from './sellTierRules'
 import { tierMeetsRequired } from './tiers'
 
 describe('rebirth sell plan', () => {
@@ -101,6 +103,49 @@ describe('rebirth sell plan', () => {
         expect(cumKeys.has(u.unitKey)).toBe(true)
       }
     }
+  })
+
+  describe('isProgressRequirementSellable', () => {
+    it('Snow Mouse at cycle 3 rebirth 26 is Pode vender (last use this step)', () => {
+      expect(lastRebirthBlockingSell('path-3', 'snow-mouse', 'rainbow')).toBe(26)
+      expect(isProgressRequirementSellable('path-3', 'snow-mouse', 'rainbow', 26)).toBe(true)
+    })
+
+    it('MO-TRAK gold at rebirth 25 stays Não venda (upgrade chain later in cycle 3)', () => {
+      expect(isProgressRequirementSellable('path-3', 'mo-trak', 'gold', 25)).toBe(false)
+    })
+
+    it('droid needed again later in the same cycle is Não venda at the earlier step', () => {
+      const pathId = 'path-1'
+      const entry = getRebirth(pathId, 2)!
+      const req = entry.requirements[0]!
+      const last = lastRebirthBlockingSell(pathId, req.droidId, req.rarity)
+      expect(last).not.toBeNull()
+      if (last !== null && last > 2) {
+        expect(isProgressRequirementSellable(pathId, req.droidId, req.rarity, 2)).toBe(false)
+        expect(isProgressRequirementSellable(pathId, req.droidId, req.rarity, last)).toBe(true)
+      }
+    })
+
+    it('uses only the active cycle path (same droid, different last rebirth per path)', () => {
+      expect(isProgressRequirementSellable('path-3', 'snow-mouse', 'rainbow', 26)).toBe(true)
+      expect(lastRebirthBlockingSell('path-3', 'snow-mouse', 'rainbow')).toBe(26)
+      expect(lastRebirthBlockingSell('path-1', 'snow-mouse', 'rainbow')).toBe(40)
+      expect(isProgressRequirementSellable('path-1', 'snow-mouse', 'rainbow', 26)).toBe(false)
+    })
+
+    it('last rebirth requirement on the path can show Pode vender at that step', () => {
+      const pathId = 'path-3'
+      let lastSnow = 0
+      for (let r = 1; r <= 40; r++) {
+        const entry = getRebirth(pathId, r)
+        if (entry?.requirements.some((x) => x.droidId === 'snow-mouse')) {
+          lastSnow = r
+        }
+      }
+      expect(lastSnow).toBe(26)
+      expect(isProgressRequirementSellable(pathId, 'snow-mouse', 'rainbow', lastSnow)).toBe(true)
+    })
   })
 
   it('result droid need ends after its final rebirth on the path', () => {

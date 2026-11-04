@@ -11,6 +11,7 @@ import { PathProgressSwitcher } from '../components/PathProgressSwitcher'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { DroidImage } from '../components/DroidImage'
 import { InsetGroup } from '../components/ui/InsetGroup'
+import { SellBadge } from '../components/ui/SellBadge'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
 import { uiIconProps } from '../components/ui/iconStyle'
 import { useAppStore } from '../store/useAppStore'
@@ -38,6 +39,7 @@ export function SellCenterPage() {
   }, [items, progress.pathId, completedRebirth])
 
   const groups = {
+    useNext: items.filter((i) => i.category === 'useNext'),
     keep: items.filter((i) => i.category === 'keep'),
     sellable: items.filter((i) => i.category === 'sellable'),
     upgrade: items.filter((i) => i.category === 'upgrade'),
@@ -46,6 +48,7 @@ export function SellCenterPage() {
   const allEmpty =
     inventory.length === 0 &&
     safeNow.length === 0 &&
+    groups.useNext.length === 0 &&
     groups.keep.length === 0 &&
     groups.sellable.length === 0 &&
     groups.upgrade.length === 0
@@ -64,9 +67,13 @@ export function SellCenterPage() {
         <DroidImage droid={droid} tier={item.tier} size="sm" className="!h-[50px] !w-[50px] rounded-[11px]" />
         <div className="dc-row-main">
           <span className="dc-droid-name dc-row-label">{droid.name}</span>
-          <span className="dc-row-sub">
-            {`${formatTierName(item.tier, tierLabels)} · ${t('progress.qtyShort', { n: item.quantity })}`}
+          <span className="dc-row-sub dc-row-sub--badge">
+            <span className="dc-row-sub-meta">
+              {`${formatTierName(item.tier, tierLabels)} · ${t('progress.qtyShort', { n: item.quantity })}`}
+            </span>
+            {item.category === 'useNext' ? <SellBadge sellable /> : null}
           </span>
+          <span className="dc-row-sub">{t(item.reasonKey, item.reasonParams)}</span>
           {plan?.disposition === 'fusionHold' ? (
             <span className="dc-row-sub text-ui-warn">{t('sellAfter.fusionHold')}</span>
           ) : null}
@@ -112,18 +119,21 @@ export function SellCenterPage() {
             </section>
           ) : null}
 
-          {(['keep', 'upgrade', 'sellable'] as const).map((cat) => {
+          {(['useNext', 'keep', 'upgrade', 'sellable'] as const).map((cat) => {
             if (groups[cat].length === 0) return null
             const footerKey =
-              cat === 'keep'
+              cat === 'keep' &&
+              groups.keep.some((i) => (i.nextNeededAtRebirth ?? 0) > progress.nextRebirth)
                 ? 'sell.keepGroupFooter'
                 : cat === 'upgrade'
                   ? 'sell.upgradeGroupFooter'
-                  : 'sell.sellableGroupFooter'
+                  : cat === 'sellable'
+                    ? 'sell.sellableGroupFooter'
+                    : undefined
             return (
-              <section key={cat} className="dc-section">
+              <section key={cat} className="dc-section" data-testid={`sell-center-${cat}`}>
                 <h2 className="dc-section-header">{t(`sell.${cat}`)}</h2>
-                <InsetGroup footer={t(footerKey)}>
+                <InsetGroup footer={footerKey ? t(footerKey) : undefined}>
                   {groups[cat].map((item, idx) => renderItemRow(item, idx))}
                 </InsetGroup>
               </section>
