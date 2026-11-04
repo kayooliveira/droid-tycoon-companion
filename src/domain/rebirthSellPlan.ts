@@ -2,7 +2,7 @@
  * Per-rebirth "what you can sell after this rebirth" for one Path.
  * Shares tier / future-need rules with Sell Center (sellCenter.ts).
  */
-import { cycleById, gameData, getPathIds } from './gameData'
+import { cycleById, gameData, getPathIds, getRebirth } from './gameData'
 import { inventoryUnitKey } from './inventory'
 import { collectFutureNeeds, type FutureNeed } from './sellCenter'
 import {
@@ -120,6 +120,54 @@ export function isProgressRequirementSellable(
   const last = lastRebirthBlockingSell(pathId, droidId, tier)
   const { disposition } = dispositionForUnit(pathId, droidId, rebirthStep, last)
   return disposition === 'sellable'
+}
+
+/** Quantity of this droid the player must deliver at `rebirth` (tier-aware). */
+export function quantityNeededAtRebirth(
+  pathId: string,
+  rebirth: number,
+  droidId: string,
+  ownedTier: TierId,
+): number {
+  const entry = getRebirth(pathId, rebirth)
+  if (!entry) return 0
+  let sum = 0
+  for (const req of entry.requirements) {
+    if (req.droidId !== droidId) continue
+    if (tierMeetsRequired(ownedTier, req.rarity)) {
+      sum += req.quantity ?? 1
+    }
+  }
+  return sum
+}
+
+/** Last use on this cycle is the upcoming rebirth; safe to sell after completing it (Progresso green badge). */
+export function isUseOnNextRebirth(
+  pathId: string,
+  droidId: string,
+  tier: TierId,
+  nextRebirth: number,
+): boolean {
+  const last = lastRebirthBlockingSell(pathId, droidId, tier)
+  if (last !== nextRebirth) return false
+  if (quantityNeededAtRebirth(pathId, nextRebirth, droidId, tier) <= 0) return false
+  return isProgressRequirementSellable(pathId, droidId, tier, nextRebirth)
+}
+
+/** Still required at a rebirth strictly after `nextRebirth` on the active cycle. */
+export function isKeepForLaterRebirth(
+  pathId: string,
+  droidId: string,
+  tier: TierId,
+  nextRebirth: number,
+): boolean {
+  const last = lastRebirthBlockingSell(pathId, droidId, tier)
+  if (last === null) return false
+  if (last > nextRebirth) return true
+  if (last === nextRebirth && !isProgressRequirementSellable(pathId, droidId, tier, nextRebirth)) {
+    return true
+  }
+  return false
 }
 
 function dispositionForUnit(

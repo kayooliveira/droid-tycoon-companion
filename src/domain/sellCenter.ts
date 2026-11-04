@@ -8,11 +8,16 @@ import {
   consumeFromPool,
   poolRemainingUnits,
 } from './inventory'
+import {
+  isKeepForLaterRebirth,
+  isUseOnNextRebirth,
+  quantityNeededAtRebirth,
+} from './rebirthSellPlan'
 import { earliestUpgradeRequirement, maxFutureRequirementForDroid } from './sellTierRules'
 import { tierMeetsRequired } from './tiers'
 import type { InventoryUnit, TierId } from './types'
 
-export type SellCategory = 'keep' | 'sellable' | 'upgrade'
+export type SellCategory = 'keep' | 'sellable' | 'upgrade' | 'useNext'
 
 export interface FutureNeed {
   rebirth: number
@@ -26,6 +31,7 @@ export type SellReasonKey =
   | 'sell.sellableExtra'
   | 'sell.keepRebirth'
   | 'sell.upgradeRebirth'
+  | 'sell.useNextNote'
 
 export interface SellAnalysisItem {
   unitId: string
@@ -61,6 +67,14 @@ export function collectFutureNeeds(
   return needs
 }
 
+/** Rebirths strictly after `afterRebirth` on the active cycle. */
+export function collectFutureNeedsAfter(
+  pathId: string,
+  afterRebirth: number,
+): FutureNeed[] {
+  return collectFutureNeeds(pathId, afterRebirth + 1)
+}
+
 function earliestRebirthNeed(
   needs: FutureNeed[],
   droidId: string,
@@ -79,6 +93,16 @@ function earliestRebirthNeed(
     return any[0]?.rebirth ?? null
   }
   return match[0]!.rebirth
+}
+
+function earliestRebirthNeedAfter(
+  needs: FutureNeed[],
+  droidId: string,
+  minTier: TierId,
+  afterRebirth: number,
+): number | null {
+  const filtered = needs.filter((n) => n.rebirth > afterRebirth)
+  return earliestRebirthNeed(filtered, droidId, minTier)
 }
 
 export function analyzeSellCenter(
@@ -102,6 +126,7 @@ export function analyzeSellCenter(
 
   const remaining = poolRemainingUnits(pool)
   const futureNeeds = collectFutureNeeds(pathId, nextRebirth)
+  const futureNeedsAfterNext = collectFutureNeedsAfter(pathId, nextRebirth)
 
   const items: SellAnalysisItem[] = []
 
@@ -132,7 +157,12 @@ export function analyzeSellCenter(
     }
 
     const needsUpgrade = !tierMeetsRequired(unit.tier, maxNeed.tier)
-    const nextRebirthNeed = earliestRebirthNeed(futureNeeds, unit.droidId, unit.tier)
+    const laterRebirthNeed = earliestRebirthNeedAfter(
+      futureNeeds,
+      unit.droidId,
+      unit.tier,
+      nextRebirth,
+    )
 
     if (needsUpgrade) {
       const completedRebirth = Math.max(0, nextRebirth - 1)
@@ -158,7 +188,45 @@ export function analyzeSellCenter(
       continue
     }
 
-    if (surplusQty > 0) {
+    if (isUseOnNextRebirth(pathId, unit.droidId, unit.tier, nextRebirth)) {
+      const neededAtNext = quantityNeededAtRebirth(
+        pathId,
+        nextRebirth,
+        unit.droidId,
+        unit.tier,
+      )
+      const reserveQty = Math.min(unit.quantity, neededAtNext)
+      if (reserveQty > 0) {
+        items.push({
+          unitId: unit.id,
+          droidId: unit.droidId,
+          tier: unit.tier,
+          quantity: reserveQty,
+          category: 'useNext',
+          reasonKey: 'sell.useNextNote',
+          reasonParams: { name, rebirth: nextRebirth },
+          nextNeededAtRebirth: nextRebirth,
+          upgradeTargetTier: null,
+        })
+      }
+      const extraQty = unit.quantity - reserveQty
+      if (extraQty > 0) {
+        items.push({
+          unitId: unit.id,
+          droidId: unit.droidId,
+          tier: unit.tier,
+          quantity: extraQty,
+          category: 'sellable',
+          reasonKey: 'sell.sellableExtra',
+          reasonParams: { name, qty: extraQty },
+          nextNeededAtRebirth: null,
+          upgradeTargetTier: null,
+        })
+      }
+      continue
+    }
+
+    if (surplusQty > 0 && !isKeepForLaterRebirth(pathId, unit.droidId, unit.tier, nextRebirth)) {
       items.push({
         unitId: unit.id,
         droidId: unit.droidId,
@@ -171,6 +239,7 @@ export function analyzeSellCenter(
         upgradeTargetTier: null,
       })
       if (unit.quantity > surplusQty) {
+        const keepRebirth = laterRebirthNeed ?? maxNeed.rebirth
         items.push({
           unitId: unit.id,
           droidId: unit.droidId,
@@ -178,11 +247,30 @@ export function analyzeSellCenter(
           quantity: unit.quantity - surplusQty,
           category: 'keep',
           reasonKey: 'sell.keepRebirth',
-          reasonParams: { name, rebirth: nextRebirthNeed ?? maxNeed.rebirth },
-          nextNeededAtRebirth: nextRebirthNeed ?? maxNeed.rebirth,
+          reasonParams: { name, rebirth: keepRebirth },
+          nextNeededAtRebirth: keepRebirth,
           upgradeTargetTier: null,
         })
       }
+      continue
+    }
+
+    if (isKeepForLaterRebirth(pathId, unit.droidId, unit.tier, nextRebirth)) {
+      const keepRebirth =
+        laterRebirthNeed ??
+        earliestRebirthNeed(futureNeedsAfterNext, unit.droidId, unit.tier) ??
+        maxNeed.rebirth
+      items.push({
+        unitId: unit.id,
+        droidId: unit.droidId,
+        tier: unit.tier,
+        quantity: unit.quantity,
+        category: 'keep',
+        reasonKey: 'sell.keepRebirth',
+        reasonParams: { name, rebirth: keepRebirth },
+        nextNeededAtRebirth: keepRebirth,
+        upgradeTargetTier: null,
+      })
       continue
     }
 
@@ -191,10 +279,10 @@ export function analyzeSellCenter(
       droidId: unit.droidId,
       tier: unit.tier,
       quantity: unit.quantity,
-      category: 'keep',
-      reasonKey: 'sell.keepRebirth',
-      reasonParams: { name, rebirth: nextRebirthNeed ?? maxNeed.rebirth },
-      nextNeededAtRebirth: nextRebirthNeed ?? maxNeed.rebirth,
+      category: 'sellable',
+      reasonKey: 'sell.sellableNotNeeded',
+      reasonParams: { name, qty: unit.quantity },
+      nextNeededAtRebirth: null,
       upgradeTargetTier: null,
     })
   }
@@ -206,6 +294,7 @@ export function summarizeSellCenter(items: SellAnalysisItem[]): {
   keep: number
   sellable: number
   upgrade: number
+  useNext: number
 } {
   return {
     keep: items.filter((i) => i.category === 'keep').reduce((s, i) => s + i.quantity, 0),
@@ -215,6 +304,7 @@ export function summarizeSellCenter(items: SellAnalysisItem[]): {
     upgrade: items
       .filter((i) => i.category === 'upgrade')
       .reduce((s, i) => s + i.quantity, 0),
+    useNext: items.filter((i) => i.category === 'useNext').reduce((s, i) => s + i.quantity, 0),
   }
 }
 
@@ -223,5 +313,5 @@ export function droidHasFutureNeedOnPath(
   fromRebirth: number,
   droidId: string,
 ): boolean {
-  return collectFutureNeeds(pathId, fromRebirth).some((n) => n.droidId === droidId)
+  return collectFutureNeedsAfter(pathId, fromRebirth).some((n) => n.droidId === droidId)
 }
