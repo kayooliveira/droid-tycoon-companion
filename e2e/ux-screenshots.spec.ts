@@ -16,10 +16,10 @@ async function waitOnboardingStep(page: import('@playwright/test').Page, step: s
       if (!el) return false
       const style = getComputedStyle(el)
       if (Number.parseFloat(style.opacity) < 0.9) return false
-      const heading = el.querySelector('[data-testid="onboarding-heading"]')
+      const heading = document.querySelector('[data-testid="onboarding-heading"]')
       return Boolean(heading?.textContent?.trim())
     },
-    testId,
+    undefined,
     { timeout: 10000 },
   )
   await page.waitForTimeout(120)
@@ -99,16 +99,16 @@ test('ux round screenshots (pt-BR artifacts)', async ({ page, browser }) => {
   await waitOnboardingStep(page, 'welcome')
   await page.screenshot({ path: path.join(ARTIFACTS, 'onboarding-1.png') })
 
-  await page.getByTestId('onboarding-start').click()
-  await waitOnboardingStep(page, 'cycle')
+  await page.getByTestId('onboarding-next').click()
+  await waitOnboardingStep(page, 'cycles')
   await page.screenshot({ path: path.join(ARTIFACTS, 'onboarding-2.png') })
 
   await page.getByTestId('onboarding-next').click()
-  await waitOnboardingStep(page, 'progress')
+  await waitOnboardingStep(page, 'inventory')
   await page.screenshot({ path: path.join(ARTIFACTS, 'onboarding-3.png') })
 
   await page.getByTestId('onboarding-next').click()
-  await waitOnboardingStep(page, 'features')
+  await waitOnboardingStep(page, 'progress')
   await page.screenshot({ path: path.join(ARTIFACTS, 'onboarding-4.png') })
 
   const desktop = await browser.newPage()
