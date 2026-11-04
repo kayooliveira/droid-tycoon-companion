@@ -2,7 +2,10 @@ import { memo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { droidById, getRebirth } from '../../domain/gameData'
 import { evaluateRequirements, metRequirementCount } from '../../domain/requirements'
-import { unitsNewlySellableAfterRebirth } from '../../domain/rebirthSellPlan'
+import {
+  isProgressRequirementSellable,
+  unitsNewlySellableAfterRebirth,
+} from '../../domain/rebirthSellPlan'
 import { formatTierName } from '../../domain/tiers'
 import { useTierLabels } from '../../i18n/useTierLabels'
 import { useProgressListExpansion } from '../../hooks/useProgressListExpansion'
@@ -110,6 +113,12 @@ const RebirthListItem = memo(function RebirthListItem({
               const owned = ownedFor(inventory, c.requirement.droidId, tier, trackInventory)
               const needed = c.requirement.quantity
               const subMeta = `${formatTierName(tier, tierLabels)} · ${owned}/${needed}`
+              const sellable = isProgressRequirementSellable(
+                pathId,
+                c.requirement.droidId,
+                tier,
+                rebirth,
+              )
               return (
                 <div key={c.requirement.droidId} className="dc-row dc-row-droid">
                   <DroidImage droid={d} tier={tier} size="sm" className="!h-[50px] !w-[50px] rounded-[11px]" />
@@ -117,7 +126,7 @@ const RebirthListItem = memo(function RebirthListItem({
                     <span className="dc-droid-name dc-row-label">{d.name}</span>
                     <span className="dc-row-sub dc-row-sub--badge">
                       <span className="dc-row-sub-meta">{subMeta}</span>
-                      <SellBadge sellable={false} />
+                      <SellBadge sellable={sellable} />
                     </span>
                   </div>
                   {trackInventory ? (

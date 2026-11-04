@@ -8,6 +8,7 @@ import { collectFutureNeeds, type FutureNeed } from './sellCenter'
 import {
   earliestUpgradeRequirement,
   highestTierHeldThroughRebirth,
+  isSellableAfterRebirth,
   lastRebirthBlockingSell,
 } from './sellTierRules'
 import { tierMeetsRequired } from './tiers'
@@ -106,6 +107,19 @@ export function fusionNeedsForIngredient(
   }
 
   return { holdIds, cautionIds }
+}
+
+/** Progresso / Vender badge on a requirement row at rebirth step N (active cycle only). */
+export function isProgressRequirementSellable(
+  pathId: string,
+  droidId: string,
+  tier: TierId,
+  rebirthStep: number,
+): boolean {
+  if (!isSellableAfterRebirth(pathId, droidId, tier, rebirthStep)) return false
+  const last = lastRebirthBlockingSell(pathId, droidId, tier)
+  const { disposition } = dispositionForUnit(pathId, droidId, rebirthStep, last)
+  return disposition === 'sellable'
 }
 
 function dispositionForUnit(
