@@ -69,6 +69,9 @@ export function ProgressPage() {
   const searchQueryFromUrl = searchParams.get('q') ?? ''
 
   const current = getRebirth(progress.pathId, progress.nextRebirth)
+  const pathDone = isPathComplete(progress)
+  const superEligible = canSuperRebirth(progress)
+  const showSuperOnly = !current && pathDone && superEligible
   const canComplete = current
     ? canCompleteRebirth(progress.pathId, current.rebirth, inventory, trackInventory)
     : false
@@ -183,36 +186,40 @@ export function ProgressPage() {
 
       <ProgressDroidSearch initialQuery={searchQueryFromUrl} onNavigateToStep={goToRebirthStep} />
 
-      {current ? (
+      {current || showSuperOnly ? (
         <>
-          {getDisputeKey(progress.pathId, current.rebirth) ? (
-            <DisputePanel
-              pathId={progress.pathId}
-              rebirth={current.rebirth}
-              tierLabels={tierLabels}
-            />
+          {current ? (
+            <>
+              {getDisputeKey(progress.pathId, current.rebirth) ? (
+                <DisputePanel
+                  pathId={progress.pathId}
+                  rebirth={current.rebirth}
+                  tierLabels={tierLabels}
+                />
+              ) : null}
+              <ProgressUnifiedRebirthPanel
+                pathId={progress.pathId}
+                rebirth={progress.nextRebirth}
+                inventory={inventory}
+                trackInventory={trackInventory}
+                onOpenDroid={openDroidDetail}
+              />
+            </>
           ) : null}
-          <ProgressUnifiedRebirthPanel
-            pathId={progress.pathId}
-            rebirth={progress.nextRebirth}
-            inventory={inventory}
-            trackInventory={trackInventory}
-            onOpenDroid={openDroidDetail}
-          />
           <ProgressActionStack
-            showComplete={!isPathComplete(progress)}
+            showComplete={Boolean(current) && !pathDone}
             completeDisabled={trackInventory && !canComplete}
             onComplete={handleCompleteClick}
-            showSuper={canSuperRebirth(progress)}
+            showSuper={superEligible}
             onSuper={() => setSuperConfirmOpen(true)}
-            showForceComplete={trackInventory && !canComplete && !isPathComplete(progress)}
+            showForceComplete={Boolean(current) && trackInventory && !canComplete && !pathDone}
             onForceComplete={() => setForceCompleteOpen(true)}
             onUndo={() => setUndoOpen(true)}
           />
         </>
       ) : (
         <p className="text-sm text-ui-muted px-4">
-          {isPathComplete(progress) ? t('progress.pathComplete') : t('progress.listCurrent')}
+          {pathDone ? t('progress.pathComplete') : t('progress.listCurrent')}
         </p>
       )}
 

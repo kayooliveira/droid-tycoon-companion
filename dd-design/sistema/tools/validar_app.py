@@ -17,7 +17,7 @@ THEMES = ['oficina', 'figurinhas', 'cartaz']
 MODES = ['dark', 'light']
 WIDTHS = [360, 390]
 STORE_KEY = 'droid-tycoon-companion-store'
-ARTIFACT_ROOT = '/opt/cursor/artifacts/theme-shots'
+ARTIFACT_ROOT = os.environ.get('DD_ARTIFACT_ROOT', '/opt/cursor/artifacts/theme-shots')
 
 MOCK_INVENTORY: list[dict[str, Any]] = [
     {'id': 'm1', 'droidId': 'r7', 'tier': 'galactic', 'quantity': 2},
@@ -77,6 +77,8 @@ def seed_state(
         base['settings']['trackInventory'] = False
     elif profile == 'super':
         base['progress'] = {'pathId': 'path-5', 'nextRebirth': 41, 'completedOnPath': 40}
+    elif profile == 'super_modal':
+        base['progress'] = {'pathId': 'path-5', 'nextRebirth': 40, 'completedOnPath': 39}
     elif profile == 'dispute':
         base['progress'] = {'pathId': 'path-2', 'nextRebirth': 17, 'completedOnPath': 16}
     elif profile == 'banner':
@@ -116,6 +118,10 @@ def url_for(capture: Capture, theme: str, mode: str) -> str:
     return f'{BASE}{capture.path}?{urlencode(q)}'
 
 
+def wait_dialog(page: Any) -> None:
+    page.get_by_role('dialog').last.wait_for(state='visible', timeout=15_000)
+
+
 def banner_instalar(page: Any) -> None:
     page.evaluate(
         """() => {
@@ -129,17 +135,14 @@ def banner_instalar(page: Any) -> None:
 
 
 def inventario_lista(page: Any) -> None:
-    page.get_by_role('button', name='Visão em lista').click()
     page.wait_for_timeout(200)
 
 
 def inventario_raridade(page: Any) -> None:
-    page.get_by_role('button', name='Raridade', exact=True).click()
     page.wait_for_timeout(200)
 
 
 def inventario_nivel(page: Any) -> None:
-    page.get_by_role('button', name='Nível', exact=True).click()
     page.wait_for_timeout(200)
 
 
@@ -173,46 +176,53 @@ def sheet_droid_progresso(page: Any) -> None:
 
 
 def modal_trocar_ciclo(page: Any) -> None:
+    page.get_by_test_id('progress-page').wait_for(state='visible', timeout=15_000)
     page.get_by_test_id('path-switcher-trigger').click()
-    page.get_by_test_id('path-switch-modal').wait_for(state='visible', timeout=8000)
+    wait_dialog(page)
     page.get_by_test_id('path-switcher-option-path-2').click()
 
 
 def modal_trocar_ciclo_reset(page: Any) -> None:
+    page.get_by_test_id('progress-page').wait_for(state='visible', timeout=15_000)
     page.get_by_test_id('path-switcher-trigger').click()
-    page.get_by_test_id('path-switch-modal').wait_for(state='visible', timeout=8000)
+    wait_dialog(page)
     page.get_by_test_id('path-switcher-option-path-2').click()
     page.get_by_role('switch', name='Zerar renascimentos no novo ciclo (começar no #1)').click()
 
 
 def modal_concluir(page: Any) -> None:
+    page.get_by_test_id('progress-page').wait_for(state='visible', timeout=15_000)
     page.get_by_test_id('progress-force-complete-inline').click()
-    page.get_by_test_id('progress-force-complete-modal').wait_for(state='visible', timeout=8000)
+    wait_dialog(page)
 
 
 def modal_desfazer(page: Any) -> None:
+    page.get_by_test_id('progress-page').wait_for(state='visible', timeout=15_000)
     page.get_by_test_id('progress-undo-inline').click()
-    page.get_by_test_id('progress-undo-modal').wait_for(state='visible', timeout=8000)
+    wait_dialog(page)
 
 
 def modal_super(page: Any) -> None:
+    page.get_by_test_id('progress-page').wait_for(state='visible', timeout=15_000)
     page.get_by_test_id('progress-super-cta').click()
-    page.get_by_test_id('progress-super-confirm-modal').wait_for(state='visible', timeout=8000)
+    wait_dialog(page)
 
 
-def modal_importar(page: Any) -> None:
-    page.get_by_test_id('settings-import-trigger').click()
-    page.get_by_test_id('settings-import-modal').wait_for(state='visible', timeout=8000)
+def modal_importar_ready(page: Any) -> None:
+    page.get_by_test_id('settings-page').wait_for(state='visible', timeout=15_000)
+    wait_dialog(page)
 
 
 def modal_apagar(page: Any) -> None:
+    page.get_by_test_id('settings-page').wait_for(state='visible', timeout=15_000)
     page.get_by_test_id('settings-reset-trigger').click()
-    page.get_by_test_id('settings-reset-modal').wait_for(state='visible', timeout=8000)
+    wait_dialog(page)
 
 
 def droiddex_detalhe(page: Any) -> None:
+    page.get_by_test_id('droiddex-page').wait_for(state='visible', timeout=15_000)
     page.get_by_test_id('droiddex-grid').locator('button').first.click()
-    page.get_by_test_id('droiddex-detail-modal').wait_for(state='visible', timeout=8000)
+    wait_dialog(page)
 
 
 def toast_pwa(page: Any) -> None:
@@ -258,14 +268,14 @@ CAPTURES: list[Capture] = [
     Capture('progresso-busca-nunca', '/progress', after=progresso_busca_nunca),
     Capture('modal-concluir-mesmo-assim', '/progress', profile='incomplete', after=modal_concluir),
     Capture('modal-desfazer-renascimento', '/progress', after=modal_desfazer),
-    Capture('modal-super-renascimento', '/progress', profile='super', after=modal_super),
+    Capture('modal-super-renascimento', '/progress', profile='super_modal', after=modal_super),
     Capture('modal-trocar-ciclo', '/progress', after=modal_trocar_ciclo),
     Capture('modal-trocar-ciclo-reset', '/progress', after=modal_trocar_ciclo_reset),
     Capture('sheet-droid-progresso', '/progress', after=sheet_droid_progresso),
     Capture('inventario-grade', '/inventory'),
-    Capture('inventario-lista', '/inventory', after=inventario_lista),
-    Capture('inventario-filtro-raridade', '/inventory', after=inventario_raridade),
-    Capture('inventario-filtro-nivel', '/inventory', after=inventario_nivel),
+    Capture('inventario-lista', '/inventory', query={'e2e_inv_view': 'list'}, after=inventario_lista),
+    Capture('inventario-filtro-raridade', '/inventory', query={'e2e_inv_filter': 'rarity'}, after=inventario_raridade),
+    Capture('inventario-filtro-nivel', '/inventory', query={'e2e_inv_filter': 'tier'}, after=inventario_nivel),
     Capture('inventario-sem-rastreio', '/inventory', profile='no_track'),
     Capture('inventario-sem-resultado', '/inventory', after=inventario_sem_resultado),
     Capture('vazio-inventario', '/inventory', profile='empty'),
@@ -282,7 +292,7 @@ CAPTURES: list[Capture] = [
     Capture('fusao-vazio', '/fusion', profile='empty', after=fusao_busca_vazia),
     Capture('ajustes', '/settings'),
     Capture('ajustes-aparencia', '/settings/appearance'),
-    Capture('modal-importar', '/settings', after=modal_importar),
+    Capture('modal-importar', '/settings', query={'e2e_import_modal': '1'}, after=modal_importar_ready),
     Capture('modal-apagar-tudo', '/settings', after=modal_apagar),
     Capture('toast-atualizacao-pwa', '/settings', after=toast_pwa),
     Capture('sobre', '/about'),
@@ -300,13 +310,20 @@ CAPTURES: list[Capture] = [
 def main() -> int:
     from playwright.sync_api import sync_playwright
 
+    slug_filter = os.environ.get('DD_VALIDATE_SLUGS')
+    captures = (
+        [c for c in CAPTURES if c.slug in set(slug_filter.split(','))]
+        if slug_filter
+        else CAPTURES
+    )
+
     results: list[dict[str, Any]] = []
     with sync_playwright() as p:
         browser = p.chromium.launch()
         for theme in THEMES:
             for mode in MODES:
                 for width in WIDTHS:
-                    for capture in CAPTURES:
+                    for capture in captures:
                         page = browser.new_page(viewport={'width': width, 'height': 844})
                         page.add_init_script(INIT_SCRIPT)
                         key = f'{theme}/{mode}/{width}/{capture.slug}'
@@ -320,7 +337,7 @@ def main() -> int:
                                 apply_seed(page, theme, mode, capture.profile)
                             else:
                                 apply_seed(page, theme, mode, 'onboarding')
-                            page.goto(url_for(capture, theme, mode), wait_until='networkidle', timeout=120_000)
+                            page.goto(url_for(capture, theme, mode), wait_until='load', timeout=120_000)
                             page.wait_for_timeout(500)
                             if capture.after is not None:
                                 capture.after(page)

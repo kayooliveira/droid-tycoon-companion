@@ -66,13 +66,12 @@ test('Mais sheet paints above Progresso content at hit-test points', async ({ pa
   await page.goto('/progress')
   await expect(page.getByTestId('progress-unified-group')).toBeVisible({ timeout: 25_000 })
   await page.getByTestId('mobile-more-nav').click()
-  await expect(page.getByTestId('nav-more-modal')).toBeVisible()
+  await expect(page.getByTestId('nav-more-menu')).toBeVisible()
 
   const hitTest = await page.evaluate(() => {
-    const modal = document.querySelector('[data-testid="nav-more-modal"]')
-    const scrim = document.querySelector('[data-testid="nav-more-modal-scrim"]')
-    const panel = modal?.querySelector('.modal-above-mobile-nav-panel') as HTMLElement | null
-    if (!modal || !scrim || !panel) return { ok: false, reason: 'missing-nodes' }
+    const panel = document.querySelector('[data-testid="nav-more-menu"].sheet') as HTMLElement | null
+    const scrim = document.querySelector('[data-testid="nav-more-menu-backdrop"]')
+    if (!panel || !scrim) return { ok: false, reason: 'missing-nodes' }
 
     const panelRect = panel.getBoundingClientRect()
     const panelPoints = [
@@ -120,16 +119,16 @@ test('tab bar navigates while Mais sheet is open', async ({ page }) => {
   for (const tab of tabsWithSheetOpen) {
     await page.goto('/inventory')
     await page.getByTestId('mobile-more-nav').click()
-    await expect(page.getByTestId('nav-more-modal')).toBeVisible()
+    await expect(page.getByTestId('nav-more-menu')).toBeVisible()
 
     const viewport = page.viewportSize()!
-    const scrimBox = await page.getByTestId('nav-more-modal-scrim').boundingBox()
+    const scrimBox = await page.getByTestId('nav-more-menu-backdrop').boundingBox()
     expect(scrimBox).toBeTruthy()
     expect(scrimBox!.y).toBeLessThanOrEqual(1)
     expect(scrimBox!.height).toBeGreaterThanOrEqual(viewport.height - 1)
 
     await clickTabAtCoordinates(page, tabTestId(tab.path))
-    await expect(page.getByTestId('nav-more-modal')).toHaveCount(0, { timeout: 8000 })
+    await expect(page.getByTestId('nav-more-menu')).toHaveCount(0, { timeout: 8000 })
     await expect(page).not.toHaveURL(/\/settings/)
     await expect(page).toHaveURL(new RegExp(`${tab.path}(\\?|$)`), { timeout: 10_000 })
     await expect(page.getByTestId(tab.hub)).toBeVisible({ timeout: 15_000 })
@@ -137,17 +136,17 @@ test('tab bar navigates while Mais sheet is open', async ({ page }) => {
 
   await page.goto('/cycles')
   await page.getByTestId('mobile-more-nav').click()
-  await expect(page.getByTestId('nav-more-modal')).toBeVisible()
+  await expect(page.getByTestId('nav-more-menu')).toBeVisible()
   await clickTabAtCoordinates(page, 'mobile-nav-home')
-  await expect(page.getByTestId('nav-more-modal')).toHaveCount(0, { timeout: 8000 })
+  await expect(page.getByTestId('nav-more-menu')).toHaveCount(0, { timeout: 8000 })
   await expect(page).toHaveURL(/\/$/)
   await expect(page.getByTestId('home-hub')).toBeVisible()
 
   await page.goto('/inventory')
   await page.getByTestId('mobile-more-nav').click()
-  await expect(page.getByTestId('nav-more-modal')).toBeVisible()
+  await expect(page.getByTestId('nav-more-menu')).toBeVisible()
   const moreBox = await page.getByTestId('mobile-more-nav').boundingBox()
   expect(moreBox).toBeTruthy()
   await page.mouse.click(moreBox!.x + moreBox!.width / 2, moreBox!.y + moreBox!.height / 2)
-  await expect(page.getByTestId('nav-more-modal')).toHaveCount(0, { timeout: 8000 })
+  await expect(page.getByTestId('nav-more-menu')).toHaveCount(0, { timeout: 8000 })
 })

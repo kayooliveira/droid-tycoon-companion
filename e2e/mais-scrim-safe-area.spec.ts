@@ -15,10 +15,10 @@ test('Mais scrim covers bottom safe-area strip on Progresso', async ({ page }) =
   await page.goto('/progress')
   await expect(page.getByTestId('progress-unified-group')).toBeVisible({ timeout: 25_000 })
   await page.getByTestId('mobile-more-nav').click()
-  await expect(page.getByTestId('nav-more-modal-scrim')).toBeVisible()
+  await expect(page.getByTestId('nav-more-menu-backdrop')).toBeVisible()
 
   const scrimCoversBottom = await page.evaluate(() => {
-    const scrim = document.querySelector('[data-testid="nav-more-modal-scrim"]')
+    const scrim = document.querySelector('[data-testid="nav-more-menu-backdrop"]')
     if (!scrim) return false
     const rect = scrim.getBoundingClientRect()
     const x = window.innerWidth / 2

@@ -105,7 +105,7 @@ export function Modal({
 
   return (
     <OverlayPortal>
-      <div data-overlay-root data-testid={testId} role="presentation">
+      <div data-overlay-root role="presentation">
         <button
           type="button"
           className="scrim"
@@ -120,6 +120,7 @@ export function Modal({
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
+            data-testid={testId}
             className={cn('modal', className)}
           >
             <h2 id={titleId}>{title}</h2>

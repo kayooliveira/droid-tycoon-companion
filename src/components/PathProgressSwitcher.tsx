@@ -45,15 +45,12 @@ export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
         type="button"
         onClick={openSwitch}
         data-testid="path-switcher-trigger"
-        className={
-          compact
-            ? 'inline-flex items-center gap-1.5 rounded-xl border border-ui bg-ui-hover px-3 py-1.5 text-xs font-medium hover:bg-ui-hover-strong'
-            : 'inline-flex items-center gap-2 rounded-xl border border-ui bg-ui-hover px-4 py-2 text-sm hover:bg-ui-hover-strong'
-        }
+        className={compact ? 'sel' : 'inline-flex items-center gap-2 rounded-xl border border-ui bg-ui-hover px-4 py-2 text-sm hover:bg-ui-hover-strong'}
+        aria-label={`${t('path.switchTitle')} ${cycleLabel(progress.pathId)}`}
       >
-        <Path size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} className="text-ui-accent shrink-0" />
+        <Path size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} className="ic shrink-0" aria-hidden />
         <span className="truncate max-w-[10rem]">{cycleLabel(progress.pathId)}</span>
-        <CaretDown size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} className="opacity-60 shrink-0" />
+        <CaretDown size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} className="ic shrink-0" aria-hidden />
       </button>
 
       <Modal
