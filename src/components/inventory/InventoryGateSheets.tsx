@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { droidById } from '../../domain/gameData'
-import { DroidImage } from '../DroidImage'
+import { droidImageSrc } from '../../lib/images'
 import { OverlayPortal } from '../ui/OverlayPortal'
 
 const PICK_IDS = ['bb', 'r7', 'mouse', 'kx', 'lep', 'cyclens'] as const
@@ -24,7 +24,16 @@ function PickButton({ id, selected }: { id: string; selected: boolean }) {
   if (!droid) return null
   return (
     <button type="button" className="pick" aria-pressed={selected}>
-      <DroidImage droid={droid} tier="default" size="sm" />
+      <span className="dtile dtile--sm" data-tier="default">
+        <span className="dtile-bg" aria-hidden />
+        <img
+          src={droidImageSrc(droid.id, droid.imageLocal)}
+          alt=""
+          width={48}
+          height={48}
+          loading="eager"
+        />
+      </span>
       <span className="dname">{droid.name}</span>
     </button>
   )

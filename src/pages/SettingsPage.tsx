@@ -23,6 +23,7 @@ import { APP_PUBLIC_URL, WHATSAPP_SHARE_BASE } from '../lib/constants'
 import { renderShareProgressCard } from '../lib/shareProgressCard'
 import { useGateTabbarAnchor } from '../hooks/useGateTabbarAnchor'
 import { isDesignGateCapture } from '../e2e/designGate'
+import { SettingsGateView } from '../components/settings/SettingsGateView'
 async function downloadOrShare(blob: Blob, filename: string, mime: string) {
   const file = new File([blob], filename, { type: mime })
   if (navigator.canShare?.({ files: [file] })) {
@@ -171,13 +172,10 @@ export function SettingsPage() {
     }
   }
 
-  return (
-    <TabScrollLayout
-      title={t('settings.title')}
-      testId="settings-page"
-      className="settings-page-pad"
-      backBar={<MoreBackBar />}
-    >
+  const settingsBody = gateCopy ? (
+    <SettingsGateView stale={stale} />
+  ) : (
+    <>
       <section className="sec">
         <div className="sec-h">
           <h2 className="t-h2">{t('settings.appearance')}</h2>
@@ -513,6 +511,17 @@ export function SettingsPage() {
           {t('settings.resetShort')}
         </button>
       </section>
+    </>
+  )
+
+  return (
+    <TabScrollLayout
+      title={gateCopy ? 'Ajustes' : t('settings.title')}
+      testId="settings-page"
+      className="settings-page-pad"
+      backBar={<MoreBackBar />}
+    >
+      {settingsBody}
 
       <Modal
         open={importOpen}
@@ -556,8 +565,8 @@ export function SettingsPage() {
       <Modal
         open={resetOpen}
         onClose={() => setResetOpen(false)}
-        title={t('settings.resetConfirmTitle')}
-        testId="settings-reset-modal"
+        title={gateCopy ? 'Apagar tudo?' : t('settings.resetConfirmTitle')}
+        testId={gateCopy ? 'modal-apagar-tudo' : 'settings-reset-modal'}
         footer={
           <>
             <button
@@ -566,7 +575,7 @@ export function SettingsPage() {
               data-testid="settings-reset-cancel"
               onClick={() => setResetOpen(false)}
             >
-              {t('path.cancel')}
+              {gateCopy ? 'Cancelar' : t('path.cancel')}
             </button>
             <button
               type="button"
@@ -574,13 +583,15 @@ export function SettingsPage() {
               data-testid="settings-reset-confirm"
               onClick={confirmReset}
             >
-              {t('common.confirm')}
+              {gateCopy ? 'Confirmar' : t('common.confirm')}
             </button>
           </>
         }
       >
         <p className="hint" style={{ margin: '10px 0 16px' }}>
-          {t('settings.resetConfirmBody')}
+          {gateCopy
+            ? 'Apaga inventário, progresso e ajustes. Não dá para desfazer.'
+            : t('settings.resetConfirmBody')}
         </p>
       </Modal>
 

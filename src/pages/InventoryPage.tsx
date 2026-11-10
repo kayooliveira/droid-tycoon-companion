@@ -37,6 +37,7 @@ import {
 } from '../e2e/gateInventoryFixture'
 import { InventoryAddGateSheet, InventoryRemoveGateSheet } from '../components/inventory/InventoryGateSheets'
 import { InventoryEmptyGateView } from '../components/inventory/InventoryEmptyGateView'
+import { InventorySemResultadoGateView } from '../components/inventory/InventorySemResultadoGateView'
 import { droidMatchesQuery } from '../lib/droidNameMatch'
 import {
   usePersistedInventoryFilters,
@@ -346,6 +347,8 @@ export function InventoryPage() {
 
       {filtered.length === 0 && isDesignGateCapture() && inventory.length === 0 ? (
         <InventoryEmptyGateView onAdd={() => setAddOpen(true)} />
+      ) : filtered.length === 0 && isDesignGateCapture() && gateInv ? (
+        <InventorySemResultadoGateView onAdd={() => setAddOpen(true)} />
       ) : filtered.length === 0 ? (
         <InsetGroup>
           <div className="row">

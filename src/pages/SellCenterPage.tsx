@@ -18,6 +18,7 @@ import { useAppStore } from '../store/useAppStore'
 import { mockSellGateRows, type MockSellGateRow } from '../e2e/mockInventoryFixture'
 import { isDesignGateCapture } from '../e2e/designGate'
 import { SellEmptyGateView } from '../components/sell/SellEmptyGateView'
+import { VenderGateView } from '../components/sell/VenderGateView'
 import { useGateTabbarAnchor } from '../hooks/useGateTabbarAnchor'
 
 export function SellCenterPage() {
@@ -36,14 +37,6 @@ export function SellCenterPage() {
     [gateRows, inventory, progress.nextRebirth, progress.pathId],
   )
   const completedRebirth = Math.max(0, progress.nextRebirth - 1)
-
-  if (isDesignGateCapture() && inventory.length === 0) {
-    return (
-      <TabScrollLayout title={t('sell.title')} testId="sell-page" backBar={<MoreBackBar />}>
-        <SellEmptyGateView />
-      </TabScrollLayout>
-    )
-  }
 
   const safeNow = useMemo(() => {
     if (gateRows) return gateRows.filter((r) => r.category === 'safeNow')
@@ -82,6 +75,22 @@ export function SellCenterPage() {
     groups.keep.length === 0 &&
     groups.sellable.length === 0 &&
     groups.upgrade.length === 0
+
+  if (isDesignGateCapture() && inventory.length === 0) {
+    return (
+      <TabScrollLayout title={t('sell.title')} testId="sell-page" backBar={<MoreBackBar />}>
+        <SellEmptyGateView />
+      </TabScrollLayout>
+    )
+  }
+
+  if (isDesignGateCapture() && gateRows) {
+    return (
+      <TabScrollLayout title="Vender" testId="sell-page" backBar={<MoreBackBar />}>
+        <VenderGateView />
+      </TabScrollLayout>
+    )
+  }
 
   const renderAnalysisRow = (
     item: SellAnalysisItem,

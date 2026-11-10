@@ -1,6 +1,6 @@
 import { useSearchParams } from 'react-router-dom'
 import { droidById, gameData } from '../../domain/gameData'
-import { DroidImage } from '../DroidImage'
+import { droidImageSrc } from '../../lib/images'
 import { OnboardingThemeGateCards } from './OnboardingThemeGateCards'
 
 const WELCOME_TRIO = [
@@ -71,10 +71,24 @@ function Step0() {
         {WELCOME_TRIO.map(({ id, tier }) => {
           const droid = droidById.get(id)
           if (!droid) return null
+          const num = id === 'r7' ? '07' : id === 'lep' ? '08' : '11'
           return (
-            <div key={id}>
-              <DroidImage droid={droid} tier={tier} priority />
-            </div>
+            <span key={id} className="dtile" data-tier={tier}>
+              <span className="dtile-bg" aria-hidden />
+              <span className="dtile-num" aria-hidden>
+                {num}
+              </span>
+              <img
+                src={droidImageSrc(droid.id, droid.imageLocal)}
+                alt=""
+                width={128}
+                height={128}
+                loading="eager"
+              />
+              <span className="dtile-q" aria-hidden>
+                ?
+              </span>
+            </span>
           )
         })}
       </div>

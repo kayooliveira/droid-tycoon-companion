@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { droidById } from '../../domain/gameData'
 import { DroidImage } from '../DroidImage'
+import { droidImageSrc } from '../../lib/images'
 
 export function ProgressDroidSearchGateView({ query }: { query: string }) {
   const { t } = useTranslation()
@@ -15,16 +16,28 @@ export function ProgressDroidSearchGateView({ query }: { query: string }) {
   }
 
   if (/^c-?3po$/i.test(trimmed)) {
+    const c3po = droidById.get('c-3po')
     return (
       <div className="row" style={{ marginTop: 14, gap: 12 }}>
         <span style={{ width: 'var(--item-tile)', flex: 'none' }}>
-          <DroidImage droid={droidById.get('c-3po')!} tier="default" size="sm" />
+          {c3po ? (
+            <span className="dtile dtile--sm" data-tier="default">
+              <span className="dtile-bg" aria-hidden />
+              <img
+                src={droidImageSrc(c3po.id, c3po.imageLocal)}
+                alt=""
+                width={48}
+                height={48}
+                loading="eager"
+              />
+            </span>
+          ) : null}
         </span>
         <span className="row-main">
           <span className="dname" style={{ display: 'block' }}>
-            {t('progress.search.neverNeeded', { name: 'C-3PO' })}
+            Você não vai precisar do C-3PO em nenhum Ciclo.
           </span>
-          <span className="hint">{t('progress.search.canSell')}</span>
+          <span className="hint">Pode vender sem medo.</span>
         </span>
       </div>
     )

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { droidById } from '../../domain/gameData'
-import { DroidImage } from '../DroidImage'
+import { droidImageSrc } from '../../lib/images'
 
 function RuleIcon({ kind }: { kind: 'tier' | 'random' | 'unlock' }) {
   if (kind === 'tier') {
@@ -36,6 +36,30 @@ const partialTag = (label: string) => (
   </span>
 )
 
+function GateSmTile({
+  droidId,
+  imageLocal,
+  tier = 'default',
+  missing,
+}: {
+  droidId: string
+  imageLocal?: string
+  tier?: string
+  missing?: boolean
+}) {
+  return (
+    <span className="dtile dtile--sm" data-tier={tier} data-missing={missing ? '' : undefined}>
+      <span className="dtile-bg" aria-hidden />
+      <img src={droidImageSrc(droidId, imageLocal ?? '')} alt="" width={48} height={48} loading="eager" />
+      {missing ? (
+        <span className="dtile-q" aria-hidden>
+          ?
+        </span>
+      ) : null}
+    </span>
+  )
+}
+
 function RecipeRow({
   ingredients,
   resultId,
@@ -65,7 +89,7 @@ function RecipeRow({
                 </span>
               ) : null}
               <div style={{ width: 48 }}>
-                <DroidImage droid={droid} tier="default" size="sm" priority />
+                <GateSmTile droidId={droid.id} imageLocal={droid.imageLocal} />
               </div>
               {q > 1 ? (
                 <span className="t-label" style={{ alignSelf: 'center' }}>
@@ -80,7 +104,7 @@ function RecipeRow({
         </span>
         <div style={{ width: 48 }}>
           {result ? (
-            <DroidImage droid={result} tier="default" size="sm" missing priority />
+            <GateSmTile droidId={result.id} imageLocal={result.imageLocal} missing />
           ) : null}
         </div>
       </div>

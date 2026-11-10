@@ -38,7 +38,7 @@ function LepDetailGateModal({ onClose }: { onClose: () => void }) {
           <div className="row2" style={{ alignItems: 'flex-start', gap: 14, margin: '10px 0 14px' }}>
             <div style={{ width: 158, flex: 'none' }}>
               {lep ? (
-                <span className="dtile" data-tier="kyber">
+                <span className="dtile" data-tier="kyber" style={{ width: 158, height: 158 }}>
                   <span className="dtile-bg" aria-hidden />
                   <span className="dtile-num" aria-hidden>
                     08
