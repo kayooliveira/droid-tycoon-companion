@@ -96,8 +96,8 @@
   }
 
   html.e2e-safe-area [data-testid^='onboarding-step-'] .stepper .btn {
-    font-size: 15px;
-    line-height: 15.75px;
+    font-size: 15px !important;
+    line-height: 15.75px !important;
   }
 
   html.e2e-safe-area [data-testid='onboarding-step-progress'] .row:has(.stepper) {

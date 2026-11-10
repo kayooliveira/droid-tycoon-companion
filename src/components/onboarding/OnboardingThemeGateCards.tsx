@@ -9,7 +9,7 @@ const THEMES = [
 
 function ThemePreview({ themeKey, cols }: { themeKey: string; cols: number }) {
   const droid = droidById.get('r7')
-  const cells = Array.from({ length: cols }, (_, i) => (
+  const cells = Array.from({ length: 20 }, (_, i) => (
     <i key={i} className={i < 12 ? 'done' : i === 12 ? 'cur' : undefined} />
   ))
   return (

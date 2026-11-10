@@ -2,10 +2,9 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { droidById } from '../../domain/gameData'
 import { formatBaseRarity } from '../../i18n/tierLabels'
-import { DroidImage } from '../DroidImage'
+import { droidImageSrc } from '../../lib/images'
 import { ChipRadioGroup } from '../ui/ChipRadioGroup'
 import { OverlayPortal } from '../ui/OverlayPortal'
-import { droidImageSrc } from '../../lib/images'
 
 const GATE_GRID_IDS = [
   'mouse',
@@ -155,7 +154,13 @@ export function DroiddexGateView() {
               onClick={() => setSelectedId(id)}
             >
               <div className="collect-art">
-                <DroidImage droid={d} tier="default" className="!h-full !w-full rounded-none" />
+                <img
+                  src={droidImageSrc(d.id, d.imageLocal)}
+                  alt=""
+                  width={128}
+                  height={128}
+                  loading="eager"
+                />
               </div>
               <div className="collect-body">
                 <span className="dname">{d.name}</span>
