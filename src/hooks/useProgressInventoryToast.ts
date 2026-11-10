@@ -49,7 +49,7 @@ export function useProgressInventoryToast() {
       const gate = isDesignGateCapture()
       const message =
         gate && context.delta > 0
-          ? `${context.name} adicionado`
+          ? 'R7 adicionado'
           : context.delta > 0
             ? t('progress.inventoryAddedShort', { name: context.name })
             : t('progress.inventoryRemovedShort', { name: context.name })

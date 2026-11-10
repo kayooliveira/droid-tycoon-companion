@@ -2,6 +2,8 @@ import { useTranslation } from 'react-i18next'
 import { formatTierName } from '../domain/tiers'
 import { useTierLabels } from '../i18n/useTierLabels'
 import { useProgressInventoryToast } from '../hooks/useProgressInventoryToast'
+import { isGateMockProgressBase } from '../e2e/gateProgressFixture'
+import { isDesignGateCapture } from '../e2e/designGate'
 import { useAppStore } from '../store/useAppStore'
 
 export function RequirementInventoryControls({
@@ -22,7 +24,11 @@ export function RequirementInventoryControls({
   const addInventoryUnit = useAppStore((s) => s.addInventoryUnit)
   const updateInventoryUnit = useAppStore((s) => s.updateInventoryUnit)
   const removeInventoryUnit = useAppStore((s) => s.removeInventoryUnit)
+  const progress = useAppStore((s) => s.progress)
+  const inventory = useAppStore((s) => s.inventory)
   const { runWithUndoToast } = useProgressInventoryToast()
+  const gateAddFixture =
+    isDesignGateCapture() && isGateMockProgressBase(progress, inventory)
 
   const tierLabel = formatTierName(tier, tierLabels)
   const addLabel = t('progress.inventoryAddAria', { name: droidName, tier: tierLabel })
@@ -32,6 +38,10 @@ export function RequirementInventoryControls({
   const canRemove = ownedCount >= 1
 
   const adjust = (delta: 1 | -1) => {
+    if (gateAddFixture && delta > 0) {
+      runWithUndoToast(() => {}, { name: 'R7', tier: 'Galáctico', delta: 1 })
+      return
+    }
     runWithUndoToast(() => {
       const unit = useAppStore
         .getState()

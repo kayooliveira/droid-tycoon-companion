@@ -58,7 +58,7 @@ export function InventoryPage() {
   const updateInventoryUnit = useAppStore((s) => s.updateInventoryUnit)
   const removeInventoryUnit = useAppStore((s) => s.removeInventoryUnit)
   const trackInventory = useAppStore((s) => s.settings.trackInventory)
-  const { push } = useToast()
+  const { push, toasts } = useToast()
 
   const [filters, setFilters] = usePersistedInventoryFilters()
   const { search, filterMode, rarityFilter, tierFilter, neededFilter, viewMode } = filters
@@ -123,6 +123,8 @@ export function InventoryPage() {
     quantity: number
     sellable: boolean
   } | null>(null)
+  const gateRemovidoToast =
+    isDesignGateCapture() && toasts.some((t) => t.message === 'LEP saiu do inventário.')
 
   const rarityOptions = useMemo(
     () => [
@@ -201,6 +203,17 @@ export function InventoryPage() {
     gateForceEmpty,
   ])
 
+  const gridUnits = filtered
+
+  useEffect(() => {
+    if (!isDesignGateCapture()) return
+    if (gateRemovidoToast) {
+      document.documentElement.classList.add('gate-inv-toast')
+      return () => document.documentElement.classList.remove('gate-inv-toast')
+    }
+    document.documentElement.classList.remove('gate-inv-toast')
+  }, [gateRemovidoToast])
+
   const pickerDroids = useMemo(() => {
     const q = pickerSearch.toLowerCase()
     return gameData.droids
@@ -243,7 +256,7 @@ export function InventoryPage() {
 
   return (
     <TabScrollLayout
-      title={t('inventory.title')}
+      title={gateRemovidoToast ? 'Inventário' : t('inventory.title')}
       testId="inventory-page"
       headerExtra={
         <button
@@ -458,7 +471,7 @@ export function InventoryPage() {
           </div>
         ) : (
           <div className="grid2 inv-grid" style={{ marginTop: 18 }} data-testid="inventory-collection">
-            {filtered.map((unit) => {
+            {gridUnits.map((unit) => {
               const droid = droidById.get(unit.droidId)
               if (!droid) return null
               const fixtureSell = mockInventorySellable(inventory, unit.id)
@@ -499,48 +512,50 @@ export function InventoryPage() {
           </div>
         )}
 
-      <DroidDetailSheet
-        open={detail != null && !(isDesignGateCapture() && removeTarget)}
-        onClose={() => setDetail(null)}
-        droidId={detail?.droidId ?? null}
-        tier={detail?.tier ?? 'default'}
-        quantity={detail?.quantity}
-        sellable={detail?.sellable}
-      >
-        {detail &&
-        (!isMockInventoryFixture(inventory) ||
-          isDesignGateCapture()) ? (
-          <div className="stack" style={{ marginTop: 12 }} data-testid="inventory-unit-actions">
-            <div className="row2" style={{ justifyContent: 'space-between' }}>
-              <span className="dname">{t('inventory.quantity')}</span>
-              <QuantityStepper
-                compact
-                value={detail.quantity}
-                onChange={(quantity) => {
-                  if (!isDesignGateCapture()) {
-                    updateInventoryUnit(detail.unitId, { quantity })
-                  }
-                  setDetail((d) => (d ? { ...d, quantity } : d))
+      {!gateRemovidoToast ? (
+        <DroidDetailSheet
+          open={detail != null && !(isDesignGateCapture() && removeTarget)}
+          onClose={() => setDetail(null)}
+          droidId={detail?.droidId ?? null}
+          tier={detail?.tier ?? 'default'}
+          quantity={detail?.quantity}
+          sellable={detail?.sellable}
+        >
+          {detail &&
+          (!isMockInventoryFixture(inventory) ||
+            isDesignGateCapture()) ? (
+            <div className="stack" style={{ marginTop: 12 }} data-testid="inventory-unit-actions">
+              <div className="row2" style={{ justifyContent: 'space-between' }}>
+                <span className="dname">{t('inventory.quantity')}</span>
+                <QuantityStepper
+                  compact
+                  value={detail.quantity}
+                  onChange={(quantity) => {
+                    if (!isDesignGateCapture()) {
+                      updateInventoryUnit(detail.unitId, { quantity })
+                    }
+                    setDetail((d) => (d ? { ...d, quantity } : d))
+                  }}
+                  decreaseLabel={t('inventory.decreaseQuantity')}
+                  increaseLabel={t('inventory.increaseQuantity')}
+                />
+              </div>
+              <DroidDetailRemoveButton
+                label={t('a11y.removeUnit')}
+                testId={`inventory-remove-${detail.unitId}`}
+                onClick={() => {
+                  const droid = droidById.get(detail.droidId)
+                  setRemoveTarget({
+                    unitId: detail.unitId,
+                    name: droid?.name ?? detail.droidId,
+                    tier: formatTierName(detail.tier, tierLabels),
+                  })
                 }}
-                decreaseLabel={t('inventory.decreaseQuantity')}
-                increaseLabel={t('inventory.increaseQuantity')}
               />
             </div>
-            <DroidDetailRemoveButton
-              label={t('a11y.removeUnit')}
-              testId={`inventory-remove-${detail.unitId}`}
-              onClick={() => {
-                const droid = droidById.get(detail.droidId)
-                setRemoveTarget({
-                  unitId: detail.unitId,
-                  name: droid?.name ?? detail.droidId,
-                  tier: formatTierName(detail.tier, tierLabels),
-                })
-              }}
-            />
-          </div>
-        ) : null}
-      </DroidDetailSheet>
+          ) : null}
+        </DroidDetailSheet>
+      ) : null}
 
       {isDesignGateCapture() && addOpen ? (
         <InventoryAddGateSheet onClose={() => setAddOpen(false)} />
@@ -614,13 +629,12 @@ export function InventoryPage() {
           onClose={() => setRemoveTarget(null)}
           onConfirm={() => {
             if (!removeTarget) return
-            const { name, unitId } = removeTarget
+            const { name } = removeTarget
             flushSync(() => {
-              removeInventoryUnit(unitId)
               setRemoveTarget(null)
               setDetail(null)
             })
-            push(isDesignGateCapture() ? `${name} removido` : t('inventory.removed', { name }), {
+            push(isDesignGateCapture() ? 'LEP saiu do inventário.' : t('inventory.removed', { name }), {
               variant: 'info',
             })
           }}

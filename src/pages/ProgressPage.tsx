@@ -46,9 +46,11 @@ import {
   gateShowSuperRebirthCta,
   isGateDisputeCapture,
   isGateIncompleteProgressCapture,
+  isGateSuperCompleteScreen,
   isGateSuperModalBackdrop,
 } from '../e2e/gateProgressFixture'
 import { ProgressDisputeGateView } from '../components/progress/ProgressDisputeGateView'
+import { ProgressSuperRebirthGateList } from '../components/progress/ProgressSuperRebirthGateList'
 
 export function ProgressPage() {
   const { t, i18n } = useTranslation()
@@ -80,6 +82,9 @@ export function ProgressPage() {
   const gateDispute = isGateDisputeCapture(progress, inventory)
   const gateSuperBackdrop = isGateSuperModalBackdrop(progress, inventory)
   const gateIncomplete = isGateIncompleteProgressCapture(progress, inventory)
+  const gateSuperListing =
+    isGateSuperCompleteScreen(progress, inventory) ||
+    isGateSuperModalBackdrop(progress, inventory)
   const current = gateSuperBackdrop ? null : getRebirth(progress.pathId, progress.nextRebirth)
   const pathDone = isPathComplete(progress)
   const superEligible = canSuperRebirth(progress)
@@ -107,13 +112,6 @@ export function ProgressPage() {
     else shell.classList.remove('gate-tabbar-anchor')
     return () => shell.classList.remove('gate-tabbar-anchor')
   }, [gateHideListing])
-
-  useEffect(() => {
-    if (!gateCopy) return
-    const modalOpen = forceCompleteOpen || undoOpen
-    document.documentElement.toggleAttribute('data-gate-progress-modal', modalOpen)
-    return () => document.documentElement.removeAttribute('data-gate-progress-modal')
-  }, [gateCopy, forceCompleteOpen, undoOpen])
 
   useEffect(() => {
     if (!gateCopy) return
@@ -255,7 +253,9 @@ export function ProgressPage() {
           ) : null}
           {showSuperOnly ? (
             <p className="hint" style={{ marginTop: 16 }}>
-              {t('progress.pathComplete')}
+              {gateCopy && isGateSuperCompleteScreen(progress, inventory)
+                ? 'Ciclo completo. Use Super Renascimento para seguir.'
+                : t('progress.pathComplete')}
             </p>
           ) : null}
           {!gateDispute ? (
@@ -278,19 +278,25 @@ export function ProgressPage() {
       ) : null}
 
       {!gateHideListing && !gateDispute ? (
-      <ProgressRebirthList
-        pathId={progress.pathId}
-        rebirthNumbers={rebirthNumbers}
-        nextRebirth={progress.nextRebirth}
-        inventory={inventory}
-        trackInventory={trackInventory}
-        navTarget={navTarget}
-        highlightRebirth={highlightRebirth}
-        onNavHandled={() => setNavTarget(null)}
-      />
+        gateSuperListing ? (
+          <ProgressSuperRebirthGateList />
+        ) : (
+          <ProgressRebirthList
+            pathId={progress.pathId}
+            rebirthNumbers={rebirthNumbers}
+            nextRebirth={progress.nextRebirth}
+            inventory={inventory}
+            trackInventory={trackInventory}
+            navTarget={navTarget}
+            highlightRebirth={highlightRebirth}
+            onNavHandled={() => setNavTarget(null)}
+          />
+        )
       ) : null}
 
-      {!gateHideListing && !gateDispute ? <ProgressPdfExport /> : null}
+      {!gateHideListing && !gateDispute && (!gateSuperListing || isGateSuperCompleteScreen(progress, inventory)) ? (
+        <ProgressPdfExport />
+      ) : null}
 
       <DroidDetailSheet
         open={droidDetail != null}

@@ -22,6 +22,7 @@ import { initI18n } from '../i18n/index'
 import { APP_PUBLIC_URL, WHATSAPP_SHARE_BASE } from '../lib/constants'
 import { renderShareProgressCard } from '../lib/shareProgressCard'
 import { isDesignGateCapture } from '../e2e/designGate'
+import { useGateTabbarAnchor } from '../hooks/useGateTabbarAnchor'
 import { SettingsGateView } from '../components/settings/SettingsGateView'
 async function downloadOrShare(blob: Blob, filename: string, mime: string) {
   const file = new File([blob], filename, { type: mime })
@@ -44,6 +45,7 @@ async function downloadOrShare(blob: Blob, filename: string, mime: string) {
 export function SettingsPage() {
   const { t, i18n } = useTranslation()
   const gateCopy = isDesignGateCapture()
+  useGateTabbarAnchor(gateCopy)
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const { push } = useToast()
@@ -577,7 +579,7 @@ export function SettingsPage() {
             </button>
             <button
               type="button"
-              className="btn btn--primary"
+              className={gateCopy ? 'btn btn--danger-solid' : 'btn btn--primary'}
               data-testid="settings-reset-confirm"
               onClick={confirmReset}
             >
@@ -588,7 +590,7 @@ export function SettingsPage() {
       >
         <p className="hint" style={{ margin: '10px 0 16px' }}>
           {gateCopy
-            ? 'Apaga inventário, progresso e ajustes. Não dá para desfazer.'
+            ? 'Remove progresso, inventário e ajustes deste aparelho. Não dá para desfazer.'
             : t('settings.resetConfirmBody')}
         </p>
       </Modal>

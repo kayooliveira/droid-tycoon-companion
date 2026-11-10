@@ -14,7 +14,6 @@ import { useAppStore } from '../../store/useAppStore'
 import {
   gateRebirthListNextRebirth,
   isGateProgressListCapture,
-  isGateSuperModalBackdrop,
 } from '../../e2e/gateProgressFixture'
 
 type RebirthListItemProps = {
@@ -183,7 +182,6 @@ export function ProgressRebirthList({
   const updateSettings = useAppStore((s) => s.updateSettings)
   const progress = useAppStore((s) => s.progress)
   const gateList = isGateProgressListCapture(progress, inventory)
-  const gateSuperListPad = isGateSuperModalBackdrop(progress, inventory)
   const listNextRebirth = gateList
     ? gateRebirthListNextRebirth(
         useAppStore.getState().progress,
@@ -225,10 +223,7 @@ export function ProgressRebirthList({
   const toggleAria = anyExpanded ? t('progress.collapseAllAria') : t('progress.expandAllAria')
 
   return (
-    <div
-      data-testid="progress-rebirth-list"
-      style={gateSuperListPad ? { marginTop: 19 } : undefined}
-    >
+    <div data-testid="progress-rebirth-list">
       <div className="sec-h sec-h--act">
         <h2 className="t-h2">{t('progress.rebirthListSection')}</h2>
         <button

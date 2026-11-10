@@ -13,7 +13,7 @@ import { MoreBackBar } from '../components/layout/MoreBackBar'
 import { InsetGroup } from '../components/ui/InsetGroup'
 
 export function AboutPage() {
-  useGateTabbarAnchor()
+  useGateTabbarAnchor(false)
   const { t, i18n } = useTranslation()
   if (isDesignGateCapture()) {
     return (

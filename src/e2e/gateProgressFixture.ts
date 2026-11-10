@@ -82,6 +82,9 @@ export function isGateDisputeCapture(
 }
 
 export function gateCycleMeter(progress: ProgressState, inventory: InventoryUnit[]) {
+  if (isGateSuperCompleteScreen(progress, inventory)) {
+    return { completedOnPath: 40, nextRebirth: 40 }
+  }
   if (isGateSuperModalBackdrop(progress, inventory)) {
     return { completedOnPath: 40, nextRebirth: 40 }
   }

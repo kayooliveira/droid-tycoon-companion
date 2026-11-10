@@ -39,7 +39,7 @@ export function SettingsGateView({
         <div className="sec-h">
           <h2 className="t-h2">Aparência</h2>
         </div>
-        <Link to="/settings/appearance" className="row">
+        <a className="row" href="#" onClick={(e) => e.preventDefault()}>
           <RowIcon>
             <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
               <path d="M4 7h9M17 7h3M4 17h3M11 17h9" />
@@ -60,7 +60,7 @@ export function SettingsGateView({
               <path d="m9 5 7 7-7 7" />
             </svg>
           </span>
-        </Link>
+        </a>
         <SwitchRow label="Animações" on />
         <SwitchRow label="Registrar inventário" on />
       </section>
@@ -194,6 +194,12 @@ export function SettingsGateView({
           <h2 className="t-h2">Compartilhar</h2>
         </div>
         <button type="button" className="row">
+          <RowIcon>
+            <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
+              <path d="M10 14a4 4 0 0 0 5.6 0l3-3a4 4 0 0 0-5.6-5.6l-1 1" />
+              <path d="M14 10a4 4 0 0 0-5.6 0l-3 3a4 4 0 0 0 5.6 5.6l1-1" />
+            </svg>
+          </RowIcon>
           <span className="row-main">
             <span className="dname" style={{ display: 'block' }}>
               Compartilhar app
@@ -201,6 +207,11 @@ export function SettingsGateView({
           </span>
         </button>
         <button type="button" className="row">
+          <RowIcon>
+            <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
+              <path d="M4 5h16v10H7l-3 3z" />
+            </svg>
+          </RowIcon>
           <span className="row-main">
             <span className="dname" style={{ display: 'block' }}>
               WhatsApp
@@ -208,6 +219,12 @@ export function SettingsGateView({
           </span>
         </button>
         <button type="button" className="row" data-testid="share-progress-card">
+          <RowIcon>
+            <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
+              <path d="M12 15.5V4M7.5 8 12 3.5 16.5 8" />
+              <path d="M5 19.5h14" />
+            </svg>
+          </RowIcon>
           <span className="row-main">
             <span className="dname" style={{ display: 'block' }}>
               Card de progresso
@@ -224,6 +241,12 @@ export function SettingsGateView({
           <h2 className="t-h2">Sobre</h2>
         </div>
         <button type="button" className="row">
+          <RowIcon>
+            <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
+              <path d="M20 12a8 8 0 1 1-2.6-5.9" />
+              <path d="M20.5 3.5v4.5H16" />
+            </svg>
+          </RowIcon>
           <span className="row-main">
             <span className="dname" style={{ display: 'block' }}>
               Refazer setup
@@ -231,6 +254,12 @@ export function SettingsGateView({
           </span>
         </button>
         <Link to="/about" className="row">
+          <RowIcon>
+            <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 10v6M12 8h.01" />
+            </svg>
+          </RowIcon>
           <span className="row-main">
             <span className="dname" style={{ display: 'block' }}>
               Sobre
@@ -238,6 +267,11 @@ export function SettingsGateView({
           </span>
         </Link>
         <button type="button" className="row">
+          <RowIcon>
+            <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
+              <path d="M4 5h16v10H7l-3 3z" />
+            </svg>
+          </RowIcon>
           <span className="row-main">
             <span className="dname" style={{ display: 'block' }}>
               Mandar feedback / Entrar no grupo

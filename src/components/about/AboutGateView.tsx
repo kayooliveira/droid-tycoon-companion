@@ -58,7 +58,7 @@ export function AboutGateView() {
 
       <div className="about-gate-spacer" aria-hidden />
 
-      <footer className="credits" style={{ marginTop: 20 }}>
+      <footer className="credits" style={{ marginTop: 18 }}>
         <p>Imagens: Star Wars Droid Tycoon Wiki (Fandom), licença CC BY-SA 4.0.</p>
         <p style={{ marginTop: 6 }}>Wikis e guias da comunidade (sem vínculo com sites de terceiros).</p>
         <p style={{ marginTop: 6 }}>

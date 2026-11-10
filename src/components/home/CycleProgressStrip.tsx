@@ -2,7 +2,8 @@ import { type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { gameData } from '../../domain/gameData'
 import { formatCycleDisplayName } from '../../lib/cycleLabel'
-import { gateCycleMeter } from '../../e2e/gateProgressFixture'
+import { gateCycleMeter, isGateSuperCompleteScreen } from '../../e2e/gateProgressFixture'
+import { isDesignGateCapture } from '../../e2e/designGate'
 import { useAppStore } from '../../store/useAppStore'
 
 const REBIRTHS_PER_PATH = 40
@@ -37,13 +38,17 @@ export function CycleProgressStrip({
   const showFoot = true
   const compact = variant === 'progress'
 
+  const gateSuperComplete =
+    isDesignGateCapture() && isGateSuperCompleteScreen(progress, inventory)
   const footText =
-    variant === 'progress'
-      ? t('progress.cycleFootSummary', {
-          done,
-          next: Math.min(nextRebirth, total),
-        })
-      : t('home.superAfterRebirth', { n: total })
+    gateSuperComplete && variant === 'progress'
+      ? 'Concluídos: 40 · Próximo renascimento: #40'
+      : variant === 'progress'
+        ? t('progress.cycleFootSummary', {
+            done,
+            next: Math.min(nextRebirth, total),
+          })
+        : t('home.superAfterRebirth', { n: total })
 
   return (
     <section className="sec" data-testid="home-cycle-strip">

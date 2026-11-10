@@ -20,6 +20,7 @@ import { UI_ICON_SIZE, UI_ICON_WEIGHT } from './ui/iconStyle'
 import { OverlayPortal } from './ui/OverlayPortal'
 import { cn } from '../lib/utils'
 import { isDesignGateCapture } from '../e2e/designGate'
+import { useAppStore } from '../store/useAppStore'
 
 export type ToastVariant = 'success' | 'info' | 'warning' | 'error' | 'neutral'
 
@@ -161,11 +162,13 @@ function ToastSlot({
 
 export function ToastViewport() {
   const ctx = useContext(ToastContext)
+  const installDismissed = useAppStore((s) => s.settings.installBannerDismissed)
   if (TOAST_PLACEMENT !== 'inflow' || !ctx) return null
   if (isDesignGateCapture() && ctx.toasts.length === 0) {
-    if (typeof document !== 'undefined' && document.querySelector('[data-testid="install-banner"]')) {
-      return null
-    }
+    const onHome =
+      typeof window !== 'undefined' &&
+      (window.location.pathname === '/' || window.location.pathname === '')
+    if (onHome && !installDismissed) return null
     return <div className="toast-slot" hidden data-testid="toast-stack" />
   }
   return <ToastSlot toasts={ctx.toasts} dismiss={ctx.dismiss} />
@@ -268,5 +271,5 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 export function useToast() {
   const ctx = useContext(ToastContext)
   if (!ctx) throw new Error('useToast must be used within ToastProvider')
-  return { push: ctx.push }
+  return { push: ctx.push, toasts: ctx.toasts }
 }
