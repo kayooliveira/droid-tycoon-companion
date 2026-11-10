@@ -1,5 +1,10 @@
 import type { InventoryUnit, TierId } from '../domain/types'
 import type { SellCategory, SellReasonKey } from '../domain/sellCenter'
+import { isDesignGateCapture } from './designGate'
+
+function gateFixtureActive(inventory: InventoryUnit[]): boolean {
+  return isDesignGateCapture() && isMockInventoryFixture(inventory)
+}
 
 /** QA seed from `dd-design/sistema/tools/validar_app.py` / comparar gate (INV10 order). */
 const MOCK_SELLABLE_BY_UNIT_ID: Record<string, boolean> = {
@@ -25,21 +30,21 @@ export function mockInventorySellable(
   inventory: InventoryUnit[],
   unitId: string,
 ): boolean | null {
-  if (!isMockInventoryFixture(inventory)) return null
+  if (!gateFixtureActive(inventory)) return null
   return MOCK_SELLABLE_BY_UNIT_ID[unitId] ?? null
 }
 
 /** Contagem de “livres pra vender” no Início / menu Mais (gate vender.html). */
 export function mockHomeSellableCount(inventory: InventoryUnit[]): number | null {
-  return isMockInventoryFixture(inventory) ? 2 : null
+  return gateFixtureActive(inventory) ? 2 : null
 }
 
 export function mockMoreMenuSellHint(inventory: InventoryUnit[]): string | null {
-  return isMockInventoryFixture(inventory) ? 'Pode vender 2 droids agora' : null
+  return gateFixtureActive(inventory) ? 'Pode vender 2 droids agora' : null
 }
 
 export function mockMoreMenuDroiddexHint(inventory: InventoryUnit[]): string | null {
-  return isMockInventoryFixture(inventory) ? '101 droids e onde cada um entra' : null
+  return gateFixtureActive(inventory) ? '101 droids e onde cada um entra' : null
 }
 
 export type MockSellGateRow = {
@@ -56,7 +61,7 @@ export type MockSellGateRow = {
 
 /** Layout fixo de `vender.html` para o inventário de QA (gate 1:1). */
 export function mockSellGateRows(inventory: InventoryUnit[]): MockSellGateRow[] | null {
-  if (!isMockInventoryFixture(inventory)) return null
+  if (!gateFixtureActive(inventory)) return null
   return [
     {
       unitId: 'm7',

@@ -22,17 +22,25 @@ export function useProgressListExpansion(
   nextRebirth: number,
   _persistedAllExpanded: boolean,
   onPersistAllExpanded: (value: boolean) => void,
+  forcedExpanded?: Record<number, boolean> | null,
 ) {
   const rebirthKey = useMemo(() => rebirthNumbers.join(','), [rebirthNumbers])
 
   const defaultExpanded = useCallback(() => {
+    if (forcedExpanded) {
+      const map = buildExpandedMap(rebirthNumbers, false)
+      for (const n of rebirthNumbers) {
+        if (forcedExpanded[n] === true) map[n] = true
+      }
+      return map
+    }
     if (_persistedAllExpanded) {
       return buildExpandedMap(rebirthNumbers, true)
     }
     const map = buildExpandedMap(rebirthNumbers, false)
     map[nextRebirth] = true
     return map
-  }, [_persistedAllExpanded, rebirthNumbers, nextRebirth])
+  }, [_persistedAllExpanded, forcedExpanded, rebirthNumbers, nextRebirth])
 
   const [expanded, setExpanded] = useState<Record<number, boolean>>(defaultExpanded)
 

@@ -18,7 +18,6 @@ import {
 import { tierLabel } from '../i18n/tierLabels'
 import { gameData } from '../domain/gameData'
 import { PathProgressSwitcher } from '../components/PathProgressSwitcher'
-import { Button } from '../components/ui/Button'
 import { Modal } from '../components/ui/Modal'
 import { useAppStore } from '../store/useAppStore'
 import { useToast } from '../components/ToastProvider'
@@ -193,6 +192,11 @@ export function ProgressPage() {
               />
             </>
           ) : null}
+          {showSuperOnly ? (
+            <p className="hint" style={{ marginTop: 16 }}>
+              {t('progress.pathComplete')}
+            </p>
+          ) : null}
           <ProgressActionStack
             showComplete={Boolean(current) && !pathDone}
             completeDisabled={trackInventory && !canComplete}
@@ -239,21 +243,28 @@ export function ProgressPage() {
         testId="progress-force-complete-modal"
         footer={
           <>
-            <Button
-              variant="secondary"
-              size="sm"
+            <button
+              type="button"
+              className="btn btn--secondary"
               data-testid="progress-force-cancel"
               onClick={() => setForceCompleteOpen(false)}
             >
               {t('path.cancel')}
-            </Button>
-            <Button size="sm" data-testid="progress-force-confirm" onClick={confirmForceComplete}>
+            </button>
+            <button
+              type="button"
+              className="btn btn--primary"
+              data-testid="progress-force-confirm"
+              onClick={confirmForceComplete}
+            >
               {t('progress.completeShort')}
-            </Button>
+            </button>
           </>
         }
       >
-        <p className="text-xs text-ui-muted text-pretty">{t('progress.completeBlockedShort')}</p>
+        <p className="hint" style={{ margin: '10px 0 16px' }}>
+          {t('progress.completeBlockedShort')}
+        </p>
       </Modal>
 
       <Modal
@@ -263,21 +274,26 @@ export function ProgressPage() {
         testId="progress-super-confirm-modal"
         footer={
           <>
-            <Button
-              variant="secondary"
-              size="sm"
+            <button
+              type="button"
+              className="btn btn--secondary"
               data-testid="progress-super-cancel"
               onClick={() => setSuperConfirmOpen(false)}
             >
               {t('path.cancel')}
-            </Button>
-            <Button size="sm" data-testid="progress-super-confirm" onClick={confirmSuperRebirth}>
+            </button>
+            <button
+              type="button"
+              className="btn btn--primary"
+              data-testid="progress-super-confirm"
+              onClick={confirmSuperRebirth}
+            >
               {t('common.confirm')}
-            </Button>
+            </button>
           </>
         }
       >
-        <p className="text-sm text-ui-secondary text-pretty">
+        <p style={{ margin: '10px 0 16px' }}>
           {t('progress.superConfirmBody', {
             currentCycle: cycleLabel(progress.pathId),
             nextCycle: cycleLabel(nextPathId),
@@ -293,16 +309,28 @@ export function ProgressPage() {
         testId="progress-undo-modal"
         footer={
           <>
-            <Button variant="secondary" size="sm" data-testid="progress-undo-cancel" onClick={() => setUndoOpen(false)}>
+            <button
+              type="button"
+              className="btn btn--secondary"
+              data-testid="progress-undo-cancel"
+              onClick={() => setUndoOpen(false)}
+            >
               {t('path.cancel')}
-            </Button>
-            <Button size="sm" data-testid="progress-undo-confirm" onClick={confirmUndo}>
+            </button>
+            <button
+              type="button"
+              className="btn btn--primary"
+              data-testid="progress-undo-confirm"
+              onClick={confirmUndo}
+            >
               {t('progress.undoConfirmShort')}
-            </Button>
+            </button>
           </>
         }
       >
-        <p className="text-xs text-ui-muted text-pretty">{t('progress.undoConfirm')}</p>
+        <p className="hint" style={{ margin: '10px 0 16px' }}>
+          {t('progress.undoConfirm')}
+        </p>
       </Modal>
 
       <div aria-hidden />

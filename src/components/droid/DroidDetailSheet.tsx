@@ -42,6 +42,7 @@ export function DroidDetailSheet({
       testId="droid-detail-sheet"
       closeLabel={t('common.close')}
       renderHeader={false}
+      aboveTabBar
       ariaLabel={`${droid.name} ${tierName}`}
       labelledBy="droid-detail-sheet-label"
     >

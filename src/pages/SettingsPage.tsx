@@ -7,7 +7,6 @@ import { REPORT_FEEDBACK_URL } from '../lib/constants'
 import { PathProgressSwitcher, ProgressSummaryLine } from '../components/PathProgressSwitcher'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
 import { MoreBackBar } from '../components/layout/MoreBackBar'
-import { Button } from '../components/ui/Button'
 import { Modal } from '../components/ui/Modal'
 import { SegmentedControl } from '../components/ui/SegmentedControl'
 import { DsSwitch } from '../components/ui/DsSwitch'
@@ -512,9 +511,9 @@ export function SettingsPage() {
         testId="modal-importar"
         footer={
           <>
-            <Button
-              variant="secondary"
-              size="sm"
+            <button
+              type="button"
+              className="btn btn--secondary"
               data-testid="settings-import-cancel"
               onClick={() => {
                 setImportOpen(false)
@@ -522,14 +521,19 @@ export function SettingsPage() {
               }}
             >
               {t('path.cancel')}
-            </Button>
-            <Button size="sm" data-testid="settings-import-confirm" onClick={confirmImport}>
+            </button>
+            <button
+              type="button"
+              className="btn btn--primary"
+              data-testid="settings-import-confirm"
+              onClick={confirmImport}
+            >
               {t('common.confirm')}
-            </Button>
+            </button>
           </>
         }
       >
-        <p className="text-sm text-ui-secondary text-pretty">{t('settings.importConfirmBody')}</p>
+        <p style={{ margin: '10px 0 16px' }}>{t('settings.importConfirmBody')}</p>
       </Modal>
 
       <Modal
@@ -539,21 +543,28 @@ export function SettingsPage() {
         testId="settings-reset-modal"
         footer={
           <>
-            <Button
-              variant="secondary"
-              size="sm"
+            <button
+              type="button"
+              className="btn btn--secondary"
               data-testid="settings-reset-cancel"
               onClick={() => setResetOpen(false)}
             >
               {t('path.cancel')}
-            </Button>
-            <Button variant="danger" size="sm" data-testid="settings-reset-confirm" onClick={confirmReset}>
+            </button>
+            <button
+              type="button"
+              className="btn btn--primary"
+              data-testid="settings-reset-confirm"
+              onClick={confirmReset}
+            >
               {t('common.confirm')}
-            </Button>
+            </button>
           </>
         }
       >
-        <p className="text-sm text-ui-secondary text-pretty">{t('settings.resetConfirmBody')}</p>
+        <p className="hint" style={{ margin: '10px 0 16px' }}>
+          {t('settings.resetConfirmBody')}
+        </p>
       </Modal>
 
       <div aria-hidden />

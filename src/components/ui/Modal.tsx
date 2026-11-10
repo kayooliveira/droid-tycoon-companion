@@ -1,10 +1,8 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { X } from '@phosphor-icons/react'
 import { useScrollLock } from '../../hooks/useScrollLock'
 import { cn } from '../../lib/utils'
 import { useOverlayStackRegister } from '../OverlayStackProvider'
-import { uiIconProps } from './iconStyle'
 import { OverlayPortal } from './OverlayPortal'
 
 const FOCUSABLE =
@@ -94,7 +92,9 @@ export function Modal({
               data-testid={`${testId}-close`}
               onClick={onClose}
             >
-              <X {...uiIconProps} width={22} height={22} className="ic" />
+              <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
+                <path d="M5.5 5.5l13 13M18.5 5.5l-13 13" />
+              </svg>
             </button>
           </div>
           {children}
@@ -119,22 +119,25 @@ export function Modal({
             tabIndex={-1}
             role="dialog"
             aria-modal="true"
-            aria-labelledby={titleId}
+            aria-label={title}
             data-testid={testId}
             className={cn('modal', className)}
           >
-            <div className="modal-h">
-              <h2 id={titleId} className="sheet-name">
-                {title}
-              </h2>
+            <div
+              className="row2"
+              style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}
+            >
+              <h2 id={titleId}>{title}</h2>
               <button
                 type="button"
-                className="btn btn--icon btn--secondary"
+                className="btn btn--icon btn--ghost"
                 aria-label={t('common.close')}
                 data-testid={`${testId}-close`}
                 onClick={onClose}
               >
-                <X {...uiIconProps} width={22} height={22} className="ic" />
+                <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
+                  <path d="M5.5 5.5l13 13M18.5 5.5l-13 13" />
+                </svg>
               </button>
             </div>
             {children}

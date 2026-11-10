@@ -49,14 +49,14 @@ export function ProgressActionStack({
       {showSuper ? (
         <button
           type="button"
-          className="btn btn--secondary"
+          className={showComplete ? 'btn btn--secondary' : 'btn btn--primary'}
           data-testid="progress-super-cta"
           onClick={onSuper}
         >
           {t('progress.superRebirthCta')}
         </button>
       ) : null}
-      {showComplete ? (
+      {showComplete || showSuper ? (
         <button
           type="button"
           className="btn btn--ghost"

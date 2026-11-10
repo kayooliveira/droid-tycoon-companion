@@ -38,7 +38,9 @@ export function QuantityStepper({
           onClick={dec}
           disabled={value <= min}
         >
-          −
+          <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
+            <path d="M5 12h14" />
+          </svg>
         </button>
         <span
           className="stepper-val"
@@ -55,7 +57,9 @@ export function QuantityStepper({
           onClick={inc}
           disabled={value >= max}
         >
-          +
+          <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
+            <path d="M12 5v14M5 12h14" />
+          </svg>
         </button>
       </div>
     </div>

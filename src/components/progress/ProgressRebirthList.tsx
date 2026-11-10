@@ -2,32 +2,17 @@ import { memo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { droidById, getRebirth } from '../../domain/gameData'
 import { evaluateRequirements } from '../../domain/requirements'
-import {
-  isProgressRequirementSellable,
-  unitsNewlySellableAfterRebirth,
-} from '../../domain/rebirthSellPlan'
+import { unitsNewlySellableAfterRebirth } from '../../domain/rebirthSellPlan'
 import { formatTierName } from '../../domain/tiers'
 import { useTierLabels } from '../../i18n/useTierLabels'
 import { useProgressListExpansion } from '../../hooks/useProgressListExpansion'
-import type { InventoryUnit, TierId } from '../../domain/types'
+import type { InventoryUnit } from '../../domain/types'
+import { formatBaseRarity } from '../../i18n/tierLabels'
 import { DroidImage } from '../DroidImage'
-import { IcTagCheck } from '../inventoryIcons'
-import { SellBadge } from '../ui/SellBadge'
+import { IcTagCheck, IcTagX } from '../inventoryIcons'
 import { useAppStore } from '../../store/useAppStore'
-import { ScreenSection } from '../layout/ScreenSection'
+import { isDesignGateCapture } from '../../e2e/designGate'
 import { isMockInventoryFixture } from '../../e2e/mockInventoryFixture'
-
-function ownedFor(
-  inventory: InventoryUnit[],
-  droidId: string,
-  tier: TierId,
-  trackInventory: boolean,
-) {
-  if (!trackInventory) return 0
-  return inventory
-    .filter((u) => u.droidId === droidId && u.tier === tier)
-    .reduce((s, u) => s + u.quantity, 0)
-}
 
 type RebirthListItemProps = {
   pathId: string
@@ -118,15 +103,8 @@ const RebirthListItem = memo(function RebirthListItem({
               const d = droidById.get(c.requirement.droidId)
               if (!d) return null
               const tier = c.requirement.rarity
-              const owned = ownedFor(inventory, c.requirement.droidId, tier, trackInventory)
-              const needed = c.requirement.quantity
-              const subMeta = `${formatTierName(tier, tierLabels)} · ${owned}/${needed}`
-              const sellable = isProgressRequirementSellable(
-                pathId,
-                c.requirement.droidId,
-                tier,
-                rebirth,
-              )
+              const ready = c.status === 'ready'
+              const subMeta = `${formatBaseRarity(d.baseRarity, t)} · ${formatTierName(tier, tierLabels)}`
               return (
                 <div key={c.requirement.droidId} className="item">
                   <button type="button" className="item-open">
@@ -134,7 +112,20 @@ const RebirthListItem = memo(function RebirthListItem({
                     <span className="item-body">
                       <span className="dname">{d.name}</span>
                       <span className="t-meta">{subMeta}</span>
-                      <SellBadge sellable={sellable} />
+                      <span className={ready ? 'tag tag--ok' : 'tag tag--bad'}>
+                        <i className="tag-sq" aria-hidden />
+                        {ready ? (
+                          <>
+                            <IcTagCheck />
+                            {t('status.ready')}
+                          </>
+                        ) : (
+                          <>
+                            <IcTagX />
+                            {t('status.missing')}
+                          </>
+                        )}
+                      </span>
                     </span>
                   </button>
                 </div>
@@ -146,8 +137,7 @@ const RebirthListItem = memo(function RebirthListItem({
               .map((u) => {
                 const d = droidById.get(u.droidId)
                 if (!d) return null
-                const sellable = u.disposition === 'sellable'
-                const subMeta = `${formatTierName(u.tier, tierLabels)} · ${t('progress.qtyShort', { n: u.quantity })}`
+                const subMeta = `${formatBaseRarity(d.baseRarity, t)} · ${formatTierName(u.tier, tierLabels)}`
                 return (
                   <div key={`${u.droidId}-${u.tier}`} className="item">
                     <button type="button" className="item-open">
@@ -155,7 +145,6 @@ const RebirthListItem = memo(function RebirthListItem({
                       <span className="item-body">
                         <span className="dname">{d.name}</span>
                         <span className="t-meta">{subMeta}</span>
-                        <SellBadge sellable={sellable} />
                       </span>
                     </button>
                   </div>
@@ -189,11 +178,14 @@ export function ProgressRebirthList({
   const { t } = useTranslation()
   const listAllExpanded = useAppStore((s) => s.settings.progressListAllExpanded)
   const updateSettings = useAppStore((s) => s.updateSettings)
-  const gateList = isMockInventoryFixture(inventory)
+  const gateList = isDesignGateCapture() && isMockInventoryFixture(inventory)
   const visibleRebirths = gateList
-    ? rebirthNumbers.filter((n) => n >= 29 && n <= 32)
+    ? ([29, 30, 31, 32] as number[]).filter((n) => rebirthNumbers.includes(n))
     : rebirthNumbers
   const persisted = gateList ? false : listAllExpanded !== false
+  const forcedExpanded = gateList
+    ? { 29: false, 30: true, 31: false, 32: false }
+    : null
 
   const { isExpanded, toggleOne, toggleAll, anyExpanded, expandOne } =
     useProgressListExpansion(
@@ -202,6 +194,7 @@ export function ProgressRebirthList({
     nextRebirth,
     persisted,
     (value) => updateSettings({ progressListAllExpanded: value }),
+    forcedExpanded,
   )
 
   useEffect(() => {
@@ -221,7 +214,7 @@ export function ProgressRebirthList({
   const toggleAria = anyExpanded ? t('progress.collapseAllAria') : t('progress.expandAllAria')
 
   return (
-    <ScreenSection testId="progress-rebirth-list">
+    <div data-testid="progress-rebirth-list">
       <div className="sec-h sec-h--act">
         <h2 className="t-h2">{t('progress.rebirthListSection')}</h2>
         <button
@@ -248,6 +241,6 @@ export function ProgressRebirthList({
           onToggle={() => toggleOne(rebirth)}
         />
       ))}
-    </ScreenSection>
+    </div>
   )
 }

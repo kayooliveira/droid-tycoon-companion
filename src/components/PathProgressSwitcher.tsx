@@ -4,9 +4,8 @@ import { cycleById, gameData } from '../domain/gameData'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { useAppStore } from '../store/useAppStore'
 import { useToast } from './ToastProvider'
-import { Button } from './ui/Button'
 import { Modal } from './ui/Modal'
-import { RadioCardGroup } from './ui/RadioCardGroup'
+import { ChipRadioGroup } from './ui/ChipRadioGroup'
 
 export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
   const { t, i18n } = useTranslation()
@@ -68,42 +67,51 @@ export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
         testId="path-switch-modal"
         footer={
           <>
-            <Button
-              variant="secondary"
-              size="sm"
+            <button
+              type="button"
+              className="btn btn--secondary"
               data-testid="path-switch-cancel"
               onClick={() => setOpen(false)}
             >
               {t('path.cancel')}
-            </Button>
-            <Button size="sm" data-testid="path-switcher-confirm" onClick={confirm}>
+            </button>
+            <button
+              type="button"
+              className="btn btn--primary"
+              data-testid="path-switcher-confirm"
+              onClick={confirm}
+            >
               {t('common.confirm')}
-            </Button>
+            </button>
           </>
         }
       >
-        <div className="space-y-3">
-          <p className="text-sm text-ui-secondary text-pretty">
+        <>
+          <p style={{ margin: '10px 0 14px', color: 'var(--c-text-2)' }}>
             {t('path.switchBody', { name: cycleLabel(targetPath) })}
           </p>
           {resetProgress ? (
-            <p className="text-sm text-ui-warn/90 text-pretty">
+            <p className="hint" style={{ margin: '0 0 14px' }}>
               {t('path.switchBodyReset', { name: cycleLabel(targetPath) })}
             </p>
           ) : null}
-          <RadioCardGroup
-            ariaLabel={t('settings.path')}
-            value={targetPath}
-            onChange={setTargetPath}
-            columns={3}
-            optionTestIdPrefix="path-switcher-option"
-            options={gameData.cycles.map((c) => ({
-              value: c.id,
-              label: formatCycleDisplayName(c.name, i18n.language),
-            }))}
-          />
+          <div style={{ marginBottom: 14 }}>
+            <ChipRadioGroup
+              ariaLabel={t('settings.path')}
+              value={targetPath}
+              onChange={setTargetPath}
+              grid
+              testId="path-switcher-option"
+              options={gameData.cycles.map((c) => ({
+                value: c.id,
+                label: formatCycleDisplayName(c.name, i18n.language),
+              }))}
+            />
+          </div>
           <label className="switch-row">
-            <span>{t('path.resetRebirthOnSwitch')}</span>
+            <span>
+              <span style={{ display: 'block' }}>{t('path.resetRebirthOnSwitch')}</span>
+            </span>
             <span className="switch">
               <input
                 type="checkbox"
@@ -115,7 +123,8 @@ export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
               <i aria-hidden />
             </span>
           </label>
-        </div>
+          <div style={{ height: 16 }} />
+        </>
       </Modal>
     </>
   )

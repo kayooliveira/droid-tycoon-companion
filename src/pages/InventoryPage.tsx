@@ -25,6 +25,7 @@ import { SegmentedControl } from '../components/ui/SegmentedControl'
 import { Sheet } from '../components/ui/Sheet'
 import { SellBadge } from '../components/ui/SellBadge'
 import { useToast } from '../components/ToastProvider'
+import { isDesignGateCapture } from '../e2e/designGate'
 import { isMockInventoryFixture, mockInventorySellable } from '../e2e/mockInventoryFixture'
 import { droidMatchesQuery } from '../lib/droidNameMatch'
 import {
@@ -409,18 +410,25 @@ export function InventoryPage() {
         quantity={detail?.quantity}
         sellable={detail?.sellable}
       >
-        {detail && !isMockInventoryFixture(inventory) ? (
-          <div className="mt-4 space-y-3" data-testid="inventory-unit-actions">
-            <QuantityStepper
-              compact
-              value={detail.quantity}
-              onChange={(quantity) => {
-                updateInventoryUnit(detail.unitId, { quantity })
-                setDetail((d) => (d ? { ...d, quantity } : d))
-              }}
-              decreaseLabel={t('inventory.decreaseQuantity')}
-              increaseLabel={t('inventory.increaseQuantity')}
-            />
+        {detail &&
+        (!isMockInventoryFixture(inventory) ||
+          isDesignGateCapture()) ? (
+          <div className="stack" style={{ marginTop: 12 }} data-testid="inventory-unit-actions">
+            <div className="row2" style={{ justifyContent: 'space-between' }}>
+              <span className="dname">{t('inventory.quantity')}</span>
+              <QuantityStepper
+                compact
+                value={detail.quantity}
+                onChange={(quantity) => {
+                  if (!isDesignGateCapture()) {
+                    updateInventoryUnit(detail.unitId, { quantity })
+                  }
+                  setDetail((d) => (d ? { ...d, quantity } : d))
+                }}
+                decreaseLabel={t('inventory.decreaseQuantity')}
+                increaseLabel={t('inventory.increaseQuantity')}
+              />
+            </div>
             <DroidDetailRemoveButton
               label={t('a11y.removeUnit')}
               testId={`inventory-remove-${detail.unitId}`}
