@@ -17,7 +17,7 @@ export function SearchInput({
 }) {
   const showClear = onClear && value && String(value).length > 0
   return (
-    <div className={cn('field-wrap', showClear && 'field-wrap--clear', className)}>
+    <div className={cn('field-wrap', showClear ? 'field-wrap--clear' : undefined, className)}>
       <MagnifyingGlass {...uiIconProps} width={20} height={20} className="ic" aria-hidden />
       <input
         type="search"

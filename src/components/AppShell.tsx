@@ -49,8 +49,13 @@ export function AppShell() {
 
   useEffect(() => {
     persistLastTab(location.pathname)
-    setMoreOpen(false)
-  }, [location.pathname])
+    const q = new URLSearchParams(location.search)
+    if (q.get('e2e_more') === '1') {
+      setMoreOpen(true)
+    } else {
+      setMoreOpen(false)
+    }
+  }, [location.pathname, location.search])
 
   useEffect(() => {
     scrollRef.current?.scrollTo(0, 0)
