@@ -133,6 +133,7 @@ export function AppShell() {
           </div>
         </main>
         <ToastViewport />
+        <InstallBanner />
         <MobileFloatingNav
           moreOpen={moreOpen}
           onMoreToggle={() => setMoreOpen((open) => !open)}
@@ -174,7 +175,6 @@ export function AppShell() {
       </div>
 
       <div id={APP_OVERLAY_ROOT_ID} className="ds-overlay-anchor" data-testid="app-overlay-root" />
-      <InstallBanner />
     </div>
   )
 }

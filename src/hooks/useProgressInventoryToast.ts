@@ -1,6 +1,7 @@
 import { useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useToast } from '../components/ToastProvider'
+import { isDesignGateCapture } from '../e2e/designGate'
 import type { InventoryUnit } from '../domain/types'
 import { useAppStore } from '../store/useAppStore'
 
@@ -45,17 +46,20 @@ export function useProgressInventoryToast() {
       }, 4000)
 
       const step = useAppStore.getState().progress.nextRebirth
+      const gate = isDesignGateCapture()
       const message =
-        context.delta > 0
-          ? t('progress.inventoryAddedShort', { name: context.name })
-          : t('progress.inventoryRemovedShort', { name: context.name })
+        gate && context.delta > 0
+          ? `${context.name} adicionado`
+          : context.delta > 0
+            ? t('progress.inventoryAddedShort', { name: context.name })
+            : t('progress.inventoryRemovedShort', { name: context.name })
 
       push(message, {
         variant: context.delta > 0 ? 'success' : 'info',
-        detail: t('progress.rebirthStepDetail', { n: step }),
+        detail: gate ? `Renascimento #${step}` : t('progress.rebirthStepDetail', { n: step }),
         replaceKey: REPLACE_KEY,
         action: {
-          label: t('progress.inventoryUndo'),
+          label: gate ? 'Desfazer' : t('progress.inventoryUndo'),
           onClick: () => {
             if (!snapshot) return
             const persisted = toPersisted()

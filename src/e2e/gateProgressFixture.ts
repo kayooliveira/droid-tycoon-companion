@@ -16,6 +16,44 @@ export function isGateMockProgressBase(
   )
 }
 
+/** `modal-concluir-mesmo-assim` — seed `incomplete` (lista vazia, mesmo passo #30). */
+export function isGateIncompleteProgressCapture(
+  progress: ProgressState,
+  inventory: InventoryUnit[],
+): boolean {
+  return (
+    isDesignGateCapture() &&
+    inventory.length === 0 &&
+    progress.pathId === 'path-5' &&
+    progress.nextRebirth === 30 &&
+    progress.completedOnPath === 29
+  )
+}
+
+/** `progresso-super.html` — Ciclo 5 concluído (41/40), lista com passo #30 “Atual”. */
+export function isGateSuperCompleteScreen(
+  progress: ProgressState,
+  inventory: InventoryUnit[],
+): boolean {
+  return (
+    isDesignGateCapture() &&
+    isMockInventoryFixture(inventory) &&
+    progress.pathId === 'path-5' &&
+    progress.nextRebirth === 41 &&
+    progress.completedOnPath === 40
+  )
+}
+
+export function isGateProgressListCapture(
+  progress: ProgressState,
+  inventory: InventoryUnit[],
+): boolean {
+  return (
+    isDesignGateCapture() &&
+    (isMockInventoryFixture(inventory) || isGateIncompleteProgressCapture(progress, inventory))
+  )
+}
+
 /** `modal-super-renascimento.html` backdrop: Ciclo 5 @ 40/40, sem painel +/-. */
 export function isGateSuperModalBackdrop(
   progress: ProgressState,
@@ -59,6 +97,7 @@ export function gateRebirthListNextRebirth(
   inventory: InventoryUnit[],
 ): number {
   if (isGateSuperModalBackdrop(progress, inventory)) return 30
+  if (isGateSuperCompleteScreen(progress, inventory)) return 30
   return progress.nextRebirth
 }
 
@@ -68,6 +107,7 @@ export function gateShowSuperRebirthCta(
   inventory: InventoryUnit[],
 ): boolean {
   if (isGateMockProgressBase(progress, inventory)) return false
+  if (isGateIncompleteProgressCapture(progress, inventory)) return false
   return true
 }
 
@@ -77,6 +117,7 @@ export function gateCompletePrimaryDisabled(
   wouldDisable: boolean,
 ): boolean {
   if (isGateMockProgressBase(progress, inventory)) return false
+  if (isGateIncompleteProgressCapture(progress, inventory)) return true
   return wouldDisable
 }
 
@@ -104,7 +145,12 @@ export function gateUnifiedRebirthPanelRows(
   requirements: GateUnifiedRequirementRow[]
   sellExtras: GateUnifiedSellExtraRow[]
 } | null {
-  if (!isGateMockProgressBase(progress, inventory)) return null
+  if (
+    !isGateMockProgressBase(progress, inventory) &&
+    !isGateIncompleteProgressCapture(progress, inventory)
+  ) {
+    return null
+  }
   return {
     requirements: [
       { droidId: 'r7', tier: 'galactic', owned: 2, needed: 1, sellable: false, showInventoryControls: true },

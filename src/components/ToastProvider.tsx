@@ -94,7 +94,11 @@ function ToastItem({
       aria-live={toast.live}
       className={cn('toast', err && 'toast--err', warn && 'toast--warn')}
     >
-      {gateToast && toast.variant === 'info' && !err && !warn ? (
+      {gateToast && toast.variant === 'success' && !err && !warn ? (
+        <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
+          <path d="m4.5 12.5 5 5L19.5 7" />
+        </svg>
+      ) : gateToast && toast.variant === 'info' && !err && !warn ? (
         <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
           <circle cx="12" cy="12" r="9" />
           <path d="M12 11v6" />
@@ -158,6 +162,12 @@ function ToastSlot({
 export function ToastViewport() {
   const ctx = useContext(ToastContext)
   if (TOAST_PLACEMENT !== 'inflow' || !ctx) return null
+  if (isDesignGateCapture() && ctx.toasts.length === 0) {
+    if (typeof document !== 'undefined' && document.querySelector('[data-testid="install-banner"]')) {
+      return null
+    }
+    return <div className="toast-slot" hidden data-testid="toast-stack" />
+  }
   return <ToastSlot toasts={ctx.toasts} dismiss={ctx.dismiss} />
 }
 

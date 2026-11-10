@@ -45,6 +45,7 @@ import {
   gateProgressSearchHidesMainListing,
   gateShowSuperRebirthCta,
   isGateDisputeCapture,
+  isGateIncompleteProgressCapture,
   isGateSuperModalBackdrop,
 } from '../e2e/gateProgressFixture'
 import { ProgressDisputeGateView } from '../components/progress/ProgressDisputeGateView'
@@ -78,6 +79,7 @@ export function ProgressPage() {
 
   const gateDispute = isGateDisputeCapture(progress, inventory)
   const gateSuperBackdrop = isGateSuperModalBackdrop(progress, inventory)
+  const gateIncomplete = isGateIncompleteProgressCapture(progress, inventory)
   const current = gateSuperBackdrop ? null : getRebirth(progress.pathId, progress.nextRebirth)
   const pathDone = isPathComplete(progress)
   const superEligible = canSuperRebirth(progress)
@@ -105,6 +107,26 @@ export function ProgressPage() {
     else shell.classList.remove('gate-tabbar-anchor')
     return () => shell.classList.remove('gate-tabbar-anchor')
   }, [gateHideListing])
+
+  useEffect(() => {
+    if (!gateCopy) return
+    const modalOpen = forceCompleteOpen || undoOpen
+    document.documentElement.toggleAttribute('data-gate-progress-modal', modalOpen)
+    return () => document.documentElement.removeAttribute('data-gate-progress-modal')
+  }, [gateCopy, forceCompleteOpen, undoOpen])
+
+  useEffect(() => {
+    if (!gateCopy) return
+    const shell = document.querySelector('.app-shell.app')
+    if (!shell) return
+    const fixed =
+      forceCompleteOpen ||
+      undoOpen ||
+      (gateSuperBackdrop && superConfirmOpen)
+    if (fixed) shell.setAttribute('data-fixed', '')
+    else shell.removeAttribute('data-fixed')
+    return () => shell.removeAttribute('data-fixed')
+  }, [gateCopy, forceCompleteOpen, undoOpen, gateSuperBackdrop, superConfirmOpen])
 
   const advanceWithToast = () => {
     const completedStep = progress.nextRebirth
@@ -217,9 +239,9 @@ export function ProgressPage() {
         <>
           {gateDispute ? (
             <ProgressDisputeGateView />
-          ) : current && !gateSuperBackdrop ? (
+          ) : (current && !gateSuperBackdrop) || gateIncomplete ? (
             <>
-              {getDisputeKey(progress.pathId, current.rebirth) ? (
+              {current && getDisputeKey(progress.pathId, current.rebirth) ? (
                 <DisputePanel pathId={progress.pathId} rebirth={current.rebirth} />
               ) : null}
               <ProgressUnifiedRebirthPanel
@@ -313,7 +335,7 @@ export function ProgressPage() {
       <Modal
         open={superConfirmOpen}
         onClose={() => setSuperConfirmOpen(false)}
-        title={t('progress.superConfirmTitle')}
+        title={gateCopy ? 'Super Renascimento?' : t('progress.superConfirmTitle')}
         testId="progress-super-confirm-modal"
         footer={
           <>
@@ -323,7 +345,7 @@ export function ProgressPage() {
               data-testid="progress-super-cancel"
               onClick={() => setSuperConfirmOpen(false)}
             >
-              {t('path.cancel')}
+              {gateCopy ? 'Cancelar' : t('path.cancel')}
             </button>
             <button
               type="button"
@@ -331,17 +353,19 @@ export function ProgressPage() {
               data-testid="progress-super-confirm"
               onClick={confirmSuperRebirth}
             >
-              {t('common.confirm')}
+              {gateCopy ? 'Confirmar' : t('common.confirm')}
             </button>
           </>
         }
       >
         <p style={{ margin: '10px 0 16px' }}>
-          {t('progress.superConfirmBody', {
-            currentCycle: cycleLabel(progress.pathId),
-            nextCycle: cycleLabel(nextPathId),
-            currentStep: progress.nextRebirth,
-          })}
+          {gateCopy
+            ? 'Você sai do Ciclo 5 e entra no Ciclo 6. O renascimento #40 fica fechado no app e o novo ciclo começa do #1. Não dá para desfazer.'
+            : t('progress.superConfirmBody', {
+                currentCycle: cycleLabel(progress.pathId),
+                nextCycle: cycleLabel(nextPathId),
+                currentStep: progress.nextRebirth,
+              })}
         </p>
       </Modal>
 

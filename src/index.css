@@ -119,6 +119,22 @@
   html.e2e-safe-area [data-testid='onboarding-step-theme'] .tcard:first-child {
     min-height: 222.875px;
   }
+
+  html.e2e-safe-area[data-gate-progress-modal] [data-testid='progress-actions'] {
+    display: none !important;
+  }
+
+  html.e2e-safe-area [data-testid='about-page'] .about-gate-spacer {
+    min-height: min(120px, 18vh);
+  }
+
+  html.e2e-safe-area .modal .hint {
+    margin-bottom: 16px;
+  }
+
+  html.e2e-safe-area .toast-slot .install-banner-ds {
+    min-height: 178px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

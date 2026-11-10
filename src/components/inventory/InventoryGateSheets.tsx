@@ -120,7 +120,13 @@ export function InventoryAddGateSheet({ onClose }: { onClose: () => void }) {
 }
 
 /** `sheet-remover-inventario.html` (capture-only). */
-export function InventoryRemoveGateSheet({ onClose }: { onClose: () => void }) {
+export function InventoryRemoveGateSheet({
+  onClose,
+  onConfirm,
+}: {
+  onClose: () => void
+  onConfirm: () => void
+}) {
   return (
     <OverlayPortal>
       <button type="button" className="scrim" aria-label="Fechar" onClick={onClose} />
@@ -146,7 +152,12 @@ export function InventoryRemoveGateSheet({ onClose }: { onClose: () => void }) {
           <button type="button" className="btn btn--secondary" onClick={onClose}>
             Cancelar
           </button>
-          <button type="button" className="btn btn--danger-solid" data-testid="inventory-remove-confirm">
+          <button
+            type="button"
+            className="btn btn--danger-solid"
+            data-testid="inventory-remove-confirm"
+            onClick={onConfirm}
+          >
             Confirmar
           </button>
         </div>

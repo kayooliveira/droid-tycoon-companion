@@ -24,7 +24,13 @@ function SwitchRow({ label, on }: { label: string; on: boolean }) {
 }
 
 /** `ajustes.html` / `ajustes-dados-velhos.html` (capture-only). */
-export function SettingsGateView({ stale }: { stale: boolean }) {
+export function SettingsGateView({
+  stale,
+  onResetTrigger,
+}: {
+  stale: boolean
+  onResetTrigger?: () => void
+}) {
   const gameDataSub = stale ? 'v1.36 · 1.2.0 · Velho' : 'v1.36 · 1.2.0 · Dados recentes'
 
   return (
@@ -244,7 +250,12 @@ export function SettingsGateView({ stale }: { stale: boolean }) {
         <div className="sec-h">
           <h2 className="t-h2">Zona de risco</h2>
         </div>
-        <button type="button" className="btn btn--danger" data-testid="settings-reset-trigger">
+        <button
+          type="button"
+          className="btn btn--danger"
+          data-testid="settings-reset-trigger"
+          onClick={onResetTrigger}
+        >
           <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
             <path d="M4 7h16" />
             <path d="M9.5 7V4h5v3" />

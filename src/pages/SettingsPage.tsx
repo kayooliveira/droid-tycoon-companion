@@ -171,7 +171,7 @@ export function SettingsPage() {
   }
 
   const settingsBody = gateCopy ? (
-    <SettingsGateView stale={stale} />
+    <SettingsGateView stale={stale} onResetTrigger={() => setResetOpen(true)} />
   ) : (
     <>
       <section className="sec">

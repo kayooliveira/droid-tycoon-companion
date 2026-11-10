@@ -11,9 +11,11 @@ import { formatBaseRarity } from '../../i18n/tierLabels'
 import { DroidImage } from '../DroidImage'
 import { IcTagCheck, IcTagX } from '../inventoryIcons'
 import { useAppStore } from '../../store/useAppStore'
-import { isDesignGateCapture } from '../../e2e/designGate'
-import { gateRebirthListNextRebirth, isGateSuperModalBackdrop } from '../../e2e/gateProgressFixture'
-import { isMockInventoryFixture } from '../../e2e/mockInventoryFixture'
+import {
+  gateRebirthListNextRebirth,
+  isGateProgressListCapture,
+  isGateSuperModalBackdrop,
+} from '../../e2e/gateProgressFixture'
 
 type RebirthListItemProps = {
   pathId: string
@@ -180,8 +182,8 @@ export function ProgressRebirthList({
   const listAllExpanded = useAppStore((s) => s.settings.progressListAllExpanded)
   const updateSettings = useAppStore((s) => s.updateSettings)
   const progress = useAppStore((s) => s.progress)
-  const gateList = isDesignGateCapture() && isMockInventoryFixture(inventory)
-  const gateSuperPad = isGateSuperModalBackdrop(progress, inventory)
+  const gateList = isGateProgressListCapture(progress, inventory)
+  const gateSuperListPad = isGateSuperModalBackdrop(progress, inventory)
   const listNextRebirth = gateList
     ? gateRebirthListNextRebirth(
         useAppStore.getState().progress,
@@ -225,7 +227,7 @@ export function ProgressRebirthList({
   return (
     <div
       data-testid="progress-rebirth-list"
-      style={gateSuperPad ? { marginTop: 20 } : undefined}
+      style={gateSuperListPad ? { marginTop: 19 } : undefined}
     >
       <div className="sec-h sec-h--act">
         <h2 className="t-h2">{t('progress.rebirthListSection')}</h2>

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { flushSync } from 'react-dom'
 import {
   IcGridView,
   IcListView,
@@ -609,7 +610,21 @@ export function InventoryPage() {
       </Sheet>
 
       {isDesignGateCapture() && removeTarget ? (
-        <InventoryRemoveGateSheet onClose={() => setRemoveTarget(null)} />
+        <InventoryRemoveGateSheet
+          onClose={() => setRemoveTarget(null)}
+          onConfirm={() => {
+            if (!removeTarget) return
+            const { name, unitId } = removeTarget
+            flushSync(() => {
+              removeInventoryUnit(unitId)
+              setRemoveTarget(null)
+              setDetail(null)
+            })
+            push(isDesignGateCapture() ? `${name} removido` : t('inventory.removed', { name }), {
+              variant: 'info',
+            })
+          }}
+        />
       ) : null}
       <Sheet
         open={Boolean(removeTarget) && !isDesignGateCapture()}

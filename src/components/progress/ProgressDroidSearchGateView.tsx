@@ -23,6 +23,9 @@ export function ProgressDroidSearchGateView({ query }: { query: string }) {
           {c3po ? (
             <span className="dtile dtile--sm" data-tier="default">
               <span className="dtile-bg" aria-hidden />
+              <span className="dtile-num" aria-hidden>
+                01
+              </span>
               <img
                 src={droidImageSrc(c3po.id, c3po.imageLocal)}
                 alt=""

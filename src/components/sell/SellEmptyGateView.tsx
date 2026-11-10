@@ -7,7 +7,7 @@ export function SellEmptyGateView() {
   const navigate = useNavigate()
   const emptyIds = ['kx', 'orb-walker', 'lo'] as const
   return (
-    <div className="empty sell-empty-gate">
+    <div className="empty sell-empty-gate sell-empty-gate--capture">
       <div className="empty-art" aria-hidden>
         {emptyIds.map((id) => {
           const d = droidById.get(id)
