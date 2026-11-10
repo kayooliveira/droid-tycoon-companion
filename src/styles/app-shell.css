@@ -51,7 +51,7 @@
   padding-bottom: env(safe-area-inset-bottom, 0px);
   position: sticky;
   bottom: 0;
-  z-index: 50;
+  z-index: var(--z-tabbar);
   isolation: isolate;
   background: var(--tab-bg);
   flex: none;
