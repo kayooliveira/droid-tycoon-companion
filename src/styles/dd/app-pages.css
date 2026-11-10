@@ -557,6 +557,8 @@ button.row.row--link::after {
 /* 1:1 mock capture: document grows; tab bar follows content (not sticky in viewport). */
 /* 1:1 mock capture: document grows; tab bar follows content (not sticky in viewport). */
 html.e2e-safe-area .app-shell.app {
+  display: flex;
+  flex-direction: column;
   height: auto;
   min-height: 844px;
   max-height: none;
@@ -571,8 +573,10 @@ html.e2e-safe-area .app-shell.app[data-fixed] {
 }
 
 html.e2e-safe-area .app-shell .scroll {
-  flex: none;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow: visible;
+  padding-bottom: var(--sp-4, 16px);
 }
 
 html.e2e-safe-area .app-shell.app[data-fixed] .scroll {
@@ -582,6 +586,8 @@ html.e2e-safe-area .app-shell.app[data-fixed] .scroll {
 html.e2e-safe-area .app-shell .tabbar {
   position: relative;
   bottom: auto;
+  margin-top: auto;
+  flex: none;
 }
 
 html.e2e-safe-area #app-overlay-root .sheet.sheet--above {

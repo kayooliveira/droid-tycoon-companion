@@ -58,6 +58,8 @@
   }
 
   html.e2e-safe-area .app-shell.app {
+    display: flex;
+    flex-direction: column;
     height: auto;
     min-height: 844px;
     max-height: none;
@@ -66,29 +68,22 @@
   }
 
   html.e2e-safe-area .app-shell .scroll {
-    flex: none;
+    flex: 1 1 auto;
+    min-height: 0;
     overflow: visible;
-    padding-bottom: 0;
+    padding-bottom: var(--sp-4, 16px);
   }
 
   html.e2e-safe-area .app-shell .tabbar {
     transform: none;
     padding-bottom: 0;
     position: relative;
+    margin-top: auto;
+    flex: none;
   }
 
   html.e2e-safe-area .app-shell.app.gate-tabbar-anchor {
     min-height: 844px;
-  }
-
-  html.e2e-safe-area .app-shell.app.gate-tabbar-anchor .scroll {
-    flex: 1 1 auto;
-    min-height: 0;
-  }
-
-  html.e2e-safe-area .app-shell.app.gate-tabbar-anchor .tabbar {
-    margin-top: auto;
-    flex: none;
   }
 
   html.e2e-safe-area .app > .scroll {
@@ -100,9 +95,13 @@
     padding-bottom: 2px;
   }
 
-  html.e2e-safe-area [data-testid^='onboarding-step-'] .stepper .btn--icon {
+  html.e2e-safe-area [data-testid^='onboarding-step-'] .stepper .btn {
     font-size: 15px;
     line-height: 15.75px;
+  }
+
+  html.e2e-safe-area [data-testid='onboarding-step-progress'] .row:has(.stepper) {
+    min-height: 103.53px;
   }
 }
 
