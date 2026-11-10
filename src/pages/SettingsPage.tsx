@@ -390,7 +390,7 @@ export function SettingsPage() {
           setPendingImport(null)
         }}
         title={t('settings.importConfirmTitle')}
-        testId="settings-import-modal"
+        testId="modal-importar"
         footer={
           <>
             <Button

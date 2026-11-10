@@ -91,7 +91,7 @@
     "expandAllAria": "Expandir todos os renascimentos da lista",
     "search": {
       "label": "Buscar droids no Progresso",
-      "placeholder": "Buscar pelo nome do droid",
+      "placeholder": "Buscar droid…",
       "clear": "Limpar busca",
       "noMatch": "Nenhum droid com esse nome.",
       "needsSummary": "Onde você vai precisar deste droid",
@@ -324,7 +324,7 @@
   },
   "appearance": {
     "themeAndMode": "Tema e modo",
-    "visualTheme": "Visual",
+    "visualTheme": "Tema",
     "themeGroup": "Tema",
     "themeAria": "Tema {{name}}",
     "previewCta": "Concluir",

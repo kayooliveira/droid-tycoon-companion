@@ -20,6 +20,7 @@ export function AppearancePage() {
     <TabScrollLayout
       title={t('settings.appearance')}
       testId="appearance-page"
+      className="appearance-tight"
       backBar={
         <div className="backbar">
           <Link to="/settings" className="top-back">

@@ -74,7 +74,11 @@ button.row.row--link::after {
 }
 
 .ds-overlay-anchor .scrim.scrim--above {
-  bottom: 0;
+  bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px));
+}
+
+#app-overlay-root .scrim.scrim--above {
+  bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px));
 }
 
 .ds-overlay-anchor .sheet.sheet--above {
@@ -191,7 +195,216 @@ button.row.row--link::after {
 }
 
 .field-wrap input::placeholder {
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.collect-card {
+  padding: 0;
+  border: none;
+  background: var(--c-surface);
+  border-radius: 16px;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-align: left;
+  color: inherit;
+  min-width: 0;
+  box-shadow: var(--row-sh);
+}
+
+.collect-art {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  width: 100%;
+}
+
+.collect-art .dtile {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+.collect-body {
+  padding: 10px 10px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+}
+
+.collect-body .dname {
+  display: block;
+  width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.collect-meta {
+  display: block;
+  width: 100%;
+  font-size: var(--meta-size, 12px);
+  line-height: 1.35;
+  color: var(--c-text-2);
+  overflow-wrap: anywhere;
+}
+
+.collection-list .collect-card {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  border-radius: 14px;
+}
+
+.collection-list .collect-art {
+  width: 92px;
+  aspect-ratio: 1;
+  flex-shrink: 0;
+}
+
+.collection-list .collect-body {
+  flex: 1;
+  justify-content: center;
+  padding: 12px 12px 12px 0;
+}
+
+.qty-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 3;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--qty-bg, rgb(0 0 0 / 0.52));
+  color: var(--qty-fg, #fff);
+  box-shadow: var(--qty-sh, none);
+}
+
+[data-mode='light'] .qty-badge {
+  background: var(--qty-bg);
+  color: var(--qty-fg);
+}
+
+.sell-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 12px;
+  padding: 3px 7px;
+  border-radius: 6px;
   white-space: nowrap;
+}
+
+.sell-badge--ok {
+  background: var(--c-ok-bg);
+  color: var(--c-ok-fg);
+}
+
+.sell-badge--no {
+  background: var(--c-bad-bg);
+  color: var(--c-bad-fg);
+}
+
+.row-sub {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+}
+
+.row-sub--badge {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.row-sub--badge .row-sub-meta {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.row-sub--badge .sell-badge {
+  flex: none;
+}
+
+.row-main .hint:empty {
+  display: none;
+}
+
+.item-open .row-main .hint:not(.row-sub) {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+}
+
+.btn--block {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.chips--scroll .seg {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  width: max-content;
+  min-width: 100%;
+}
+
+.chips--scroll .seg > button {
+  flex: none;
+  white-space: nowrap;
+  min-width: max-content;
+  padding: 0 10px;
+}
+
+.onboarding-welcome-compact .trio {
+  margin: 12px 0 8px;
+}
+
+.onboarding-welcome-compact .top {
+  margin-bottom: 0;
+}
+
+.onboarding-welcome-compact .hint--footnote {
+  margin-top: 12px;
+}
+
+.appearance-tight .sec + .sec {
+  margin-top: 8px;
+}
+
+.appearance-tight .sec:first-of-type {
+  margin-bottom: 4px;
+}
+
+.inventory-picker-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--tap, 44px);
+  padding: 6px 10px;
+  text-align: left;
+  width: 100%;
+  border: var(--chip-bw) solid var(--c-control-border);
+  border-radius: var(--r-control);
+  background: transparent;
+  color: var(--c-text);
+}
+
+.inventory-picker-row[aria-pressed='true'] {
+  background: var(--chip-on-bg);
+  color: var(--chip-on-fg);
+  border-color: var(--chip-on-bd);
+}
+
+.progress-search-field .field {
+  font-size: max(14px, min(16px, 4.1vw));
 }

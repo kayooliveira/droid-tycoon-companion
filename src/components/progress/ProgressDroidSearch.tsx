@@ -98,6 +98,7 @@ export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: Pro
           spellCheck={false}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          className="progress-search-field"
           placeholder={t('progress.search.placeholder')}
           aria-controls="progress-droid-search-results"
           aria-expanded={effectiveQuery.length > 0}

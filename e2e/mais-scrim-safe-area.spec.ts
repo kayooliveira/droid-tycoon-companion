@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 import { heavyAppState, STORE_KEY } from './overflowHelpers'
 
-test('Mais scrim covers bottom safe-area strip on Progresso', async ({ page }) => {
+test('Mais scrim stops above tab bar on Progresso', async ({ page }) => {
   await page.addInitScript(() => document.documentElement.classList.add('e2e-safe-area'))
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('/onboarding')
@@ -17,12 +17,14 @@ test('Mais scrim covers bottom safe-area strip on Progresso', async ({ page }) =
   await page.getByTestId('mobile-more-nav').click()
   await expect(page.getByTestId('nav-more-menu-backdrop')).toBeVisible()
 
-  const scrimCoversBottom = await page.evaluate(() => {
+  const scrimAboveTabBar = await page.evaluate(() => {
     const scrim = document.querySelector('[data-testid="nav-more-menu-backdrop"]')
-    if (!scrim) return false
-    const rect = scrim.getBoundingClientRect()
-  return rect.bottom >= window.innerHeight - 1
+    const tab = document.querySelector('.tabbar')
+    if (!scrim || !tab) return false
+    const scrimRect = scrim.getBoundingClientRect()
+    const tabRect = tab.getBoundingClientRect()
+    return scrimRect.bottom <= tabRect.top + 2
   })
 
-  expect(scrimCoversBottom).toBe(true)
+  expect(scrimAboveTabBar).toBe(true)
 })

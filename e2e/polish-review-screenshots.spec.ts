@@ -43,12 +43,12 @@ for (const theme of ['dark', 'light'] as const) {
     await page.goto('/settings')
     await expect(page.getByTestId('settings-page')).toBeVisible({ timeout: 20_000 })
     await page.getByTestId('mobile-more-nav').click()
-    await expect(page.getByTestId('nav-more-modal')).toBeVisible()
+    await expect(page.getByTestId('nav-more-menu')).toBeVisible()
     await page.screenshot({
       path: path.join(ARTIFACTS, `mais-sheet-open-${theme}-390x844.png`),
       fullPage: false,
     })
-    await page.getByTestId('nav-more-modal-close').click()
+    await page.getByTestId('nav-more-menu-close').click()
 
     await page.goto('/fusion')
     await expect(page.getByTestId('fusion-page')).toBeVisible({ timeout: 20_000 })

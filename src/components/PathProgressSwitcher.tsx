@@ -9,7 +9,6 @@ import { useToast } from './ToastProvider'
 import { Button } from './ui/Button'
 import { Modal } from './ui/Modal'
 import { RadioCardGroup } from './ui/RadioCardGroup'
-import { Switch } from './ui/Switch'
 
 export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
   const { t, i18n } = useTranslation()
@@ -94,11 +93,19 @@ export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
               label: formatCycleDisplayName(c.name, i18n.language),
             }))}
           />
-          <Switch
-            label={t('path.resetRebirthOnSwitch')}
-            checked={resetProgress}
-            onChange={setResetProgress}
-          />
+          <label className="switch-row">
+            <span>{t('path.resetRebirthOnSwitch')}</span>
+            <span className="switch">
+              <input
+                type="checkbox"
+                role="switch"
+                checked={resetProgress}
+                onChange={(e) => setResetProgress(e.target.checked)}
+                aria-label={t('path.resetRebirthOnSwitch')}
+              />
+              <i aria-hidden />
+            </span>
+          </label>
         </div>
       </Modal>
     </>

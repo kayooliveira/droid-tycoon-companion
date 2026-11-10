@@ -24,6 +24,7 @@ import { useAppStore } from '../store/useAppStore'
 import { ThemeCardGroup } from '../components/appearance/ThemeCard'
 import { useAppearance, type AppearanceModePref } from '../hooks/useAppearance'
 import { uiIconProps } from '../components/ui/iconStyle'
+import { cn } from '../lib/utils'
 const STEPS = ['welcome', 'cycle', 'progress', 'theme', 'features'] as const
 const REBIRTHS_PER_PATH = 40
 const CONTENT_STEP_COUNT = 4
@@ -70,6 +71,7 @@ function OnboardingCycleMeter({
   cycleName: string
   previewLabel: string
 }) {
+  const { t } = useTranslation()
   const cells = useMemo(
     () =>
       Array.from({ length: REBIRTHS_PER_PATH }, (_, i) => {
@@ -86,7 +88,7 @@ function OnboardingCycleMeter({
     <div className="cm cm--compact">
       <div className="cm-top">
         <span className="cm-num">{completed}</span>
-        <span className="cm-of">de {REBIRTHS_PER_PATH}</span>
+        <span className="cm-of">{t('home.cycleProgressOf', { total: REBIRTHS_PER_PATH })}</span>
         <span className="cm-label t-label">{cycleName}</span>
       </div>
       <div className="cm-cells" aria-hidden>
@@ -211,12 +213,15 @@ export function OnboardingPage() {
         <div
           key={current}
           data-testid={`onboarding-step-${current}`}
-          className="flex-1 flex flex-col min-h-0 gap-3"
+          className={cn(
+            'flex-1 flex flex-col min-h-0 gap-3',
+            current === 'welcome' && 'onboarding-welcome-compact',
+          )}
         >
           {current === 'welcome' ? (
             <>
               <header className="top">
-                <span className="top-brand">DroidDeck</span>
+                <span className="top-brand">{t('app.name')}</span>
                 <div className="top-aside" />
                 <h1 className="t-display" style={{ fontSize: 'min(var(--title-size), 11vw)' }}>
                   {t('onboarding.welcomeTitle')}
@@ -233,7 +238,7 @@ export function OnboardingPage() {
               <p className="hint" style={{ marginTop: 8 }}>
                 {t('onboarding.welcomeSub')}
               </p>
-              <div className="trio" style={{ margin: '28px 0 24px' }}>
+              <div className="trio">
                 {WELCOME_TRIO.map(({ id, tier }) => {
                   const droid = droidById.get(id)
                   if (!droid) return null
@@ -244,9 +249,6 @@ export function OnboardingPage() {
                   )
                 })}
               </div>
-              <p className="hint" style={{ marginTop: 4 }}>
-                {t('onboarding.welcomeFootnote')}
-              </p>
             </>
           ) : null}
 
@@ -503,6 +505,9 @@ export function OnboardingPage() {
               {t('onboarding.skip')}
             </Button>
           )}
+          {current === 'welcome' ? (
+            <p className="hint hint--footnote text-center">{t('onboarding.welcomeFootnote')}</p>
+          ) : null}
         </div>
       </main>
     </div>

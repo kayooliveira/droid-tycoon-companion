@@ -43,10 +43,10 @@ export function CyclesPage() {
     <TabScrollLayout title={t('cycles.title')} testId="cycles-page">
       <InsetGroup footer={t('cycles.referenceNote')}>
         <div className="px-4 py-3">
-          <div data-testid="cycles-path-chips">
+          <div className="chips chips--scroll" data-testid="cycles-path-chips">
             <SegmentedControl
               compact
-              className="!mx-0 flex-wrap"
+              className="!mx-0"
               ariaLabel={t('cycles.pickCycle')}
               value={pathId}
               onChange={(id) => {

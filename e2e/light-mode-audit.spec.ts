@@ -28,6 +28,8 @@ async function seedLightOnboarded(page: Page, patch?: Record<string, unknown>) {
     settings: {
       locale: 'pt-BR',
       localeSource: 'user',
+      appearanceTheme: 'oficina',
+      appearanceMode: 'light',
       theme: 'light',
       trackInventory: true,
       animationsEnabled: false,
@@ -189,13 +191,13 @@ test.describe('light mode audit', () => {
     await waitForLoadedPage(page, '/', 'home-hub')
 
     await page.getByTestId('mobile-more-nav').click()
-    await expect(page.getByTestId('nav-more-modal')).toBeVisible()
+    await expect(page.getByTestId('nav-more-menu')).toBeVisible()
     await axeScan(page, 'nav-more')
     await shot(page, 'light-overlay-nav-more')
-    await page.getByTestId('nav-more-modal-close').click()
+    await page.getByTestId('nav-more-menu-close').click()
 
     await waitForLoadedPage(page, '/droiddex', 'droiddex-page')
-    await page.locator('button.glass-panel').first().click()
+    await page.getByTestId('droiddex-grid').locator('button').first().click()
     await expect(page.getByTestId('droiddex-detail-modal')).toBeVisible()
     await shot(page, 'light-overlay-droiddex-detail')
     await page.getByTestId('droiddex-detail-modal-close').click()
@@ -242,7 +244,7 @@ test.describe('light mode audit', () => {
 
     await seedLightOnboarded(page, { theme: 'dark' })
     await waitForLoadedPage(page, '/', 'home-hub')
-    await expect(page.locator('html')).not.toHaveClass('theme-light')
+    await expect(page.locator('html')).toHaveAttribute('data-mode', 'dark')
     await shot(page, 'dark-regression-dashboard')
     await waitForLoadedPage(page, '/progress', 'progress-page')
     await shot(page, 'dark-regression-progress')

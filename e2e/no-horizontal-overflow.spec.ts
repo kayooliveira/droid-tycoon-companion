@@ -41,7 +41,7 @@ async function openRoute(
   await seedHeavyStore(page, theme)
   await page.goto(route.path, { waitUntil: 'domcontentloaded', timeout: 45_000 })
   if (theme === 'light') {
-    await expect(page.locator('html')).toHaveClass(/theme-light/, { timeout: 10_000 })
+    await expect(page.locator('html')).toHaveAttribute('data-mode', 'light', { timeout: 10_000 })
   }
   await expect(page.getByTestId(route.testId)).toBeVisible({ timeout: 25_000 })
   if (route.wait) await route.wait(page)

@@ -91,7 +91,7 @@
     "expandAllAria": "Expand all rebirth steps in the list",
     "search": {
       "label": "Search droids in Progress",
-      "placeholder": "Search by droid name",
+      "placeholder": "Search droid…",
       "clear": "Clear search",
       "noMatch": "No droid matches that name.",
       "needsSummary": "Where you will need this droid",
@@ -324,7 +324,7 @@
   },
   "appearance": {
     "themeAndMode": "Theme & mode",
-    "visualTheme": "Look",
+    "visualTheme": "Theme",
     "themeGroup": "Theme",
     "themeAria": "Theme {{name}}",
     "previewCta": "Done",

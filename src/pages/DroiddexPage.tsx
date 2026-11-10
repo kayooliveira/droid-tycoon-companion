@@ -43,15 +43,17 @@ export function DroiddexPage() {
         clearLabel={t('progress.search.clear')}
         aria-label={t('droiddex.search')}
       />
-      <SegmentedControl
-        ariaLabel={t('droiddex.allClasses')}
-        value={classFilter}
-        onChange={setClassFilter}
-        options={[
-          { value: 'all', label: t('droiddex.allClasses') },
-          ...DROID_CLASSES.map((c) => ({ value: c, label: c })),
-        ]}
-      />
+      <div className="chips chips--scroll">
+        <SegmentedControl
+          ariaLabel={t('droiddex.allClasses')}
+          value={classFilter}
+          onChange={setClassFilter}
+          options={[
+            { value: 'all', label: t('droiddex.allClasses') },
+            ...DROID_CLASSES.map((c) => ({ value: c, label: c })),
+          ]}
+        />
+      </div>
 
       <div
         className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3"

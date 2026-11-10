@@ -34,8 +34,8 @@ export function ProgressDroidRequirementRow({
         <DroidImage droid={droid} tier={tier} size="sm" className="!h-[50px] !w-[50px] rounded-[11px]" />
         <span className="row-main">
           <span className="dname row-title">{droid.name}</span>
-          <span className="hint ">
-            <span className="t-meta">{subMeta}</span>
+          <span className="row-sub row-sub--badge">
+            <span className="row-sub-meta t-meta">{subMeta}</span>
             <SellBadge sellable={sellable} />
           </span>
         </span>

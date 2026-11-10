@@ -52,7 +52,12 @@ export function DashboardPage() {
                   className="req-col"
                   aria-label={`${d.name} ${formatTierName(c.requirement.rarity, tierLabels)}`}
                 >
-                  <DroidImage droid={d} tier={c.requirement.rarity} size="sm" />
+                  <DroidImage
+                    droid={d}
+                    tier={c.requirement.rarity}
+                    size="sm"
+                    quantity={c.neededCount > 1 ? c.ownedCount : undefined}
+                  />
                   <span className="dname">{d.name}</span>
                   <span className="t-meta">{formatTierName(c.requirement.rarity, tierLabels)}</span>
                   <span className={ok ? 'tag tag--ok' : 'tag tag--bad'}>
@@ -98,7 +103,7 @@ export function DashboardPage() {
       </section>
 
       <div style={{ marginTop: 16 }}>
-        <Link to="/progress" className="btn btn--primary">
+        <Link to="/progress" className="btn btn--primary btn--block">
           {t('home.primaryViewProgress')}
         </Link>
       </div>

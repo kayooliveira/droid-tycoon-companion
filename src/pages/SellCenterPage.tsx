@@ -67,8 +67,8 @@ export function SellCenterPage() {
         <DroidImage droid={droid} tier={item.tier} size="sm" className="!h-[50px] !w-[50px] rounded-[11px]" />
         <div className="row-main">
           <span className="dname row-title">{droid.name}</span>
-          <span className="hint ">
-            <span className="t-meta">
+          <span className="row-sub row-sub--badge">
+            <span className="row-sub-meta t-meta">
               {`${formatTierName(item.tier, tierLabels)} · ${t('progress.qtyShort', { n: item.quantity })}`}
             </span>
             {item.category === 'useNext' ? <SellBadge sellable /> : null}

@@ -388,12 +388,8 @@ export function InventoryPage() {
                 key={d.id}
                 type="button"
                 onClick={() => setNewDroidId(d.id)}
-                className={cn(
-                  'flex items-center gap-2 rounded-xl px-2 py-2 text-left text-sm border',
-                  newDroidId === d.id
-                    ? 'border-[var(--ui-accent-fill)] bg-[var(--ui-accent-fill)]/10'
-                    : 'border-[var(--ui-border-subtle)]',
-                )}
+                className="inventory-picker-row"
+                aria-pressed={newDroidId === d.id}
               >
                 <DroidImage droid={d} tier="default" size="sm" className="!h-8 !w-8" />
                 <span className="truncate">{d.name}</span>

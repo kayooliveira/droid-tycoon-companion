@@ -121,11 +121,12 @@ test('tab bar navigates while Mais sheet is open', async ({ page }) => {
     await page.getByTestId('mobile-more-nav').click()
     await expect(page.getByTestId('nav-more-menu')).toBeVisible()
 
-    const viewport = page.viewportSize()!
+    const tabBar = await page.locator('.tabbar').boundingBox()
     const scrimBox = await page.getByTestId('nav-more-menu-backdrop').boundingBox()
     expect(scrimBox).toBeTruthy()
-    expect(scrimBox!.y).toBeLessThanOrEqual(1)
-    expect(scrimBox!.height).toBeGreaterThanOrEqual(viewport.height - 1)
+    expect(tabBar).toBeTruthy()
+    const scrimBottom = scrimBox!.y + scrimBox!.height
+    expect(scrimBottom).toBeLessThanOrEqual(tabBar!.y + 2)
 
     await page.getByTestId(tabTestId(tab.path)).click()
     await expect(page.getByTestId('nav-more-menu')).toHaveCount(0, { timeout: 8000 })

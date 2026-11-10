@@ -63,9 +63,9 @@ test('impl-pr1b mock vs app side by side', async ({ page }) => {
   for (const theme of ['dark', 'light'] as const) {
     await seed(page, theme)
     if (theme === 'light') {
-      await page.evaluate(() => document.documentElement.classList.add('theme-light'))
+      await page.evaluate(() => document.documentElement.setAttribute('data-mode', 'light'))
     } else {
-      await page.evaluate(() => document.documentElement.classList.remove('theme-light'))
+      await page.evaluate(() => document.documentElement.setAttribute('data-mode', 'dark'))
     }
     for (const { hash, file } of MOCK_SCREENS) {
       await page.goto(`file://${MOCK_HTML}#${hash}`)
