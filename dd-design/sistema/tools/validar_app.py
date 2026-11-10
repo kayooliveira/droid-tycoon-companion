@@ -39,7 +39,7 @@ ONBOARDING = '/onboarding'
 
 
 def url_for(screen: str, path: str, theme: str, mode: str) -> str:
-    q = urlencode({'theme': theme, 'mode': mode})
+    q = urlencode({'theme': theme, 'mode': mode, 'onboarding': 'skip'})
     if 'onboarding' in screen:
         return f'{BASE}{ONBOARDING}?{q}'
     return f'{BASE}{path}?{q}'

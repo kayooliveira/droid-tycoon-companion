@@ -13,6 +13,7 @@ import { OnboardingPage } from './pages/OnboardingPage'
 import { setDocumentLanguage } from './i18n'
 import { reloadForPwaUpdate } from './lib/pwaUpdate'
 import { AppearanceSync } from './components/AppearanceSync'
+import { shouldBypassOnboarding } from './lib/e2eOnboardingBypass'
 import { useAppStore } from './store/useAppStore'
 
 const ProgressPage = lazy(() =>
@@ -43,7 +44,9 @@ const AppearancePage = lazy(() =>
 
 function OnboardingGate({ children }: { children: ReactNode }) {
   const onboardingComplete = useAppStore((s) => s.onboardingComplete)
-  if (!onboardingComplete) return <Navigate to="/onboarding" replace />
+  if (!onboardingComplete && !shouldBypassOnboarding()) {
+    return <Navigate to="/onboarding" replace />
+  }
   return children
 }
 
