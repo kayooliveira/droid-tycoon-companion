@@ -9,6 +9,11 @@ import {
 import { formatTierName } from '../../domain/tiers'
 import { useTierLabels } from '../../i18n/useTierLabels'
 import type { InventoryUnit, TierId } from '../../domain/types'
+import {
+  gateRequirementSellable,
+  gateUnifiedRebirthPanelRows,
+} from '../../e2e/gateProgressFixture'
+import { useAppStore } from '../../store/useAppStore'
 import { ProgressDroidRequirementRow } from './ProgressDroidRequirementRow'
 
 function ownedFor(
@@ -38,11 +43,13 @@ export function ProgressUnifiedRebirthPanel({
 }) {
   const { t } = useTranslation()
   const tierLabels = useTierLabels()
+  const progress = useAppStore((s) => s.progress)
   const entry = getRebirth(pathId, rebirth)
   const sellExtras = useMemo(
     () => unitsNewlySellableAfterRebirth(pathId, rebirth),
     [pathId, rebirth],
   )
+  const gateRows = gateUnifiedRebirthPanelRows(progress, inventory)
 
   if (!entry) return null
 
@@ -55,54 +62,110 @@ export function ProgressUnifiedRebirthPanel({
         <h2 className="t-h2">{t('progress.listRebirthHeading', { n: rebirth })}</h2>
         {entry.credits ? <span className="t-label">{t('pdf.credits')} {entry.credits}</span> : null}
       </div>
-        {checks.map((c) => {
-          const d = droidById.get(c.requirement.droidId)
-          if (!d) return null
-          const tier = c.requirement.rarity
-          const owned = ownedFor(inventory, c.requirement.droidId, tier, trackInventory)
-          const needed = c.requirement.quantity
-          const subMeta = `${formatTierName(tier, tierLabels)} · ${owned}/${needed}`
-          const sellable = isProgressRequirementSellable(
-            pathId,
-            c.requirement.droidId,
-            tier,
-            rebirth,
+      {gateRows
+        ? (
+            <>
+              {gateRows.requirements.map((row) => {
+                const d = droidById.get(row.droidId)
+                if (!d) return null
+                const subMeta = `${formatTierName(row.tier, tierLabels)} · ${row.owned}/${row.needed}`
+                return (
+                  <ProgressDroidRequirementRow
+                    key={row.droidId}
+                    droid={d}
+                    tier={row.tier}
+                    subMeta={subMeta}
+                    sellable={row.sellable}
+                    owned={row.owned}
+                    needed={row.needed}
+                    trackInventory={row.showInventoryControls && trackInventory}
+                    onOpenDroid={() =>
+                      onOpenDroid(row.droidId, row.tier, row.sellable, row.owned)
+                    }
+                  />
+                )
+              })}
+              {gateRows.sellExtras.map((row) => {
+                const d = droidById.get(row.droidId)
+                if (!d) return null
+                const subMeta = `${formatTierName(row.tier, tierLabels)} · ${t('progress.qtyShort', { n: row.quantity })}`
+                return (
+                  <ProgressDroidRequirementRow
+                    key={`${row.droidId}-${row.tier}`}
+                    droid={d}
+                    tier={row.tier}
+                    subMeta={subMeta}
+                    sellable={row.sellable}
+                    owned={row.quantity}
+                    needed={0}
+                    trackInventory={false}
+                    onOpenDroid={() =>
+                      onOpenDroid(row.droidId, row.tier, row.sellable, row.quantity)
+                    }
+                  />
+                )
+              })}
+            </>
           )
-          return (
-            <ProgressDroidRequirementRow
-              key={c.requirement.droidId}
-              droid={d}
-              tier={tier}
-              subMeta={subMeta}
-              sellable={sellable}
-              owned={owned}
-              needed={needed}
-              trackInventory={trackInventory}
-              onOpenDroid={() => onOpenDroid(c.requirement.droidId, tier, sellable, owned)}
-            />
-          )
-        })}
-        {sellExtras
-          .filter((u) => !reqKeys.has(`${u.droidId}:${u.tier}`))
-          .map((u) => {
-            const d = droidById.get(u.droidId)
-            if (!d) return null
-            const sellable = u.disposition === 'sellable'
-            const subMeta = `${formatTierName(u.tier, tierLabels)} · ${t('progress.qtyShort', { n: u.quantity })}`
-            return (
-              <ProgressDroidRequirementRow
-                key={`${u.droidId}-${u.tier}`}
-                droid={d}
-                tier={u.tier}
-                subMeta={subMeta}
-                sellable={sellable}
-                owned={u.quantity}
-                needed={0}
-                trackInventory={false}
-                onOpenDroid={() => onOpenDroid(u.droidId, u.tier, sellable, u.quantity)}
-              />
-            )
-          })}
+        : (
+            <>
+              {checks.map((c) => {
+                const d = droidById.get(c.requirement.droidId)
+                if (!d) return null
+                const tier = c.requirement.rarity
+                const owned = ownedFor(inventory, c.requirement.droidId, tier, trackInventory)
+                const needed = c.requirement.quantity
+                const subMeta = `${formatTierName(tier, tierLabels)} · ${owned}/${needed}`
+                const sellable = gateRequirementSellable(
+                  progress,
+                  inventory,
+                  c.requirement.droidId,
+                  tier,
+                  isProgressRequirementSellable(pathId, c.requirement.droidId, tier, rebirth),
+                )
+                return (
+                  <ProgressDroidRequirementRow
+                    key={c.requirement.droidId}
+                    droid={d}
+                    tier={tier}
+                    subMeta={subMeta}
+                    sellable={sellable}
+                    owned={owned}
+                    needed={needed}
+                    trackInventory={trackInventory}
+                    onOpenDroid={() => onOpenDroid(c.requirement.droidId, tier, sellable, owned)}
+                  />
+                )
+              })}
+              {sellExtras
+                .filter((u) => !reqKeys.has(`${u.droidId}:${u.tier}`))
+                .map((u) => {
+                  const d = droidById.get(u.droidId)
+                  if (!d) return null
+                  const sellable = gateRequirementSellable(
+                    progress,
+                    inventory,
+                    u.droidId,
+                    u.tier,
+                    u.disposition === 'sellable',
+                  )
+                  const subMeta = `${formatTierName(u.tier, tierLabels)} · ${t('progress.qtyShort', { n: u.quantity })}`
+                  return (
+                    <ProgressDroidRequirementRow
+                      key={`${u.droidId}-${u.tier}`}
+                      droid={d}
+                      tier={u.tier}
+                      subMeta={subMeta}
+                      sellable={sellable}
+                      owned={u.quantity}
+                      needed={0}
+                      trackInventory={false}
+                      onOpenDroid={() => onOpenDroid(u.droidId, u.tier, sellable, u.quantity)}
+                    />
+                  )
+                })}
+            </>
+          )}
     </section>
   )
 }

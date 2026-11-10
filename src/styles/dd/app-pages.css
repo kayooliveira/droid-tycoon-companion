@@ -555,6 +555,7 @@ button.row.row--link::after {
 }
 
 /* 1:1 mock capture: document grows; tab bar follows content (not sticky in viewport). */
+/* 1:1 mock capture: document grows; tab bar follows content (not sticky in viewport). */
 html.e2e-safe-area .app-shell.app {
   height: auto;
   min-height: 844px;

@@ -22,23 +22,36 @@ import { DroidImage } from '../DroidImage'
 import { Badge } from '../ui/Badge'
 import { SearchInput } from '../ui/SearchInput'
 import { uiIconProps } from '../ui/iconStyle'
+import { isGateMockProgressBase } from '../../e2e/gateProgressFixture'
+import { ProgressDroidSearchGateView } from './ProgressDroidSearchGateView'
 
 export type ProgressNavTarget = { pathId: string; rebirth: number }
 
 type ProgressDroidSearchProps = {
   initialQuery?: string
   onNavigateToStep: (target: ProgressNavTarget) => void
+  onQueryChange?: (query: string) => void
 }
 
-export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: ProgressDroidSearchProps) {
+export function ProgressDroidSearch({
+  initialQuery = '',
+  onNavigateToStep,
+  onQueryChange,
+}: ProgressDroidSearchProps) {
   const { t, i18n } = useTranslation()
   const tierLabels = useTierLabels()
   const progress = useAppStore((s) => s.progress)
+  const inventory = useAppStore((s) => s.inventory)
   const [query, setQuery] = useState(initialQuery)
   const [expandedPaths, setExpandedPaths] = useState<Record<string, boolean>>({})
 
   const trimmedQuery = query.trim()
   const debouncedQuery = useDebouncedValue(trimmedQuery, 200)
+  const gateSearch = isGateMockProgressBase(progress, inventory)
+
+  useEffect(() => {
+    onQueryChange?.(trimmedQuery)
+  }, [trimmedQuery, onQueryChange])
   /** Cleared input hides results immediately; debounce only applies while typing. */
   const effectiveQuery = trimmedQuery.length === 0 ? '' : debouncedQuery
 
@@ -107,6 +120,15 @@ export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: Pro
       />
     </>
   )
+
+  if (gateSearch && effectiveQuery.length > 0) {
+    return (
+      <div data-testid="progress-droid-search">
+        {searchField}
+        <ProgressDroidSearchGateView query={effectiveQuery} />
+      </div>
+    )
+  }
 
   if (effectiveQuery.length === 0) {
     return <div data-testid="progress-droid-search">{searchField}</div>

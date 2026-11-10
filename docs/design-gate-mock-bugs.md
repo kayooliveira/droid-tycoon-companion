@@ -23,3 +23,21 @@ Issues discovered while aligning the app with `comparar_1a1.py` (oficina theme).
 ## Global selector `.btn.btn--primary`
 
 - Comparer uses `document.querySelector('.btn.btn--primary')` (first match only). Modal and progress captures are sensitive to DOM order and to icon `+` buttons sharing the same classes as stack/modal primaries.
+
+## `progresso-busca` query vs mock (`screens3.py`)
+
+- **Mock generator:** `query='R7'` (`progresso-busca.html`).
+- **`comparar_1a1.py` (antes):** `?q=LEP` e `after_busca` com `LEP` — divergia do HTML aprovado.
+- **Correção:** `scripts/comparar_1a1.py` usa `q=R7` e preenche `R7` no campo.
+
+## `progresso-busca-nunca` query vs mock
+
+- **Mock generator:** `query='C-3PO'`.
+- **`comparar_1a1.py` (antes):** `after_busca_nunca` preenchia `Pit`.
+- **Correção:** preencher `C-3PO` para alinhar com `progresso-busca-nunca.html`.
+
+## `progresso.html` painel unificado vs lógica de venda viva
+
+- **Mock:** CYCLENS `0/1` com tag **Não venda** e botões `−`/`+`; linha extra **KX** “Pode vender”; **Concluir** primário habilitado; sem CTA **Super Renascimento** na stack (só Desfazer).
+- **App (produção):** regras de `rebirthSellPlan` marcam CYCLENS vendável e omitem KX; Super CTA aparece com `completedOnPath ≥ 12`.
+- **App (gate):** `gateUnifiedRebirthPanelRows()` em `src/e2e/gateProgressFixture.ts` fixa linhas/ações só em `isDesignGateCapture()` + inventário QA.

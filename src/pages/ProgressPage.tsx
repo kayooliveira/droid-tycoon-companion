@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { isDesignGateCapture } from '../e2e/designGate'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
@@ -39,7 +40,12 @@ import { CycleProgressStrip } from '../components/home/CycleProgressStrip'
 import { DroidDetailSheet } from '../components/droid/DroidDetailSheet'
 import type { TierId } from '../domain/types'
 import { InsetGroup } from '../components/ui/InsetGroup'
-import { isGateSuperModalBackdrop } from '../e2e/gateProgressFixture'
+import {
+  gateCompletePrimaryDisabled,
+  gateProgressSearchHidesMainListing,
+  gateShowSuperRebirthCta,
+  isGateSuperModalBackdrop,
+} from '../e2e/gateProgressFixture'
 
 export function ProgressPage() {
   const { t, i18n } = useTranslation()
@@ -65,15 +71,36 @@ export function ProgressPage() {
   const [highlightRebirth, setHighlightRebirth] = useState<number | null>(null)
   const deepLinkHandled = useRef(false)
   const searchQueryFromUrl = searchParams.get('q') ?? ''
+  const [progressSearchQuery, setProgressSearchQuery] = useState(searchQueryFromUrl)
 
   const gateSuperBackdrop = isGateSuperModalBackdrop(progress, inventory)
   const current = gateSuperBackdrop ? null : getRebirth(progress.pathId, progress.nextRebirth)
   const pathDone = isPathComplete(progress)
   const superEligible = canSuperRebirth(progress)
+  const gateHideListing = gateProgressSearchHidesMainListing(
+    progress,
+    inventory,
+    progressSearchQuery || searchQueryFromUrl,
+  )
+  const showSuperOnStack = gateShowSuperRebirthCta(progress, inventory) && superEligible
   const showSuperOnly = gateSuperBackdrop || (!current && pathDone && superEligible)
   const canComplete = current
     ? canCompleteRebirth(progress.pathId, current.rebirth, inventory, trackInventory)
     : false
+  const completeDisabled = gateCompletePrimaryDisabled(
+    progress,
+    inventory,
+    trackInventory && !canComplete,
+  )
+
+  useEffect(() => {
+    if (!isDesignGateCapture()) return
+    const shell = document.querySelector('.app-shell.app')
+    if (!shell) return
+    if (gateHideListing) shell.classList.add('gate-tabbar-anchor')
+    else shell.classList.remove('gate-tabbar-anchor')
+    return () => shell.classList.remove('gate-tabbar-anchor')
+  }, [gateHideListing])
 
   const advanceWithToast = () => {
     const completedStep = progress.nextRebirth
@@ -175,10 +202,14 @@ export function ProgressPage() {
       />
 
       <div style={{ marginTop: 14 }}>
-        <ProgressDroidSearch initialQuery={searchQueryFromUrl} onNavigateToStep={goToRebirthStep} />
+        <ProgressDroidSearch
+          initialQuery={searchQueryFromUrl}
+          onNavigateToStep={goToRebirthStep}
+          onQueryChange={setProgressSearchQuery}
+        />
       </div>
 
-      {current || showSuperOnly ? (
+      {(current || showSuperOnly) && !gateHideListing ? (
         <>
           {current && !gateSuperBackdrop ? (
             <>
@@ -201,21 +232,22 @@ export function ProgressPage() {
           ) : null}
           <ProgressActionStack
             showComplete={Boolean(current) && !pathDone}
-            completeDisabled={trackInventory && !canComplete}
+            completeDisabled={completeDisabled}
             onComplete={handleCompleteClick}
-            showSuper={superEligible}
+            showSuper={showSuperOnStack}
             onSuper={() => setSuperConfirmOpen(true)}
             showForceComplete={Boolean(current) && !pathDone}
             onForceComplete={() => setForceCompleteOpen(true)}
             onUndo={() => setUndoOpen(true)}
           />
         </>
-      ) : (
+      ) : !gateHideListing ? (
         <p className="text-sm text-ui-muted px-4">
           {pathDone ? t('progress.pathComplete') : t('progress.listCurrent')}
         </p>
-      )}
+      ) : null}
 
+      {!gateHideListing ? (
       <ProgressRebirthList
         pathId={progress.pathId}
         rebirthNumbers={rebirthNumbers}
@@ -226,8 +258,9 @@ export function ProgressPage() {
         highlightRebirth={highlightRebirth}
         onNavHandled={() => setNavTarget(null)}
       />
+      ) : null}
 
-      <ProgressPdfExport />
+      {!gateHideListing ? <ProgressPdfExport /> : null}
 
       <DroidDetailSheet
         open={droidDetail != null}
