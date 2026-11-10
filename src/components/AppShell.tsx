@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
@@ -20,6 +20,7 @@ import { Logo } from './Logo'
 import { InstallBanner } from './InstallBanner'
 import { Modal } from './ui/Modal'
 import { MobileFloatingNav } from './MobileFloatingNav'
+import { ToastViewport } from './ToastProvider'
 
 const desktopNav = [
   { to: '/', labelKey: 'nav.dashboard', icon: SquaresFour, end: true as const },
@@ -40,6 +41,7 @@ const moreMobile = desktopNav.filter((item) =>
 export function AppShell() {
   const { t } = useTranslation()
   const location = useLocation()
+  const scrollRef = useRef<HTMLElement>(null)
   useScrollRestoration()
   useLastTabRestore()
   const [moreOpen, setMoreOpen] = useState(false)
@@ -49,14 +51,18 @@ export function AppShell() {
     setMoreOpen(false)
   }, [location.pathname])
 
+  useEffect(() => {
+    scrollRef.current?.scrollTo(0, 0)
+  }, [location.pathname])
+
   return (
-    <div className="flex min-h-dvh flex-col md:flex-row">
-      <aside className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col border-r border-ui bg-ui-elevated">
-        <div className="flex items-center gap-3 border-b border-ui p-5">
+    <div className="shell-root flex min-h-dvh flex-col md:flex-row bg-[var(--c-bg)] text-[var(--c-text)]">
+      <aside className="shell-desktop-aside md:fixed md:inset-y-0 md:w-64 md:flex-col border-r border-[var(--c-border)] bg-[var(--c-surface)]">
+        <div className="flex items-center gap-3 border-b border-[var(--c-border)] p-5">
           <Logo className="h-8 w-8" />
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-ui-fg">{t('app.name')}</p>
-            <p className="truncate text-xs text-ui-muted">{t('app.subtitle')}</p>
+            <p className="truncate text-sm font-semibold">{t('app.name')}</p>
+            <p className="truncate text-xs t-meta">{t('app.subtitle')}</p>
           </div>
         </div>
         <nav className="flex-1 space-y-1 p-3">
@@ -68,7 +74,9 @@ export function AppShell() {
               className={({ isActive }) =>
                 cn(
                   'flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors',
-                  isActive ? 'bg-ui-accent-soft text-ui-accent' : 'text-ui-secondary hover:bg-ui-hover',
+                  isActive
+                    ? 'bg-[var(--c-surface-2)] text-[var(--c-accent-text)]'
+                    : 'text-[var(--c-text-2)] hover:bg-[var(--c-surface-2)]',
                 )
               }
             >
@@ -79,17 +87,19 @@ export function AppShell() {
         </nav>
       </aside>
 
-      <main className="shell-main-pad flex min-h-dvh min-w-0 flex-1 flex-col overflow-x-hidden md:ml-64 md:pb-6">
-        <div className="mx-auto flex min-h-0 w-full min-w-0 max-w-6xl flex-1 flex-col px-4 md:py-8">
-          <Outlet />
-        </div>
-      </main>
-
-      <MobileFloatingNav
-        moreOpen={moreOpen}
-        onMoreToggle={() => setMoreOpen((open) => !open)}
-        onCloseMore={() => setMoreOpen(false)}
-      />
+      <div className="app app-shell flex min-h-dvh min-w-0 flex-1 flex-col md:ml-64">
+        <main ref={scrollRef} className="scroll" data-testid="app-scroll">
+          <div className="mx-auto w-full min-w-0 max-w-6xl md:py-8">
+            <Outlet />
+          </div>
+        </main>
+        <ToastViewport />
+        <MobileFloatingNav
+          moreOpen={moreOpen}
+          onMoreToggle={() => setMoreOpen((open) => !open)}
+          onCloseMore={() => setMoreOpen(false)}
+        />
+      </div>
 
       <Modal
         open={moreOpen}
@@ -107,7 +117,9 @@ export function AppShell() {
               className={({ isActive }) =>
                 cn(
                   'flex min-h-11 items-center gap-3 rounded-xl px-3 py-3 text-sm',
-                  isActive ? 'bg-ui-accent-soft text-ui-accent' : 'hover:bg-ui-hover',
+                  isActive
+                    ? 'bg-[var(--c-surface-2)] text-[var(--c-accent-text)]'
+                    : 'hover:bg-[var(--c-surface-2)]',
                 )
               }
             >

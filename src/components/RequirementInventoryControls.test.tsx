@@ -6,7 +6,7 @@ import { getRebirth } from '../domain/gameData'
 import { initI18n } from '../i18n'
 import { useAppStore } from '../store/useAppStore'
 import { RequirementCard } from './RequirementCard'
-import { ToastProvider } from './ToastProvider'
+import { ToastProvider, ToastViewport } from './ToastProvider'
 
 const i18n = initI18n('en')
 
@@ -18,6 +18,7 @@ function renderCard() {
     <I18nextProvider i18n={i18n}>
       <ToastProvider>
         <RequirementCard check={check} />
+        <ToastViewport />
       </ToastProvider>
     </I18nextProvider>,
   )
