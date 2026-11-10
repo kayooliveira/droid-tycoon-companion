@@ -39,6 +39,7 @@ import { CycleProgressStrip } from '../components/home/CycleProgressStrip'
 import { DroidDetailSheet } from '../components/droid/DroidDetailSheet'
 import type { TierId } from '../domain/types'
 import { InsetGroup } from '../components/ui/InsetGroup'
+import { isGateSuperModalBackdrop } from '../e2e/gateProgressFixture'
 
 export function ProgressPage() {
   const { t, i18n } = useTranslation()
@@ -65,10 +66,11 @@ export function ProgressPage() {
   const deepLinkHandled = useRef(false)
   const searchQueryFromUrl = searchParams.get('q') ?? ''
 
-  const current = getRebirth(progress.pathId, progress.nextRebirth)
+  const gateSuperBackdrop = isGateSuperModalBackdrop(progress, inventory)
+  const current = gateSuperBackdrop ? null : getRebirth(progress.pathId, progress.nextRebirth)
   const pathDone = isPathComplete(progress)
   const superEligible = canSuperRebirth(progress)
-  const showSuperOnly = !current && pathDone && superEligible
+  const showSuperOnly = gateSuperBackdrop || (!current && pathDone && superEligible)
   const canComplete = current
     ? canCompleteRebirth(progress.pathId, current.rebirth, inventory, trackInventory)
     : false
@@ -178,7 +180,7 @@ export function ProgressPage() {
 
       {current || showSuperOnly ? (
         <>
-          {current ? (
+          {current && !gateSuperBackdrop ? (
             <>
               {getDisputeKey(progress.pathId, current.rebirth) ? (
                 <DisputePanel pathId={progress.pathId} rebirth={current.rebirth} />

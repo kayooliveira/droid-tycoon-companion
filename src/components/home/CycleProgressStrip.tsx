@@ -2,6 +2,7 @@ import { type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { gameData } from '../../domain/gameData'
 import { formatCycleDisplayName } from '../../lib/cycleLabel'
+import { gateCycleMeter } from '../../e2e/gateProgressFixture'
 import { useAppStore } from '../../store/useAppStore'
 
 const REBIRTHS_PER_PATH = 40
@@ -15,9 +16,12 @@ export function CycleProgressStrip({
 }) {
   const { t, i18n } = useTranslation()
   const progress = useAppStore((s) => s.progress)
+  const inventory = useAppStore((s) => s.inventory)
   const cycle = gameData.cycles.find((c) => c.id === progress.pathId)
   const total = cycle?.rebirths.length ?? REBIRTHS_PER_PATH
-  const done = progress.completedOnPath
+  const meter = gateCycleMeter(progress, inventory)
+  const done = meter.completedOnPath
+  const nextRebirth = meter.nextRebirth
   const cycleLabel = cycle ? formatCycleDisplayName(cycle.name, i18n.language) : progress.pathId
   const marks = [10, 20, 30, total].filter((n, i, arr) => arr.indexOf(n) === i)
 
@@ -37,7 +41,7 @@ export function CycleProgressStrip({
     variant === 'progress'
       ? t('progress.cycleFootSummary', {
           done,
-          next: Math.min(progress.nextRebirth, total),
+          next: Math.min(nextRebirth, total),
         })
       : t('home.superAfterRebirth', { n: total })
 

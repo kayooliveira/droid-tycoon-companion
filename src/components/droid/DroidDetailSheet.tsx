@@ -7,6 +7,7 @@ import { formatBaseRarity } from '../../i18n/tierLabels'
 import { useTierLabels } from '../../i18n/useTierLabels'
 import type { TierId } from '../../domain/types'
 import { DroidImage } from '../DroidImage'
+import { isDesignGateCapture } from '../../e2e/designGate'
 import { Sheet } from '../ui/Sheet'
 import { SellBadge } from '../ui/SellBadge'
 import { uiIconProps } from '../ui/iconStyle'
@@ -43,6 +44,7 @@ export function DroidDetailSheet({
       closeLabel={t('common.close')}
       renderHeader={false}
       aboveTabBar
+      className={isDesignGateCapture() ? 'sheet--gate-fill' : undefined}
       ariaLabel={`${droid.name} ${tierName}`}
       labelledBy="droid-detail-sheet-label"
     >

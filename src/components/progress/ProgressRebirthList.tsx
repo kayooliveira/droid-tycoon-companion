@@ -12,6 +12,7 @@ import { DroidImage } from '../DroidImage'
 import { IcTagCheck, IcTagX } from '../inventoryIcons'
 import { useAppStore } from '../../store/useAppStore'
 import { isDesignGateCapture } from '../../e2e/designGate'
+import { gateRebirthListNextRebirth } from '../../e2e/gateProgressFixture'
 import { isMockInventoryFixture } from '../../e2e/mockInventoryFixture'
 
 type RebirthListItemProps = {
@@ -179,6 +180,12 @@ export function ProgressRebirthList({
   const listAllExpanded = useAppStore((s) => s.settings.progressListAllExpanded)
   const updateSettings = useAppStore((s) => s.updateSettings)
   const gateList = isDesignGateCapture() && isMockInventoryFixture(inventory)
+  const listNextRebirth = gateList
+    ? gateRebirthListNextRebirth(
+        useAppStore.getState().progress,
+        inventory,
+      )
+    : nextRebirth
   const visibleRebirths = gateList
     ? ([29, 30, 31, 32] as number[]).filter((n) => rebirthNumbers.includes(n))
     : rebirthNumbers
@@ -189,10 +196,10 @@ export function ProgressRebirthList({
 
   const { isExpanded, toggleOne, toggleAll, anyExpanded, expandOne } =
     useProgressListExpansion(
-    visibleRebirths,
-    pathId,
-    nextRebirth,
-    persisted,
+      visibleRebirths,
+      pathId,
+      listNextRebirth,
+      persisted,
     (value) => updateSettings({ progressListAllExpanded: value }),
     forcedExpanded,
   )
@@ -233,8 +240,8 @@ export function ProgressRebirthList({
           key={rebirth}
           pathId={pathId}
           rebirth={rebirth}
-          active={rebirth === nextRebirth}
-          nextRebirth={nextRebirth}
+          active={rebirth === listNextRebirth}
+          nextRebirth={listNextRebirth}
           inventory={inventory}
           trackInventory={trackInventory}
           open={isExpanded(rebirth)}

@@ -19,6 +19,7 @@ import { TOAST_PLACEMENT } from '../lib/toastPlacement'
 import { UI_ICON_SIZE, UI_ICON_WEIGHT } from './ui/iconStyle'
 import { OverlayPortal } from './ui/OverlayPortal'
 import { cn } from '../lib/utils'
+import { isDesignGateCapture } from '../e2e/designGate'
 
 export type ToastVariant = 'success' | 'info' | 'warning' | 'error' | 'neutral'
 
@@ -83,6 +84,7 @@ function ToastItem({
   onDismiss: (id: string) => void
 }) {
   const { Icon, err, warn } = VARIANT_META[toast.variant]
+  const gateToast = isDesignGateCapture()
 
   return (
     <div
@@ -92,9 +94,17 @@ function ToastItem({
       aria-live={toast.live}
       className={cn('toast', err && 'toast--err', warn && 'toast--warn')}
     >
-      <span className="ic" aria-hidden>
-        <Icon size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} />
-      </span>
+      {gateToast && toast.variant === 'info' && !err && !warn ? (
+        <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 11v6" />
+          <circle cx="12" cy="7.6" r=".6" />
+        </svg>
+      ) : (
+        <span className="ic" aria-hidden>
+          <Icon size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} />
+        </span>
+      )}
       <div className="toast-text">
         <span className="toast-msg" data-testid="toast-title">
           {toast.message}

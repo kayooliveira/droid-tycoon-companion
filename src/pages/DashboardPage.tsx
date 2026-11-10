@@ -93,7 +93,7 @@ export function DashboardPage() {
             <span className="dname" style={{ display: 'block' }}>
               {next.credits}
             </span>
-            <span className="hint" style={{ display: 'block', lineHeight: 1.32, marginTop: 0 }}>
+            <span className="hint" style={{ display: 'block' }}>
               {t('home.creditsDisclaimer')}
             </span>
           </span>

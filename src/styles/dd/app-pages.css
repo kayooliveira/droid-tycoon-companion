@@ -584,9 +584,14 @@ html.e2e-safe-area .app-shell .tabbar {
 }
 
 html.e2e-safe-area #app-overlay-root .sheet.sheet--above {
-  bottom: 0;
-  max-height: calc(100% - 36px);
+  bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px));
+  max-height: calc(100dvh - var(--tab-h) - env(safe-area-inset-bottom, 0px) - 12px);
   position: fixed;
+}
+
+html.e2e-safe-area #app-overlay-root .sheet.sheet--above.sheet--gate-fill {
+  bottom: 0;
+  max-height: min(92dvh, calc(100dvh - 12px));
 }
 
 .app-shell .scroll > div {
