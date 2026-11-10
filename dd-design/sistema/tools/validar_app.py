@@ -163,7 +163,9 @@ def sheet_droid(page: Any) -> None:
 
 
 def sheet_remover(page: Any) -> None:
-    page.get_by_test_id('inventory-unit-card').first.click()
+    card = page.get_by_test_id('inventory-unit-card').first
+    card.scroll_into_view_if_needed()
+    card.click(force=True)
     page.get_by_test_id('droid-detail-sheet').wait_for(state='visible', timeout=8000)
     remove = page.locator('[data-testid^="inventory-remove-"]').first
     remove.click()
@@ -251,8 +253,12 @@ def progresso_busca_nunca(page: Any) -> None:
 
 
 def inventario_toast_removido(page: Any) -> None:
-    page.get_by_test_id('inventory-unit-card').first.click()
-    page.locator('[data-testid^="inventory-remove-"]').first.click()
+    card = page.get_by_test_id('inventory-unit-card').first
+    card.scroll_into_view_if_needed()
+    card.click(force=True)
+    remove = page.locator('[data-testid^="inventory-remove-"]').first
+    remove.scroll_into_view_if_needed()
+    remove.click(force=True)
     page.get_by_test_id('inventory-remove-confirm').click()
     page.get_by_test_id('toast-item').first.wait_for(state='visible', timeout=8000)
 
