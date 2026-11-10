@@ -26,7 +26,7 @@ export function SellCenterPage() {
   const tierLabels = useTierLabels()
   const progress = useAppStore((s) => s.progress)
   const inventory = useAppStore((s) => s.inventory)
-  useGateTabbarAnchor()
+  useGateTabbarAnchor(inventory.length === 0)
   const cycleName = formatCycleDisplayName(
     cycleById.get(progress.pathId)?.name ?? progress.pathId,
     i18n.language,

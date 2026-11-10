@@ -583,14 +583,31 @@ html.e2e-safe-area .app-shell .tabbar {
   bottom: auto;
 }
 
-/* Back-bar routes: app (is_mobile) sits ~22px above static mock HTML. */
-/* Vender (+ vazio): mock viewport ~22px lower (is_mobile); pad tab-page, not margin on backbar. */
-html.e2e-safe-area .app-shell.app:has([data-testid='sell-page']):not([data-fixed]) .tab-page {
-  padding-top: 22.39px;
+html.e2e-safe-area .app-shell.app.gate-tabbar-anchor {
+  display: flex;
+  flex-direction: column;
+  min-height: 844px;
 }
 
-html.e2e-safe-area .app-shell.app:has([data-testid='sell-page']):not([data-fixed]) .tabbar {
-  transform: translateY(22.39px);
+html.e2e-safe-area .app-shell.app.gate-tabbar-anchor .scroll,
+html.e2e-safe-area .app-shell.app[data-fixed] .scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+html.e2e-safe-area .app-shell.app.gate-tabbar-anchor .tabbar,
+html.e2e-safe-area .app-shell.app[data-fixed] .tabbar {
+  margin-top: auto;
+  flex: none;
+}
+
+html.e2e-safe-area .hint,
+html.e2e-safe-area .row-main .hint {
+  line-height: 1.4;
+}
+
+html.e2e-safe-area .sell-empty-gate .hint {
+  line-height: 1.35;
 }
 
 html.e2e-safe-area #app-overlay-root .sheet.sheet--above {

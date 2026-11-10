@@ -48,3 +48,9 @@ Issues discovered while aligning the app with `comparar_1a1.py` (oficina theme).
 - **Mock:** CYCLENS `0/1` com tag **Não venda** e botões `−`/`+`; linha extra **KX** “Pode vender”; **Concluir** primário habilitado; sem CTA **Super Renascimento** na stack (só Desfazer).
 - **App (produção):** regras de `rebirthSellPlan` marcam CYCLENS vendável e omitem KX; Super CTA aparece com `completedOnPath ≥ 12`.
 - **App (gate):** `gateUnifiedRebirthPanelRows()` em `src/e2e/gateProgressFixture.ts` fixa linhas/ações só em `isDesignGateCapture()` + inventário QA.
+
+## `vazio-vender.html` contém texto de tupla fora do app
+
+- **Static mock:** o `<body>` começa com o texto acidental `('Vender vazio', '` e termina com `')`, deslocando todo o mock em cerca de 22 px.
+- **Fluxo real:** a tela vazia começa diretamente em `<div class="app">`, sem esses nós de texto.
+- **Correção do comparador:** `after_mock_static()` remove somente os nós de texto que são filhos diretos de `body` para esse slug antes da captura. O HTML aprovado permanece intacto para deixar o defeito de geração auditável.

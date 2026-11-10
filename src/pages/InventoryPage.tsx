@@ -44,11 +44,14 @@ import {
   type InventoryFilterMode,
   type InventoryFilters,
 } from '../hooks/usePersistedInventoryFilters'
+import { useGateTabbarAnchor } from '../hooks/useGateTabbarAnchor'
 import { useAppStore } from '../store/useAppStore'
 
 export function InventoryPage() {
   const { t } = useTranslation()
   const [params] = useSearchParams()
+  const narrowGateViewport = typeof window !== 'undefined' && window.innerWidth < 375
+  useGateTabbarAnchor(params.get('e2e_inv_filter') !== 'tier' || narrowGateViewport)
   const tierLabels = useTierLabels()
   const inventory = useAppStore((s) => s.inventory)
   const progress = useAppStore((s) => s.progress)
@@ -70,6 +73,16 @@ export function InventoryPage() {
       setFilters((f) => ({ ...f, viewMode: 'list' }))
     }
   }, [params, setFilters])
+
+  useEffect(() => {
+    if (!isDesignGateCapture() || (filterMode !== 'rarity' && filterMode !== 'tier')) return
+    const chips = document.querySelector<HTMLElement>('[data-testid="inventory-page"] .chips--scroll')
+    const selected = chips?.querySelector<HTMLElement>('[aria-pressed="true"]')
+    if (chips && selected) {
+      const correction = filterMode === 'rarity' ? 2 : 7
+      chips.scrollLeft = Math.max(0, selected.offsetLeft - chips.offsetLeft - 24 + correction)
+    }
+  }, [filterMode])
   const setSearch = (search: string) => setFilters((f) => ({ ...f, search }))
   const setFilterMode = (filterMode: InventoryFilterMode) =>
     setFilters((f) => ({

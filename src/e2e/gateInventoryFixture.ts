@@ -39,10 +39,7 @@ export const GATE_TIER_CHIP_INDEX = 5
 
 export function gateFilteredMockUnits(inventory: InventoryUnit[], mode: 'rarity' | 'tier'): InventoryUnit[] {
   if (mode === 'rarity') {
-    return inventory.filter((u) => {
-      const droid = u.droidId
-      return droid === 'mecha-droid' || droid === 'util-tec-ulti-tech'
-    })
+    return inventory.filter((u) => u.droidId === 'util-tec-ulti-tech' || u.droidId === 'orb-walker')
   }
   return inventory.filter((u) => u.tier === 'galactic' || u.tier === 'beskar')
 }

@@ -76,7 +76,7 @@ function SellItem({
 /** `vender.html` (capture-only). */
 export function VenderGateView() {
   return (
-    <>
+    <div className="vender-gate">
       <p className="hint" style={{ marginTop: 6 }}>
         Renascimentos 30 a 40 do Ciclo 5. Depois do Super Renascimento quase tudo reseta, então planeje o
         próximo ciclo.
@@ -97,6 +97,7 @@ export function VenderGateView() {
       <section className="sec" data-testid="sell-center-safe-now">
         <div className="sec-h">
           <h2 className="t-h2">Pode vender agora</h2>
+          <span className="t-label">2</span>
         </div>
         <SellItem
           id="kx"
@@ -108,7 +109,7 @@ export function VenderGateView() {
         <SellItem
           id="orb-walker"
           tier="diamond"
-          name="Orb Walker"
+          name="ORB-Walker"
           meta="Diamante · Qtd. 1"
           note="Está no seu inventário e pode vender antes do próximo renascimento."
         />
@@ -120,6 +121,7 @@ export function VenderGateView() {
       <section className="sec" data-testid="sell-center-useNext">
         <div className="sec-h">
           <h2 className="t-h2">Usar no próximo</h2>
+          <span className="t-label">1</span>
         </div>
         <SellItem
           id="r7"
@@ -134,6 +136,7 @@ export function VenderGateView() {
       <section className="sec" data-testid="sell-center-keep">
         <div className="sec-h">
           <h2 className="t-h2">Guardar</h2>
+          <span className="t-label">3</span>
         </div>
         <SellItem
           id="mecha-droid"
@@ -162,6 +165,7 @@ export function VenderGateView() {
       <section className="sec" data-testid="sell-center-upgrade">
         <div className="sec-h">
           <h2 className="t-h2">Upar</h2>
+          <span className="t-label">1</span>
         </div>
         <SellItem
           id="util-tec-ulti-tech"
@@ -178,6 +182,7 @@ export function VenderGateView() {
       <section className="sec" data-testid="sell-center-sellable">
         <div className="sec-h">
           <h2 className="t-h2">Vender</h2>
+          <span className="t-label">1</span>
         </div>
         <SellItem
           id="mouse"
@@ -190,6 +195,6 @@ export function VenderGateView() {
           Não entra nos renascimentos que faltam; venda quando quiser.
         </p>
       </section>
-    </>
+    </div>
   )
 }

@@ -2,8 +2,20 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { droidById } from '../../domain/gameData'
 import { formatBaseRarity } from '../../i18n/tierLabels'
-import { droidImageSrc } from '../../lib/images'
+import { DroidImage } from '../DroidImage'
 import { OverlayPortal } from '../ui/OverlayPortal'
+import bb8GateImage from '../../../dd-design/sistema/assets/droids/bb-8.webp'
+import bb9GateImage from '../../../dd-design/sistema/assets/droids/bb9.webp'
+import bbGateImage from '../../../dd-design/sistema/assets/droids/bb.webp'
+import c3poGateImage from '../../../dd-design/sistema/assets/droids/c-3po.webp'
+import cbGateImage from '../../../dd-design/sistema/assets/droids/cb.webp'
+import cyclensGateImage from '../../../dd-design/sistema/assets/droids/cyclens.webp'
+import lepGateImage from '../../../dd-design/sistema/assets/droids/lep.webp'
+import mechaGateImage from '../../../dd-design/sistema/assets/droids/mecha-droid.webp'
+import mouseGateImage from '../../../dd-design/sistema/assets/droids/mouse.webp'
+import orbGateImage from '../../../dd-design/sistema/assets/droids/orb-walker.webp'
+import pitGateImage from '../../../dd-design/sistema/assets/droids/pit.webp'
+import r6GateImage from '../../../dd-design/sistema/assets/droids/r6.webp'
 
 const GATE_GRID_IDS = [
   'mouse',
@@ -19,6 +31,40 @@ const GATE_GRID_IDS = [
   'bb-8',
   'c-3po',
 ] as const
+
+const GATE_GRID_IMAGES: Record<(typeof GATE_GRID_IDS)[number], string> = {
+  mouse: mouseGateImage,
+  pit: pitGateImage,
+  cb: cbGateImage,
+  bb: bbGateImage,
+  'orb-walker': orbGateImage,
+  r6: r6GateImage,
+  'mecha-droid': mechaGateImage,
+  bb9: bb9GateImage,
+  lep: lepGateImage,
+  cyclens: cyclensGateImage,
+  'bb-8': bb8GateImage,
+  'c-3po': c3poGateImage,
+}
+
+function GateGridTile({ id }: { id: (typeof GATE_GRID_IDS)[number] }) {
+  const droid = droidById.get(id)
+  if (!droid) return null
+  return (
+    <span className="dtile" data-tier="default">
+      <span className="dtile-bg" aria-hidden />
+      <span className="dtile-num" aria-hidden>01</span>
+      <img
+        src={GATE_GRID_IMAGES[id]}
+        alt=""
+        width={128}
+        height={128}
+        loading="eager"
+      />
+      <span className="dtile-q" aria-hidden>?</span>
+    </span>
+  )
+}
 
 function LepDetailGateModal({ onClose }: { onClose: () => void }) {
   const lep = droidById.get('lep')
@@ -36,18 +82,9 @@ function LepDetailGateModal({ onClose }: { onClose: () => void }) {
             </button>
           </div>
           <div className="row2" style={{ alignItems: 'flex-start', gap: 14, margin: '10px 0 14px' }}>
-            <div style={{ width: 158, flex: 'none' }}>
+            <div style={{ width: 96, flex: 'none' }}>
               {lep ? (
-                <span className="dtile" data-tier="kyber" style={{ width: 158, height: 158 }}>
-                  <span className="dtile-bg" aria-hidden />
-                  <span className="dtile-num" aria-hidden>
-                    08
-                  </span>
-                  <img src={droidImageSrc(lep.id, lep.imageLocal)} alt="" width={128} height={128} loading="eager" />
-                  <span className="dtile-q" aria-hidden>
-                    ?
-                  </span>
-                </span>
+                <DroidImage droid={lep} tier="kyber" priority />
               ) : null}
             </div>
             <div className="stack" style={{ gap: 8, alignItems: 'flex-start' }}>
@@ -136,7 +173,7 @@ export function DroiddexGateView() {
           ))}
         </div>
       </div>
-      <div className="collection-grid" data-testid="droiddex-grid" style={{ marginTop: 18 }}>
+      <div className="grid2" data-testid="droiddex-grid" style={{ marginTop: 18 }}>
         {GATE_GRID_IDS.map((id) => {
           const d = droidById.get(id)
           if (!d) return null
@@ -144,22 +181,15 @@ export function DroiddexGateView() {
             <button
               key={id}
               type="button"
-              className="collect-card"
+              className="dcard"
+              aria-label={`Abrir ${d.name} Padrão`}
               onClick={() => setSelectedId(id)}
             >
-              <div className="collect-art">
-                <img
-                  src={droidImageSrc(d.id, d.imageLocal)}
-                  alt=""
-                  width={128}
-                  height={128}
-                  loading="eager"
-                />
-              </div>
-              <div className="collect-body">
-                <span className="dname">{d.name}</span>
-                <span className="collect-meta">{formatBaseRarity(d.baseRarity, t)}</span>
-              </div>
+              <GateGridTile id={id} />
+              <span className="dname" style={{ display: 'block' }}>{d.name}</span>
+              <span className="t-meta dmeta" style={{ display: 'block' }}>
+                {formatBaseRarity(d.baseRarity, t)}
+              </span>
             </button>
           )
         })}

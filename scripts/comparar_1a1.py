@@ -479,6 +479,18 @@ def after_dados_velhos(page: Any) -> None:
     page.wait_for_timeout(400)
 
 
+def after_mock_static(page: Any, slug: str) -> None:
+    """Normaliza defeitos conhecidos do HTML estático antes da comparação."""
+    if slug == "vazio-vender":
+        page.evaluate(
+            """() => {
+              for (const node of [...document.body.childNodes]) {
+                if (node.nodeType === Node.TEXT_NODE) node.remove();
+              }
+            }"""
+        )
+
+
 @dataclass
 class Capture:
     slug: str
@@ -1098,6 +1110,7 @@ def main(argv: list[str] | None = None) -> int:
                             else:
                                 page.goto(mock_url, wait_until="load", timeout=60_000)
                                 page.evaluate("() => document.fonts && document.fonts.ready")
+                                after_mock_static(page, cap.slug)
                                 page.wait_for_timeout(200)
                                 mock_data = page.evaluate(JS_COLLECT, [SELECTORS, STYLE_PROPS])
                                 mock_png = os.path.join(prints, "mock", theme, mode, str(width), cap.slug + ".png")
