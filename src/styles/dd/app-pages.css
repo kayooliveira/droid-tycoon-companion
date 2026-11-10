@@ -583,6 +583,12 @@ html.e2e-safe-area .app-shell .tabbar {
   bottom: auto;
 }
 
+html.e2e-safe-area #app-overlay-root .sheet.sheet--above {
+  bottom: 0;
+  max-height: calc(100% - 36px);
+  position: fixed;
+}
+
 .app-shell .scroll > div {
   max-width: none;
   padding-top: 0;
