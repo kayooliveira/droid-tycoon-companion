@@ -22,7 +22,7 @@ import { ThemeCardGroup } from '../components/appearance/ThemeCard'
 import { useAppearance, type AppearanceModePref } from '../hooks/useAppearance'
 import { uiIconProps } from '../components/ui/iconStyle'
 import { cn } from '../lib/utils'
-import { isDesignGateCapture } from '../e2e/designGate'
+import { isDesignGateCapture, isOnboardingGateCapture } from '../e2e/designGate'
 import { OnboardingGateView } from '../components/onboarding/OnboardingGateView'
 const STEPS = ['welcome', 'cycle', 'progress', 'theme', 'features'] as const
 const REBIRTHS_PER_PATH = 40
@@ -107,7 +107,7 @@ export function OnboardingCycleMeter({
 }
 
 export function OnboardingPage() {
-  if (isDesignGateCapture()) {
+  if (isOnboardingGateCapture()) {
     return <OnboardingGateView />
   }
   return <OnboardingFlow />

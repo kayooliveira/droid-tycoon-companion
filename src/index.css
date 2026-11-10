@@ -84,6 +84,20 @@
     margin-top: auto;
     flex: none;
   }
+
+  html.e2e-safe-area .app > .scroll {
+    flex: none;
+    overflow: visible;
+  }
+
+  html.e2e-safe-area .tab-page.dashboard-compact {
+    padding-bottom: 2px;
+  }
+
+  html.e2e-safe-area [data-testid^='onboarding-step-'] .stepper .btn--icon {
+    font-size: 15px;
+    line-height: 15.75px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

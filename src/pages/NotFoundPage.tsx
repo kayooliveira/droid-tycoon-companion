@@ -25,7 +25,12 @@ export function NotFoundPage() {
             </div>
             <h1 className="t-h2">Página não encontrada</h1>
             <p className="hint">Esse endereço não existe no app. Volte ao início para continuar.</p>
-            <button type="button" className="btn btn--primary" onClick={() => navigate('/')}>
+            <button
+              type="button"
+              className="btn btn--primary"
+              style={{ width: '100%', maxWidth: 312 }}
+              onClick={() => navigate('/')}
+            >
               Ir ao início
             </button>
           </div>

@@ -35,6 +35,7 @@ import {
   GATE_TIER_CHIP_INDEX,
   GATE_TIER_CHIP_LABELS,
 } from '../e2e/gateInventoryFixture'
+import { InventoryAddGateSheet, InventoryRemoveGateSheet } from '../components/inventory/InventoryGateSheets'
 import { droidMatchesQuery } from '../lib/droidNameMatch'
 import {
   usePersistedInventoryFilters,
@@ -450,7 +451,7 @@ export function InventoryPage() {
         )}
 
       <DroidDetailSheet
-        open={detail != null}
+        open={detail != null && !(isDesignGateCapture() && removeTarget)}
         onClose={() => setDetail(null)}
         droidId={detail?.droidId ?? null}
         tier={detail?.tier ?? 'default'}
@@ -492,8 +493,11 @@ export function InventoryPage() {
         ) : null}
       </DroidDetailSheet>
 
+      {isDesignGateCapture() && addOpen ? (
+        <InventoryAddGateSheet onClose={() => setAddOpen(false)} />
+      ) : null}
       <Sheet
-        open={addOpen}
+        open={addOpen && !isDesignGateCapture()}
         onClose={() => setAddOpen(false)}
         testId="inventory-add-modal"
         aboveTabBar
@@ -556,7 +560,14 @@ export function InventoryPage() {
         </div>
       </Sheet>
 
-      <Sheet open={Boolean(removeTarget)} onClose={() => setRemoveTarget(null)} testId="inventory-remove-modal">
+      {isDesignGateCapture() && removeTarget ? (
+        <InventoryRemoveGateSheet onClose={() => setRemoveTarget(null)} />
+      ) : null}
+      <Sheet
+        open={Boolean(removeTarget) && !isDesignGateCapture()}
+        onClose={() => setRemoveTarget(null)}
+        testId="inventory-remove-modal"
+      >
         <h2 className="text-[20px] font-bold mb-3">{t('inventory.removeConfirmTitle')}</h2>
         {removeTarget ? (
           <p className="text-sm text-ui-secondary text-pretty mb-4">

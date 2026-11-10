@@ -16,6 +16,8 @@ import { PathProgressSwitcher } from '../components/PathProgressSwitcher'
 import { uiIconProps } from '../components/ui/iconStyle'
 import { useAppStore } from '../store/useAppStore'
 import { mockSellGateRows, type MockSellGateRow } from '../e2e/mockInventoryFixture'
+import { isDesignGateCapture } from '../e2e/designGate'
+import { SellEmptyGateView } from '../components/sell/SellEmptyGateView'
 import { useGateTabbarAnchor } from '../hooks/useGateTabbarAnchor'
 
 export function SellCenterPage() {
@@ -34,6 +36,14 @@ export function SellCenterPage() {
     [gateRows, inventory, progress.nextRebirth, progress.pathId],
   )
   const completedRebirth = Math.max(0, progress.nextRebirth - 1)
+
+  if (isDesignGateCapture() && inventory.length === 0) {
+    return (
+      <TabScrollLayout title={t('sell.title')} testId="sell-page" backBar={<MoreBackBar />}>
+        <SellEmptyGateView />
+      </TabScrollLayout>
+    )
+  }
 
   const safeNow = useMemo(() => {
     if (gateRows) return gateRows.filter((r) => r.category === 'safeNow')
