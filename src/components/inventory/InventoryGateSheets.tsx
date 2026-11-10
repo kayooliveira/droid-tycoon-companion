@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import { droidById } from '../../domain/gameData'
 import { droidImageSrc } from '../../lib/images'
 import { OverlayPortal } from '../ui/OverlayPortal'
@@ -24,7 +24,7 @@ function PickButton({ id, selected }: { id: string; selected: boolean }) {
   if (!droid) return null
   return (
     <button type="button" className="pick" aria-pressed={selected}>
-      <span className="dtile dtile--sm" data-tier="default">
+      <span className="dtile dtile--xs" data-tier="default">
         <span className="dtile-bg" aria-hidden />
         <img
           src={droidImageSrc(droid.id, droid.imageLocal)}
@@ -42,11 +42,15 @@ function PickButton({ id, selected }: { id: string; selected: boolean }) {
 /** `sheet-adicionar-droid.html` overlay (capture-only). */
 export function InventoryAddGateSheet({ onClose }: { onClose: () => void }) {
   const chipsRef = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    const c = chipsRef.current
-    if (!c) return
-    const selected = c.querySelector<HTMLElement>('[aria-pressed="true"]')
-    if (selected) c.scrollLeft = Math.max(0, selected.offsetLeft - c.offsetLeft - 24)
+  useLayoutEffect(() => {
+    const alignChips = () => {
+      const c = chipsRef.current
+      if (!c) return
+      const selected = c.querySelector<HTMLElement>('[aria-pressed="true"]')
+      if (selected) c.scrollLeft = Math.max(0, selected.offsetLeft - c.offsetLeft - 17)
+    }
+    alignChips()
+    void document.fonts?.ready?.then(alignChips)
   }, [])
   return (
     <OverlayPortal>

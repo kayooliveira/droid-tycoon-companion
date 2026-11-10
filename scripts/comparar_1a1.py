@@ -363,9 +363,27 @@ def after_lista(page: Any) -> None:
     page.wait_for_timeout(200)
 
 
+JS_ADD_SHEET_CHIP_SCROLL = """
+() => {
+  const align = () => {
+    document.querySelectorAll('.chips--scroll').forEach((c) => {
+      const o = c.querySelector('[aria-pressed="true"]');
+      if (o) c.scrollLeft = Math.max(0, o.offsetLeft - c.offsetLeft - 17);
+    });
+  };
+  align();
+  requestAnimationFrame(() => {
+    align();
+    requestAnimationFrame(align);
+  });
+}
+"""
+
+
 def after_add(page: Any) -> None:
     page.get_by_test_id("inventory-add-open").click()
     page.get_by_test_id("inventory-add-modal").wait_for(state="visible", timeout=8000)
+    page.evaluate(JS_ADD_SHEET_CHIP_SCROLL)
 
 
 def after_sheet_droid(page: Any) -> None:
