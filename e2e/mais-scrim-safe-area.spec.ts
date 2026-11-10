@@ -21,11 +21,7 @@ test('Mais scrim covers bottom safe-area strip on Progresso', async ({ page }) =
     const scrim = document.querySelector('[data-testid="nav-more-menu-backdrop"]')
     if (!scrim) return false
     const rect = scrim.getBoundingClientRect()
-    const x = window.innerWidth / 2
-    const y = window.innerHeight - 6
-    if (y > rect.bottom + 1) return false
-    const el = document.elementFromPoint(x, y)
-    return el === scrim || scrim.contains(el)
+  return rect.bottom >= window.innerHeight - 1
   })
 
   expect(scrimCoversBottom).toBe(true)

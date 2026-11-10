@@ -113,7 +113,6 @@ export function AppShell() {
           onMoreToggle={() => setMoreOpen((open) => !open)}
           onCloseMore={() => setMoreOpen(false)}
         />
-        <div id={APP_OVERLAY_ROOT_ID} className="ds-overlay-anchor" data-testid="app-overlay-root" />
         <Sheet
           open={moreOpen}
           onClose={() => setMoreOpen(false)}
@@ -148,6 +147,7 @@ export function AppShell() {
         </Sheet>
       </div>
 
+      <div id={APP_OVERLAY_ROOT_ID} className="ds-overlay-anchor" data-testid="app-overlay-root" />
       <InstallBanner />
     </div>
   )

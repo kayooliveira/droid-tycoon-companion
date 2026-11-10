@@ -74,7 +74,7 @@ button.row.row--link::after {
 }
 
 .ds-overlay-anchor .scrim.scrim--above {
-  bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px) + var(--e2e-safe-bottom, 0px));
+  bottom: 0;
 }
 
 .ds-overlay-anchor .sheet.sheet--above {
@@ -117,7 +117,7 @@ button.row.row--link::after {
 }
 
 #app-overlay-root {
-  position: absolute;
+  position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: var(--z-scrim);
