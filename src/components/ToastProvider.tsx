@@ -146,16 +146,14 @@ function ToastSlot({
 }
 
 export function ToastViewport() {
-  if (TOAST_PLACEMENT !== 'inflow') return null
   const ctx = useContext(ToastContext)
-  if (!ctx) return null
+  if (TOAST_PLACEMENT !== 'inflow' || !ctx) return null
   return <ToastSlot toasts={ctx.toasts} dismiss={ctx.dismiss} />
 }
 
 function ToastTopAnchor() {
-  if (TOAST_PLACEMENT !== 'top') return null
   const ctx = useContext(ToastContext)
-  if (!ctx || ctx.toasts.length === 0) return null
+  if (TOAST_PLACEMENT !== 'top' || !ctx || ctx.toasts.length === 0) return null
   return (
     <OverlayPortal>
       <div className="toast-anchor--top">

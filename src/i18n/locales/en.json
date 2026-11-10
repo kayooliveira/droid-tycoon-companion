@@ -323,6 +323,7 @@
     "themeGroup": "Theme",
     "themeAria": "Theme {{name}}",
     "previewCta": "Done",
+    "themeCardDemoOfTotal": "of 20",
     "themes": {
       "oficina": {
         "name": "Workshop",

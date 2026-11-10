@@ -52,7 +52,7 @@ export function ThemeCard({
           <div className="cm cm--compact">
             <div className="cm-top">
               <span className="cm-num">12</span>
-              <span className="cm-of">de 20</span>
+              <span className="cm-of">{t('appearance.themeCardDemoOfTotal')}</span>
             </div>
             <div className="cm-cells" style={{ ['--cm-cols' as string]: cols }} aria-hidden>
               {cells}
