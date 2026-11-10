@@ -24,7 +24,7 @@ MODES = ['dark', 'light']
 
 ROUTES: list[tuple[str, str]] = [
     ('inicio', '/'),
-    ('progresso-foco', '/progress'),
+    ('progresso', '/progress'),
     ('inventario-grade', '/inventory'),
     ('vender', '/sell'),
     ('ciclos', '/cycles'),
@@ -32,7 +32,8 @@ ROUTES: list[tuple[str, str]] = [
     ('fusao', '/fusion'),
     ('ajustes', '/settings'),
     ('ajustes-aparencia', '/settings/appearance'),
-    ('mais', '/about'),
+    ('sobre', '/about'),
+    ('nao-encontrada', '/404'),
     ('onb-1-boas-vindas', '/onboarding'),
 ]
 
@@ -40,9 +41,10 @@ ONBOARDING = '/onboarding'
 
 
 def url_for(screen: str, path: str, theme: str, mode: str) -> str:
+    if path == ONBOARDING or screen.startswith('onb-'):
+        q = urlencode({'theme': theme, 'mode': mode})
+        return f'{BASE}{path}?{q}'
     q = urlencode({'theme': theme, 'mode': mode, 'onboarding': 'skip'})
-    if 'onboarding' in screen:
-        return f'{BASE}{ONBOARDING}?{q}'
     return f'{BASE}{path}?{q}'
 
 

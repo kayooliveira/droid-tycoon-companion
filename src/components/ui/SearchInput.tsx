@@ -22,7 +22,7 @@ export function SearchInput({
       <input
         type="search"
         enterKeyHint="search"
-        className={cn('field', showClear && 'pr-10')}
+        className={cn('field', showClear ? 'pr-10' : undefined)}
         value={value}
         {...props}
       />
