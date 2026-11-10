@@ -1,4 +1,7 @@
 import { useMemo, useState } from 'react'
+import { isDesignGateCapture } from '../e2e/designGate'
+import { DroiddexGateView } from '../components/droiddex/DroiddexGateView'
+import { useGateTabbarAnchor } from '../hooks/useGateTabbarAnchor'
 import { useTranslation } from 'react-i18next'
 import { cycleById, gameData } from '../domain/gameData'
 import { formatTierName } from '../domain/tiers'
@@ -18,6 +21,7 @@ import { formatVerifiedDatePt } from '../lib/formatVerifiedDate'
 const DROID_CLASSES = ['Worker', 'Astromech', 'Battle', 'Protocol'] as const
 
 export function DroiddexPage() {
+  useGateTabbarAnchor()
   const { t, i18n } = useTranslation()
   const tierLabels = useTierLabels()
   const [search, setSearch] = useState('')
@@ -41,6 +45,14 @@ export function DroiddexPage() {
       })
       .sort((a, b) => a.name.localeCompare(b.name))
   }, [search, classFilter])
+
+  if (isDesignGateCapture()) {
+    return (
+      <TabScrollLayout title={t('droiddex.title')} testId="droiddex-page" backBar={<MoreBackBar />}>
+        <DroiddexGateView />
+      </TabScrollLayout>
+    )
+  }
 
   return (
     <TabScrollLayout title={t('droiddex.title')} testId="droiddex-page" backBar={<MoreBackBar />}>

@@ -21,6 +21,7 @@ import { setDocumentLanguage } from '../i18n'
 import { initI18n } from '../i18n/index'
 import { APP_PUBLIC_URL, WHATSAPP_SHARE_BASE } from '../lib/constants'
 import { renderShareProgressCard } from '../lib/shareProgressCard'
+import { useGateTabbarAnchor } from '../hooks/useGateTabbarAnchor'
 async function downloadOrShare(blob: Blob, filename: string, mime: string) {
   const file = new File([blob], filename, { type: mime })
   if (navigator.canShare?.({ files: [file] })) {
@@ -40,6 +41,7 @@ async function downloadOrShare(blob: Blob, filename: string, mime: string) {
 }
 
 export function SettingsPage() {
+  useGateTabbarAnchor()
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const [params] = useSearchParams()

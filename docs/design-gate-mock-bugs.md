@@ -36,6 +36,13 @@ Issues discovered while aligning the app with `comparar_1a1.py` (oficina theme).
 - **`comparar_1a1.py` (antes):** `after_busca_nunca` preenchia `Pit`.
 - **Correção:** preencher `C-3PO` para alinhar com `progresso-busca-nunca.html`.
 
+## `droiddex-detalhe.html` abre LEP, não o primeiro card
+
+- **Mock:** modal do **LEP** (Kyber) após tocar no card correspondente.
+- **Grid mock:** ordem custom (`mouse`, `pit`, …, `lep`, …), não alfabética.
+- **`comparar_1a1.py`:** `after_dex_detalhe` clica no botão cujo texto inclui `LEP`.
+- **App (gate):** `DroiddexGateView` replica grid/modal estáticos só em captura.
+
 ## `progresso.html` painel unificado vs lógica de venda viva
 
 - **Mock:** CYCLENS `0/1` com tag **Não venda** e botões `−`/`+`; linha extra **KX** “Pode vender”; **Concluir** primário habilitado; sem CTA **Super Renascimento** na stack (só Desfazer).

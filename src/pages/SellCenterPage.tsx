@@ -16,8 +16,10 @@ import { PathProgressSwitcher } from '../components/PathProgressSwitcher'
 import { uiIconProps } from '../components/ui/iconStyle'
 import { useAppStore } from '../store/useAppStore'
 import { mockSellGateRows, type MockSellGateRow } from '../e2e/mockInventoryFixture'
+import { useGateTabbarAnchor } from '../hooks/useGateTabbarAnchor'
 
 export function SellCenterPage() {
+  useGateTabbarAnchor()
   const { t, i18n } = useTranslation()
   const tierLabels = useTierLabels()
   const progress = useAppStore((s) => s.progress)

@@ -44,8 +44,10 @@ import {
   gateCompletePrimaryDisabled,
   gateProgressSearchHidesMainListing,
   gateShowSuperRebirthCta,
+  isGateDisputeCapture,
   isGateSuperModalBackdrop,
 } from '../e2e/gateProgressFixture'
+import { ProgressDisputeGateView } from '../components/progress/ProgressDisputeGateView'
 
 export function ProgressPage() {
   const { t, i18n } = useTranslation()
@@ -73,6 +75,7 @@ export function ProgressPage() {
   const searchQueryFromUrl = searchParams.get('q') ?? ''
   const [progressSearchQuery, setProgressSearchQuery] = useState(searchQueryFromUrl)
 
+  const gateDispute = isGateDisputeCapture(progress, inventory)
   const gateSuperBackdrop = isGateSuperModalBackdrop(progress, inventory)
   const current = gateSuperBackdrop ? null : getRebirth(progress.pathId, progress.nextRebirth)
   const pathDone = isPathComplete(progress)
@@ -211,7 +214,9 @@ export function ProgressPage() {
 
       {(current || showSuperOnly) && !gateHideListing ? (
         <>
-          {current && !gateSuperBackdrop ? (
+          {gateDispute ? (
+            <ProgressDisputeGateView />
+          ) : current && !gateSuperBackdrop ? (
             <>
               {getDisputeKey(progress.pathId, current.rebirth) ? (
                 <DisputePanel pathId={progress.pathId} rebirth={current.rebirth} />
@@ -230,16 +235,18 @@ export function ProgressPage() {
               {t('progress.pathComplete')}
             </p>
           ) : null}
-          <ProgressActionStack
-            showComplete={Boolean(current) && !pathDone}
-            completeDisabled={completeDisabled}
-            onComplete={handleCompleteClick}
-            showSuper={showSuperOnStack}
-            onSuper={() => setSuperConfirmOpen(true)}
-            showForceComplete={Boolean(current) && !pathDone}
-            onForceComplete={() => setForceCompleteOpen(true)}
-            onUndo={() => setUndoOpen(true)}
-          />
+          {!gateDispute ? (
+            <ProgressActionStack
+              showComplete={Boolean(current) && !pathDone}
+              completeDisabled={completeDisabled}
+              onComplete={handleCompleteClick}
+              showSuper={showSuperOnStack}
+              onSuper={() => setSuperConfirmOpen(true)}
+              showForceComplete={Boolean(current) && !pathDone}
+              onForceComplete={() => setForceCompleteOpen(true)}
+              onUndo={() => setUndoOpen(true)}
+            />
+          ) : null}
         </>
       ) : !gateHideListing ? (
         <p className="text-sm text-ui-muted px-4">
@@ -247,7 +254,7 @@ export function ProgressPage() {
         </p>
       ) : null}
 
-      {!gateHideListing ? (
+      {!gateHideListing && !gateDispute ? (
       <ProgressRebirthList
         pathId={progress.pathId}
         rebirthNumbers={rebirthNumbers}
@@ -260,7 +267,7 @@ export function ProgressPage() {
       />
       ) : null}
 
-      {!gateHideListing ? <ProgressPdfExport /> : null}
+      {!gateHideListing && !gateDispute ? <ProgressPdfExport /> : null}
 
       <DroidDetailSheet
         open={droidDetail != null}

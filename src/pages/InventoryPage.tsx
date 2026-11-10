@@ -27,6 +27,14 @@ import { SellBadge } from '../components/ui/SellBadge'
 import { useToast } from '../components/ToastProvider'
 import { isDesignGateCapture } from '../e2e/designGate'
 import { isMockInventoryFixture, mockInventorySellable } from '../e2e/mockInventoryFixture'
+import {
+  gateFilteredMockUnits,
+  gateInventoryFilterActive,
+  GATE_RARITY_CHIP_INDEX,
+  GATE_RARITY_CHIP_LABELS,
+  GATE_TIER_CHIP_INDEX,
+  GATE_TIER_CHIP_LABELS,
+} from '../e2e/gateInventoryFixture'
 import { droidMatchesQuery } from '../lib/droidNameMatch'
 import {
   usePersistedInventoryFilters,
@@ -132,7 +140,11 @@ export function InventoryPage() {
     [t],
   )
 
+  const gateInv = gateInventoryFilterActive(inventory)
+
   const filtered = useMemo(() => {
+    if (gateInv && filterMode === 'rarity') return gateFilteredMockUnits(inventory, 'rarity')
+    if (gateInv && filterMode === 'tier') return gateFilteredMockUnits(inventory, 'tier')
     return inventory
       .filter((u) => {
         const d = droidById.get(u.droidId)
@@ -158,6 +170,7 @@ export function InventoryPage() {
     neededFilter,
     progress.pathId,
     progress.nextRebirth,
+    gateInv,
   ])
 
   const pickerDroids = useMemo(() => {
@@ -242,27 +255,61 @@ export function InventoryPage() {
           </div>
         </div>
         {filterMode === 'rarity' ? (
-          <div className="px-4 pb-2">
-            <ChipRadioGroup
-              ariaLabel={t('inventory.filterRarity')}
-              testId="inventory-rarity-chips"
-              scrollX
-              value={rarityFilter}
-              onChange={setRarityFilter}
-              options={rarityOptions}
-            />
+          <div style={{ marginTop: 12 }}>
+            {gateInv ? (
+              <div className="chips chips--scroll" role="group" aria-label={t('inventory.filterRarity')}>
+                {GATE_RARITY_CHIP_LABELS.map((label, i) => (
+                  <button
+                    key={label}
+                    type="button"
+                    className="chip"
+                    aria-pressed={i === GATE_RARITY_CHIP_INDEX}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="px-4 pb-2">
+                <ChipRadioGroup
+                  ariaLabel={t('inventory.filterRarity')}
+                  testId="inventory-rarity-chips"
+                  scrollX
+                  value={rarityFilter}
+                  onChange={setRarityFilter}
+                  options={rarityOptions}
+                />
+              </div>
+            )}
           </div>
         ) : null}
         {filterMode === 'tier' ? (
-          <div className="px-4 pb-2">
-            <ChipRadioGroup
-              ariaLabel={t('inventory.filterTier')}
-              testId="inventory-tier-chips"
-              scrollX
-              value={tierFilter}
-              onChange={setTierFilter}
-              options={tierOptions}
-            />
+          <div style={{ marginTop: 12 }}>
+            {gateInv ? (
+              <div className="chips chips--scroll" role="group" aria-label={t('inventory.filterTier')}>
+                {GATE_TIER_CHIP_LABELS.map((label, i) => (
+                  <button
+                    key={label}
+                    type="button"
+                    className="chip"
+                    aria-pressed={i === GATE_TIER_CHIP_INDEX}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="px-4 pb-2">
+                <ChipRadioGroup
+                  ariaLabel={t('inventory.filterTier')}
+                  testId="inventory-tier-chips"
+                  scrollX
+                  value={tierFilter}
+                  onChange={setTierFilter}
+                  options={tierOptions}
+                />
+              </div>
+            )}
           </div>
         ) : null}
         {filterMode === 'all' ? (

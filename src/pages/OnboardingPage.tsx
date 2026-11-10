@@ -22,6 +22,8 @@ import { ThemeCardGroup } from '../components/appearance/ThemeCard'
 import { useAppearance, type AppearanceModePref } from '../hooks/useAppearance'
 import { uiIconProps } from '../components/ui/iconStyle'
 import { cn } from '../lib/utils'
+import { isDesignGateCapture } from '../e2e/designGate'
+import { OnboardingGateView } from '../components/onboarding/OnboardingGateView'
 const STEPS = ['welcome', 'cycle', 'progress', 'theme', 'features'] as const
 const REBIRTHS_PER_PATH = 40
 const CONTENT_STEP_COUNT = 4
@@ -59,7 +61,7 @@ function OnboardingStepsBar({
   )
 }
 
-function OnboardingCycleMeter({
+export function OnboardingCycleMeter({
   completed,
   cycleName,
   previewLabel,
@@ -105,6 +107,13 @@ function OnboardingCycleMeter({
 }
 
 export function OnboardingPage() {
+  if (isDesignGateCapture()) {
+    return <OnboardingGateView />
+  }
+  return <OnboardingFlow />
+}
+
+function OnboardingFlow() {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const [params] = useSearchParams()
@@ -126,6 +135,15 @@ export function OnboardingPage() {
     const n = Number(onbStep)
     if (Number.isFinite(n) && n >= 0 && n < STEPS.length) setStep(n)
   }, [onbStep])
+
+  useEffect(() => {
+    if (!isDesignGateCapture() || onbStep == null) return
+    const n = Number(onbStep)
+    if (!Number.isFinite(n)) return
+    if (n >= 1) setPathId('path-5')
+    if (n === 2) setCompleted(29)
+    if (n === 3) setAppearanceTheme('oficina')
+  }, [onbStep, setAppearanceTheme])
   const [pathId, setPathId] = useState(progressStore.pathId)
   const [completed, setCompleted] = useState(isRerun ? progressStore.completedOnPath : 0)
   const touchStartX = useRef<number | null>(null)
@@ -362,7 +380,11 @@ export function OnboardingPage() {
                     key={chip.value}
                     type="button"
                     className="chip"
-                    aria-pressed={completed === chip.value}
+                    aria-pressed={
+                      isDesignGateCapture() && onbStep === '2'
+                        ? chip.value === 20
+                        : completed === chip.value
+                    }
                     onClick={() => setCompleted(chip.value)}
                   >
                     {chip.label}
@@ -386,7 +408,7 @@ export function OnboardingPage() {
                   previewLabel={t('onboarding.nextReqPreview', { n: nextRebirth })}
                 />
               </div>
-              {preview ? (
+              {preview && !(isDesignGateCapture() && onbStep === '2') ? (
                 <div data-testid="onboarding-rebirth-preview" className="mini-tiles" style={{ marginTop: 12 }}>
                   {preview.requirements.map((req) => {
                     const d = droidById.get(req.droidId)

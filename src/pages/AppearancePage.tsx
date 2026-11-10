@@ -5,6 +5,7 @@ import { ThemeCardGroup } from '../components/appearance/ThemeCard'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
 import { useAppearance, type AppearanceModePref } from '../hooks/useAppearance'
 import { uiIconProps } from '../components/ui/iconStyle'
+import { useGateTabbarAnchor } from '../hooks/useGateTabbarAnchor'
 
 const MODES: { value: AppearanceModePref; icon: typeof Moon; labelKey: string }[] = [
   { value: 'system', icon: Desktop, labelKey: 'settings.themeSystem' },
@@ -13,6 +14,7 @@ const MODES: { value: AppearanceModePref; icon: typeof Moon; labelKey: string }[
 ]
 
 export function AppearancePage() {
+  useGateTabbarAnchor()
   const { t } = useTranslation()
   const { theme, modePref, setTheme, setModePref } = useAppearance()
 

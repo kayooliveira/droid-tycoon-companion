@@ -13,6 +13,7 @@ import { TabScrollLayout } from '../components/layout/TabScrollLayout'
 import { MoreBackBar } from '../components/layout/MoreBackBar'
 import { InsetGroup } from '../components/ui/InsetGroup'
 import { SearchInput } from '../components/ui/SearchInput'
+import { useGateTabbarAnchor } from '../hooks/useGateTabbarAnchor'
 
 const FUSION_RULE_KEY: Record<string, string> = {
   'tier-up': 'fusion.rules.tierUp',
@@ -25,6 +26,7 @@ function fusionRuleKey(rule: (typeof gameData.fusionRules)[0]): string {
 }
 
 export function FusionLabPage() {
+  useGateTabbarAnchor()
   const { t } = useTranslation()
   const [search, setSearch] = useState('')
   const progress = useAppStore((s) => s.progress)

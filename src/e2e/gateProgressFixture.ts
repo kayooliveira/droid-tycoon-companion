@@ -30,9 +30,25 @@ export function isGateSuperModalBackdrop(
   )
 }
 
+/** Seed `dispute` profile — Ciclo 2 @ renascimento #17. */
+export function isGateDisputeCapture(
+  progress: ProgressState,
+  inventory: InventoryUnit[],
+): boolean {
+  return (
+    isDesignGateCapture() &&
+    isMockInventoryFixture(inventory) &&
+    progress.pathId === 'path-2' &&
+    progress.nextRebirth === 17
+  )
+}
+
 export function gateCycleMeter(progress: ProgressState, inventory: InventoryUnit[]) {
   if (isGateSuperModalBackdrop(progress, inventory)) {
     return { completedOnPath: 40, nextRebirth: 40 }
+  }
+  if (isGateDisputeCapture(progress, inventory)) {
+    return { completedOnPath: 16, nextRebirth: 17 }
   }
   return { completedOnPath: progress.completedOnPath, nextRebirth: progress.nextRebirth }
 }

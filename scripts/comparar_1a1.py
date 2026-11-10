@@ -43,7 +43,7 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-SISTEMA = os.path.abspath(os.path.join(ROOT, ".."))
+SISTEMA = os.path.abspath(os.path.join(ROOT, "..", "dd-design", "sistema"))
 CHROME = os.environ.get("CHROME_PATH", "/usr/bin/google-chrome")
 STORE_KEY = "droid-tycoon-companion-store"
 
@@ -427,7 +427,7 @@ def after_apagar(page: Any) -> None:
 
 def after_dex_detalhe(page: Any) -> None:
     page.get_by_test_id("droiddex-page").wait_for(state="visible", timeout=15_000)
-    page.get_by_test_id("droiddex-grid").locator("button").first.click()
+    page.get_by_test_id("droiddex-grid").locator("button").filter(has_text="LEP").click()
     wait_dialog(page)
 
 
