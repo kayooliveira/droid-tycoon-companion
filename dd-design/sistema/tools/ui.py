@@ -103,14 +103,17 @@ def dcard(i,tier,qty=1,note='',status=None,meta=None):
     return (f'<button class="dcard" aria-label="Abrir {esc(dname(i))} {TL[tier]}">{tile(i,tier,qty=qty)}<span class="dname" style="display:block">{esc(dname(i))}</span>'
             f'<span class="t-meta dmeta" style="display:block">{esc(m)}</span>{st}{nt}</button>')
 
-def search(ph='Buscar por nome…',value='',cls=''):
-    return f'<div class="field-wrap">{ic("search",20)}<input class="field {cls}" type="search" placeholder="{esc(ph)}" value="{esc(value)}" aria-label="{esc(ph)}"></div>'
+def search(ph='Buscar por nome…',value='',cls='',clear=False):
+    c=f'<button class="field-clear" aria-label="Limpar busca">{ic("x",20)}</button>' if clear else ''
+    return f'<div class="field-wrap{" field-wrap--clear" if clear else ""}">{ic("search",20)}<input class="field {cls}" type="search" placeholder="{esc(ph)}" value="{esc(value)}" aria-label="{esc(ph)}">{c}</div>'
 def sel(label,value,nm):
     return f'<div><span class="lbl">{esc(label)}</span><button class="sel" style="width:100%;justify-content:space-between" aria-label="{esc(label)}: {esc(value)}">{esc(value)}{ic("down",18)}</button></div>'
 
-def toast(msg,act='Desfazer',kind='',icon='check'):
+def toast(msg,act='Desfazer',kind='',icon='check',detail=''):
+    """Toast. kind: '' (sucesso/info/neutro: invertido), 'toast--warn', 'toast--err'. detail: segunda linha."""
     a=f'<button class="toast-act">{esc(act)}</button>' if act else ''
-    return f'<div class="toast {kind}" role="status">{ic(icon,22)}<span class="toast-msg">{esc(msg)}</span>{a}</div>'
+    d=f'<span class="toast-detail">{esc(detail)}</span>' if detail else ''
+    return f'<div class="toast {kind}" role="status">{ic(icon,22)}<span class="toast-text"><span class="toast-msg">{esc(msg)}</span>{d}</span>{a}</div>'
 
 def row(icon,title,sub='',val='',tail=True):
     return (f'<a class="row" href="#"><span class="row-ic">{ic(icon,24)}</span><span class="row-main"><span class="dname" style="display:block">{esc(title)}</span>'
@@ -146,7 +149,7 @@ def theme_card(key,selected,small=False):
     return (f'<button class="tcard" role="radio" aria-checked="{"true" if selected else "false"}" aria-label="Tema {n}">{pre}'
             f'<span class="tcard-head"><span class="tcard-name"><span class="t-h2" style="display:block">{n}</span><span class="hint" style="display:block">{esc(desc)}</span></span><span class="mark"></span></span></button>')
 
-SCOPE_JS="""<script>(function(){function s(){var m=document.documentElement.dataset.mode;document.querySelectorAll('[data-theme-scope]').forEach(function(e){e.dataset.mode=m})}s();window.__syncScopes=s})()</script>"""
+SCOPE_JS="""<script>(function(){function s(){var m=document.documentElement.dataset.mode;document.querySelectorAll('[data-theme-scope]').forEach(function(e){e.dataset.mode=m})}s();window.__syncScopes=s;document.querySelectorAll('.chips--scroll').forEach(function(c){var o=c.querySelector('[aria-pressed=true]');if(o)c.scrollLeft=Math.max(0,o.offsetLeft-c.offsetLeft-24)})})()</script>"""
 HEAD_JS="""<script>(function(){var d=document.documentElement,q=new URLSearchParams(location.search),t,p;
 try{t=localStorage.getItem('dd-theme');p=localStorage.getItem('dd-mode')}catch(e){}
 t=q.get('theme')||t||'oficina';if(['oficina','figurinhas','cartaz'].indexOf(t)<0)t='oficina';
@@ -161,3 +164,29 @@ def page(title,body):
     return (f'<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
             f'<title>{esc(title)} | DroidDeck</title><link rel="stylesheet" href="../css/fonts.css"><link rel="stylesheet" href="../css/tokens.css"><link rel="stylesheet" href="../css/components.css">{HEAD_JS}</head>'
             f'<body>{body}{SCOPE_JS}</body></html>')
+
+
+# ---------- fase 3 ----------
+def banner(title,body,acts='',icon='download',close=True):
+    x=f'<button class="btn btn--icon btn--ghost" aria-label="Fechar">{ic("x",22)}</button>' if close else '<span></span>'
+    return (f'<div class="banner" role="region" aria-label="{esc(title)}">{ic(icon,24)}<div class="banner-body"><span class="banner-title">{esc(title)}</span>'
+            f'<span class="hint" style="display:block">{esc(body)}</span><div class="banner-act">{acts}</div></div>{x}</div>')
+def link_btn(t): return f'<button class="link-btn">{esc(t)}</button>'
+def sec_act(title,action):
+    return f'<div class="sec-h sec-h--act"><h2 class="t-h2">{esc(title)}</h2>{link_btn(action)}</div>'
+def chips(labels,on=0,cls=''):
+    return f'<div class="chips {cls}" role="group">'+''.join(f'<button class="chip" aria-pressed="{"true" if i==on else "false"}">{esc(l)}</button>' for i,l in enumerate(labels))+'</div>'
+def pick(i,tier='default',on=False):
+    return f'<button class="pick" aria-pressed="{"true" if on else "false"}">{tile(i,tier,"xs")}<span class="dname">{esc(dname(i))}</span></button>'
+def view_toggle(on=0):
+    b=''.join(f'<button class="btn btn--icon {"btn--primary" if k==on else "btn--secondary"}" aria-pressed="{"true" if k==on else "false"}" aria-label="{l}">{ic(i,22)}</button>' for k,(i,l) in enumerate([('grid','Visão em grade'),('list','Visão em lista')]))
+    return f'<div class="row2" style="gap:6px" role="group" aria-label="Visão">{b}</div>'
+def cycle_sel(label='Ciclo 5'):
+    return f'<button class="sel" aria-label="Trocar ciclo: {esc(label)}">{ic("cycles",20)}{esc(label)}{ic("down",18)}</button>'
+def kv(k,v): return f'<div class="kv"><span>{esc(k)}</span><b>{esc(v)}</b></div>'
+def stepper(val,label='quantidade'):
+    return f'<div class="stepper">{ibtn("minus","Diminuir "+label)}<span class="stepper-val">{val}</span>{ibtn("plus","Aumentar "+label,"primary")}</div>'
+def modal_wrap(h,body,acts,close=True):
+    x=f'<button class="btn btn--icon btn--ghost" aria-label="Fechar">{ic("x",22)}</button>'
+    return (f'<div class="scrim"></div><div class="modal-wrap"><div class="modal" role="dialog" aria-label="{esc(h)}"><div class="row2" style="justify-content:space-between;align-items:flex-start"><h2>{esc(h)}</h2>{x}</div>{body}'
+            f'<div class="modal-act">{acts}</div></div></div>')

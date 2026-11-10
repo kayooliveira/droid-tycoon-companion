@@ -23,16 +23,17 @@ THEMES = ['oficina', 'figurinhas', 'cartaz']
 MODES = ['dark', 'light']
 
 ROUTES: list[tuple[str, str]] = [
-    ('inicio', '/?onboarding=skip'),
+    ('inicio', '/'),
     ('progresso-foco', '/progress'),
     ('inventario-grade', '/inventory'),
     ('vender', '/sell'),
     ('ciclos', '/cycles'),
-    ('ajustes', '/settings'),
-    ('ajustes-aparencia', '/settings/appearance'),
     ('droiddex', '/droiddex'),
     ('fusao', '/fusion'),
-    ('mais', '/settings'),
+    ('ajustes', '/settings'),
+    ('ajustes-aparencia', '/settings/appearance'),
+    ('mais', '/about'),
+    ('onb-1-boas-vindas', '/onboarding'),
 ]
 
 ONBOARDING = '/onboarding'

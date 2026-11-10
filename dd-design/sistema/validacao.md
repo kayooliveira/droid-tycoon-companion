@@ -4,28 +4,28 @@ Gerado por `tools/validar.py` (Playwright + Chrome, viewport 390 e 360, 1x, movi
 
 ## Resultado final
 
-**28.704 checagens em 336 páginas (28 telas x 6 combinações x 2 larguras). 0 falhas na versão final.**
+**63.480 checagens em 684 páginas (57 telas x 6 combinações x 2 larguras). 0 falhas na versão final.**
 Falhas encontradas durante o trabalho e corrigidas estão na seção "O que a validação achou e o que foi corrigido".
 
 | Checagem | Quantidade | Falhas finais |
 |---|---:|---:|
-| Sem overflow horizontal (scrollWidth e caixas de todos os elementos e de todo texto) | 336 | 0 |
-| Alvo de toque maior ou igual a 44px (largura e altura) | 4.608 | 0 |
-| Campo de texto com fonte maior ou igual a 16px | 96 | 0 |
-| Texto e nome de droid sem corte (sem reticências, sem overflow oculto, sem line-clamp) | 8.508 | 0 |
-| Toast sem sobrepor botão, texto ou conteúdo interativo | 36 | 0 |
-| Contraste AA de texto medido em pixels (4,5:1 normal, 3:1 grande) | 8.508 | 0 |
-| Contraste de borda ou preenchimento de controle (3:1) | 1.476 | 0 |
-| Contraste da régua, barras e páginas do medidor (3:1) | 4.800 | 0 |
-| Fonte do tema carregada (sem cair no fallback) | 336 | 0 |
+| Sem overflow horizontal (scrollWidth e caixas de todos os elementos e de todo texto) | 684 | 0 |
+| Alvo de toque maior ou igual a 44px (largura e altura) | 13.464 | 0 |
+| Campo de texto com fonte maior ou igual a 16px | 384 | 0 |
+| Texto e nome de droid sem corte (sem reticências, sem overflow oculto, sem line-clamp) | 18.088 | 0 |
+| Toast sem sobrepor botão, texto ou conteúdo interativo | 252 | 0 |
+| Contraste AA de texto medido em pixels (4,5:1 normal, 3:1 grande) | 18.088 | 0 |
+| Contraste de borda ou preenchimento de controle (3:1) | 3.196 | 0 |
+| Contraste da régua, barras e páginas do medidor (3:1) | 8.640 | 0 |
+| Fonte do tema carregada (sem cair no fallback) | 684 | 0 |
 
 | Tema | Páginas | Checagens | Falhas |
 |---|---:|---:|---:|
-| oficina | 112 | 9.572 | 0 |
-| figurinhas | 112 | 9.572 | 0 |
-| cartaz | 112 | 9.560 | 0 |
+| oficina | 228 | 21.178 | 0 |
+| figurinhas | 228 | 21.160 | 0 |
+| cartaz | 228 | 21.142 | 0 |
 
-Cobertura: as 28 telas (Início, Progresso Foco e Lista, Progresso com Ciclo completo, toast com Desfazer, Inventário grade e lista, sheet de droid, modais de remover, trocar Ciclo e Super Renascimento, Vender, Ciclos, Mais, Droiddex, Fusão, Ajustes, Aparência, 5 passos de onboarding incluindo o passo de tema, estados vazios, esqueletos e a folha de componentes) em Oficina, Figurinhas e Cartaz, claro e escuro, a 390px e a 360px.
+Cobertura: todas as telas, modais, sheets, toasts, banners e estados listados em `sistema.md` (seção 6) e `auditoria/inventario.md`, nos 3 temas, nos 2 modos, em 390 e 360px.
 
 ## Como cada checagem é feita
 
@@ -44,11 +44,11 @@ Cobertura: as 28 telas (Início, Progresso Foco e Lista, Progresso com Ciclo com
 `tools/teste_validador.py` injeta uma falha conhecida de cada tipo (botão de 30px, caixa de 420px, campo de 13px, texto cinza claro, borda de controle invisível, nome com reticências, toast fixo sobre o conteúdo, régua sem contraste) e confirma que a checagem correspondente falha. Resultado da última execução:
 
 ```
-toque: 21 falhas detectadas (OK)
+toque: 23 falhas detectadas (OK)
 overflow: 12 falhas detectadas (OK)
 input16: 1 falhas detectadas (OK)
-contraste_texto: 7 falhas detectadas (OK)
-contraste_controle: 5 falhas detectadas (OK)
+contraste_texto: 15 falhas detectadas (OK)
+contraste_controle: 4 falhas detectadas (OK)
 toast: 1 falhas detectadas (OK)
 contraste_grafico: 39 falhas detectadas (OK)
 corte: 13 falhas detectadas (OK)
@@ -69,6 +69,12 @@ validador sensível a todas as categorias
 | 8 | Receitas de Fusão quebravam linha no Figurinhas | Fusão | Tiles de 48px, linha sem quebra. |
 | 9 | Esqueleto do Cartaz com número sobreposto ao trio | Início carregando | Margem própria no esqueleto. |
 | 10 | Falsos positivos do próprio validador (corrigidos no script, não no design): amostragem de borda pegando o preenchimento; fonte "não carregada" quando o tema não usa aquele peso na tela; régua sob o scrim de modal; contraste do numeral do Cartaz medido na parte coberta pelos tiles | `validar.py` | Amostragem pega o melhor entre borda e preenchimento; verifica só famílias em uso; ignora o que está sob o scrim; mede só a parte visível do numeral (a parte coberta é sobreposição intencional do design). |
+| 11 | **Fase 3, validador quebrava** (`IndexError`) em chip fora da janela dentro de lista que rola na horizontal (filtros do Inventário) | `tools/validar.py` | Medição de pixel ignora o que está fora da imagem; elemento cortado por contêiner com rolagem horizontal própria (`.chips--scroll`) deixa de contar como overflow ou texto cortado. A página em si continua sem rolagem horizontal (checado por `scrollWidth`). |
+| 12 | **Fase 3, Cartaz a 360px:** título do modal "Super Renascimento?" (40px) com botão fechar passava 13px da tela | `modal-super-renascimento` e todos os modais com título e fechar | `--mt-size` do Cartaz `min(40px, 9.4vw)`, título com `min-width:0` e `overflow-wrap:anywhere`. |
+| 13 | **Fase 3:** no detalhe do Droiddex o tile em tamanho grande ocupava a linha e escondia as etiquetas (texto 1,15:1 de contraste) | `droiddex-detalhe` | Tile em caixa de 96px, etiquetas ao lado. |
+| 14 | **Fase 3:** linhas ad hoc com tile pequeno sem largura fixa empurravam o texto para fora da tela (386px de 390) | `progresso-busca`, `progresso-busca-nunca` | Tile em caixa de largura `--item-tile`, `flex:none`. |
+
+Na primeira rodada completa da fase 3 (antes das correções 11 a 14): 684 páginas, 90 com falha, 902 falhas (566 de overflow e 312 de corte, todas de chips em rolagem horizontal ou das linhas dos itens 13 e 14; 12 de contraste de controle e 12 de contraste de texto, nos mesmos casos). Depois das correções: 0.
 
 ## Itens verificados manualmente (leitura dos prints)
 
@@ -82,3 +88,25 @@ Lidos com a ferramenta de imagem, nos 3 temas e nos dois modos: Início, Progres
 4. A checagem de toast é estrutural (slot em fluxo). Se alguém reposicionar o toast com `position:fixed`, a checagem pega, como mostra o teste de sanidade.
 5. Big Shoulders (Cartaz) usa fallback aproximado (`Arial Narrow` ou `Impact`), porque não existe fonte do sistema com métricas parecidas. Só afeta o instante antes da fonte chegar.
 6. O seletor de tema e o hook `useAppearance` são especificados mas **não implementados** no app (decisão do Kayo: primeiro aprovar).
+
+## Fase 3: telas novas e refeitas (auditoria de cobertura)
+
+Auditoria contra o código do app em `auditoria/inventario.md`. Das 57 telas, **32 são novas** (não existiam na fase 2) e **15 foram refeitas** para bater com o código real (`inicio`, `progresso-super`, `toast-desfazer`, `inventario-grade`, `inventario-lista`, `sheet-droid`, `vender`, `ciclos`, `mais`, `droiddex`, `fusao`, `ajustes`, `onb-5-pronto`, `modal-super-renascimento`, `modal-trocar-ciclo`). Três slugs antigos saíram (`progresso-foco`, `progresso-lista`, `modal-remover`) porque o código não tem abas Foco e Lista e a confirmação de remover é um sheet.
+
+**Resultado nas telas novas (32 telas x 6 combinações x 2 larguras = 384 páginas):** 32.832 checagens, **0 falhas**.
+
+| Checagem (telas novas) | Quantidade |
+|---|---:|
+| Sem overflow horizontal (scrollWidth e caixas de todos os elementos e de todo texto) | 384 |
+| Alvo de toque maior ou igual a 44px (largura e altura) | 7.932 |
+| Campo de texto com fonte maior ou igual a 16px | 228 |
+| Texto e nome de droid sem corte (sem reticências, sem overflow oculto, sem line-clamp) | 8.976 |
+| Toast sem sobrepor botão, texto ou conteúdo interativo | 180 |
+| Contraste AA de texto medido em pixels (4,5:1 normal, 3:1 grande) | 8.976 |
+| Contraste de borda ou preenchimento de controle (3:1) | 1.452 |
+| Contraste da régua, barras e páginas do medidor (3:1) | 4.320 |
+| Fonte do tema carregada (sem cair no fallback) | 384 |
+
+Telas novas: `ajustes-dados-velhos`, `banner-instalar`, `banner-instalar-ios`, `ciclos-toast-pdf`, `droiddex-detalhe`, `fusao-vazio`, `inventario-filtro-nivel`, `inventario-filtro-raridade`, `inventario-sem-rastreio`, `inventario-sem-resultado`, `inventario-toast-removido`, `modal-apagar-tudo`, `modal-concluir-mesmo-assim`, `modal-desfazer-renascimento`, `modal-importar`, `modal-trocar-ciclo-reset`, `nao-encontrada`, `progresso`, `progresso-busca`, `progresso-busca-nunca`, `progresso-busca-vazia`, `progresso-disputa`, `progresso-sem-inventario`, `sheet-adicionar-droid`, `sheet-droid-progresso`, `sheet-remover-inventario`, `skeleton-pagina`, `sobre`, `toast-atualizacao-pwa`, `toast-card-erro`, `toast-importar-erro`, `toasts-variantes`.
+
+Observação sobre a contagem: com o ajuste do validador (item 11), a contagem de checagens de overflow e corte ficou menor que nas fases anteriores porque itens dentro de listas com rolagem horizontal própria deixaram de ser contados. Nenhuma checagem foi relaxada para o resto da tela.

@@ -15,23 +15,23 @@ export function AboutPage() {
   return (
     <TabScrollLayout title={t('about.title')} testId="about-page">
       <InsetGroup footer={t('app.disclaimer')}>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('about.intro')}</span>
+        <div className="row">
+          <div className="row-main">
+            <span className="row-title">{t('about.intro')}</span>
           </div>
         </div>
       </InsetGroup>
 
-      <h2 className="dc-section-header">{t('about.dataTitle')}</h2>
+      <h2 className="sec-h">{t('about.dataTitle')}</h2>
       <InsetGroup footer={t('about.disputedNote')}>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('about.dataLine', {
+        <div className="row">
+          <div className="row-main">
+            <span className="row-title">{t('about.dataLine', {
               version: meta.dataVersion,
               game: meta.gameVersion,
               date: meta.lastUpdated,
             })}</span>
-            <span className="dc-row-sub">
+            <span className="hint">
               {stale
                 ? t('settings.dataStale', { days: gameData.staleAfterDays })
                 : t('settings.dataFresh')}
@@ -40,22 +40,22 @@ export function AboutPage() {
         </div>
       </InsetGroup>
 
-      <h2 className="dc-section-header">{t('about.feedbackTitle')}</h2>
+      <h2 className="sec-h">{t('about.feedbackTitle')}</h2>
       <InsetGroup>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('about.feedbackBody')}</span>
+        <div className="row">
+          <div className="row-main">
+            <span className="row-title">{t('about.feedbackBody')}</span>
           </div>
         </div>
-        <div className="dc-row">
+        <div className="row">
           <FeedbackWhatsAppLink />
         </div>
       </InsetGroup>
 
       <InsetGroup>
-        <Link to="/settings" className="dc-row dc-row-chevron">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('nav.settings')}</span>
+        <Link to="/settings" className="row row row--link">
+          <div className="row-main">
+            <span className="row-title">{t('nav.settings')}</span>
           </div>
         </Link>
       </InsetGroup>

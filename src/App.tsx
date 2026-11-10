@@ -2,7 +2,6 @@ import { Suspense, lazy, useEffect, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AppShell } from './components/AppShell'
-import { GlassFilters } from './components/GlassFilters'
 import { TabScreenSkeleton } from './components/layout/TabScreenSkeleton'
 import { SeoManager } from './components/SeoManager'
 import { OverlayStackProvider } from './components/OverlayStackProvider'
@@ -87,25 +86,9 @@ function LazyPage({ children }: { children: ReactNode }) {
 }
 
 export default function App() {
-  useEffect(() => {
-    const root = document.documentElement
-    const supportsSvgBackdrop =
-      typeof CSS !== 'undefined' &&
-      (CSS.supports('(-webkit-backdrop-filter: url(#lg-nav))') ||
-        CSS.supports('(backdrop-filter: url(#lg-nav))') ||
-        CSS.supports('(-webkit-backdrop-filter: url(#lg))') ||
-        CSS.supports('(backdrop-filter: url(#lg))'))
-    if (supportsSvgBackdrop) {
-      root.classList.add('glass-refraction-enabled')
-    } else {
-      root.classList.add('glass-refraction-fallback')
-    }
-  }, [])
-
   return (
     <OverlayStackProvider>
       <ToastProvider>
-        <GlassFilters />
         <BrowserRouter>
         <AppearanceSync />
         <LocaleSync />

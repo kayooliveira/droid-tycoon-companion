@@ -153,10 +153,10 @@ export function InventoryPage() {
     return (
       <TabScrollLayout title={t('inventory.title')} testId="inventory-page">
         <InsetGroup>
-          <div className="dc-row">
-            <div className="dc-row-main">
-              <span className="dc-row-label">{t('inventory.trackingOff')}</span>
-              <span className="dc-row-sub">{t('inventory.trackingOffHint')}</span>
+          <div className="row">
+            <div className="row-main">
+              <span className="row-title">{t('inventory.trackingOff')}</span>
+              <span className="hint">{t('inventory.trackingOffHint')}</span>
             </div>
           </div>
         </InsetGroup>
@@ -180,8 +180,8 @@ export function InventoryPage() {
         </Button>
       }
     >
-      <div className="dc-inv-pin">
-        <div className="dc-search-wrap">
+      <div className="inv-pin">
+        <div className="field-wrap">
           <SearchInput
             placeholder={t('inventory.search')}
             value={search}
@@ -189,7 +189,7 @@ export function InventoryPage() {
             aria-label={t('inventory.search')}
           />
         </div>
-        <div className="dc-inv-toolbar">
+        <div className="grid2">
           <SegmentedControl
             compact
             ariaLabel={t('inventory.filterNeed')}
@@ -201,10 +201,10 @@ export function InventoryPage() {
               { value: 'tier', label: t('inventory.filterTier') },
             ]}
           />
-          <div className="dc-view-toggle" role="group" aria-label={t('progress.viewMode')}>
+          <div className="seg" role="group" aria-label={t('progress.viewMode')}>
             <button
               type="button"
-              className={cn('dc-view-btn', viewMode === 'grid' && 'dc-view-btn-on')}
+              className={cn( viewMode === 'grid' && '')}
               aria-label={t('inventory.viewGrid')}
               aria-pressed={viewMode === 'grid'}
               onClick={() => setViewMode('grid')}
@@ -213,7 +213,7 @@ export function InventoryPage() {
             </button>
             <button
               type="button"
-              className={cn('dc-view-btn', viewMode === 'list' && 'dc-view-btn-on')}
+              className={cn( viewMode === 'list' && '')}
               aria-label={t('inventory.viewList')}
               aria-pressed={viewMode === 'list'}
               onClick={() => setViewMode('list')}
@@ -260,13 +260,13 @@ export function InventoryPage() {
 
       {filtered.length === 0 ? (
         <InsetGroup>
-          <div className="dc-row">
-            <div className="dc-row-main">
-              <span className="dc-row-label">{t('inventory.emptyHint')}</span>
+          <div className="row">
+            <div className="row-main">
+              <span className="row-title">{t('inventory.emptyHint')}</span>
             </div>
           </div>
-          <button type="button" className="dc-row" onClick={() => setAddOpen(true)}>
-            <span className="dc-row-label text-[var(--ui-accent-fill)]">{t('inventory.addDroid')}</span>
+          <button type="button" className="row" onClick={() => setAddOpen(true)}>
+            <span className="row-title text-[var(--ui-accent-fill)]">{t('inventory.addDroid')}</span>
           </button>
         </InsetGroup>
       ) : (
@@ -306,13 +306,13 @@ export function InventoryPage() {
                   ) : null}
                 </div>
                 <div className="collect-body">
-                  <span className="dc-droid-name" data-testid="inventory-unit-name">
+                  <span className="dname" data-testid="inventory-unit-name">
                     {droid.name}
                   </span>
                   <span className="collect-meta" data-testid="inventory-unit-badges">
                     {formatBaseRarity(droid.baseRarity, t)} · {formatTierName(unit.tier, tierLabels)}
                   </span>
-                  <span className="collect-meta dc-row-sub--badge">
+                  <span className="collect-meta ">
                     <SellBadge sellable={sellable} />
                   </span>
                 </div>
@@ -460,7 +460,7 @@ export function InventoryPage() {
         </div>
       </Sheet>
 
-      <div className="dc-scroll-spacer" aria-hidden />
+      <div aria-hidden />
     </TabScrollLayout>
   )
 }

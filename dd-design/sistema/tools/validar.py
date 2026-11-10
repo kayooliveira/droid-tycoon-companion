@@ -21,9 +21,10 @@ JS_COLLECT=r"""
  const rect = (e) => { const r=e.getBoundingClientRect(); return [r.left+scrollX, r.top+scrollY, r.width, r.height]; };
  const srOnly = (e) => e.closest('.sr-only')!==null;
  const inSk = (e) => e.closest('.sk')!==null;
+ const hClip = (e) => { const r=e.getBoundingClientRect(); for(let p=e.parentElement;p&&p!==document.body;p=p.parentElement){ if(p.classList.contains('app')||p.classList.contains('scroll')) break; const cs=getComputedStyle(p); if((cs.overflowX==='auto'||cs.overflowX==='scroll')&&p.scrollWidth>p.clientWidth+1){ const pr=p.getBoundingClientRect(); if(r.right>pr.right+0.6||r.left<pr.left-0.6) return true; } } return false; };
  // 1. overflow por caixa
  document.querySelectorAll('body *').forEach(e=>{
-   if(!vis(e)||srOnly(e)||inSk(e)||e.closest('svg')&&e.tagName!=='svg') return;
+   if(!vis(e)||srOnly(e)||inSk(e)||e.closest('svg')&&e.tagName!=='svg'||hClip(e)) return;
    const r=e.getBoundingClientRect();
    if(r.right>W+0.6||r.left<-0.6) out.over.push({d:desc(e),l:+r.left.toFixed(1),r:+r.right.toFixed(1)});
  });
@@ -33,7 +34,7 @@ JS_COLLECT=r"""
  while(tw.nextNode()){
    const n=tw.currentNode; if(!n.textContent.trim()) continue; const el=n.parentElement;
    if(['SCRIPT','STYLE','TITLE'].includes(el.tagName)) continue;
-   if(!vis(el)||srOnly(el)) continue;
+   if(!vis(el)||srOnly(el)||hClip(el)) continue;
    const rg=document.createRange(); rg.selectNodeContents(n); const rs=[...rg.getClientRects()].filter(x=>x.width>0);
    if(!rs.length) continue;
    const u=rs.reduce((a,b)=>({l:Math.min(a.l,b.left),r:Math.max(a.r,b.right),t:Math.min(a.t,b.top),b:Math.max(a.b,b.bottom)}),{l:1e9,r:-1e9,t:1e9,b:-1e9});
@@ -86,7 +87,7 @@ JS_COLLECT=r"""
  // 3. controles com borda/preenchimento
  const ctl='.btn:not(.btn--ghost),.field,.sel,.chip,.switch i,.opt .mark,.tcard,.seg';
  document.querySelectorAll(ctl).forEach(e=>{
-   if(!vis(e)||hiddenAnc(e)||e.closest('.tp')) return;
+   if(!vis(e)||hiddenAnc(e)||e.closest('.tp')||hClip(e)) return;
    if(e.disabled||e.hasAttribute('disabled')) return;
    const host=e.closest('.demo-stage')||e.closest('.app'); if(host&&host.querySelector(':scope > .scrim')&&!e.closest('.sheet,.modal-wrap')) return;
    const cs=getComputedStyle(e);
@@ -216,8 +217,8 @@ def analisar(pg,theme):
         best=0
         for dd in (0,1,2,3):
             if pill:
-                a_=[im.getpixel((int(x+w/2),int(y+dd)))[:3]] if 0<=int(y+dd)<im.height else []
-                o_=[im.getpixel((int(x+w/2),int(y-k)))[:3] for k in (2,3,4) if 0<=int(y-k)<im.height]
+                a_=[im.getpixel((int(x+w/2),int(y+dd)))[:3]] if 0<=int(y+dd)<im.height and 0<=int(x+w/2)<im.width else []
+                o_=[im.getpixel((int(x+w/2),int(y-k)))[:3] for k in (2,3,4) if 0<=int(y-k)<im.height and 0<=int(x+w/2)<im.width]
             else:
                 a_=[im.getpixel((int(x+dd),cy+k))[:3] for k in (-3,0,3) if 0<=int(x+dd)<im.width and 0<=cy+k<im.height]
                 o_=[outside]

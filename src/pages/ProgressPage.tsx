@@ -160,21 +160,21 @@ export function ProgressPage() {
   return (
     <TabScrollLayout title={t('nav.progress')} testId="progress-page">
       <ScreenSummaryCard testId="progress-summary">
-          <div className="dc-row">
-            <div className="dc-row-main">
-              <span className="dc-row-label">{cycleLabel(progress.pathId)}</span>
-              <span className="dc-row-sub">
+          <div className="row">
+            <div className="row-main">
+              <span className="row-title">{cycleLabel(progress.pathId)}</span>
+              <span className="hint">
                 <PathProgressSwitcher compact />
               </span>
             </div>
           </div>
-          <div className="dc-row">
-            <div className="dc-row-main">
-              <span className="dc-row-label">{t('progress.pathProgress')}</span>
-              <span className="dc-row-sub">
+          <div className="row">
+            <div className="row-main">
+              <span className="row-title">{t('progress.pathProgress')}</span>
+              <span className="hint">
                 <ProgressSummaryLine />
               </span>
-              <span className="dc-row-sub text-ui-muted">
+              <span className="hint text-ui-muted">
                 {t('progress.workingOn', { n: progress.nextRebirth })}
               </span>
             </div>
@@ -311,7 +311,7 @@ export function ProgressPage() {
         <p className="text-xs text-ui-muted text-pretty">{t('progress.undoConfirm')}</p>
       </Modal>
 
-      <div className="dc-scroll-spacer" aria-hidden />
+      <div aria-hidden />
     </TabScrollLayout>
   )
 }
@@ -331,17 +331,17 @@ function DisputePanel({
   const dispute = DISPUTED_REBIRTH_ALTERNATIVES[key]
   return (
     <InsetGroup>
-      <div className="dc-row">
-        <div className="dc-row-main">
-          <span className="dc-row-label">{t('dispute.title')}</span>
-          <span className="dc-row-sub">
+      <div className="row">
+        <div className="row-main">
+          <span className="row-title">{t('dispute.title')}</span>
+          <span className="hint">
             {key === 'path-2:17' ? t('dispute.path2r17') : t('dispute.path6r19')}
           </span>
         </div>
       </div>
       {dispute.alternatives.map((alt) => (
-        <div key={alt.labelKey} className="dc-row">
-          <span className="dc-row-sub">
+        <div key={alt.labelKey} className="row">
+          <span className="hint">
             <span className="text-ui-muted">{t(alt.labelKey)}: </span>
             {alt.requirements
               .map(

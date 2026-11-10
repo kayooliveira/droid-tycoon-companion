@@ -2,9 +2,9 @@ import { Skeleton } from '../ui/Skeleton'
 
 export function TabScreenSkeleton({ rows = 3 }: { rows?: number }) {
   return (
-    <div className="dc-scroll-view -mx-4 min-h-0 flex-1 md:mx-0" aria-busy="true" aria-label="Loading">
+    <div className="stack -mx-4 min-h-0 flex-1 md:mx-0" aria-busy="true" aria-label="Loading">
       <Skeleton className="mx-4 mt-2 h-[41px] w-[55%]" rounded="md" />
-      <div className="dc-screen-stack mt-[var(--space-2)]">
+      <div className="stack mt-[var(--space-2)]">
         <div className="inset-group mx-4">
           <div className="inset-group__body space-y-0">
             {Array.from({ length: 2 }).map((_, i) => (

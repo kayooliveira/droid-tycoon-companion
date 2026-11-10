@@ -290,4 +290,5 @@ def componentes():
        +csec('Tab bar',tabdemo)+csec('Vazio e carregando',vazio)+csec('Ícones',icons)+'</div>')
     return b
 S['componentes']=('Folha de componentes',componentes())
+import screens3  # fase 3 (sobrescreve/adiciona telas)
 SCREENS=list(S.keys())

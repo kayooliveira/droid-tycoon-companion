@@ -33,46 +33,44 @@ export function DroidDetailSheet({
   if (!droid) return null
 
   return (
-    <Sheet open={open} onClose={onClose} testId="droid-detail-sheet" closeLabel={t('common.close')}>
-      <div className="pb-2">
-        <DroidImage droid={droid} tier={tier} size="lg" className="!h-auto !w-full max-w-sm mx-auto aspect-square rounded-2xl" />
-        <h2 className="text-center text-[22px] font-bold leading-[26px] tracking-[-0.3px] mt-4 mb-3 px-1">
-          {droid.name}
-        </h2>
-        <InsetGroup>
-          <div className="dc-row">
-            <div className="dc-row-main">
-              <span className="dc-row-label">{t('inventory.filterTier')}</span>
-              <span className="dc-row-sub">{formatTierName(tier, tierLabels)}</span>
-            </div>
-          </div>
-          <div className="dc-row">
-            <div className="dc-row-main">
-              <span className="dc-row-label">{t('inventory.filterRarity')}</span>
-              <span className="dc-row-sub">{formatBaseRarity(droid.baseRarity, t)}</span>
-            </div>
-          </div>
-          {quantity != null ? (
-            <div className="dc-row">
-              <div className="dc-row-main">
-                <span className="dc-row-label">{t('inventory.quantity')}</span>
-                <span className="dc-row-sub">{quantity}</span>
-              </div>
-            </div>
-          ) : null}
-          {sellable != null ? (
-            <div className="dc-row">
-              <div className="dc-row-main">
-                <span className="dc-row-label">{t('sell.title')}</span>
-                <span className="dc-row-sub">
-                  <SellBadge sellable={sellable} />
-                </span>
-              </div>
-            </div>
-          ) : null}
-        </InsetGroup>
-        {children}
+    <Sheet
+      open={open}
+      onClose={onClose}
+      testId="droid-detail-sheet"
+      closeLabel={t('common.close')}
+      headerLabel={droid.name}
+    >
+      <div className="sheet-art">
+        <DroidImage droid={droid} tier={tier} size="lg" />
       </div>
+      <div className="sheet-title">
+        <h2 className="sheet-name dname">{droid.name}</h2>
+        <span className="sheet-tier">{formatTierName(tier, tierLabels)}</span>
+      </div>
+      <p className="t-meta">
+        {formatBaseRarity(droid.baseRarity, t)} · {formatTierName(tier, tierLabels)}
+      </p>
+      <InsetGroup>
+        {quantity != null ? (
+          <div className="row">
+            <span className="dname">{t('inventory.quantity')}</span>
+            <div className="stepper">
+              <span className="stepper-val">{quantity}</span>
+            </div>
+          </div>
+        ) : null}
+        <div className="row">
+          <span className="row-main">
+            <span className="dname">{t('sell.title')}</span>
+            {sellable != null ? (
+              <span className="hint">
+                <SellBadge sellable={sellable} />
+              </span>
+            ) : null}
+          </span>
+        </div>
+      </InsetGroup>
+      {children}
     </Sheet>
   )
 }

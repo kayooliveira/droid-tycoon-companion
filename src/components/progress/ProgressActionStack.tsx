@@ -25,7 +25,7 @@ export function ProgressActionStack({
   const { t } = useTranslation()
 
   return (
-    <div className="dc-action-stack" data-testid="progress-actions">
+    <div className="stack" data-testid="progress-actions">
       {showComplete ? (
         <Button
           variant="primary"

@@ -38,6 +38,11 @@ fonts=f'''| Tema | Arquivos baixados (só quando o tema está ativo) | Peso apro
 fb=open(f'{ROOT}/css/fonts.css').read()
 fbs='\n'.join(l for l in fb.splitlines() if 'Fallback' in l and 'local(' in l)
 meta=' | '.join(f'`{V(t,d)["--c-bg"]}`' for t in ['oficina','figurinhas','cartaz'] for d in (True,False))
-doc=open(f'{ROOT}/tools/sistema_template.md').read()
+from inventario_telas import INV
+scr=[k for k,_ in json.load(open(f'{ROOT}/html/screens.json'))]
+used=[x for _,_,l in INV for x in l]
+assert sorted(used)==sorted(scr),(set(scr)^set(used))
+inv='| Tela ou estado | Arquivo no repo | Mock |\n|---|---|---|\n'+'\n'.join(f'| {t} | `{f}` | '+', '.join(f'`{x}`' for x in l)+' |' for t,f,l in INV)
+doc=open(f'{ROOT}/tools/sistema_template.md').read().replace('{{INVENTARIO}}',inv).replace('{{N}}',str(len(scr))).replace('{{N6}}',str(len(scr)*6))
 doc=doc.replace('{{CORES}}',tab).replace('{{TIPO}}',tvl(type_rows)).replace('{{FORMA}}',tvl(shape_rows)).replace('{{ASSINATURA}}',tvl(sig_rows)).replace('{{TIERS}}',tiers).replace('{{FONTES}}',fonts).replace('{{FALLBACKS}}',fbs).replace('{{METATHEME}}',meta)
 open(f'{ROOT}/sistema.md','w').write(doc); print(len(doc))

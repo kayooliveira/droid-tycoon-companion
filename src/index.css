@@ -2,53 +2,26 @@
 @import './styles/dd/fonts.css';
 @import './styles/dd/tokens.css';
 @import './styles/dd/components.css';
+@import './styles/dd/app-pages.css';
 @import './styles/app-shell.css';
-@import './styles/dc-dd-bridge.css';
-@import './styles/theme-tokens.css';
-@import './styles/design-tokens.css';
-@import './styles/tier-visuals.css';
-@import './styles/direction-c.css';
-
-@theme {
-  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', Inter, system-ui,
-    sans-serif;
-  --font-display: var(--font-sans);
-
-  --radius-glass: 1.25rem;
-  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.35);
-  --glass-blur: blur(24px) saturate(180%);
-  --mobile-nav-height: 5.25rem;
-
-  /* Stacking: content < sticky < overlay (Mais stack) < nav < modal < toast */
-  --z-index-content: 1;
-  --z-index-sticky: 40;
-  --z-index-banner: 46;
-  --z-index-overlay: 110;
-  --z-index-nav: 112;
-  --z-index-modal: 115;
-  --z-index-popover: 116;
-  --z-index-toast: 120;
-}
+@import './styles/toast-placement.css';
 
 @layer base {
   html {
-    @apply antialiased;
     overflow-x: hidden;
     max-width: 100%;
+    scroll-padding-top: calc(3.5rem + env(safe-area-inset-top, 0px));
   }
 
   body {
-    @apply min-h-dvh font-sans bg-ui-bg text-ui-fg;
+    min-height: 100dvh;
     overflow-x: hidden;
     max-width: 100%;
+    background: var(--c-bg);
+    color: var(--c-text);
+    font-family: var(--f-text);
   }
 
-  :focus-visible {
-    outline: 2px solid var(--ui-accent-fill);
-    outline-offset: 2px;
-  }
-
-  /* iOS Safari: inputs below 16px trigger focus zoom */
   @media (max-width: 767px) {
     :where(
       input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='hidden']):not(
@@ -64,276 +37,12 @@
 }
 
 @layer utilities {
-  /* Solid content cards (not glass) */
-  .surface-card {
-    @apply rounded-[var(--radius-glass)] bg-ui-raised shadow-sm;
-    border: 1px solid var(--ui-border);
-  }
-
-  .glass {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    -webkit-backdrop-filter: var(--glass-blur);
-    backdrop-filter: var(--glass-blur);
-  }
-
-  @supports (backdrop-filter: url(#lg)) {
-    html.glass-refraction-enabled .glass.glass-regular,
-    html.glass-refraction-enabled .glass.glass-clear {
-      -webkit-backdrop-filter: url(#lg) blur(20px) saturate(190%) brightness(1.06);
-      backdrop-filter: url(#lg) blur(20px) saturate(190%) brightness(1.06);
-    }
-
-    html.glass-refraction-enabled .glass-nav-liquid.glass-regular {
-      -webkit-backdrop-filter: url(#lg-nav) blur(18px) saturate(200%) brightness(1.1);
-      backdrop-filter: url(#lg-nav) blur(18px) saturate(200%) brightness(1.1);
-    }
-  }
-
-  html.glass-refraction-fallback .glass-nav-liquid.glass-regular {
-    -webkit-backdrop-filter: blur(16px) saturate(190%) brightness(1.08);
-    backdrop-filter: blur(16px) saturate(190%) brightness(1.08);
-  }
-
-  .glass-nav-liquid.glass-regular {
-    border-color: rgba(255, 255, 255, 0.22);
-    box-shadow:
-      0 12px 40px rgba(0, 0, 0, 0.45),
-      inset 0 1px 0 rgba(255, 255, 255, 0.5),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.08);
-  }
-
-  .glass-nav-liquid.glass-regular::before {
-    background: linear-gradient(
-      165deg,
-      rgba(255, 255, 255, 0.22) 0%,
-      rgba(255, 255, 255, 0.06) 28%,
-      transparent 55%
-    );
-  }
-
-  .glass-nav-liquid.glass-regular::after {
-    content: '';
-    pointer-events: none;
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 1px;
-    background: conic-gradient(
-      from 210deg,
-      rgba(255, 255, 255, 0.45),
-      rgba(94, 234, 212, 0.2),
-      rgba(255, 255, 255, 0.08),
-      rgba(51, 128, 255, 0.25),
-      rgba(255, 255, 255, 0.4)
-    );
-    -webkit-mask:
-      linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
-    mask:
-      linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    z-index: 0;
-    opacity: 0.85;
-  }
-
-  html.glass-refraction-fallback .glass-nav-liquid.glass-regular::after {
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.35) 0%,
-      rgba(255, 255, 255, 0.05) 35%,
-      rgba(0, 0, 0, 0.12) 100%
-    );
-    opacity: 1;
-  }
-
-  .nav-glass-lens {
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.28);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.45),
-      0 4px 16px rgba(51, 128, 255, 0.15);
-    -webkit-backdrop-filter: blur(14px) saturate(200%) brightness(1.12);
-    backdrop-filter: blur(14px) saturate(200%) brightness(1.12);
-    transform: scale(1.02);
-  }
-
-  @supports (backdrop-filter: url(#lg-lens)) {
-    html.glass-refraction-enabled .nav-glass-lens {
-      -webkit-backdrop-filter: url(#lg-lens) blur(12px) saturate(210%) brightness(1.14);
-      backdrop-filter: url(#lg-lens) blur(12px) saturate(210%) brightness(1.14);
-    }
-  }
-
-  .glass-regular {
-    background: var(--glass-bg);
-  }
-
-  .glass-nav.glass-regular {
-    background: var(--glass-nav-bg);
-  }
-
-  html.theme-light .glass-nav-liquid.glass-regular {
-    border-color: rgb(255 255 255 / 0.92);
-    box-shadow:
-      0 10px 32px rgb(15 23 42 / 0.12),
-      inset 0 1px 0 rgb(255 255 255 / 0.95),
-      inset 0 -1px 0 rgb(24 24 27 / 0.04);
-  }
-
-  html.theme-light .glass-nav-liquid.glass-regular::before {
-    background: linear-gradient(
-      165deg,
-      rgb(255 255 255 / 0.75) 0%,
-      rgb(255 255 255 / 0.25) 35%,
-      transparent 60%
-    );
-  }
-
-  html.theme-light .nav-glass-lens {
-    background: var(--ui-nav-lens);
-    border-color: var(--ui-nav-lens-border);
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.9),
-      0 4px 14px rgb(51 128 255 / 0.12);
-  }
-
-  .glass-clear {
-    background: rgba(255, 255, 255, 0.05);
-  }
-
-  .glass-tinted {
-    background: linear-gradient(135deg, rgba(29, 95, 245, 0.35), rgba(6, 182, 212, 0.22));
-    border-color: rgba(94, 234, 212, 0.25);
-  }
-
-  html.theme-light .glass-regular {
-    border-color: rgb(255 255 255 / 0.85);
-    box-shadow: 0 8px 28px rgb(15 23 42 / 0.1), inset 0 1px 0 rgb(255 255 255 / 0.95);
-  }
-
-  html.theme-light .glass-clear {
-    background: rgb(255 255 255 / 0.45);
-  }
-
-  html.theme-light .glass {
-    border-color: rgb(24 24 27 / 0.1);
-    box-shadow: 0 8px 28px rgb(15 23 42 / 0.08), inset 0 1px 0 rgb(255 255 255 / 0.85);
-  }
-
-  .glass::before {
-    content: '';
-    pointer-events: none;
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.14) 0%,
-      transparent 42%,
-      transparent 100%
-    );
-    z-index: 0;
-  }
-
-  .glass > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  .glass-interactive {
-    transition: transform 0.15s ease, filter 0.15s ease;
-  }
-
-  .glass-interactive:active:not(:disabled) {
-    transform: scale(0.97);
-    filter: brightness(1.08);
-  }
-
-  .glass-panel {
-    @apply rounded-[var(--radius-glass)] bg-ui-raised shadow-sm text-ui-fg;
-    border: 1px solid var(--ui-border);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-  }
-
-  @keyframes toast-progress {
-    from {
-      transform: scaleX(1);
-    }
-    to {
-      transform: scaleX(0);
-    }
-  }
-
-  .font-display {
-    font-family: var(--font-display);
-  }
-
-  .toast-surface {
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-  }
-
-  @supports (backdrop-filter: blur(1px)) {
-    .toast-surface {
-      backdrop-filter: blur(20px) saturate(180%);
-    }
-  }
-
-  .help-hint-popover {
-    @apply bg-ui-raised text-ui-secondary shadow-lg;
-    border: 1px solid var(--ui-border);
-  }
-
-  .shell-main-pad {
-    padding-bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 24px);
-  }
-
   html.e2e-safe-area {
     --e2e-safe-bottom: 34px;
   }
 
-  html.e2e-safe-area .shell-main-pad {
-    padding-bottom: calc(var(--mobile-nav-height) + var(--e2e-safe-bottom) + 24px);
-  }
-
   html.e2e-safe-area nav[data-testid='mobile-floating-nav'] {
     bottom: calc(var(--e2e-safe-bottom) + 12px);
-  }
-
-  html {
-    scroll-padding-top: calc(3.5rem + env(safe-area-inset-top, 0px));
-  }
-}
-
-@media (prefers-reduced-transparency: reduce) {
-  .glass,
-  .glass-regular,
-  .glass-clear,
-  .glass-tinted {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
-    background: var(--glass-solid) !important;
-    border-color: rgba(255, 255, 255, 0.2) !important;
-  }
-
-  html.theme-light .glass,
-  html.theme-light .glass-regular,
-  html.theme-light .glass-clear,
-  html.theme-light .glass-tinted {
-    background: var(--glass-solid) !important;
-    border-color: rgb(24 24 27 / 0.18) !important;
-  }
-}
-
-@media (prefers-contrast: more) {
-  .glass,
-  .surface-card {
-    border-width: 2px;
   }
 }
 

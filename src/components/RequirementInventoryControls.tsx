@@ -57,7 +57,7 @@ export function RequirementInventoryControls({
   return (
     <div
       data-testid="requirement-inventory-actions"
-      className="dc-row-trail dc-row-trail--acts"
+      className="row-val row2"
       onClick={stopRowActivation}
       onPointerDown={stopRowActivation}
     >

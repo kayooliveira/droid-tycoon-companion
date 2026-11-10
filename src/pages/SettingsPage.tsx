@@ -220,11 +220,11 @@ export function SettingsPage() {
           <h2 className="t-h2">{t('settings.preferences')}</h2>
         </div>
         <InsetGroup>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('settings.animations')}</span>
+        <div className="row">
+          <div className="row-main">
+            <span className="row-title">{t('settings.animations')}</span>
           </div>
-          <div className="dc-row-trail">
+          <div className="row-val">
             <SettingsSwitch
               label={t('settings.animations')}
               checked={settings.animationsEnabled}
@@ -232,11 +232,11 @@ export function SettingsPage() {
             />
           </div>
         </div>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('settings.trackInventory')}</span>
+        <div className="row">
+          <div className="row-main">
+            <span className="row-title">{t('settings.trackInventory')}</span>
           </div>
-          <div className="dc-row-trail">
+          <div className="row-val">
             <SettingsSwitch
               label={t('settings.trackInventory')}
               checked={settings.trackInventory}
@@ -247,7 +247,7 @@ export function SettingsPage() {
       </InsetGroup>
       </section>
 
-      <h2 className="dc-section-header">{t('settings.language')}</h2>
+      <h2 className="sec-h">{t('settings.language')}</h2>
       <InsetGroup>
         <div className="px-4 py-3" data-testid="language-select">
           <SegmentedControl
@@ -264,26 +264,26 @@ export function SettingsPage() {
         </div>
       </InsetGroup>
 
-      <h2 className="dc-section-header">{t('settings.progress')}</h2>
+      <h2 className="sec-h">{t('settings.progress')}</h2>
       <InsetGroup>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('settings.path')}</span>
-            <span className="dc-row-sub">
+        <div className="row">
+          <div className="row-main">
+            <span className="row-title">{t('settings.path')}</span>
+            <span className="hint">
               <PathProgressSwitcher compact />
             </span>
           </div>
         </div>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('progress.pathProgress')}</span>
-            <span className="dc-row-sub">
+        <div className="row">
+          <div className="row-main">
+            <span className="row-title">{t('progress.pathProgress')}</span>
+            <span className="hint">
               <ProgressSummaryLine />
             </span>
           </div>
         </div>
-        <div className="dc-row flex-col !items-stretch gap-2">
-          <span className="dc-row-label">{t('settings.completedRebirths', { n: progress.completedOnPath })}</span>
+        <div className="row flex-col !items-stretch gap-2">
+          <span className="row-title">{t('settings.completedRebirths', { n: progress.completedOnPath })}</span>
           <input
             type="range"
             min={0}
@@ -298,12 +298,12 @@ export function SettingsPage() {
         </div>
       </InsetGroup>
 
-      <h2 className="dc-section-header">{t('settings.dataSection')}</h2>
+      <h2 className="sec-h">{t('settings.dataSection')}</h2>
       <InsetGroup footer={t('settings.updateHint')}>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('settings.gameData')}</span>
-            <span className="dc-row-sub">
+        <div className="row">
+          <div className="row-main">
+            <span className="row-title">{t('settings.gameData')}</span>
+            <span className="hint">
               {`v${meta.dataVersion} · ${meta.gameVersion}`}
               {stale ? ` · ${t('settings.dataStaleShort')}` : ` · ${t('settings.dataFresh')}`}
             </span>
@@ -311,24 +311,24 @@ export function SettingsPage() {
         </div>
         <button
           type="button"
-          className="dc-row dc-row-chevron"
+          className="row row row--link"
           onClick={() => downloadJson('droid-tycoon-progress.json', exportProgress(toPersisted()))}
         >
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('settings.exportShort')}</span>
+          <div className="row-main">
+            <span className="row-title">{t('settings.exportShort')}</span>
           </div>
-          <DownloadSimple {...uiIconProps} className="dc-row-trail shrink-0 opacity-60" />
+          <DownloadSimple {...uiIconProps} className="row-val shrink-0 opacity-60" />
         </button>
         <button
           type="button"
-          className="dc-row dc-row-chevron"
+          className="row row row--link"
           data-testid="settings-import-trigger"
           onClick={() => fileRef.current?.click()}
         >
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('settings.importShort')}</span>
+          <div className="row-main">
+            <span className="row-title">{t('settings.importShort')}</span>
           </div>
-          <UploadSimple {...uiIconProps} className="dc-row-trail shrink-0 opacity-60" />
+          <UploadSimple {...uiIconProps} className="row-val shrink-0 opacity-60" />
         </button>
         <input
           ref={fileRef}
@@ -354,60 +354,60 @@ export function SettingsPage() {
         />
       </InsetGroup>
 
-      <h2 className="dc-section-header">{t('shareExport.title')}</h2>
+      <h2 className="sec-h">{t('shareExport.title')}</h2>
       <InsetGroup footer={t('shareExport.footer')} testId="share-export-card">
-        <button type="button" className="dc-row dc-row-chevron" data-testid="share-app" onClick={() => void shareApp()}>
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('share.shareApp')}</span>
+        <button type="button" className="row row row--link" data-testid="share-app" onClick={() => void shareApp()}>
+          <div className="row-main">
+            <span className="row-title">{t('share.shareApp')}</span>
           </div>
           <LinkSimple {...uiIconProps} className="shrink-0 opacity-60" />
         </button>
-        <button type="button" className="dc-row dc-row-chevron" onClick={shareWhatsApp}>
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('share.whatsapp')}</span>
+        <button type="button" className="row row row--link" onClick={shareWhatsApp}>
+          <div className="row-main">
+            <span className="row-title">{t('share.whatsapp')}</span>
           </div>
           <WhatsappLogo {...uiIconProps} className="shrink-0 opacity-60" />
         </button>
         <button
           type="button"
-          className="dc-row dc-row-chevron"
+          className="row row row--link"
           disabled={shareBusy}
           data-testid="share-progress-card"
           onClick={() => void shareProgressImage()}
         >
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('share.progressCard')}</span>
+          <div className="row-main">
+            <span className="row-title">{t('share.progressCard')}</span>
           </div>
           <ShareNetwork {...uiIconProps} className="shrink-0 opacity-60" />
         </button>
       </InsetGroup>
 
-      <h2 className="dc-section-header">{t('settings.aboutSection')}</h2>
+      <h2 className="sec-h">{t('settings.aboutSection')}</h2>
       <InsetGroup>
-        <button type="button" className="dc-row dc-row-chevron" onClick={rerunOnboarding}>
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('settings.rerunOnboardingShort')}</span>
+        <button type="button" className="row row row--link" onClick={rerunOnboarding}>
+          <div className="row-main">
+            <span className="row-title">{t('settings.rerunOnboardingShort')}</span>
           </div>
         </button>
-        <Link to="/about" className="dc-row dc-row-chevron">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('nav.about')}</span>
+        <Link to="/about" className="row row row--link">
+          <div className="row-main">
+            <span className="row-title">{t('nav.about')}</span>
           </div>
         </Link>
-        <div className="dc-row">
+        <div className="row">
           <FeedbackWhatsAppLink variant="link" className="text-sm" />
         </div>
       </InsetGroup>
 
-      <h2 className="dc-section-header">{t('settings.danger')}</h2>
+      <h2 className="sec-h">{t('settings.danger')}</h2>
       <InsetGroup>
         <button
           type="button"
-          className="dc-row"
+          className="row"
           data-testid="settings-reset-trigger"
           onClick={() => setResetOpen(true)}
         >
-          <span className="dc-row-label text-red-500">{t('settings.resetShort')}</span>
+          <span className="row-title text-red-500">{t('settings.resetShort')}</span>
         </button>
       </InsetGroup>
 
@@ -465,7 +465,7 @@ export function SettingsPage() {
         <p className="text-sm text-ui-secondary text-pretty">{t('settings.resetConfirmBody')}</p>
       </Modal>
 
-      <div className="dc-scroll-spacer" aria-hidden />
+      <div aria-hidden />
     </TabScrollLayout>
   )
 }

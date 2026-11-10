@@ -56,7 +56,7 @@ test.describe('Direction C section spacing', () => {
     const actionsToRebirthHeader = await verticalGap(
       page,
       '[data-testid="progress-actions"]',
-      '[data-testid="progress-rebirth-list"] .dc-section-header',
+      '[data-testid="progress-rebirth-list"] .sec-h',
     )
     expect(actionsToRebirthHeader).not.toBeNull()
     expect(actionsToRebirthHeader!).toBeGreaterThanOrEqual(24 - TOLERANCE)
@@ -64,7 +64,7 @@ test.describe('Direction C section spacing', () => {
 
     const rebirthHeaderToFirstCard = await verticalGap(
       page,
-      '[data-testid="progress-rebirth-list"] .dc-section-header-row',
+      '[data-testid="progress-rebirth-list"] .sec-h',
       '[data-testid="progress-list-item-1"]',
     )
     expect(rebirthHeaderToFirstCard).not.toBeNull()
@@ -88,7 +88,7 @@ test.describe('Direction C section spacing', () => {
     const introToHeader = await verticalGap(
       page,
       '[data-testid="sell-page"] .inset-group:first-of-type',
-      '[data-testid="sell-center-safe-now"] .dc-section-header',
+      '[data-testid="sell-center-safe-now"] .sec-h',
     )
     expect(introToHeader).not.toBeNull()
     expect(introToHeader!).toBeGreaterThanOrEqual(24 - TOLERANCE)
@@ -96,7 +96,7 @@ test.describe('Direction C section spacing', () => {
 
     const headerToGroup = await verticalGap(
       page,
-      '[data-testid="sell-center-safe-now"] .dc-section-header',
+      '[data-testid="sell-center-safe-now"] .sec-h',
       '[data-testid="sell-center-safe-now"] .inset-group',
     )
     expect(headerToGroup).not.toBeNull()
@@ -110,7 +110,7 @@ test.describe('Direction C section spacing', () => {
 
     const appearanceHeaderToGroup = await verticalGap(
       page,
-      '[data-testid="settings-page"] .dc-section-header',
+      '[data-testid="settings-page"] .sec-h',
       '[data-testid="settings-page"] .inset-group',
     )
     expect(appearanceHeaderToGroup).not.toBeNull()
@@ -120,7 +120,7 @@ test.describe('Direction C section spacing', () => {
     const firstGroupToLanguageHeader = await verticalGap(
       page,
       '[data-testid="settings-page"] .inset-group',
-      '[data-testid="settings-page"] .dc-section-header:nth-of-type(2)',
+      '[data-testid="settings-page"] .sec-h:nth-of-type(2)',
     )
     expect(firstGroupToLanguageHeader).not.toBeNull()
     expect(firstGroupToLanguageHeader!).toBeGreaterThanOrEqual(24 - TOLERANCE)
@@ -134,7 +134,7 @@ test.describe('Direction C section spacing', () => {
     const rulesToHelpsHeader = await verticalGap(
       page,
       '[data-testid="fusion-rules-card"]',
-      '[data-testid="fusion-page"] section:nth-of-type(2) .dc-section-header',
+      '[data-testid="fusion-page"] section:nth-of-type(2) .sec-h',
     )
     expect(rulesToHelpsHeader).not.toBeNull()
     expect(rulesToHelpsHeader!).toBeGreaterThanOrEqual(24 - TOLERANCE)
@@ -142,7 +142,7 @@ test.describe('Direction C section spacing', () => {
 
     const helpsHeaderToCard = await verticalGap(
       page,
-      '[data-testid="fusion-page"] section:nth-of-type(2) .dc-section-header',
+      '[data-testid="fusion-page"] section:nth-of-type(2) .sec-h',
       '[data-testid="fusion-page"] section:nth-of-type(2) .inset-group',
     )
     expect(helpsHeaderToCard).not.toBeNull()
@@ -156,7 +156,7 @@ test.describe('Direction C section spacing', () => {
 
     const pathBlockToFirstRebirth = await verticalGap(
       page,
-      '[data-testid="cycles-page"] .dc-screen-stack > .inset-group',
+      '[data-testid="cycles-page"] .stack > .inset-group',
       '[data-testid="cycles-rebirth-group-1"]',
     )
     expect(pathBlockToFirstRebirth).not.toBeNull()
@@ -174,7 +174,7 @@ test.describe('Direction C section spacing', () => {
 
     const lastRebirthToSuperHeader = await verticalGap(
       page,
-      '[data-testid="cycles-page"] .dc-card-list .inset-group:last-of-type',
+      '[data-testid="cycles-page"] .stack .inset-group:last-of-type',
       '[data-testid="cycles-super-section-header"]',
     )
     expect(lastRebirthToSuperHeader).not.toBeNull()

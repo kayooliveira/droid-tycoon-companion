@@ -87,11 +87,11 @@ export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: Pro
     cycleDisplayNameForId(pathId, cycleById.get(pathId)?.name ?? pathId, i18n.language)
 
   return (
-    <div className="dc-screen-stack-item" data-testid="progress-droid-search">
+    <div className="stack" data-testid="progress-droid-search">
       <label className="sr-only" htmlFor="progress-droid-search-input">
         {t('progress.search.label')}
       </label>
-      <div className="dc-search-wrap">
+      <div className="field-wrap">
         <SearchInput
           id="progress-droid-search-input"
           autoComplete="off"

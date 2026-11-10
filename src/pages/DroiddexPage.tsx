@@ -35,9 +35,7 @@ export function DroiddexPage() {
 
   return (
     <TabScrollLayout title={t('droiddex.title')} testId="droiddex-page">
-      <div className="dc-search-wrap">
       <SearchInput
-        className="dc-search"
         placeholder={t('droiddex.search')}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
@@ -45,7 +43,6 @@ export function DroiddexPage() {
         clearLabel={t('progress.search.clear')}
         aria-label={t('droiddex.search')}
       />
-      </div>
       <SegmentedControl
         ariaLabel={t('droiddex.allClasses')}
         value={classFilter}

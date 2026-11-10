@@ -60,7 +60,8 @@ export function InstallBanner() {
     <OverlayPortal>
       <div
         data-testid="install-banner"
-        className="fixed bottom-20 md:bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm z-banner glass-panel rounded-2xl p-4 shadow-xl"
+        className="fixed bottom-20 md:bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm panel"
+        style={{ zIndex: 50 }}
       >
         <div className="flex gap-3">
           <DownloadSimple {...uiIconProps} className="text-ui-accent shrink-0 mt-0.5" />

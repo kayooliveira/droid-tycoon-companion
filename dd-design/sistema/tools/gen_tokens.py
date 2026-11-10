@@ -239,6 +239,8 @@ def theme_vars(name,dark):
     v,t=THEMES[name](dark)
     for k,c in t.items():
         v['--tier-'+k]=c; v['--tier-'+k+'-num']=TIER_NUM[k]
+    # aviso (amarelo, usado em toast de aviso e notas): igual nos 3 temas, muda só com o modo
+    v['--c-warn-fg']='#FFD166' if dark else '#6B4E00'; v['--c-warn-bg']='#2E2610' if dark else '#FBEFC2'
     # específicos do tema (hero, medidor, estados de carregar, sheet, modal, toast, stats, ícones, cs, tema)
     return v
 
@@ -288,7 +290,7 @@ def extra(name,dark):
          '--cell-cur-w':'100%','--cell-cur-h':'26px','--cell-cur-bg':'var(--c-bg)','--cell-cur-bd':'3px solid var(--c-text)','--cell-cur-outline':'0',
          '--stats-gap':'0px','--stats-bt':'1px solid var(--c-text)','--stat-pad':'10px 10px','--stat-pad-first':'0px','--stat-bg':'transparent','--stat-r':'0','--stat-sh':'none','--stat-bl':'1px solid var(--c-border)','--stat-font':D,'--stat-size':'44px','--stat-weight':'900','--stat-var':'normal','--stat-case':'uppercase',
          '--sheet-bg':'var(--c-bg)','--sheet-bt':'4px solid var(--c-text)','--grab-h':'6px','--grab-r':'0','--sheetn-font':D,'--sheetn-size':'64px','--sheetn-weight':'900','--sheetn-case':'uppercase','--sheetn-ls':'0','--sheetn-var':'normal','--sheet-title-align':'left','--sheet-title-j':'space-between','--sheet-tier-display':'block',
-         '--modal-bg':'var(--c-bg)','--modal-bd':'4px solid var(--c-text)','--modal-sh':'none','--mt-font':D,'--mt-size':'40px','--mt-weight':'900','--mt-case':'uppercase','--mt-ls':'0','--mt-var':'normal',
+         '--modal-bg':'var(--c-bg)','--modal-bd':'4px solid var(--c-text)','--modal-sh':'none','--mt-font':D,'--mt-size':'min(40px,9.4vw)','--mt-weight':'900','--mt-case':'uppercase','--mt-ls':'0','--mt-var':'normal',
          '--toast-bg':'var(--c-text)','--toast-fg':'var(--c-bg)','--toast-r':'0','--toast-sh':'none','--toast-ic':'var(--toast-fg)','--toast-act-bg':'var(--c-bg)','--toast-act-fg':'var(--c-text)','--toast-act-r':'0','--toast-act-font':'900 17px '+D,'--toast-act-deco':'none','--toast-err-bg':'var(--c-bad-bg)','--toast-err-fg':'var(--c-bad-fg)',
          '--ico-gap':'0px','--ico-bd':'1px solid var(--c-border)','--ico-r':'0','--ico-bg':'transparent',
          '--sk-bg':'var(--c-surface-2)','--sk-r':'0','--sk-dur':'1.4s','--sk-shimmer':m('linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent)','linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent)'),

@@ -15,7 +15,9 @@ import {
   useState,
   type ReactNode,
 } from 'react'
+import { TOAST_PLACEMENT } from '../lib/toastPlacement'
 import { UI_ICON_SIZE, UI_ICON_WEIGHT } from './ui/iconStyle'
+import { OverlayPortal } from './ui/OverlayPortal'
 import { cn } from '../lib/utils'
 
 export type ToastVariant = 'success' | 'info' | 'warning' | 'error' | 'neutral'
@@ -48,11 +50,11 @@ const TOAST_DURATION_MS = 4000
 
 const VARIANT_META: Record<
   ToastVariant,
-  { Icon: Icon; err?: boolean }
+  { Icon: Icon; err?: boolean; warn?: boolean }
 > = {
   success: { Icon: CheckCircle },
   info: { Icon: Info },
-  warning: { Icon: Warning },
+  warning: { Icon: Warning, warn: true },
   error: { Icon: WarningCircle, err: true },
   neutral: { Icon: Info },
 }
@@ -80,8 +82,7 @@ function ToastItem({
   toast: Toast
   onDismiss: (id: string) => void
 }) {
-  const { Icon, err } = VARIANT_META[toast.variant]
-  const message = toast.detail ? `${toast.message} — ${toast.detail}` : toast.message
+  const { Icon, err, warn } = VARIANT_META[toast.variant]
 
   return (
     <div
@@ -89,19 +90,21 @@ function ToastItem({
       data-toast-variant={toast.variant}
       role="status"
       aria-live={toast.live}
-      className={cn('toast', err && 'toast--err')}
+      className={cn('toast', err && 'toast--err', warn && 'toast--warn')}
     >
       <span className="ic" aria-hidden>
         <Icon size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} />
       </span>
-      <span className="toast-msg" data-testid="toast-title">
-        {message}
-      </span>
-      {toast.detail ? (
-        <span className="sr-only" data-testid="toast-detail">
-          {toast.detail}
+      <div className="toast-text">
+        <span className="toast-msg" data-testid="toast-title">
+          {toast.message}
         </span>
-      ) : null}
+        {toast.detail ? (
+          <span className="toast-detail" data-testid="toast-detail">
+            {toast.detail}
+          </span>
+        ) : null}
+      </div>
       {toast.action ? (
         <button
           type="button"
@@ -119,16 +122,19 @@ function ToastItem({
   )
 }
 
-export function ToastViewport() {
-  const ctx = useContext(ToastContext)
-  if (!ctx) return null
-
-  const { toasts, dismiss } = ctx
+function ToastSlot({
+  toasts,
+  dismiss,
+  className,
+}: {
+  toasts: Toast[]
+  dismiss: (id: string) => void
+  className?: string
+}) {
   const visible = toasts.length > 0
-
   return (
     <div
-      className="toast-slot"
+      className={cn('toast-slot', className)}
       hidden={!visible ? true : undefined}
       data-testid="toast-stack"
     >
@@ -136,6 +142,26 @@ export function ToastViewport() {
         <ToastItem key={t.id} toast={t} onDismiss={dismiss} />
       ))}
     </div>
+  )
+}
+
+export function ToastViewport() {
+  if (TOAST_PLACEMENT !== 'inflow') return null
+  const ctx = useContext(ToastContext)
+  if (!ctx) return null
+  return <ToastSlot toasts={ctx.toasts} dismiss={ctx.dismiss} />
+}
+
+function ToastTopAnchor() {
+  if (TOAST_PLACEMENT !== 'top') return null
+  const ctx = useContext(ToastContext)
+  if (!ctx || ctx.toasts.length === 0) return null
+  return (
+    <OverlayPortal>
+      <div className="toast-anchor--top">
+        <ToastSlot toasts={ctx.toasts} dismiss={ctx.dismiss} />
+      </div>
+    </OverlayPortal>
   )
 }
 
@@ -213,7 +239,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     [push, toasts, dismiss],
   )
 
-  return <ToastContext.Provider value={value}>{children}</ToastContext.Provider>
+  return (
+    <ToastContext.Provider value={value}>
+      {children}
+      <ToastTopAnchor />
+    </ToastContext.Provider>
+  )
 }
 
 export function useToast() {

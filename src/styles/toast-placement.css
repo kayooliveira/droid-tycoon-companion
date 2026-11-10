@@ -1,0 +1,28 @@
+.toast-anchor--top {
+  pointer-events: none;
+  position: fixed;
+  inset-inline: 0;
+  top: calc(env(safe-area-inset-top, 0px) + 8px);
+  z-index: calc(var(--z-modal) + 5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding-inline: 12px;
+  max-width: 390px;
+  margin-inline: auto;
+}
+
+.toast-anchor--top .toast-slot {
+  position: static;
+  width: 100%;
+  padding: 0;
+  pointer-events: auto;
+}
+
+.toast-anchor--inflow .toast-slot {
+  flex: none;
+  padding: 8px 12px;
+  position: relative;
+  z-index: var(--z-toast);
+}

@@ -9,7 +9,7 @@ Decisão do Kayo: as três direções viram **temas selecionáveis**. Oficina é
 ## 1. Princípio: uma estrutura, três aparências
 
 1. **Uma só marcação HTML e um só `components.css`.** Nenhum seletor de componente conhece o tema. Tudo que muda vem de variáveis CSS (tokens).
-2. O tema é definido por **dois atributos no `<html>`**: `data-theme="oficina|figurinhas|cartaz"` e `data-mode="dark|light"`. Trocar só esses dois atributos troca o app inteiro. Foi assim que os 28 mocks e os 168 prints (28 telas x 6 combinações) foram gerados (uma única base de HTML, só os atributos mudam).
+2. O tema é definido por **dois atributos no `<html>`**: `data-theme="oficina|figurinhas|cartaz"` e `data-mode="dark|light"`. Trocar só esses dois atributos troca o app inteiro. Foi assim que os 57 mocks e os 342 prints (57 telas x 6 combinações) foram gerados (uma única base de HTML, só os atributos mudam).
 3. As diferenças de "assinatura" (régua, figurinha, número gigante) são **variantes do mesmo componente**, controladas por tokens (exibir ou não um elemento, tamanho, posição em grade, moldura). Mesma informação, mesma ordem, mesmo comportamento, mesmos alvos de toque.
 4. Como os tokens são resolvidos no elemento, um **escopo aninhado** funciona: o card de pré-visualização do tema em Ajustes usa `data-theme="figurinhas"` num `<div>` e renderiza os componentes reais de Figurinhas dentro do tema ativo. Nada de screenshot nem de CSS duplicado.
 
@@ -21,8 +21,8 @@ sistema/
   css/tokens.css       6 combinações de tokens (gerado de tools/gen_tokens.py), 41 KB, cerca de 7,5 KB gzip
   css/components.css   componentes só com var(--...), sem condicional de tema
   assets/fonts/*.woff2 fontes (latin) | assets/droids/*.webp imagens usadas nos mocks
-  html/*.html          28 telas geradas da MESMA base | viewer.html troca tema, modo e tela
-  prints/<tema>/<modo>/<tela>.png        6 combinações x 28 telas, 390px, escala 2
+  html/*.html          57 telas geradas da MESMA base | viewer.html troca tema, modo e tela
+  prints/<tema>/<modo>/<tela>.png        6 combinações x 57 telas, 390px, escala 2
   prints/comparativo/<tela>.png          6 combinações lado a lado, por tela
   tools/               gen_tokens.py, gen_fonts.py, ui.py, screens.py, build.py, capture.py, validar.py, teste_validador.py
   validacao.md         relatório da validação automática
@@ -80,7 +80,14 @@ Todos em `css/components.css`. A marcação está em `tools/ui.py` (funções) e
 | Medidor do Ciclo | `.cm` (`.cm-top`, `.cm-cells`, `.cm-marks`, `.cm-foot`) | 40 células nas 3 variantes. Redundante com o texto "29 de 40", por isso `aria-hidden`. |
 | Sheet | `.scrim + .sheet` | Ficha do droid. Fechar sempre disponível (botão 44px). |
 | Modal | `.modal-wrap > .modal` | Cancelar à esquerda, ação à direita, nas 3 variantes. |
-| Toast | `.toast` (+ `.toast--err`) com `.toast-act` | Mensagem completa (sem cortar), botão Desfazer com 44px. |
+| Toast | `.toast` (+ `.toast--warn`, `.toast--err`) com `.toast-text > .toast-msg + .toast-detail` e `.toast-act` | Mensagem completa (sem cortar), detalhe opcional de uma linha, ação com 44px. Sucesso, informação e neutro usam o toast padrão e se distinguem pelo ícone. |
+| Banner | `.banner` (`.banner-body`, `.banner-act`) | Instalar o app. Fica no `.toast-slot`, em fluxo, nunca cobre botão. Fechar com 44px. |
+| Busca com limpar | `.field-wrap--clear` + `.field-clear` | Botão de limpar com 44px, campo 16px. |
+| Filtros | `.seg` (Todos, Raridade, Nível), `.chips--scroll` (chips que rolam na horizontal), `.chips--grid` (cartões de Ciclo em 3 colunas), `.sel` com ícone (seletor de Ciclo), `.view-toggle`/`.btn--icon` (grade e lista) | Chips que rolam só rolam dentro do próprio contêiner; a página nunca ganha rolagem horizontal. |
+| Escolha de droid | `.pick` | Nome inteiro, quebra em 2 linhas. Usado no sheet Adicionar droid. |
+| Menu Mais | `.scrim--above + .sheet--above` | Sheet ancorado acima da tab bar (a tab bar continua visível). |
+| Ação de seção | `.sec-h--act` + `.link-btn` | "Recolher todos" e links de fonte, 44px. |
+| Linha chave e valor, nota de aviso | `.kv`, `.note-warn` | Ficha do droid, detalhe do Droiddex; `--c-warn-fg` com contraste AA nos 3 temas. |
 | Seletor de tema | `.tcard[role=radio]` com `.tp` (preview real) | |
 | Vazio e carregando | `.empty`, `.sk` | Esqueleto com `prefers-reduced-motion` respeitado. |
 
@@ -269,7 +276,7 @@ Como cada assinatura funciona **sem marcação própria**:
 
 ### 5.1 Ajustes, Aparência
 
-Entrada: em **Ajustes**, a primeira seção "Aparência" tem a linha **Tema e modo** (subtítulo mostra a escolha atual, por exemplo "Oficina, seguir o sistema") que abre a tela **Aparência**. Mock: `html/ajustes.html` e `html/ajustes-aparencia.html`.
+Entrada: em **Ajustes**, a primeira seção "Aparência" tem a linha **Visual e modo** (subtítulo mostra a escolha atual, por exemplo "Oficina · segue o sistema") que abre a tela **Aparência**. Mock: `html/ajustes.html` e `html/ajustes-aparencia.html`.
 
 Tela Aparência (pt-BR, sem travessão, sem setas):
 
@@ -294,9 +301,44 @@ Passo novo, **entre "Onde você está neste Ciclo?" e o final**. Mock: `html/onb
 
 ---
 
-## 6. Telas e estados cobertos (28)
+## 6. Inventário de telas (57 mocks)
 
-`inicio`, `progresso-foco`, `progresso-lista`, `progresso-super`, `toast-desfazer`, `inventario-grade`, `inventario-lista`, `sheet-droid`, `modal-remover`, `vender`, `ciclos`, `modal-trocar-ciclo`, `modal-super-renascimento`, `mais`, `droiddex`, `fusao`, `ajustes`, `ajustes-aparencia`, `onb-1-boas-vindas`, `onb-2-ciclo`, `onb-3-progresso`, `onb-4-tema`, `onb-5-pronto`, `vazio-inventario`, `vazio-vender`, `skeleton-inicio`, `skeleton-inventario`, `componentes` (folha completa: cores, tipografia, botões, campos, tags, 9 níveis, vaga vazia, quantidade, hero, medidor, sheet, modal, toast, tab bar, vazio e esqueleto, ícones).
+Auditoria feita contra o código real (`kayooliveira/droid-tycoon-companion`, branch `current`, leitura somente leitura). Detalhe completo, com motivos do que ficou de fora, em `auditoria/inventario.md`. Cada linha abaixo: tela ou estado, arquivo de origem no repo e mock correspondente em `html/<slug>.html` (e `prints/<tema>/<modo>/<slug>.png`, `prints/comparativo/<slug>.png`).
+
+| Tela ou estado | Arquivo no repo | Mock |
+|---|---|---|
+| Onboarding: boas-vindas, Ciclo, progresso, visual (novo), o que você ganha | `pages/OnboardingPage.tsx` | `onb-1-boas-vindas`, `onb-2-ciclo`, `onb-3-progresso`, `onb-4-tema`, `onb-5-pronto` |
+| Início | `pages/DashboardPage.tsx` | `inicio`, `skeleton-inicio` |
+| Progresso: página, sem inventário, Ciclo completo, requisito disputado | `pages/ProgressPage.tsx` | `progresso`, `progresso-sem-inventario`, `progresso-super`, `progresso-disputa` |
+| Progresso: busca de droid (resultado, nunca necessário, sem resultado) | `components/progress/ProgressDroidSearch.tsx` | `progresso-busca`, `progresso-busca-nunca`, `progresso-busca-vazia` |
+| Progresso: toast de adicionar com Desfazer | `hooks/useProgressInventoryToast.ts` | `toast-desfazer` |
+| Modais do Progresso: Concluir mesmo assim, Desfazer, Super Renascimento | `pages/ProgressPage.tsx` | `modal-concluir-mesmo-assim`, `modal-desfazer-renascimento`, `modal-super-renascimento` |
+| Modal Trocar de ciclo (com e sem reset) | `components/PathProgressSwitcher.tsx` | `modal-trocar-ciclo`, `modal-trocar-ciclo-reset` |
+| Inventário: grade, lista, filtro por raridade, filtro por nível | `pages/InventoryPage.tsx` | `inventario-grade`, `inventario-lista`, `inventario-filtro-raridade`, `inventario-filtro-nivel` |
+| Inventário: desligado, filtro sem resultado, vazio, carregando, toast ao remover | `pages/InventoryPage.tsx` | `inventario-sem-rastreio`, `inventario-sem-resultado`, `vazio-inventario`, `skeleton-inventario`, `inventario-toast-removido` |
+| Sheet Adicionar droid; sheet Remover do inventário | `pages/InventoryPage.tsx` | `sheet-adicionar-droid`, `sheet-remover-inventario` |
+| Ficha do droid (Inventário e Progresso) | `components/droid/DroidDetailSheet.tsx` | `sheet-droid`, `sheet-droid-progresso` |
+| Vender (seções) e vazio | `pages/SellCenterPage.tsx` | `vender`, `vazio-vender` |
+| Ciclos e toast de PDF | `pages/CyclesPage.tsx, components/CycleGuidePdfExport.tsx` | `ciclos`, `ciclos-toast-pdf` |
+| Mais (menu sobre a tab bar) | `components/AppShell.tsx, components/MobileFloatingNav.tsx` | `mais` |
+| Droiddex e detalhe do droid | `pages/DroiddexPage.tsx` | `droiddex`, `droiddex-detalhe` |
+| Fusão e estados vazios | `pages/FusionLabPage.tsx` | `fusao`, `fusao-vazio` |
+| Ajustes (página completa), dados velhos, Aparência (novo) | `pages/SettingsPage.tsx` | `ajustes`, `ajustes-dados-velhos`, `ajustes-aparencia` |
+| Modais de Ajustes: Importar progresso, Apagar tudo | `pages/SettingsPage.tsx` | `modal-importar`, `modal-apagar-tudo` |
+| Toasts de erro de Ajustes: arquivo inválido, card não gerado | `pages/SettingsPage.tsx` | `toast-importar-erro`, `toast-card-erro` |
+| Sobre | `pages/AboutPage.tsx` | `sobre` |
+| Página não encontrada (404) | `pages/NotFoundPage.tsx` | `nao-encontrada` |
+| Banner de instalação (Android e iOS) | `components/InstallBanner.tsx` | `banner-instalar`, `banner-instalar-ios` |
+| Toast de atualização do app (fixo) | `App.tsx (PwaRefreshListener), main.tsx, lib/pwaUpdate.ts` | `toast-atualizacao-pwa` |
+| Todas as variantes de toast | `components/ToastProvider.tsx` | `toasts-variantes` |
+| Carregando de rota preguiçosa | `components/layout/TabScreenSkeleton.tsx` | `skeleton-pagina` |
+| Folha de componentes | `(design)` | `componentes` |
+
+**Fora do mock, de propósito:** layout desktop (sidebar de `md:` em diante), seletor de arquivo e menu nativo de compartilhar (UI do sistema), erro global e offline (não existem no app; se forem criados, usar `.empty` com `.btn--primary` e o toast de erro). Componentes sem uso nas páginas: `ShareMenu`, `DownloadCycleMenu`, `ShareExportCard`, `PageSkeleton`, `HelpHint`.
+
+**Observação de navegação:** "Mais" na tab bar abre um menu (modal ancorado acima da tab bar) com Vender, Droiddex, Fusão, Sobre e Ajustes. Mock: `mais`. No código a página `/settings` usa o título "Mais"; nos mocks o título é "Ajustes".
+
+**Toast:** no app ele aparece no topo da tela; nos mocks fica em um slot logo acima da tab bar, empurra o conteúdo e nunca cobre botão (decisão do Kayo, validada). Variantes (sucesso, info, neutro, aviso, erro), detalhe de uma linha, ação e "fixo até agir" estão em `toasts-variantes`. O aviso usa os tokens novos `--c-warn-fg` e `--c-warn-bg`.
 
 Os dados nos mocks são os do app (Ciclo 5, Renascimento #30 com R7 Galáctico, LEP Beskar e CYCLENS Galáctico; créditos 100T; receitas de fusão e regras reais do `data.json`). Droids sem imagem local aparecem como vaga com silhueta.
 

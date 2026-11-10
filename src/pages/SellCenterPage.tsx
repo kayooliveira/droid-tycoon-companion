@@ -63,19 +63,19 @@ export function SellCenterPage() {
       item.tier,
     )
     return (
-      <div key={`${item.unitId}-${idx}`} className="dc-row dc-row-droid">
+      <div key={`${item.unitId}-${idx}`} className="row item">
         <DroidImage droid={droid} tier={item.tier} size="sm" className="!h-[50px] !w-[50px] rounded-[11px]" />
-        <div className="dc-row-main">
-          <span className="dc-droid-name dc-row-label">{droid.name}</span>
-          <span className="dc-row-sub dc-row-sub--badge">
-            <span className="dc-row-sub-meta">
+        <div className="row-main">
+          <span className="dname row-title">{droid.name}</span>
+          <span className="hint ">
+            <span className="t-meta">
               {`${formatTierName(item.tier, tierLabels)} · ${t('progress.qtyShort', { n: item.quantity })}`}
             </span>
             {item.category === 'useNext' ? <SellBadge sellable /> : null}
           </span>
-          <span className="dc-row-sub">{t(item.reasonKey, item.reasonParams)}</span>
+          <span className="hint">{t(item.reasonKey, item.reasonParams)}</span>
           {plan?.disposition === 'fusionHold' ? (
-            <span className="dc-row-sub text-ui-warn">{t('sellAfter.fusionHold')}</span>
+            <span className="hint text-ui-warn">{t('sellAfter.fusionHold')}</span>
           ) : null}
         </div>
       </div>
@@ -85,10 +85,10 @@ export function SellCenterPage() {
   return (
     <TabScrollLayout title={t('sell.title')} testId="sell-page">
       <InsetGroup footer={t('sell.intro', { from: progress.nextRebirth, cycle: cycleName })}>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('settings.path')}</span>
-            <span className="dc-row-sub">
+        <div className="row">
+          <div className="row-main">
+            <span className="row-title">{t('settings.path')}</span>
+            <span className="hint">
               <PathProgressSwitcher compact />
             </span>
           </div>
@@ -97,22 +97,22 @@ export function SellCenterPage() {
 
       {allEmpty ? (
         <InsetGroup data-testid="sell-empty-state">
-          <div className="dc-row">
+          <div className="row">
             <Package {...uiIconProps} className="shrink-0 text-ui-accent" />
-            <div className="dc-row-main">
-              <span className="dc-row-label">{t('sell.emptyStateTitle')}</span>
-              <span className="dc-row-sub">{t('sell.emptyStateBody')}</span>
+            <div className="row-main">
+              <span className="row-title">{t('sell.emptyStateTitle')}</span>
+              <span className="hint">{t('sell.emptyStateBody')}</span>
             </div>
           </div>
-          <Link to="/inventory" className="dc-row dc-row-chevron">
-            <span className="dc-row-label">{t('sell.emptyStateCta')}</span>
+          <Link to="/inventory" className="row row row--link">
+            <span className="row-title">{t('sell.emptyStateCta')}</span>
           </Link>
         </InsetGroup>
       ) : (
         <>
           {safeNow.length > 0 ? (
-            <section className="dc-section" data-testid="sell-center-safe-now">
-              <h2 className="dc-section-header">{t('sell.safeNowTitle')}</h2>
+            <section className="sec" data-testid="sell-center-safe-now">
+              <h2 className="sec-h">{t('sell.safeNowTitle')}</h2>
               <InsetGroup footer={t('sell.safeNowHint', { rebirth: completedRebirth })}>
                 {safeNow.map(({ item }, idx) => renderItemRow(item, idx))}
               </InsetGroup>
@@ -131,8 +131,8 @@ export function SellCenterPage() {
                     ? 'sell.sellableGroupFooter'
                     : undefined
             return (
-              <section key={cat} className="dc-section" data-testid={`sell-center-${cat}`}>
-                <h2 className="dc-section-header">{t(`sell.${cat}`)}</h2>
+              <section key={cat} className="sec" data-testid={`sell-center-${cat}`}>
+                <h2 className="sec-h">{t(`sell.${cat}`)}</h2>
                 <InsetGroup footer={footerKey ? t(footerKey) : undefined}>
                   {groups[cat].map((item, idx) => renderItemRow(item, idx))}
                 </InsetGroup>
@@ -142,7 +142,7 @@ export function SellCenterPage() {
         </>
       )}
 
-      <div className="dc-scroll-spacer" aria-hidden />
+      <div aria-hidden />
     </TabScrollLayout>
   )
 }

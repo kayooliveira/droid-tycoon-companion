@@ -16,6 +16,7 @@ import { UI_ICON_SIZE, UI_ICON_WEIGHT } from './ui/iconStyle'
 import { useScrollRestoration } from '../hooks/useScrollRestoration'
 import { persistLastTab, useLastTabRestore } from '../hooks/useLastTab'
 import { cn } from '../lib/utils'
+import { APP_OVERLAY_ROOT_ID } from '../lib/overlayRoot'
 import { Logo } from './Logo'
 import { InstallBanner } from './InstallBanner'
 import { Modal } from './ui/Modal'
@@ -99,36 +100,35 @@ export function AppShell() {
           onMoreToggle={() => setMoreOpen((open) => !open)}
           onCloseMore={() => setMoreOpen(false)}
         />
+        <div id={APP_OVERLAY_ROOT_ID} className="ds-overlay-anchor" data-testid="app-overlay-root" />
+        <Modal
+          open={moreOpen}
+          onClose={() => setMoreOpen(false)}
+          title={t('nav.more')}
+          testId="nav-more-modal"
+          anchorAboveMobileNav
+        >
+          <div className="stack">
+            {moreMobile.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                onClick={() => setMoreOpen(false)}
+                className={({ isActive }) =>
+                  cn('row row--link', isActive && 'ring-2 ring-[var(--c-accent)]')
+                }
+              >
+                <span className="row-ic" aria-hidden>
+                  <item.icon size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} />
+                </span>
+                <span className="row-main">
+                  <span className="dname">{t(item.labelKey)}</span>
+                </span>
+              </NavLink>
+            ))}
+          </div>
+        </Modal>
       </div>
-
-      <Modal
-        open={moreOpen}
-        onClose={() => setMoreOpen(false)}
-        title={t('nav.more')}
-        testId="nav-more-modal"
-        anchorAboveMobileNav
-      >
-        <div className="grid gap-1">
-          {moreMobile.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              onClick={() => setMoreOpen(false)}
-              className={({ isActive }) =>
-                cn(
-                  'flex min-h-11 items-center gap-3 rounded-xl px-3 py-3 text-sm',
-                  isActive
-                    ? 'bg-[var(--c-surface-2)] text-[var(--c-accent-text)]'
-                    : 'hover:bg-[var(--c-surface-2)]',
-                )
-              }
-            >
-              <item.icon size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} />
-              {t(item.labelKey)}
-            </NavLink>
-          ))}
-        </div>
-      </Modal>
 
       <InstallBanner />
     </div>

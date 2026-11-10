@@ -75,25 +75,25 @@ const RebirthListItem = memo(function RebirthListItem({
     <InsetGroup>
       <button
         type="button"
-        className="dc-row dc-row-chevron w-full"
+        className="row row row--link w-full"
         aria-expanded={open}
         onClick={onToggle}
         data-testid={`progress-list-item-${rebirth}`}
       >
-        <div className="dc-row-main">
-          <span className="dc-row-label">
+        <div className="row-main">
+          <span className="row-title">
             {t('progress.listRebirthHeading', { n: rebirth })}
             {done ? ` · ${t('progress.listDone')}` : ''}
             {active ? ` · ${t('progress.listCurrent')}` : ''}
           </span>
-          <span className="dc-row-sub">{entry.credits}</span>
+          <span className="hint">{entry.credits}</span>
         </div>
         {trackInventory && !done ? (
-          <span className="dc-row-trail text-xs text-ui-muted shrink-0">
+          <span className="row-val text-xs text-ui-muted shrink-0">
             {metRequirementCount(checks)}/3
           </span>
         ) : done ? (
-          <span className="dc-row-trail text-xs text-ui-success shrink-0">
+          <span className="row-val text-xs text-ui-success shrink-0">
             {t('progress.listCompletedState')}
           </span>
         ) : null}
@@ -101,8 +101,8 @@ const RebirthListItem = memo(function RebirthListItem({
       {open ? (
         <>
           {entry.note ? (
-            <div className="dc-row">
-              <span className="dc-row-sub text-ui-warn">{entry.note}</span>
+            <div className="row">
+              <span className="hint text-ui-warn">{entry.note}</span>
             </div>
           ) : null}
           {!done &&
@@ -120,12 +120,12 @@ const RebirthListItem = memo(function RebirthListItem({
                 rebirth,
               )
               return (
-                <div key={c.requirement.droidId} className="dc-row dc-row-droid">
+                <div key={c.requirement.droidId} className="row item">
                   <DroidImage droid={d} tier={tier} size="sm" className="!h-[50px] !w-[50px] rounded-[11px]" />
-                  <div className="dc-row-main">
-                    <span className="dc-droid-name dc-row-label">{d.name}</span>
-                    <span className="dc-row-sub dc-row-sub--badge">
-                      <span className="dc-row-sub-meta">{subMeta}</span>
+                  <div className="row-main">
+                    <span className="dname row-title">{d.name}</span>
+                    <span className="hint ">
+                      <span className="t-meta">{subMeta}</span>
                       <SellBadge sellable={sellable} />
                     </span>
                   </div>
@@ -150,12 +150,12 @@ const RebirthListItem = memo(function RebirthListItem({
                 const sellable = u.disposition === 'sellable'
                 const subMeta = `${formatTierName(u.tier, tierLabels)} · ${t('progress.qtyShort', { n: u.quantity })}`
                 return (
-                  <div key={`${u.droidId}-${u.tier}`} className="dc-row dc-row-droid">
+                  <div key={`${u.droidId}-${u.tier}`} className="row item">
                     <DroidImage droid={d} tier={u.tier} size="sm" className="!h-[50px] !w-[50px] rounded-[11px]" />
-                    <div className="dc-row-main">
-                      <span className="dc-droid-name dc-row-label">{d.name}</span>
-                      <span className="dc-row-sub dc-row-sub--badge">
-                        <span className="dc-row-sub-meta">{subMeta}</span>
+                    <div className="row-main">
+                      <span className="dname row-title">{d.name}</span>
+                      <span className="hint ">
+                        <span className="t-meta">{subMeta}</span>
                         <SellBadge sellable={sellable} />
                       </span>
                     </div>
@@ -222,15 +222,15 @@ export function ProgressRebirthList({
 
   return (
     <ScreenSection testId="progress-rebirth-list">
-      <div className="dc-section-header-row">
-        <h2 className="dc-section-header">{t('progress.rebirthListSection')}</h2>
+      <div className="sec-h">
+        <h2 className="sec-h">{t('progress.rebirthListSection')}</h2>
         <button
           type="button"
           data-testid="progress-list-expand-all"
           aria-expanded={anyExpanded}
           aria-label={toggleAria}
           onClick={toggleAll}
-          className="dc-section-header-action"
+          className="btn btn--ghost btn--sm"
         >
           {toggleLabel}
         </button>

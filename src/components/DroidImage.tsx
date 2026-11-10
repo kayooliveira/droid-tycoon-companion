@@ -2,8 +2,26 @@ import { Robot } from '@phosphor-icons/react'
 import { droidImageSrc, isMissingImageFlag } from '../lib/images'
 import { cn } from '../lib/utils'
 import type { Droid, TierId } from '../domain/types'
-import { tierSurfaceClass } from './ui/tierVisuals'
 import { uiIconProps } from './ui/iconStyle'
+
+const TIER_NUM: Record<TierId, string> = {
+  default: '01',
+  gold: '02',
+  diamond: '03',
+  rainbow: '04',
+  beskar: '05',
+  galactic: '06',
+  stellar: '07',
+  kyber: '08',
+  scourge: 'S',
+}
+
+const SIZE_CLASS = {
+  sm: 'dtile--sm',
+  md: '',
+  lg: 'dtile--lg',
+  xs: 'dtile--xs',
+} as const
 
 export function DroidImage({
   droid,
@@ -11,50 +29,64 @@ export function DroidImage({
   size = 'md',
   className,
   priority,
+  quantity,
+  missing,
 }: {
   droid: Pick<Droid, 'id' | 'imageLocal' | 'imageMissing' | 'name'>
   tier?: TierId
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'xs' | 'sm' | 'md' | 'lg'
   className?: string
   priority?: boolean
+  quantity?: number
+  missing?: boolean
 }) {
-  const sizes = { sm: 'h-10 w-10', md: 'h-14 w-14', lg: 'h-24 w-24' }
-  const iconSizes = { sm: 22, md: 28, lg: 40 } as const
-  const missing = isMissingImageFlag(droid) || !droid.imageLocal
-  const src = missing ? null : droidImageSrc(droid.id, droid.imageLocal)
-
-  const backdropClass = cn(
-    'tier-droid-backdrop',
-    tierSurfaceClass(tier),
-    sizes[size],
-    className,
-  )
-
-  if (missing || !src) {
-    return (
-      <div className={backdropClass} role="img" aria-label={droid.name}>
-        <Robot
-          {...uiIconProps}
-          size={iconSizes[size]}
-          className="tier-droid-backdrop__placeholder shrink-0 opacity-70"
-          aria-hidden
-        />
-      </div>
-    )
-  }
+  const isMissing = missing ?? (isMissingImageFlag(droid) || !droid.imageLocal)
+  const src = isMissing ? null : droidImageSrc(droid.id, droid.imageLocal)
 
   return (
-    <div className={backdropClass}>
-      <img
-        src={src}
-        alt={droid.name}
-        width={size === 'lg' ? 96 : size === 'md' ? 56 : 40}
-        height={size === 'lg' ? 96 : size === 'md' ? 56 : 40}
-        className="tier-droid-backdrop__img"
-        loading={priority ? 'eager' : 'lazy'}
-        decoding="async"
-        fetchPriority={priority ? 'high' : 'auto'}
-      />
-    </div>
+    <span
+      className={cn('dtile', SIZE_CLASS[size], isMissing && 'dtile--missing', className)}
+      data-tier={tier}
+      role="img"
+      aria-label={droid.name}
+    >
+      <span className="dtile-bg" aria-hidden />
+      <span className="dtile-num" aria-hidden>
+        {TIER_NUM[tier]}
+      </span>
+      {src ? (
+        <img
+          src={src}
+          alt=""
+          width={128}
+          height={128}
+          loading={priority ? 'eager' : 'lazy'}
+          decoding="async"
+          fetchPriority={priority ? 'high' : 'auto'}
+        />
+      ) : (
+        <Robot
+          {...uiIconProps}
+          size={size === 'lg' ? 40 : size === 'sm' || size === 'xs' ? 22 : 28}
+          className="ic"
+          style={{
+            position: 'absolute',
+            left: '50%',
+            bottom: '10%',
+            transform: 'translateX(-50%)',
+            opacity: 0.7,
+          }}
+          aria-hidden
+        />
+      )}
+      {quantity != null && quantity > 1 ? (
+        <span className="dtile-qty" aria-label={`quantidade ${quantity}`}>
+          ×{quantity}
+        </span>
+      ) : null}
+      <span className="dtile-q" aria-hidden>
+        ?
+      </span>
+    </span>
   )
 }

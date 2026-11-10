@@ -23,11 +23,10 @@ describe('ToastProvider', () => {
     vi.useRealTimers()
   })
 
-  it('renders in-flow toast slot', () => {
+  it('renders toast stack at top anchor', () => {
     render(
       <ToastProvider>
         <PushOnMount message="Hello" options={{ variant: 'info' }} />
-        <ToastViewport />
       </ToastProvider>,
     )
     const stack = screen.getByTestId('toast-stack')
@@ -45,7 +44,6 @@ describe('ToastProvider', () => {
             action: { label: 'Undo', onClick: () => {} },
           }}
         />
-        <ToastViewport />
       </ToastProvider>,
     )
     expect(screen.getByText('Undo me').closest('[data-testid="toast-item"]')).toHaveAttribute(
@@ -59,7 +57,6 @@ describe('ToastProvider', () => {
     render(
       <ToastProvider>
         <PushOnMount message="Failed" options={{ variant: 'error' }} />
-        <ToastViewport />
       </ToastProvider>,
     )
     expect(screen.getByText('Failed').closest('[data-testid="toast-item"]')).toHaveAttribute(

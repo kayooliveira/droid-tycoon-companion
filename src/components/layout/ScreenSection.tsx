@@ -11,7 +11,7 @@ export function ScreenSection({
   testId?: string
 }) {
   return (
-    <section className={cn('dc-section', className)} data-testid={testId}>
+    <section className={cn('sec', className)} data-testid={testId}>
       {children}
     </section>
   )

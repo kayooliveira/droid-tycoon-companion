@@ -57,26 +57,26 @@ export function CyclesPage() {
             />
           </div>
         </div>
-        <div className="dc-row">
+        <div className="row">
           <CycleGuidePdfExport pathId={pathId} cycleName={cycleName} />
         </div>
       </InsetGroup>
 
-      <div className="dc-card-list">
+      <div className="stack">
       {rebirths.map((entry) => {
         const open = openRebirth === entry.rebirth
         return (
           <InsetGroup key={entry.rebirth} testId={`cycles-rebirth-group-${entry.rebirth}`}>
             <button
               type="button"
-              className="dc-row dc-row-chevron w-full"
+              className="row row row--link w-full"
               onClick={() => setOpenRebirth(open ? null : entry.rebirth)}
               data-testid={`cycles-rebirth-${entry.rebirth}`}
               aria-expanded={open}
             >
-              <div className="dc-row-main">
-                <span className="dc-row-label">{t('cycles.rebirthN', { n: entry.rebirth })}</span>
-                <span className="dc-row-sub">
+              <div className="row-main">
+                <span className="row-title">{t('cycles.rebirthN', { n: entry.rebirth })}</span>
+                <span className="hint">
                   {entry.credits} · {t(`confidence.${entry.confidence}`)}
                 </span>
               </div>
@@ -84,14 +84,14 @@ export function CyclesPage() {
             {open ? (
               <>
                 {entry.note ? (
-                  <div className="dc-row">
-                    <span className="dc-row-sub text-ui-warn">{entry.note}</span>
+                  <div className="row">
+                    <span className="hint text-ui-warn">{entry.note}</span>
                   </div>
                 ) : null}
                 {entry.requirements.map((req) => {
                   const droid = droidById.get(req.droidId)
                   return (
-                    <div key={req.droidId} className="dc-row dc-row-droid">
+                    <div key={req.droidId} className="row item">
                       {droid ? (
                         <DroidImage
                           droid={droid}
@@ -100,9 +100,9 @@ export function CyclesPage() {
                           className="!h-[50px] !w-[50px] rounded-[11px]"
                         />
                       ) : null}
-                      <div className="dc-row-main">
-                        <span className="dc-droid-name dc-row-label">{droid?.name ?? req.droidId}</span>
-                        <span className="dc-row-sub">
+                      <div className="row-main">
+                        <span className="dname row-title">{droid?.name ?? req.droidId}</span>
+                        <span className="hint">
                           {formatTierName(req.rarity, tierLabels)}
                           {req.quantity > 1 ? ` · ×${req.quantity}` : ''}
                         </span>
@@ -117,19 +117,19 @@ export function CyclesPage() {
       })}
       </div>
 
-      <h2 className="dc-section-header" data-testid="cycles-super-section-header">
+      <h2 className="sec-h" data-testid="cycles-super-section-header">
         {t('cycles.superSection')}
       </h2>
       <InsetGroup>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('cycles.superBody', { n: SUPER_REBIRTH_UNLOCK_AFTER })}</span>
-            <span className="dc-row-sub">{t('common.unconfirmed')}</span>
+        <div className="row">
+          <div className="row-main">
+            <span className="row-title">{t('cycles.superBody', { n: SUPER_REBIRTH_UNLOCK_AFTER })}</span>
+            <span className="hint">{t('common.unconfirmed')}</span>
           </div>
         </div>
       </InsetGroup>
 
-      <div className="dc-scroll-spacer" aria-hidden />
+      <div aria-hidden />
     </TabScrollLayout>
   )
 }
