@@ -373,35 +373,40 @@ export function InventoryPage() {
         ) : null}
       </DroidDetailSheet>
 
-      <Sheet open={addOpen} onClose={() => setAddOpen(false)} testId="inventory-add-modal">
-        <h2 className="text-[20px] font-bold mb-4">{t('inventory.modalTitle')}</h2>
-        <div className="space-y-4">
+      <Sheet
+        open={addOpen}
+        onClose={() => setAddOpen(false)}
+        testId="inventory-add-modal"
+        aboveTabBar
+        title={t('inventory.modalTitle')}
+        headerLabel={t('inventory.modalTitle')}
+      >
+        <div className="stack">
           <SearchInput
             placeholder={t('inventory.searchDroids')}
             value={pickerSearch}
             onChange={(e) => setPickerSearch(e.target.value)}
             aria-label={t('inventory.searchDroids')}
           />
-          <div className="max-h-48 overflow-auto grid grid-cols-2 gap-2">
+          <div className="add-droid-picks">
             {pickerDroids.map((d) => (
               <button
                 key={d.id}
                 type="button"
                 onClick={() => setNewDroidId(d.id)}
-                className="inventory-picker-row"
+                className="pick"
                 aria-pressed={newDroidId === d.id}
               >
-                <DroidImage droid={d} tier="default" size="sm" className="!h-8 !w-8" />
-                <span className="truncate">{d.name}</span>
+                <DroidImage droid={d} tier="default" size="sm" className="!w-[44px] !h-[44px]" />
+                <span className="dname">{d.name}</span>
               </button>
             ))}
           </div>
-          <div className="space-y-1.5">
-            <p className="text-sm text-ui-muted">{t('inventory.pickTier')}</p>
+          <div className="add-droid-tier-block">
+            <span className="t-label">{t('inventory.pickTier')}</span>
             <ChipRadioGroup
               ariaLabel={t('inventory.pickTier')}
               testId="inventory-add-tier-chips"
-              scrollX
               value={newTier}
               onChange={setNewTier}
               options={tierPickOptions}
@@ -415,8 +420,9 @@ export function InventoryPage() {
             increaseLabel={t('inventory.increaseQuantity')}
             testId="inventory-add-qty"
           />
-          <Button
-            className="w-full"
+          <button
+            type="button"
+            className="btn btn--primary btn--block"
             data-testid="inventory-add-confirm"
             onClick={() => {
               addInventoryUnit(newDroidId, newTier, newQty)
@@ -427,7 +433,7 @@ export function InventoryPage() {
             }}
           >
             {t('inventory.add')}
-          </Button>
+          </button>
         </div>
       </Sheet>
 

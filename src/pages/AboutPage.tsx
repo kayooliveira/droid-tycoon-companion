@@ -5,6 +5,7 @@ import { gameData } from '../domain/gameData'
 import { APP_PUBLIC_URL } from '../lib/constants'
 import { FeedbackWhatsAppLink } from '../components/FeedbackWhatsAppLink'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
+import { MoreBackBar } from '../components/layout/MoreBackBar'
 import { InsetGroup } from '../components/ui/InsetGroup'
 
 export function AboutPage() {
@@ -13,7 +14,7 @@ export function AboutPage() {
   const stale = gameDataSource.isStale()
 
   return (
-    <TabScrollLayout title={t('about.title')} testId="about-page">
+    <TabScrollLayout title={t('about.title')} testId="about-page" backBar={<MoreBackBar />}>
       <InsetGroup footer={t('app.disclaimer')}>
         <div className="row">
           <div className="row-main">

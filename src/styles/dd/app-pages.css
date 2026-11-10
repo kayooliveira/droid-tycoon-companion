@@ -146,6 +146,7 @@ button.row.row--link::after {
   gap: 14px;
   width: 100%;
   min-width: 0;
+  padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px) + 8px);
 }
 
 .collection-grid.collection-list {
@@ -369,6 +370,16 @@ button.row.row--link::after {
   margin: 12px 0 8px;
 }
 
+[data-theme='figurinhas'] .onboarding-welcome-compact .trio > div {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+[data-theme='figurinhas'] .onboarding-welcome-compact .trio .dtile--lg {
+  width: min(30vw, 112px);
+  margin: 0 auto;
+}
+
 .onboarding-welcome-compact .top {
   margin-bottom: 0;
 }
@@ -407,4 +418,113 @@ button.row.row--link::after {
 
 .progress-search-field .field {
   font-size: max(14px, min(16px, 4.1vw));
+}
+
+.add-droid-picks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  max-height: min(240px, 38vh);
+  overflow-y: auto;
+  margin-bottom: 16px;
+}
+
+.add-droid-picks .pick {
+  min-height: 52px;
+}
+
+.add-droid-picks .dname {
+  overflow-wrap: anywhere;
+  white-space: normal;
+  line-height: 1.15;
+}
+
+.add-droid-tier-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+
+.collection-list .row.item {
+  min-height: var(--row-h, 60px);
+}
+
+.collection-list .row.item .dtile {
+  width: var(--item-tile, 56px);
+  height: var(--item-tile, 56px);
+}
+
+.onboarding-lang-pill {
+  min-width: 44px;
+}
+
+.onboarding-lang-pill > button {
+  min-width: 44px;
+}
+
+.dashboard-compact .sec:last-child {
+  margin-bottom: calc(var(--tab-h) + 8px);
+}
+
+.droiddex-detail-art {
+  width: min(168px, 44vw);
+  margin: 0 auto 12px;
+}
+
+.droiddex-detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.droiddex-req-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+  border-top: 1px solid var(--c-border);
+  font-size: var(--fs-small);
+}
+
+.droiddex-req-row:first-child {
+  border-top: 0;
+}
+
+.droiddex-source {
+  display: inline-flex;
+  margin-top: 8px;
+  color: var(--c-accent-text);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.install-banner-ds {
+  left: var(--sp-page);
+  right: var(--sp-page);
+  bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px) + 8px);
+  max-width: 390px;
+  margin: 0 auto;
+}
+
+.sheet-art--compact {
+  max-height: min(42vw, 180px);
+}
+
+.sheet-art--compact .dtile {
+  max-height: min(42vw, 180px);
+  width: auto;
+  margin: 0 auto;
+}
+
+.install-banner-ds .banner-act .btn {
+  white-space: normal;
+  text-align: center;
+  min-height: 44px;
+  height: auto;
+  padding: 8px 12px;
 }

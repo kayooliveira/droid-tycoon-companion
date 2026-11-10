@@ -323,7 +323,7 @@
     "openDashboard": "Abrir início"
   },
   "appearance": {
-    "themeAndMode": "Tema e modo",
+    "themeAndMode": "Visual e modo",
     "visualTheme": "Tema",
     "themeGroup": "Tema",
     "themeAria": "Tema {{name}}",

@@ -40,8 +40,8 @@ export function DroidDetailSheet({
       closeLabel={t('common.close')}
       headerLabel={droid.name}
     >
-      <div className="sheet-art">
-        <DroidImage droid={droid} tier={tier} size="lg" quantity={quantity} />
+      <div className="sheet-art sheet-art--compact">
+        <DroidImage droid={droid} tier={tier} size="md" quantity={quantity} />
       </div>
       <div className="sheet-title">
         <h2 className="sheet-name dname">{droid.name}</h2>

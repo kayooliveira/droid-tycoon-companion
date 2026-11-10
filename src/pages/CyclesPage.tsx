@@ -4,7 +4,7 @@ import { CycleGuidePdfExport } from '../components/CycleGuidePdfExport'
 import { DroidImage } from '../components/DroidImage'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
 import { InsetGroup } from '../components/ui/InsetGroup'
-import { SegmentedControl } from '../components/ui/SegmentedControl'
+import { RadioCardGroup } from '../components/ui/RadioCardGroup'
 import { cycleById, droidById, gameData, getRebirth } from '../domain/gameData'
 import { REBIRTHS_PER_PATH, SUPER_REBIRTH_UNLOCK_AFTER } from '../domain/progress'
 import { formatTierName } from '../domain/tiers'
@@ -41,22 +41,25 @@ export function CyclesPage() {
 
   return (
     <TabScrollLayout title={t('cycles.title')} testId="cycles-page">
-      <InsetGroup footer={t('cycles.referenceNote')}>
-        <div className="px-4 py-3">
-          <div className="chips chips--scroll" data-testid="cycles-path-chips">
-            <SegmentedControl
-              compact
-              className="!mx-0"
-              ariaLabel={t('cycles.pickCycle')}
-              value={pathId}
-              onChange={(id) => {
-                setPathId(id)
-                setOpenRebirth(1)
-              }}
-              options={cycleOptions}
-            />
-          </div>
+      <section className="sec">
+        <div className="sec-h">
+          <h2 className="t-h2">{t('cycles.pickCycle')}</h2>
         </div>
+        <div data-testid="cycles-path-chips">
+          <RadioCardGroup
+            ariaLabel={t('cycles.pickCycle')}
+            value={pathId}
+            onChange={(id) => {
+              setPathId(id)
+              setOpenRebirth(1)
+            }}
+            columns={3}
+            optionTestIdPrefix="cycles-path-option"
+            options={cycleOptions}
+          />
+        </div>
+      </section>
+      <InsetGroup footer={t('cycles.referenceNote')}>
         <div className="row">
           <CycleGuidePdfExport pathId={pathId} cycleName={cycleName} />
         </div>

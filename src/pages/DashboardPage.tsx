@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { Tag, TreeStructure, Warehouse } from '@phosphor-icons/react'
+import { Check, Tag, TreeStructure, Warehouse, X } from '@phosphor-icons/react'
 import { CycleProgressStrip } from '../components/home/CycleProgressStrip'
 import { DroidImage } from '../components/DroidImage'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
@@ -29,6 +29,7 @@ export function DashboardPage() {
     <TabScrollLayout
       title={t('nav.dashboard')}
       testId="home-hub"
+      className="dashboard-compact"
       headerExtra={<span className="chip-static">{cycleLabel}</span>}
     >
       <CycleProgressStrip />
@@ -61,7 +62,18 @@ export function DashboardPage() {
                   <span className="dname">{d.name}</span>
                   <span className="t-meta">{formatTierName(c.requirement.rarity, tierLabels)}</span>
                   <span className={ok ? 'tag tag--ok' : 'tag tag--bad'}>
-                    {ok ? t('status.ready') : t('status.missing')}
+                    <i className="tag-sq" aria-hidden />
+                    {ok ? (
+                      <>
+                        <Check {...uiIconProps} size={14} className="ic" />
+                        {t('status.ready')}
+                      </>
+                    ) : (
+                      <>
+                        <X {...uiIconProps} size={14} className="ic" />
+                        {t('status.missing')}
+                      </>
+                    )}
                   </span>
                 </button>
               )
@@ -94,21 +106,16 @@ export function DashboardPage() {
             </span>
             <span className="hint">{cycle ? t('home.sellInCycle') : ''}</span>
           </span>
-          <span className="chev" aria-hidden>
-            <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
-              <path d="m9 5 7 7-7 7" />
-            </svg>
-          </span>
         </Link>
       </section>
 
-      <div style={{ marginTop: 16 }}>
+      <div style={{ marginTop: 12 }}>
         <Link to="/progress" className="btn btn--primary btn--block">
           {t('home.primaryViewProgress')}
         </Link>
       </div>
 
-      <section className="sec">
+      <section className="sec" style={{ marginTop: 12 }}>
         <div className="sec-h">
           <h2 className="t-h2">{t('home.cycleSummaryTitle')}</h2>
         </div>

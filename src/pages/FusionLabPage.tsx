@@ -8,6 +8,7 @@ import { Badge } from '../components/ui/Badge'
 import { droidMatchesQuery } from '../lib/droidNameMatch'
 import { useAppStore } from '../store/useAppStore'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
+import { MoreBackBar } from '../components/layout/MoreBackBar'
 import { InsetGroup } from '../components/ui/InsetGroup'
 import { SearchInput } from '../components/ui/SearchInput'
 
@@ -47,7 +48,7 @@ export function FusionLabPage() {
   const showResultTierRule = gameData.fusions.some((f) => f.resultTierRule)
 
   return (
-    <TabScrollLayout title={t('fusion.title')} testId="fusion-page">
+    <TabScrollLayout title={t('fusion.title')} testId="fusion-page" backBar={<MoreBackBar />}>
       <section className="sec">
         <h2 className="sec-h">{t('fusion.rulesTitle')}</h2>
         <InsetGroup testId="fusion-rules-card" footer={t('fusion.rulesFootnote')}>

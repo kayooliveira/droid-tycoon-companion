@@ -123,7 +123,20 @@ export function Modal({
             data-testid={testId}
             className={cn('modal', className)}
           >
-            <h2 id={titleId}>{title}</h2>
+            <div className="modal-h">
+              <h2 id={titleId} className="sheet-name">
+                {title}
+              </h2>
+              <button
+                type="button"
+                className="btn btn--icon btn--secondary"
+                aria-label={t('common.close')}
+                data-testid={`${testId}-close`}
+                onClick={onClose}
+              >
+                <X {...uiIconProps} width={22} height={22} className="ic" />
+              </button>
+            </div>
             {children}
             {footer ? <div className="modal-act">{footer}</div> : null}
           </div>

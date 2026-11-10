@@ -2,9 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import {
-  ArrowLeft,
-  ArrowRight,
-  Check,
   Desktop,
   Export,
   Minus,
@@ -188,7 +185,12 @@ export function OnboardingPage() {
     >
       <main className="scroll mx-auto w-full max-w-lg flex-1 flex flex-col px-4 sm:px-6 py-4 min-h-0">
         <div className="flex items-center justify-between gap-2 mb-2 shrink-0">
-          <div className="seg" data-testid="onboarding-lang-pill" role="group" aria-label={t('onboarding.language')}>
+          <div
+            className="seg onboarding-lang-pill"
+            data-testid="onboarding-lang-pill"
+            role="group"
+            aria-label={t('onboarding.language')}
+          >
             {(['pt-BR', 'en'] as const).map((loc) => (
               <button
                 key={loc}
@@ -200,14 +202,7 @@ export function OnboardingPage() {
               </button>
             ))}
           </div>
-          <button
-            type="button"
-            className="btn btn--ghost btn--sm"
-            data-testid="onboarding-skip"
-            onClick={skip}
-          >
-            {t('onboarding.skip')}
-          </button>
+          <span className="w-11" aria-hidden />
         </div>
 
         <div
@@ -464,36 +459,21 @@ export function OnboardingPage() {
 
         <div className="stack shrink-0 pt-4" style={{ marginTop: 'auto' }}>
           {current === 'welcome' ? (
-            <Button className="w-full" data-testid="onboarding-start" onClick={goNext}>
+            <button type="button" className="btn btn--primary btn--block w-full" data-testid="onboarding-start" onClick={goNext}>
               {t('onboarding.start')}
-            </Button>
+            </button>
           ) : step < STEPS.length - 1 ? (
-            <Button
-              className="w-full"
-              data-testid="onboarding-next"
-              icon={<ArrowRight {...uiIconProps} />}
-              onClick={goNext}
-            >
+            <Button className="w-full btn btn--primary" data-testid="onboarding-next" onClick={goNext}>
               {t('onboarding.continue')}
             </Button>
           ) : (
-            <Button
-              className="w-full"
-              data-testid="onboarding-finish"
-              icon={<Check {...uiIconProps} />}
-              onClick={finish}
-            >
+            <Button className="w-full btn btn--primary" data-testid="onboarding-finish" onClick={finish}>
               {t('onboarding.ctaStart')}
             </Button>
           )}
           {step > 0 ? (
             <div className="grid2">
-              <Button
-                variant="secondary"
-                data-testid="onboarding-back"
-                icon={<ArrowLeft {...uiIconProps} />}
-                onClick={goBack}
-              >
+              <Button variant="secondary" data-testid="onboarding-back" onClick={goBack}>
                 {t('onboarding.back')}
               </Button>
               <Button variant="ghost" onClick={skip}>

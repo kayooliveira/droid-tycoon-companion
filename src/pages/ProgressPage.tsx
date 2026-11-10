@@ -38,6 +38,7 @@ import { ProgressActionStack } from '../components/progress/ProgressActionStack'
 import { ScreenSummaryCard } from '../components/layout/ScreenSummaryCard'
 import { hapticTap } from '../lib/haptics'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
+import { CycleProgressStrip } from '../components/home/CycleProgressStrip'
 import { DroidDetailSheet } from '../components/droid/DroidDetailSheet'
 import type { TierId } from '../domain/types'
 import { InsetGroup } from '../components/ui/InsetGroup'
@@ -162,6 +163,7 @@ export function ProgressPage() {
 
   return (
     <TabScrollLayout title={t('nav.progress')} testId="progress-page">
+      <CycleProgressStrip />
       <ScreenSummaryCard testId="progress-summary">
           <div className="row">
             <div className="row-main">

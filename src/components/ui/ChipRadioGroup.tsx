@@ -7,6 +7,7 @@ export function ChipRadioGroup<T extends string>({
   ariaLabel,
   testId,
   scrollX,
+  grid,
 }: {
   value: T
   onChange: (v: T) => void
@@ -14,6 +15,7 @@ export function ChipRadioGroup<T extends string>({
   ariaLabel: string
   testId?: string
   scrollX?: boolean
+  grid?: boolean
 }) {
   return (
     <div
@@ -21,10 +23,10 @@ export function ChipRadioGroup<T extends string>({
       aria-label={ariaLabel}
       data-testid={testId}
       className={cn(
-        'flex w-full min-w-0 max-w-full gap-2',
-        scrollX
-          ? 'overflow-x-auto overscroll-x-contain pb-1 snap-x snap-mandatory scrollbar-thin'
-          : 'flex-wrap',
+        'chips',
+        scrollX && 'chips--scroll',
+        grid && 'chips--grid',
+        !scrollX && !grid && 'flex-wrap',
       )}
     >
       {options.map((opt) => {
@@ -36,10 +38,8 @@ export function ChipRadioGroup<T extends string>({
             role="radio"
             aria-checked={active}
             data-testid={testId ? `${testId}-${opt.value}` : undefined}
-            className={cn(
-              'rounded-full px-3 py-2 text-base min-h-11 border font-medium shrink-0 snap-start whitespace-nowrap',
-              active ? 'ui-chip-active' : 'border-ui bg-ui-hover text-ui-muted hover:text-ui-fg',
-            )}
+            className="chip"
+            aria-pressed={active}
             onClick={() => onChange(opt.value)}
           >
             {opt.label}

@@ -13,6 +13,7 @@ import { DroidImage } from '../components/DroidImage'
 import { InsetGroup } from '../components/ui/InsetGroup'
 import { SellBadge } from '../components/ui/SellBadge'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
+import { MoreBackBar } from '../components/layout/MoreBackBar'
 import { uiIconProps } from '../components/ui/iconStyle'
 import { useAppStore } from '../store/useAppStore'
 
@@ -83,7 +84,7 @@ export function SellCenterPage() {
   }
 
   return (
-    <TabScrollLayout title={t('sell.title')} testId="sell-page">
+    <TabScrollLayout title={t('sell.title')} testId="sell-page" backBar={<MoreBackBar />}>
       <InsetGroup footer={t('sell.intro', { from: progress.nextRebirth, cycle: cycleName })}>
         <div className="row">
           <div className="row-main">

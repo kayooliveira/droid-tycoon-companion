@@ -323,7 +323,7 @@
     "openDashboard": "Open dashboard"
   },
   "appearance": {
-    "themeAndMode": "Theme & mode",
+    "themeAndMode": "Look & mode",
     "visualTheme": "Theme",
     "themeGroup": "Theme",
     "themeAria": "Theme {{name}}",
