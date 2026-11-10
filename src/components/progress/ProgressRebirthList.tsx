@@ -12,7 +12,7 @@ import { DroidImage } from '../DroidImage'
 import { IcTagCheck, IcTagX } from '../inventoryIcons'
 import { useAppStore } from '../../store/useAppStore'
 import { isDesignGateCapture } from '../../e2e/designGate'
-import { gateRebirthListNextRebirth } from '../../e2e/gateProgressFixture'
+import { gateRebirthListNextRebirth, isGateSuperModalBackdrop } from '../../e2e/gateProgressFixture'
 import { isMockInventoryFixture } from '../../e2e/mockInventoryFixture'
 
 type RebirthListItemProps = {
@@ -179,7 +179,9 @@ export function ProgressRebirthList({
   const { t } = useTranslation()
   const listAllExpanded = useAppStore((s) => s.settings.progressListAllExpanded)
   const updateSettings = useAppStore((s) => s.updateSettings)
+  const progress = useAppStore((s) => s.progress)
   const gateList = isDesignGateCapture() && isMockInventoryFixture(inventory)
+  const gateSuperPad = isGateSuperModalBackdrop(progress, inventory)
   const listNextRebirth = gateList
     ? gateRebirthListNextRebirth(
         useAppStore.getState().progress,
@@ -221,7 +223,10 @@ export function ProgressRebirthList({
   const toggleAria = anyExpanded ? t('progress.collapseAllAria') : t('progress.expandAllAria')
 
   return (
-    <div data-testid="progress-rebirth-list">
+    <div
+      data-testid="progress-rebirth-list"
+      style={gateSuperPad ? { marginTop: 20 } : undefined}
+    >
       <div className="sec-h sec-h--act">
         <h2 className="t-h2">{t('progress.rebirthListSection')}</h2>
         <button
