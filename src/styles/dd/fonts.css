@@ -1,0 +1,15 @@
+/* Gerado por tools/gen_fonts.py. Só baixa o que o tema ativo usa: o navegador só busca um @font-face quando alguma família dele aparece no texto renderizado. */
+@font-face{font-family:'Archivo';src:url('/fonts/dd/archivo-var.woff2') format('woff2');font-weight:100 900;font-stretch:62% 125%;font-style:normal;font-display:swap}
+@font-face{font-family:'Plex Mono';src:url('/fonts/dd/plex-mono-400.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Plex Mono';src:url('/fonts/dd/plex-mono-500.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:'Bricolage';src:url('/fonts/dd/bricolage-var.woff2') format('woff2');font-weight:200 800;font-stretch:75% 100%;font-style:normal;font-display:swap}
+@font-face{font-family:'Figtree';src:url('/fonts/dd/figtree-var.woff2') format('woff2');font-weight:300 900;font-style:normal;font-display:swap}
+@font-face{font-family:'Big Shoulders';src:url('/fonts/dd/big-shoulders-800.woff2') format('woff2');font-weight:800;font-style:normal;font-display:swap}
+@font-face{font-family:'Big Shoulders';src:url('/fonts/dd/big-shoulders-900.woff2') format('woff2');font-weight:900;font-style:normal;font-display:swap}
+@font-face{font-family:'Hanken';src:url('/fonts/dd/hanken-var.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
+@font-face{font-family:'Archivo Fallback';src:local('Arial');size-adjust:98.2%;ascent-override:89.4%;descent-override:21.4%;line-gap-override:0.0%}
+@font-face{font-family:'Plex Mono Fallback';src:local('Courier New');size-adjust:100.0%;ascent-override:102.5%;descent-override:27.5%;line-gap-override:0.0%}
+@font-face{font-family:'Bricolage Fallback';src:local('Arial');size-adjust:93.5%;ascent-override:99.5%;descent-override:28.9%;line-gap-override:0.0%}
+@font-face{font-family:'Figtree Fallback';src:local('Arial');size-adjust:102.4%;ascent-override:92.8%;descent-override:24.4%;line-gap-override:0.0%}
+@font-face{font-family:'Big Shoulders Fallback';src:local('Arial Narrow');size-adjust:140.9%;ascent-override:69.8%;descent-override:15.1%;line-gap-override:0.0%}
+@font-face{font-family:'Hanken Fallback';src:local('Arial');size-adjust:101.5%;ascent-override:98.6%;descent-override:29.9%;line-gap-override:0.0%}

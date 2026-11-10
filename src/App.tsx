@@ -12,7 +12,8 @@ import { NotFoundPage } from './pages/NotFoundPage'
 import { OnboardingPage } from './pages/OnboardingPage'
 import { setDocumentLanguage } from './i18n'
 import { reloadForPwaUpdate } from './lib/pwaUpdate'
-import { applyTheme, useAppStore } from './store/useAppStore'
+import { AppearanceSync } from './components/AppearanceSync'
+import { useAppStore } from './store/useAppStore'
 
 const ProgressPage = lazy(() =>
   import('./pages/ProgressPage').then((m) => ({ default: m.ProgressPage })),
@@ -80,20 +81,6 @@ function LazyPage({ children }: { children: ReactNode }) {
 }
 
 export default function App() {
-  const theme = useAppStore((s) => s.settings.theme)
-
-  useEffect(() => {
-    applyTheme(theme)
-  }, [theme])
-
-  useEffect(() => {
-    if (theme !== 'system') return
-    const mq = window.matchMedia('(prefers-color-scheme: dark)')
-    const onChange = () => applyTheme('system')
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
-  }, [theme])
-
   useEffect(() => {
     const root = document.documentElement
     const supportsSvgBackdrop =
@@ -114,6 +101,7 @@ export default function App() {
       <ToastProvider>
         <GlassFilters />
         <BrowserRouter>
+        <AppearanceSync />
         <LocaleSync />
         <SeoManager />
         <PwaRefreshListener />

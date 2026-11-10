@@ -15,13 +15,42 @@ export function migratePersistedState(raw: unknown): PersistedState {
     const settings = base.settings as UserSettings & { locale?: string }
     base = {
       ...base,
-      schemaVersion: PERSIST_SCHEMA_VERSION,
+      schemaVersion: 2,
       settings: {
         ...base.settings,
         locale: settings.locale === 'pt-BR' ? 'pt-BR' : detectBrowserLocale(),
         localeSource: 'auto',
         installBannerDismissed: false,
         iosInstallHintDismissed: false,
+      },
+    }
+  }
+
+  if ((base.schemaVersion ?? version) < 3) {
+    const legacyMode = base.settings.theme ?? 'system'
+    let appearanceTheme: 'oficina' | 'figurinhas' | 'cartaz' = 'oficina'
+    try {
+      const t = localStorage.getItem('dd-theme')
+      if (t === 'oficina' || t === 'figurinhas' || t === 'cartaz') appearanceTheme = t
+    } catch {
+      /* ignore */
+    }
+    let appearanceMode: 'system' | 'light' | 'dark' =
+      legacyMode === 'light' || legacyMode === 'dark' ? legacyMode : 'system'
+    try {
+      const p = localStorage.getItem('dd-mode')
+      if (p === 'system' || p === 'light' || p === 'dark') appearanceMode = p
+    } catch {
+      /* ignore */
+    }
+    base = {
+      ...base,
+      schemaVersion: PERSIST_SCHEMA_VERSION,
+      settings: {
+        ...base.settings,
+        theme: legacyMode,
+        appearanceTheme,
+        appearanceMode,
       },
     }
   }
@@ -48,6 +77,14 @@ function sanitize(partial: Partial<PersistedState>): PersistedState {
       locale: settingsIn.locale === 'pt-BR' ? 'pt-BR' : 'en',
       localeSource: settingsIn.localeSource === 'user' ? 'user' : 'auto',
       progressListAllExpanded: settingsIn.progressListAllExpanded !== false,
+      appearanceTheme:
+        settingsIn.appearanceTheme === 'figurinhas' || settingsIn.appearanceTheme === 'cartaz'
+          ? settingsIn.appearanceTheme
+          : 'oficina',
+      appearanceMode:
+        settingsIn.appearanceMode === 'light' || settingsIn.appearanceMode === 'dark'
+          ? settingsIn.appearanceMode
+          : 'system',
     },
     lastSavedAt: partial.lastSavedAt ?? new Date().toISOString(),
   }

@@ -5,27 +5,22 @@ import App from './App.tsx'
 import { setPwaUpdateFn } from './lib/pwaUpdate.ts'
 import { initI18n, setDocumentLanguage } from './i18n/index.ts'
 import { detectBrowserLocale } from './i18n/detectLocale.ts'
-import { applyTheme, useAppStore } from './store/useAppStore.ts'
+import { useAppStore } from './store/useAppStore.ts'
 import './index.css'
 
 const stored = localStorage.getItem('droid-tycoon-companion-store')
 let initialLocale = detectBrowserLocale()
-let initialTheme: 'dark' | 'light' | 'system' = 'system'
 try {
   if (stored) {
     const parsed = JSON.parse(stored) as {
-      state?: { settings?: { locale?: string; localeSource?: string; theme?: 'dark' | 'light' | 'system' } }
+      state?: { settings?: { locale?: string; localeSource?: string } }
     }
     const loc = parsed?.state?.settings?.locale
     if (loc === 'pt-BR' || loc === 'en') initialLocale = loc
-    const th = parsed?.state?.settings?.theme
-    if (th === 'dark' || th === 'light' || th === 'system') initialTheme = th
   }
 } catch {
   /* use browser default */
 }
-
-applyTheme(initialTheme)
 
 initI18n(initialLocale)
 setDocumentLanguage(initialLocale)
