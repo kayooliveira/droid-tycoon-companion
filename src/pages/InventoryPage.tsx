@@ -36,6 +36,7 @@ import {
   GATE_TIER_CHIP_LABELS,
 } from '../e2e/gateInventoryFixture'
 import { InventoryAddGateSheet, InventoryRemoveGateSheet } from '../components/inventory/InventoryGateSheets'
+import { InventoryEmptyGateView } from '../components/inventory/InventoryEmptyGateView'
 import { droidMatchesQuery } from '../lib/droidNameMatch'
 import {
   usePersistedInventoryFilters,
@@ -184,14 +185,32 @@ export function InventoryPage() {
   if (!trackInventory) {
     return (
       <TabScrollLayout title={t('inventory.title')} testId="inventory-page">
-        <InsetGroup>
-          <div className="row">
-            <div className="row-main">
-              <span className="row-title">{t('inventory.trackingOff')}</span>
-              <span className="hint">{t('inventory.trackingOffHint')}</span>
-            </div>
+        {isDesignGateCapture() ? (
+          <div className="row" style={{ marginTop: 12 }}>
+            <span className="row-ic" aria-hidden>
+              <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
+                <path d="M4 8h16v10H4z" />
+              </svg>
+            </span>
+            <span className="row-main">
+              <span className="dname" style={{ display: 'block' }}>
+                Inventário desligado
+              </span>
+              <span className="hint" style={{ display: 'block' }}>
+                Liga o inventário em Ajustes pra comparar com os renascimentos.
+              </span>
+            </span>
           </div>
-        </InsetGroup>
+        ) : (
+          <InsetGroup>
+            <div className="row">
+              <div className="row-main">
+                <span className="row-title">{t('inventory.trackingOff')}</span>
+                <span className="hint">{t('inventory.trackingOffHint')}</span>
+              </div>
+            </div>
+          </InsetGroup>
+        )}
       </TabScrollLayout>
     )
   }
@@ -325,7 +344,9 @@ export function InventoryPage() {
         ) : null}
       </div>
 
-      {filtered.length === 0 ? (
+      {filtered.length === 0 && isDesignGateCapture() && inventory.length === 0 ? (
+        <InventoryEmptyGateView onAdd={() => setAddOpen(true)} />
+      ) : filtered.length === 0 ? (
         <InsetGroup>
           <div className="row">
             <div className="row-main">

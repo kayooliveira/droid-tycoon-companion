@@ -9,7 +9,7 @@ const THEMES = [
 
 function ThemePreview({ themeKey, cols }: { themeKey: string; cols: number }) {
   const droid = droidById.get('r7')
-  const cells = Array.from({ length: 20 }, (_, i) => (
+  const cells = Array.from({ length: cols }, (_, i) => (
     <i key={i} className={i < 12 ? 'done' : i === 12 ? 'cur' : undefined} />
   ))
   return (
@@ -20,7 +20,10 @@ function ThemePreview({ themeKey, cols }: { themeKey: string; cols: number }) {
           <span className="dtile-num" aria-hidden>
             06
           </span>
-          <img src={droidImageSrc(droid.id, droid.imageLocal)} alt="" width={128} height={128} />
+          <img src={droidImageSrc(droid.id, droid.imageLocal)} alt="" width={128} height={128} loading="eager" />
+          <span className="dtile-q" aria-hidden>
+            ?
+          </span>
         </span>
       ) : null}
       <div className="tp-body">

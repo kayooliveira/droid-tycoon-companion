@@ -341,6 +341,7 @@ export function OnboardingGateView() {
           {safeStep === 4 ? <Step4 /> : null}
         </div>
       </main>
+      <div className="toast-slot" hidden />
     </div>
   )
 }

@@ -51,6 +51,12 @@
     overflow: visible;
   }
 
+  html.e2e-safe-area .app-shell .scroll > div.mx-auto {
+    max-width: none !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
   html.e2e-safe-area .app-shell.app {
     height: auto;
     min-height: 844px;

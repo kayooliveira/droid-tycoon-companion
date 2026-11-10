@@ -1,14 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { cycleById, droidById } from '../../domain/gameData'
-import { formatTierName } from '../../domain/tiers'
+import { droidById } from '../../domain/gameData'
 import { formatBaseRarity } from '../../i18n/tierLabels'
-import { useTierLabels } from '../../i18n/useTierLabels'
 import { DroidImage } from '../DroidImage'
-import { Modal } from '../ui/Modal'
 import { ChipRadioGroup } from '../ui/ChipRadioGroup'
-import { cycleDisplayNameForId } from '../../lib/cycleLabel'
-import { formatVerifiedDatePt } from '../../lib/formatVerifiedDate'
+import { OverlayPortal } from '../ui/OverlayPortal'
+import { droidImageSrc } from '../../lib/images'
 
 const GATE_GRID_IDS = [
   'mouse',
@@ -25,12 +22,101 @@ const GATE_GRID_IDS = [
   'c-3po',
 ] as const
 
+function LepDetailGateModal({ onClose }: { onClose: () => void }) {
+  const lep = droidById.get('lep')
+  return (
+    <OverlayPortal>
+      <div className="scrim" aria-hidden />
+      <div className="modal-wrap">
+        <div className="modal" role="dialog" aria-label="LEP" data-testid="droiddex-detail-modal">
+          <div className="row2" style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <h2>LEP</h2>
+            <button type="button" className="btn btn--icon btn--ghost" aria-label="Fechar" onClick={onClose}>
+              <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
+                <path d="M5.5 5.5l13 13M18.5 5.5l-13 13" />
+              </svg>
+            </button>
+          </div>
+          <div className="row2" style={{ alignItems: 'flex-start', gap: 14, margin: '10px 0 14px' }}>
+            <div style={{ width: 96, flex: 'none' }}>
+              {lep ? (
+                <span className="dtile" data-tier="kyber">
+                  <span className="dtile-bg" aria-hidden />
+                  <span className="dtile-num" aria-hidden>
+                    08
+                  </span>
+                  <img src={droidImageSrc(lep.id, lep.imageLocal)} alt="" width={128} height={128} loading="eager" />
+                  <span className="dtile-q" aria-hidden>
+                    ?
+                  </span>
+                </span>
+              ) : null}
+            </div>
+            <div className="stack" style={{ gap: 8, alignItems: 'flex-start' }}>
+              <span className="tag tag--mute">
+                <i className="tag-sq" aria-hidden />
+                <svg className="ic" width={14} height={14} viewBox="0 0 24 24" aria-hidden>
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+                Worker
+              </span>
+              <span className="tag tag--mute">
+                <i className="tag-sq" aria-hidden />
+                <svg className="ic" width={14} height={14} viewBox="0 0 24 24" aria-hidden>
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+                Mítico
+              </span>
+              <span className="tag tag--ok">
+                <i className="tag-sq" aria-hidden />
+                <svg className="ic" width={14} height={14} viewBox="0 0 24 24" aria-hidden>
+                  <path d="m4.5 12.5 5 5L19.5 7" />
+                </svg>
+                Confirmado
+              </span>
+            </div>
+          </div>
+          <span className="lbl">Níveis</span>
+          <p style={{ marginBottom: 12 }}>
+            Padrão · Ouro · Diamante · Arco-íris · Beskar · Galáctico · Estelar · Kyber
+          </p>
+          <span className="lbl">Aparece nos renascimentos</span>
+          <div className="kv">
+            <span>Ciclo 5 R33</span>
+            <b>Beskar</b>
+          </div>
+          <div className="kv">
+            <span>Ciclo 5 R40</span>
+            <b>Kyber</b>
+          </div>
+          <div className="kv">
+            <span>Ciclo 6 R12</span>
+            <b>Galáctico</b>
+          </div>
+          <p className="hint" style={{ margin: '6px 0 4px' }}>
+            + 3 a mais
+          </p>
+          <a className="link-btn" href="#">
+            Fonte (verificado 31/10/2026)
+          </a>
+        </div>
+      </div>
+    </OverlayPortal>
+  )
+}
+
 /** Grid + modal matching `droiddex.html` / `droiddex-detalhe.html`. */
 export function DroiddexGateView() {
-  const { t, i18n } = useTranslation()
-  const tierLabels = useTierLabels()
+  const { t } = useTranslation()
   const [selectedId, setSelectedId] = useState<string | null>(null)
-  const selected = selectedId ? droidById.get(selectedId) : null
+
+  useEffect(() => {
+    const shell = document.querySelector('.app-shell.app')
+    if (!shell) return
+    if (selectedId) shell.setAttribute('data-fixed', '')
+    else shell.removeAttribute('data-fixed')
+    return () => shell.removeAttribute('data-fixed')
+  }, [selectedId])
 
   const classOptions = [
     { value: 'all', label: 'Todas classes' },
@@ -80,63 +166,7 @@ export function DroiddexGateView() {
         })}
       </div>
 
-      <Modal
-        open={Boolean(selected)}
-        onClose={() => setSelectedId(null)}
-        title={selected?.name ?? 'Droiddex'}
-        testId="droiddex-detail-modal"
-      >
-        {selected ? (
-          <div className="stack">
-            <div
-              className="row2"
-              style={{ alignItems: 'flex-start', gap: 14, margin: '10px 0 14px' }}
-            >
-              <div style={{ width: 96, flex: 'none' }}>
-                <DroidImage droid={selected} tier="kyber" size="md" priority />
-              </div>
-              <div className="stack" style={{ gap: 8, alignItems: 'flex-start' }}>
-                <span className="tag tag--mute">
-                  <i className="tag-sq" aria-hidden />
-                  {selected.class}
-                </span>
-                <span className="tag tag--mute">
-                  <i className="tag-sq" aria-hidden />
-                  {formatBaseRarity(selected.baseRarity, t)}
-                </span>
-                <span className="tag tag--ok">
-                  <i className="tag-sq" aria-hidden />
-                  {t('confidence.confirmed')}
-                </span>
-              </div>
-            </div>
-            <span className="lbl">Níveis</span>
-            <p style={{ marginBottom: 12 }}>
-              {selected.tiersAvailable.map((tier) => formatTierName(tier, tierLabels)).join(' · ')}
-            </p>
-            <span className="lbl">Aparece nos renascimentos</span>
-            {selected.requiredIn?.slice(0, 3).map((r) => (
-              <div key={`${r.cycle}-${r.rebirth}`} className="kv">
-                <span>
-                  {cycleDisplayNameForId(r.cycle, cycleById.get(r.cycle)?.name, i18n.language)} R
-                  {r.rebirth}
-                </span>
-                <b>{formatTierName(r.rarity, tierLabels)}</b>
-              </div>
-            ))}
-            {(selected.requiredIn?.length ?? 0) > 3 ? (
-              <p className="hint" style={{ margin: '6px 0 4px' }}>
-                + 3 a mais
-              </p>
-            ) : null}
-            <a className="link-btn" href={selected.sourceUrl}>
-              {t('droiddex.source', {
-                date: formatVerifiedDatePt(selected.lastVerified, i18n.language),
-              })}
-            </a>
-          </div>
-        ) : null}
-      </Modal>
+      {selectedId ? <LepDetailGateModal onClose={() => setSelectedId(null)} /> : null}
     </>
   )
 }

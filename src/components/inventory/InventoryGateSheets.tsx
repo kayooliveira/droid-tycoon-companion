@@ -122,8 +122,10 @@ export function InventoryRemoveGateSheet({ onClose }: { onClose: () => void }) {
         data-testid="inventory-remove-modal"
       >
         <span className="grab" aria-hidden />
-        <div className="sheet-h">
-          <h2 className="t-h2">Remover do inventário?</h2>
+        <div className="sheet-h" style={{ marginBottom: 0 }}>
+          <h2 className="t-h2" style={{ marginTop: 2 }}>
+            Remover do inventário?
+          </h2>
           <button type="button" className="btn btn--icon btn--ghost" aria-label="Fechar" onClick={onClose}>
             <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
               <path d="M5.5 5.5l13 13M18.5 5.5l-13 13" />

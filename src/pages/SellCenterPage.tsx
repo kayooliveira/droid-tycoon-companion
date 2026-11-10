@@ -21,11 +21,11 @@ import { SellEmptyGateView } from '../components/sell/SellEmptyGateView'
 import { useGateTabbarAnchor } from '../hooks/useGateTabbarAnchor'
 
 export function SellCenterPage() {
-  useGateTabbarAnchor()
   const { t, i18n } = useTranslation()
   const tierLabels = useTierLabels()
   const progress = useAppStore((s) => s.progress)
   const inventory = useAppStore((s) => s.inventory)
+  useGateTabbarAnchor(inventory.length > 0)
   const cycleName = formatCycleDisplayName(
     cycleById.get(progress.pathId)?.name ?? progress.pathId,
     i18n.language,
