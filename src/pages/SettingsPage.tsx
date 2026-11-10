@@ -166,7 +166,7 @@ export function SettingsPage() {
   }
 
   return (
-    <TabScrollLayout title={t('settings.title')} testId="settings-page">
+    <TabScrollLayout title={t('settings.title')} testId="settings-page" className="settings-page-pad">
       <section className="sec">
         <div className="sec-h">
           <h2 className="t-h2">{t('settings.appearance')}</h2>

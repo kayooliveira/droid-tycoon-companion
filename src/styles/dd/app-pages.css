@@ -521,6 +521,10 @@ button.row.row--link::after {
   margin: 0 auto;
 }
 
+.settings-page-pad {
+  padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px) + 12px);
+}
+
 .install-banner-ds .banner-act .btn {
   white-space: normal;
   text-align: center;
