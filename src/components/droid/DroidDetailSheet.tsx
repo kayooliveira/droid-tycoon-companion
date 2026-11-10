@@ -93,7 +93,7 @@ export function DroidDetailSheet({
           </div>
         ) : null}
       </div>
-      {children ? (
+      {children && isDesignGateCapture() ? children : children ? (
         <div className="stack" style={{ marginTop: 12 }}>
           {children}
         </div>

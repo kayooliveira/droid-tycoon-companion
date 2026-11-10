@@ -44,9 +44,9 @@ export function InventoryAddGateSheet({ onClose }: { onClose: () => void }) {
   const chipsRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const c = chipsRef.current
-  if (!c) return
+    if (!c) return
     const selected = c.querySelector<HTMLElement>('[aria-pressed="true"]')
-    if (selected) c.scrollLeft = Math.max(0, selected.offsetLeft - c.offsetLeft - 24)
+    if (selected) c.scrollLeft = Math.max(0, selected.offsetLeft - c.offsetLeft - 17)
   }, [])
   return (
     <OverlayPortal>
@@ -80,7 +80,7 @@ export function InventoryAddGateSheet({ onClose }: { onClose: () => void }) {
         </div>
         <div style={{ marginTop: 14 }}>
           <span className="lbl">Nível deste droid</span>
-          <div ref={chipsRef} className="chips chips--scroll" role="group" style={{ marginTop: 8 }}>
+          <div ref={chipsRef} className="chips chips--scroll" role="group">
             {TIER_CHIPS.map((label, i) => (
               <button
                 key={label}
@@ -131,10 +131,8 @@ export function InventoryRemoveGateSheet({ onClose }: { onClose: () => void }) {
         data-testid="inventory-remove-modal"
       >
         <span className="grab" aria-hidden />
-        <div className="sheet-h" style={{ marginBottom: 0 }}>
-          <h2 className="t-h2" style={{ marginTop: 2 }}>
-            Remover do inventário?
-          </h2>
+        <div className="sheet-h">
+          <h2 className="t-h2">Remover do inventário?</h2>
           <button type="button" className="btn btn--icon btn--ghost" aria-label="Fechar" onClick={onClose}>
             <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
               <path d="M5.5 5.5l13 13M18.5 5.5l-13 13" />

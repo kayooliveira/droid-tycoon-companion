@@ -2,11 +2,23 @@
 
 Issues discovered while aligning the app with `comparar_1a1.py` (oficina theme). The app may apply **capture-only** fixtures via `isDesignGateCapture()` when the mock or seed disagrees without changing production behavior.
 
+## Static overlays are not composited like live portal overlays
+
+- **Live flow:** modals and sheets render in the fixed overlay portal, which Chrome promotes
+  to a composited layer and rasterizes text without subpixel color fringes.
+- **Static mocks:** overlays are direct children of `.app`; identical geometry and computed
+  typography still produce a false pixel diff (up to 2% for text-heavy dialogs).
+- **Correction:** `after_mock_static()` applies a no-op `translateZ(0)` to `.modal` and
+  `.sheet`, matching the live layer rasterization without changing layout or approved styles.
+
 ## `modal-trocar-ciclo.html`
 
-- **Gate:** `after_trocar` clicks `path-switcher-option-path-2` → Ciclo **2** selected (`aria-pressed="true"`).
+- **Fluxo anterior:** `after_trocar` clicava `path-switcher-option-path-2` → Ciclo **2**
+  selecionado (`aria-pressed="true"`).
 - **Static mock:** shows **Ciclo 6** selected.
 - **Evidence:** chip position deltas in comparar runs (e.g. selected chip x ≈136px app vs ≈232px mock on 360px dark).
+- **Correção:** o comparador seleciona `path-switcher-option-path-6`, reproduzindo o estado
+  aprovado em ambos os modais de troca.
 
 ## `modal-super-renascimento.html` vs `super_modal` seed
 

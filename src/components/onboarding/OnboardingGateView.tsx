@@ -250,7 +250,7 @@ function Step3() {
         Você pode mudar depois em Ajustes, Aparência.
       </p>
       <OnboardingThemeGateCards />
-      <div className="seg" role="group" aria-label="Modo" style={{ marginTop: 16 }}>
+      <div className="seg" role="group" aria-label="Modo">
         <button type="button" aria-pressed>
           Sistema
         </button>
@@ -265,9 +265,14 @@ function Step3() {
         <button type="button" className="btn btn--primary">
           Continuar
         </button>
-        <button type="button" className="btn btn--ghost">
-          Pular
-        </button>
+        <div className="grid2">
+          <button type="button" className="btn btn--secondary">
+            Voltar
+          </button>
+          <button type="button" className="btn btn--ghost">
+            Pular
+          </button>
+        </div>
       </div>
     </>
   )

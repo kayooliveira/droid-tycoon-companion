@@ -393,7 +393,7 @@ def after_trocar(page: Any) -> None:
     page.get_by_test_id("progress-page").wait_for(state="visible", timeout=15_000)
     page.get_by_test_id("path-switcher-trigger").click()
     wait_dialog(page)
-    page.get_by_test_id("path-switcher-option-path-2").click()
+    page.get_by_test_id("path-switcher-option-path-6").click()
 
 
 def after_trocar_reset(page: Any) -> None:
@@ -489,6 +489,13 @@ def after_dados_velhos(page: Any) -> None:
 
 def after_mock_static(page: Any, slug: str) -> None:
     """Normaliza defeitos conhecidos do HTML estático antes da comparação."""
+    page.evaluate(
+        """() => {
+          for (const overlay of document.querySelectorAll('.modal, .sheet')) {
+            overlay.style.transform = 'translateZ(0)';
+          }
+        }"""
+    )
     if slug == "vazio-vender":
         page.evaluate(
             """() => {

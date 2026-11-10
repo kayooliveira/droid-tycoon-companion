@@ -615,6 +615,14 @@ html.e2e-safe-area .empty > .hint {
   margin-top: 0;
 }
 
+html.e2e-safe-area .sheet > .grab {
+  margin: 0 auto 10px;
+}
+
+html.e2e-safe-area .sheet > .hint {
+  margin-top: 0;
+}
+
 html.e2e-safe-area .sell-empty-gate .hint {
   line-height: 1.35;
 }
