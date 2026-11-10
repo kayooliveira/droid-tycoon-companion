@@ -103,6 +103,14 @@
   html.e2e-safe-area [data-testid='onboarding-step-progress'] .row:has(.stepper) {
     min-height: 103.53px;
   }
+
+  html.e2e-safe-area [data-testid='droiddex-detail-modal'] .dtile {
+    margin-bottom: 10px;
+  }
+
+  html.e2e-safe-area [data-testid='droiddex-detail-modal'] .dtile-bg {
+    background-color: rgb(116, 122, 132);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

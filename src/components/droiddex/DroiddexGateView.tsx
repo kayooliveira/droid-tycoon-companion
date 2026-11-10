@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { droidById } from '../../domain/gameData'
 import { formatBaseRarity } from '../../i18n/tierLabels'
 import { droidImageSrc } from '../../lib/images'
-import { ChipRadioGroup } from '../ui/ChipRadioGroup'
 import { OverlayPortal } from '../ui/OverlayPortal'
 
 const GATE_GRID_IDS = [
@@ -37,7 +36,7 @@ function LepDetailGateModal({ onClose }: { onClose: () => void }) {
             </button>
           </div>
           <div className="row2" style={{ alignItems: 'flex-start', gap: 14, margin: '10px 0 14px' }}>
-            <div style={{ width: 96, flex: 'none' }}>
+            <div style={{ width: 158, flex: 'none' }}>
               {lep ? (
                 <span className="dtile" data-tier="kyber">
                   <span className="dtile-bg" aria-hidden />
@@ -117,13 +116,7 @@ export function DroiddexGateView() {
     return () => shell.removeAttribute('data-fixed')
   }, [selectedId])
 
-  const classOptions = [
-    { value: 'all', label: 'Todas classes' },
-    { value: 'Worker', label: 'Worker' },
-    { value: 'Astromech', label: 'Astromech' },
-    { value: 'Battle', label: 'Battle' },
-    { value: 'Protocol', label: 'Protocol' },
-  ]
+  const chipLabels = ['Todas classes', 'Worker', 'Astromech', 'Battle', 'Protocol'] as const
 
   return (
     <>
@@ -135,12 +128,13 @@ export function DroiddexGateView() {
         <input className="field" type="search" placeholder="Buscar droids…" aria-label="Buscar droids" />
       </div>
       <div style={{ marginTop: 12 }}>
-        <ChipRadioGroup
-          ariaLabel="Todas classes"
-          value="all"
-          onChange={() => {}}
-          options={classOptions}
-        />
+        <div className="chips" role="group" aria-label="Todas classes">
+          {chipLabels.map((label, i) => (
+            <button key={label} type="button" className="chip" aria-pressed={i === 0}>
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
       <div className="collection-grid" data-testid="droiddex-grid" style={{ marginTop: 18 }}>
         {GATE_GRID_IDS.map((id) => {

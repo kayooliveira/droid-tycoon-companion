@@ -25,8 +25,8 @@ export function MobileFloatingNav({
   const location = useLocation()
   const navigate = useNavigate()
 
-  const isMoreRoute = ['/droiddex', '/fusion', '/about', '/settings', '/sell'].includes(
-    location.pathname,
+  const isMoreRoute = ['/droiddex', '/fusion', '/about', '/settings', '/sell'].some(
+    (p) => location.pathname === p || location.pathname.startsWith(`${p}/`),
   )
 
   const gateNotFound =

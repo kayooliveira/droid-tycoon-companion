@@ -2,10 +2,12 @@ import { Moon, Sun, Desktop } from '@phosphor-icons/react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { ThemeCardGroup } from '../components/appearance/ThemeCard'
+import { AppearanceGateView } from '../components/appearance/AppearanceGateView'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
 import { useAppearance, type AppearanceModePref } from '../hooks/useAppearance'
 import { uiIconProps } from '../components/ui/iconStyle'
 import { useGateTabbarAnchor } from '../hooks/useGateTabbarAnchor'
+import { isDesignGateCapture } from '../e2e/designGate'
 
 const MODES: { value: AppearanceModePref; icon: typeof Moon; labelKey: string }[] = [
   { value: 'system', icon: Desktop, labelKey: 'settings.themeSystem' },
@@ -17,10 +19,11 @@ export function AppearancePage() {
   useGateTabbarAnchor()
   const { t } = useTranslation()
   const { theme, modePref, setTheme, setModePref } = useAppearance()
+  const gate = isDesignGateCapture()
 
   return (
     <TabScrollLayout
-      title={t('settings.appearance')}
+      title={gate ? 'Aparência' : t('settings.appearance')}
       testId="appearance-page"
       className="appearance-tight"
       backBar={
@@ -29,11 +32,15 @@ export function AppearancePage() {
             <svg className="ic" width={20} height={20} viewBox="0 0 24 24" aria-hidden>
               <path d="m9 5 7 7-7 7" />
             </svg>
-            {t('nav.settings')}
+            {gate ? 'Ajustes' : t('nav.settings')}
           </Link>
         </div>
       }
     >
+      {gate ? (
+        <AppearanceGateView />
+      ) : (
+        <>
       <section className="sec">
         <div className="sec-h">
           <h2 className="t-h2">{t('appearance.visualTheme')}</h2>
@@ -59,6 +66,8 @@ export function AppearancePage() {
           ))}
         </div>
       </section>
+        </>
+      )}
     </TabScrollLayout>
   )
 }

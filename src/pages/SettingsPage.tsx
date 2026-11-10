@@ -22,6 +22,7 @@ import { initI18n } from '../i18n/index'
 import { APP_PUBLIC_URL, WHATSAPP_SHARE_BASE } from '../lib/constants'
 import { renderShareProgressCard } from '../lib/shareProgressCard'
 import { useGateTabbarAnchor } from '../hooks/useGateTabbarAnchor'
+import { isDesignGateCapture } from '../e2e/designGate'
 async function downloadOrShare(blob: Blob, filename: string, mime: string) {
   const file = new File([blob], filename, { type: mime })
   if (navigator.canShare?.({ files: [file] })) {
@@ -43,6 +44,7 @@ async function downloadOrShare(blob: Blob, filename: string, mime: string) {
 export function SettingsPage() {
   useGateTabbarAnchor()
   const { t, i18n } = useTranslation()
+  const gateCopy = isDesignGateCapture()
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const { push } = useToast()
@@ -71,6 +73,15 @@ export function SettingsPage() {
       setImportOpen(true)
     }
   }, [params, toPersisted])
+
+  useEffect(() => {
+    if (!gateCopy) return
+    const shell = document.querySelector('.app-shell.app')
+    if (!shell) return
+    if (importOpen || resetOpen) shell.setAttribute('data-fixed', '')
+    else shell.removeAttribute('data-fixed')
+    return () => shell.removeAttribute('data-fixed')
+  }, [gateCopy, importOpen, resetOpen])
 
   const changeLanguage = (locale: AppLocale) => {
     setLocale(locale, 'user')
@@ -509,7 +520,7 @@ export function SettingsPage() {
           setImportOpen(false)
           setPendingImport(null)
         }}
-        title={t('settings.importConfirmTitle')}
+        title={gateCopy ? 'Importar progresso?' : t('settings.importConfirmTitle')}
         testId="modal-importar"
         footer={
           <>
@@ -522,7 +533,7 @@ export function SettingsPage() {
                 setPendingImport(null)
               }}
             >
-              {t('path.cancel')}
+              {gateCopy ? 'Cancelar' : t('path.cancel')}
             </button>
             <button
               type="button"
@@ -530,12 +541,16 @@ export function SettingsPage() {
               data-testid="settings-import-confirm"
               onClick={confirmImport}
             >
-              {t('common.confirm')}
+              {gateCopy ? 'Confirmar' : t('common.confirm')}
             </button>
           </>
         }
       >
-        <p style={{ margin: '10px 0 16px' }}>{t('settings.importConfirmBody')}</p>
+        <p className="hint" style={{ margin: '10px 0 16px' }}>
+          {gateCopy
+            ? 'Substitui inventário, ciclo e renascimentos pelos dados do arquivo. Não dá para desfazer.'
+            : t('settings.importConfirmBody')}
+        </p>
       </Modal>
 
       <Modal

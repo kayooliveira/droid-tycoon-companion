@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { droidById } from '../../domain/gameData'
 import { DroidImage } from '../DroidImage'
 
@@ -92,9 +91,8 @@ function RecipeRow({
 }
 
 export function FusionGateView() {
-  const { t } = useTranslation()
-  const partial = t('confidence.partial')
-  const partialBadge = t('fusion.partialBadge')
+  const partial = 'Parcial'
+  const partialBadge = 'Só uma fonte. Confira no jogo.'
   const [search, setSearch] = useState('')
   const searchActive = search.trim().length > 0
 
@@ -102,7 +100,7 @@ export function FusionGateView() {
     <>
       <section className="sec">
         <div className="sec-h">
-          <h2 className="t-h2">{t('fusion.rulesTitle')}</h2>
+          <h2 className="t-h2">Regras gerais</h2>
         </div>
         <div className="row">
           <span className="row-ic" aria-hidden>
@@ -110,7 +108,7 @@ export function FusionGateView() {
           </span>
           <span className="row-main">
             <span className="dname" style={{ display: 'block' }}>
-              {t('fusion.rules.tierUp')}
+              Três do mesmo droid no mesmo nível viram um desse droid no nível seguinte.
             </span>
             <span className="hint">{partial}</span>
           </span>
@@ -121,7 +119,7 @@ export function FusionGateView() {
           </span>
           <span className="row-main">
             <span className="dname" style={{ display: 'block' }}>
-              {t('fusion.rules.random')}
+              Três droids diferentes da mesma raridade base viram um droid aleatório uma raridade acima.
             </span>
             <span className="hint">{partial}</span>
           </span>
@@ -132,29 +130,29 @@ export function FusionGateView() {
           </span>
           <span className="row-main">
             <span className="dname" style={{ display: 'block' }}>
-              {t('fusion.rules.unlock')}
+              Fusão abre no renascimento 3.
             </span>
             <span className="hint">{partial}</span>
           </span>
         </div>
         <div className="row">
           <span className="row-main">
-            <span className="hint">{t('fusion.resultTierRule')}</span>
+            <span className="hint">O resultado fica no menor nível entre os três ingredientes.</span>
           </span>
         </div>
         <p className="hint" style={{ marginTop: 8 }}>
-          {t('fusion.rulesFootnote')}
+          Fusão libera no renascimento #3. Droids só de fusão não entram em renascimento (pelas fontes).
         </p>
       </section>
 
       <section className="sec">
         <div className="sec-h">
-          <h2 className="t-h2">{t('fusion.helpsNext')}</h2>
+          <h2 className="t-h2">Útil pro próximo renascimento</h2>
         </div>
         {searchActive ? (
           <div className="row">
             <span className="row-main">
-              <span className="hint">{t('fusion.helpsNextEmpty')}</span>
+              <span className="hint">Nada marcado pro próximo renascimento ainda.</span>
             </span>
           </div>
         ) : (
@@ -173,7 +171,7 @@ export function FusionGateView() {
 
       <section className="sec">
         <div className="sec-h">
-          <h2 className="t-h2">{t('fusion.recipes')}</h2>
+          <h2 className="t-h2">Receitas</h2>
         </div>
         <div style={{ marginBottom: 12 }}>
           <div className={searchActive ? 'field-wrap field-wrap--clear' : 'field-wrap'}>
@@ -184,16 +182,16 @@ export function FusionGateView() {
             <input
               className="field"
               type="search"
-              placeholder={t('fusion.search')}
+              placeholder="Buscar…"
               value={search}
-              aria-label={t('fusion.search')}
+              aria-label="Buscar…"
               onChange={(e) => setSearch(e.target.value)}
             />
             {searchActive ? (
               <button
                 type="button"
                 className="field-clear"
-                aria-label={t('progress.search.clear')}
+                aria-label="Limpar busca"
                 onClick={() => setSearch('')}
               >
                 <svg className="ic" width={20} height={20} viewBox="0 0 24 24" aria-hidden>
@@ -206,7 +204,7 @@ export function FusionGateView() {
         {searchActive ? (
           <div className="row">
             <span className="row-main">
-              <span className="hint">{t('fusion.emptySearch')}</span>
+              <span className="hint">Nenhuma receita bate com a busca.</span>
             </span>
           </div>
         ) : (
