@@ -1,16 +1,20 @@
-import { droidById } from '../../domain/gameData'
-import { DroidImage } from '../DroidImage'
+import r2GateImage from '../../../dd-design/sistema/assets/droids/r2.webp'
+import bbGateImage from '../../../dd-design/sistema/assets/droids/bb.webp'
+import mouseGateImage from '../../../dd-design/sistema/assets/droids/mouse.webp'
 
-const EMPTY_IDS = ['r2', 'bb', 'mouse'] as const
+const EMPTY_IMAGES = [r2GateImage, bbGateImage, mouseGateImage]
 
 export function InventoryEmptyGateView({ onAdd }: { onAdd: () => void }) {
   return (
     <div className="empty">
       <div className="empty-art" aria-hidden>
-        {EMPTY_IDS.map((id) => {
-          const d = droidById.get(id)
-          return d ? <DroidImage key={id} droid={d} tier="default" missing priority /> : null
-        })}
+        {EMPTY_IMAGES.map((src) => (
+          <span key={src} className="dtile dtile--missing" data-tier="default">
+            <span className="dtile-bg" />
+            <img src={src} alt="" width={128} height={128} loading="eager" />
+            <span className="dtile-q">?</span>
+          </span>
+        ))}
       </div>
       <h2 className="t-h2">Nenhum droid ainda.</h2>
       <p className="hint">Cadastre os droids da sua base pra comparar com o próximo renascimento.</p>

@@ -608,6 +608,11 @@ html.e2e-safe-area .row-main .hint {
 
 html.e2e-safe-area .row-main .hint {
   display: inline;
+  margin-top: 0;
+}
+
+html.e2e-safe-area .empty > .hint {
+  margin-top: 0;
 }
 
 html.e2e-safe-area .sell-empty-gate .hint {

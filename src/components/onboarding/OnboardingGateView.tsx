@@ -180,13 +180,23 @@ function Step2() {
           <span className="hint">Próximo renascimento: #30</span>
         </span>
         <div className="stepper">
-          <button type="button" className="btn btn--icon btn--secondary" aria-label="Diminuir renascimentos">
+          <button
+            type="button"
+            className="btn btn--icon btn--secondary"
+            aria-label="Diminuir renascimentos"
+            style={{ fontSize: 15, lineHeight: '15.75px' }}
+          >
             <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
               <path d="M5 12h14" />
             </svg>
           </button>
           <span className="stepper-val">29</span>
-          <button type="button" className="btn btn--icon btn--primary" aria-label="Aumentar renascimentos">
+          <button
+            type="button"
+            className="btn btn--icon btn--primary"
+            aria-label="Aumentar renascimentos"
+            style={{ fontSize: 15, lineHeight: '15.75px' }}
+          >
             <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
               <path d="M12 5v14M5 12h14" />
             </svg>

@@ -13,10 +13,8 @@ import { useAppStore } from '../store/useAppStore'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { uiIconProps } from '../components/ui/iconStyle'
 import { mockHomeSellableCount } from '../e2e/mockInventoryFixture'
-import { useGateTabbarAnchor } from '../hooks/useGateTabbarAnchor'
 
 export function DashboardPage() {
-  useGateTabbarAnchor()
   const { t, i18n } = useTranslation()
   const tierLabels = useTierLabels()
   const progress = useAppStore((s) => s.progress)

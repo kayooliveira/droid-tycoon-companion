@@ -50,7 +50,7 @@ export function ProgressDisputeGateView() {
         ].map(({ droid, tier, owned, showControls }) =>
           droid ? (
             <div key={droid.id} className="item">
-              <button type="button" className="item-open" aria-label={droid.name}>
+              <button type="button" className="item-open" aria-label={`Abrir ${droid.name}`}>
                 <DroidImage droid={droid} tier={tier} size="sm" />
                 <span className="item-body">
                   <span className="dname">{droid.name}</span>
@@ -64,10 +64,10 @@ export function ProgressDisputeGateView() {
                 </span>
               </button>
               {showControls ? (
-                <div className="item-actions row2">
+                <>
                   <button type="button" className="btn btn--icon btn--secondary" aria-label={`Tirar ${droid.name}`}>
                     <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
-                      <path d="M5 12h14" />
+                      <path d="M5.5 5.5l13 13M18.5 5.5l-13 13" />
                     </svg>
                   </button>
                   <button
@@ -79,7 +79,7 @@ export function ProgressDisputeGateView() {
                       <path d="M12 5v14M5 12h14" />
                     </svg>
                   </button>
-                </div>
+                </>
               ) : null}
             </div>
           ) : null,
@@ -87,11 +87,14 @@ export function ProgressDisputeGateView() {
       </section>
 
       <div className="stack" style={{ marginTop: 16 }}>
-        <button type="button" className="btn btn--primary" data-testid="progress-force-complete-inline">
+        <button type="button" className="btn btn--primary">
+          Concluir
+        </button>
+        <button type="button" className="btn btn--secondary" data-testid="progress-force-complete-inline">
           Concluir mesmo assim
         </button>
         <button type="button" className="btn btn--ghost" data-testid="progress-undo-inline">
-          Desfazer renascimento
+          Desfazer
         </button>
       </div>
     </>

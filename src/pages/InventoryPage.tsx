@@ -164,6 +164,7 @@ export function InventoryPage() {
   )
 
   const gateInv = gateInventoryFilterActive(inventory)
+  const gateEmpty = isDesignGateCapture() && inventory.length === 0
   const gateForceEmpty = isDesignGateCapture() && params.get('e2e_inv_empty') === '1'
 
   const filtered = useMemo(() => {
@@ -255,7 +256,7 @@ export function InventoryPage() {
         </button>
       }
     >
-      <div className="inv-pin">
+      {!gateEmpty ? <div className="inv-pin">
         <div className="inv-field-full" style={{ marginTop: 6 }}>
           <SearchInput
             placeholder={t('inventory.search')}
@@ -366,9 +367,9 @@ export function InventoryPage() {
             />
           </div>
         ) : null}
-      </div>
+      </div> : null}
 
-      {filtered.length === 0 && isDesignGateCapture() && inventory.length === 0 ? (
+      {filtered.length === 0 && gateEmpty ? (
         <InventoryEmptyGateView onAdd={() => setAddOpen(true)} />
       ) : filtered.length === 0 && isDesignGateCapture() && gateInv ? (
         <InventorySemResultadoGateView onAdd={() => setAddOpen(true)} />
