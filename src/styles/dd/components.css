@@ -29,6 +29,7 @@ input{font:inherit;color:inherit}
 
 /* ---------- shell ---------- */
 .app{position:relative;width:100%;max-width:390px;min-height:844px;margin:0 auto;display:flex;flex-direction:column;background:var(--c-bg)}
+.app.app-shell{max-width:none;min-height:0;margin:0;width:100%}
 .app[data-fixed]{height:844px;overflow:hidden}
 .scroll{flex:1;min-height:0;padding:0 var(--sp-page) var(--sp-4)}
 .app[data-fixed] .scroll{overflow:hidden}
@@ -134,7 +135,7 @@ input{font:inherit;color:inherit}
 /* ---------- linhas e itens ---------- */
 .row,.acc{display:flex;align-items:center;gap:12px;width:100%;min-height:var(--row-h);padding:var(--row-pad);background:var(--row-bg);border-radius:var(--row-r);box-shadow:var(--row-sh);border-top:var(--row-bt);border-bottom:var(--row-bb);margin-bottom:var(--row-gap)}
 .acc{display:block;padding:0}
-.row-main{flex:1;min-width:0}
+.row-main{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px}
 .row .chev{color:var(--c-text-2)}
 .row-ic{display:grid;place-items:center;width:44px;height:44px;border-radius:var(--rowic-r);background:var(--rowic-bg);flex:none}
 .row-val{color:var(--c-text-2);font-size:var(--fs-small);text-align:right}

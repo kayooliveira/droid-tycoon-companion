@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ListBullets, Plus, SquaresFour } from '@phosphor-icons/react'
 import { useTranslation } from 'react-i18next'
+import { useSearchParams } from 'react-router-dom'
 import { droidById, gameData } from '../domain/gameData'
 import { droidHasFutureNeedOnPath } from '../domain/sellCenter'
 import { formatTierName } from '../domain/tiers'
@@ -31,6 +32,7 @@ import { uiIconProps } from '../components/ui/iconStyle'
 
 export function InventoryPage() {
   const { t } = useTranslation()
+  const [params] = useSearchParams()
   const tierLabels = useTierLabels()
   const inventory = useAppStore((s) => s.inventory)
   const progress = useAppStore((s) => s.progress)
@@ -42,6 +44,16 @@ export function InventoryPage() {
 
   const [filters, setFilters] = usePersistedInventoryFilters()
   const { search, filterMode, rarityFilter, tierFilter, neededFilter, viewMode } = filters
+
+  useEffect(() => {
+    const mode = params.get('e2e_inv_filter')
+    if (mode === 'rarity' || mode === 'tier' || mode === 'all') {
+      setFilters((f) => ({ ...f, filterMode: mode }))
+    }
+    if (params.get('e2e_inv_view') === 'list') {
+      setFilters((f) => ({ ...f, viewMode: 'list' }))
+    }
+  }, [params, setFilters])
   const setSearch = (search: string) => setFilters((f) => ({ ...f, search }))
   const setFilterMode = (filterMode: InventoryFilterMode) =>
     setFilters((f) => ({

@@ -7,9 +7,9 @@ import { useAppearance, type AppearanceModePref } from '../hooks/useAppearance'
 import { uiIconProps } from '../components/ui/iconStyle'
 
 const MODES: { value: AppearanceModePref; icon: typeof Moon; labelKey: string }[] = [
-  { value: 'dark', icon: Moon, labelKey: 'settings.themeDark' },
+  { value: 'system', icon: Desktop, labelKey: 'settings.themeSystem' },
   { value: 'light', icon: Sun, labelKey: 'settings.themeLight' },
-  { value: 'system', icon: Desktop, labelKey: 'settings.themeSystemShort' },
+  { value: 'dark', icon: Moon, labelKey: 'settings.themeDark' },
 ]
 
 export function AppearancePage() {

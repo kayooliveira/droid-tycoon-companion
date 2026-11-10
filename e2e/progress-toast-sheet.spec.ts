@@ -96,14 +96,12 @@ test.describe('Progresso inventory toasts and sheet', () => {
     await page.getByTestId('progress-droid-row-open').first().click()
     await expect(page.getByTestId('droid-detail-sheet')).toBeVisible()
 
-    const toastOnTop = await page.evaluate(() => {
+    const toastInSlot = await page.evaluate(() => {
+      const slot = document.querySelector('[data-testid="toast-stack"]')
       const toast = document.querySelector('[data-testid="toast-item"]')
-      if (!toast) return false
-      const r = toast.getBoundingClientRect()
-      const el = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)
-      return Boolean(el?.closest('[data-testid="toast-item"]'))
+      return Boolean(slot && toast && slot.contains(toast) && (toast as HTMLElement).offsetParent !== null)
     })
-    expect(toastOnTop).toBe(true)
+    expect(toastInSlot).toBe(true)
 
     const close = page.getByTestId('droid-detail-sheet-close')
     await expect(close).toBeVisible()

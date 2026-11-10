@@ -37,12 +37,20 @@
 }
 
 @layer utilities {
+  :root {
+    --e2e-safe-bottom: 0px;
+  }
+
   html.e2e-safe-area {
     --e2e-safe-bottom: 34px;
   }
 
-  html.e2e-safe-area nav[data-testid='mobile-floating-nav'] {
-    bottom: calc(var(--e2e-safe-bottom) + 12px);
+  html.e2e-safe-area .app-shell.app {
+    padding-bottom: var(--e2e-safe-bottom);
+  }
+
+  html.e2e-safe-area .app-shell .tabbar {
+    transform: translateY(calc(-1 * var(--e2e-safe-bottom)));
   }
 }
 

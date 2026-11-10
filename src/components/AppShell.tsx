@@ -35,6 +35,14 @@ const desktopNav = [
   { to: '/settings', labelKey: 'nav.settings', icon: Gear },
 ] as const
 
+const MORE_HINT: Record<string, string> = {
+  '/sell': 'nav.moreHintSell',
+  '/droiddex': 'nav.moreHintDroiddex',
+  '/fusion': 'nav.moreHintFusion',
+  '/about': 'nav.moreHintAbout',
+  '/settings': 'nav.moreHintSettings',
+}
+
 const moreMobile = desktopNav.filter((item) =>
   ['/sell', '/droiddex', '/fusion', '/about', '/settings'].includes(item.to),
 )
@@ -127,6 +135,12 @@ export function AppShell() {
                 </span>
                 <span className="row-main">
                   <span className="dname">{t(item.labelKey)}</span>
+                  <span className="hint">{t(MORE_HINT[item.to] ?? item.labelKey)}</span>
+                </span>
+                <span className="chev" aria-hidden>
+                  <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+                    <path d="m9 5 7 7-7 7" />
+                  </svg>
                 </span>
               </NavLink>
             ))}

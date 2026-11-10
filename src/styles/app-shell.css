@@ -8,9 +8,20 @@
   }
 }
 
+@media (max-width: 767px) {
+  .shell-root {
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+  }
+}
+
 .app-shell.app {
-  min-height: 100dvh;
+  height: 100dvh;
+  min-height: 0;
+  max-height: 100dvh;
   max-width: 100%;
+  overflow: hidden;
 }
 
 .app-shell .scroll {
@@ -38,6 +49,12 @@
 
 .app-shell .tabbar {
   padding-bottom: env(safe-area-inset-bottom, 0px);
+  position: sticky;
+  bottom: 0;
+  z-index: 50;
+  isolation: isolate;
+  background: var(--tab-bg);
+  flex: none;
 }
 
 @media (min-width: 768px) {

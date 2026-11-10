@@ -20,16 +20,22 @@ test.describe('theme contrast (axe)', () => {
   })
 
   test('settings light theme', async ({ page }) => {
-    await page.goto('/settings')
-    await page.getByRole('radio', { name: /Claro|Light/i }).click()
+    await page.goto('/settings/appearance')
+    await expect(page.getByTestId('appearance-page')).toBeVisible({ timeout: 15_000 })
+    await page.locator('.seg button').filter({ hasText: /Claro|Light/i }).click()
     await page.waitForTimeout(200)
+    await page.goto('/settings')
+    await expect(page.getByTestId('settings-page')).toBeVisible()
     await expectNoSeriousViolations(page)
   })
 
   test('settings dark theme', async ({ page }) => {
-    await page.goto('/settings')
-    await page.getByRole('radio', { name: /Escuro|Dark/i }).click()
+    await page.goto('/settings/appearance')
+    await expect(page.getByTestId('appearance-page')).toBeVisible({ timeout: 15_000 })
+    await page.locator('.seg button').filter({ hasText: /Escuro|Dark/i }).click()
     await page.waitForTimeout(200)
+    await page.goto('/settings')
+    await expect(page.getByTestId('settings-page')).toBeVisible()
     await expectNoSeriousViolations(page)
   })
 })

@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import {
   DownloadSimple,
   LinkSimple,
@@ -15,6 +15,7 @@ import { Button } from '../components/ui/Button'
 import { InsetGroup } from '../components/ui/InsetGroup'
 import { Modal } from '../components/ui/Modal'
 import { SegmentedControl } from '../components/ui/SegmentedControl'
+import { DsSwitch } from '../components/ui/DsSwitch'
 import { gameDataSource } from '../data/dataSource'
 import type { AppLocale } from '../i18n/detectLocale'
 import { useAppStore } from '../store/useAppStore'
@@ -27,7 +28,6 @@ import { initI18n } from '../i18n/index'
 import { uiIconProps } from '../components/ui/iconStyle'
 import { APP_PUBLIC_URL, WHATSAPP_SHARE_BASE } from '../lib/constants'
 import { renderShareProgressCard } from '../lib/shareProgressCard'
-import { cn } from '../lib/utils'
 async function downloadOrShare(blob: Blob, filename: string, mime: string) {
   const file = new File([blob], filename, { type: mime })
   if (navigator.canShare?.({ files: [file] })) {
@@ -46,40 +46,10 @@ async function downloadOrShare(blob: Blob, filename: string, mime: string) {
   URL.revokeObjectURL(url)
 }
 
-function SettingsSwitch({
-  checked,
-  onChange,
-  label,
-}: {
-  checked: boolean
-  onChange: (v: boolean) => void
-  label: string
-}) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      aria-label={label}
-      onClick={() => onChange(!checked)}
-      className={cn(
-        'relative h-7 w-12 shrink-0 rounded-full border transition-colors',
-        checked ? 'bg-[var(--ui-accent-fill)] border-transparent' : 'bg-ui-field-muted border-ui',
-      )}
-    >
-      <span
-        className={cn(
-          'absolute top-0.5 left-0.5 h-6 w-6 rounded-full bg-white shadow transition-transform',
-          checked && 'translate-x-5',
-        )}
-      />
-    </button>
-  )
-}
-
 export function SettingsPage() {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
+  const [params] = useSearchParams()
   const { push } = useToast()
   const fileRef = useRef<HTMLInputElement>(null)
   const [resetOpen, setResetOpen] = useState(false)
@@ -99,6 +69,13 @@ export function SettingsPage() {
 
   const meta = gameDataSource.getMeta()
   const stale = gameDataSource.isStale()
+
+  useEffect(() => {
+    if (params.get('e2e_import_modal') === '1') {
+      setPendingImport(toPersisted())
+      setImportOpen(true)
+    }
+  }, [params, toPersisted])
 
   const changeLanguage = (locale: AppLocale) => {
     setLocale(locale, 'user')
@@ -219,50 +196,34 @@ export function SettingsPage() {
         <div className="sec-h">
           <h2 className="t-h2">{t('settings.preferences')}</h2>
         </div>
-        <InsetGroup>
-        <div className="row">
-          <div className="row-main">
-            <span className="row-title">{t('settings.animations')}</span>
-          </div>
-          <div className="row-val">
-            <SettingsSwitch
-              label={t('settings.animations')}
-              checked={settings.animationsEnabled}
-              onChange={(v) => updateSettings({ animationsEnabled: v })}
-            />
-          </div>
-        </div>
-        <div className="row">
-          <div className="row-main">
-            <span className="row-title">{t('settings.trackInventory')}</span>
-          </div>
-          <div className="row-val">
-            <SettingsSwitch
-              label={t('settings.trackInventory')}
-              checked={settings.trackInventory}
-              onChange={(v) => updateSettings({ trackInventory: v })}
-            />
-          </div>
-        </div>
-      </InsetGroup>
+        <DsSwitch
+          label={t('settings.animations')}
+          checked={settings.animationsEnabled}
+          onChange={(v) => updateSettings({ animationsEnabled: v })}
+        />
+        <DsSwitch
+          label={t('settings.trackInventory')}
+          checked={settings.trackInventory}
+          onChange={(v) => updateSettings({ trackInventory: v })}
+        />
       </section>
 
-      <h2 className="sec-h">{t('settings.language')}</h2>
-      <InsetGroup>
-        <div className="px-4 py-3" data-testid="language-select">
-          <SegmentedControl
-            compact
-            className="!mx-0"
-            ariaLabel={t('settings.language')}
-            value={settings.locale}
-            onChange={changeLanguage}
-            options={[
-              { value: 'pt-BR', label: '🇧🇷 PT' },
-              { value: 'en', label: '🇺🇸 EN' },
-            ]}
-          />
+      <section className="sec">
+        <div className="sec-h">
+          <h2 className="t-h2">{t('settings.language')}</h2>
         </div>
-      </InsetGroup>
+        <div data-testid="language-select">
+        <SegmentedControl
+          ariaLabel={t('settings.language')}
+          value={settings.locale}
+          onChange={changeLanguage}
+          options={[
+            { value: 'pt-BR', label: t('settings.langPt') },
+            { value: 'en', label: t('settings.langEn') },
+          ]}
+        />
+        </div>
+      </section>
 
       <h2 className="sec-h">{t('settings.progress')}</h2>
       <InsetGroup>
@@ -282,19 +243,28 @@ export function SettingsPage() {
             </span>
           </div>
         </div>
-        <div className="row flex-col !items-stretch gap-2">
-          <span className="row-title">{t('settings.completedRebirths', { n: progress.completedOnPath })}</span>
+        <div className="row" style={{ display: 'block', minHeight: 0 }}>
+          <div className="lbl-row">
+            <span className="lbl">{t('settings.completedRebirths', { n: progress.completedOnPath })}</span>
+            <span className="val">{progress.completedOnPath}</span>
+          </div>
           <input
             type="range"
+            className="range"
             min={0}
             max={40}
             value={progress.completedOnPath}
-            className="w-full accent-[var(--ui-accent-fill)]"
+            style={{ ['--p' as string]: `${(progress.completedOnPath / 40) * 100}%` }}
+            aria-label={t('settings.completedRebirths', { n: progress.completedOnPath })}
             onChange={(e) => {
               const completed = Number(e.target.value)
               setProgress(completed + 1, completed)
             }}
           />
+          <div className="range-scale">
+            <span>0</span>
+            <span>40</span>
+          </div>
         </div>
       </InsetGroup>
 
@@ -399,17 +369,19 @@ export function SettingsPage() {
         </div>
       </InsetGroup>
 
-      <h2 className="sec-h">{t('settings.danger')}</h2>
-      <InsetGroup>
+      <section className="sec">
+        <div className="sec-h">
+          <h2 className="t-h2">{t('settings.danger')}</h2>
+        </div>
         <button
           type="button"
-          className="row"
+          className="btn btn--danger"
           data-testid="settings-reset-trigger"
           onClick={() => setResetOpen(true)}
         >
-          <span className="row-title text-red-500">{t('settings.resetShort')}</span>
+          {t('settings.resetShort')}
         </button>
-      </InsetGroup>
+      </section>
 
       <Modal
         open={importOpen}

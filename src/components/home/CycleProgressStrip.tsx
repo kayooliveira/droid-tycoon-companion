@@ -3,35 +3,51 @@ import { gameData } from '../../domain/gameData'
 import { formatCycleDisplayName } from '../../lib/cycleLabel'
 import { useAppStore } from '../../store/useAppStore'
 
+const REBIRTHS_PER_PATH = 40
+
 export function CycleProgressStrip() {
   const { t, i18n } = useTranslation()
   const progress = useAppStore((s) => s.progress)
   const cycle = gameData.cycles.find((c) => c.id === progress.pathId)
-  const total = cycle?.rebirths.length ?? 40
+  const total = cycle?.rebirths.length ?? REBIRTHS_PER_PATH
   const done = progress.completedOnPath
-  const pct = total > 0 ? done / total : 0
-  const circumference = 2 * Math.PI * 16
-  const dash = `${(pct * circumference).toFixed(2)} ${circumference.toFixed(2)}`
+  const cycleLabel = cycle ? formatCycleDisplayName(cycle.name, i18n.language) : progress.pathId
+  const marks = [10, 20, 30, total].filter((n, i, arr) => arr.indexOf(n) === i)
+
+  const cells = Array.from({ length: total }, (_, i) => {
+    const step = i + 1
+    const parts: string[] = []
+    if (step <= done) parts.push('done')
+    if (step === done + 1) parts.push('cur')
+    if (step % 5 === 0) parts.push('m5')
+    return <i key={step} className={parts.join(' ') || undefined} />
+  })
 
   return (
-    <div className="cycle-strip" data-testid="home-cycle-strip">
-      <div className="cycle-ring" aria-hidden>
-        <svg viewBox="0 0 40 40">
-          <circle className="ring-track" cx="20" cy="20" r="16" />
-          <circle className="ring-fill" cx="20" cy="20" r="16" strokeDasharray={dash} />
-        </svg>
-        <span className="ring-label">
-          {done}/{total}
-        </span>
+    <section className="sec" data-testid="home-cycle-strip">
+      <div className="sec-h">
+        <h2 className="t-h2">{t('progress.pathProgress')}</h2>
       </div>
-      <div className="cycle-strip-text">
-        <span className="cycle-strip-title">
-          {cycle ? formatCycleDisplayName(cycle.name, i18n.language) : progress.pathId}
-        </span>
-        <span className="cycle-strip-sub">
-          {t('home.nextRenascimento', { n: progress.nextRebirth })}
-        </span>
+      <div className="cm">
+        <div className="cm-top">
+          <span className="cm-num">{done}</span>
+          <span className="cm-of">{t('home.cycleProgressOf', { total })}</span>
+          <span className="cm-label t-label">{cycleLabel}</span>
+        </div>
+        <div className="cm-cells" aria-hidden>
+          {cells}
+        </div>
+        <div className="cm-marks" aria-hidden>
+          {marks.map((n) => (
+            <span key={n} style={{ left: `${(n / total) * 100 - (n === total ? 0 : 1.25)}%` }}>
+              {n}
+            </span>
+          ))}
+        </div>
+        <div className="cm-foot">
+          <span className="t-meta">{t('home.superAfterRebirth', { n: total })}</span>
+        </div>
       </div>
-    </div>
+    </section>
   )
 }

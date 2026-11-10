@@ -16,7 +16,12 @@
     "settings": "Settings",
     "about": "About",
     "more": "More",
-    "cycles": "Cycles"
+    "cycles": "Cycles",
+    "moreHintSell": "Sell advice for your cycle",
+    "moreHintDroiddex": "Droids and where each is used",
+    "moreHintFusion": "Recipes and rules",
+    "moreHintAbout": "Data sources and notices",
+    "moreHintSettings": "Look, language, data"
   },
   "cycles": {
     "title": "Cycles",
@@ -469,6 +474,8 @@
     "nowTitle": "Now",
     "nextRenascimento": "Rebirth #{{n}}",
     "nextRenascimentoSection": "Next rebirth",
+    "cycleProgressOf": "of {{total}}",
+    "superAfterRebirth": "Super Rebirth after #{{n}}",
     "creditsDisclaimer": "Double-check in-game before selling or fusing.",
     "sellCount": "{{n}} droids free to sell",
     "sellInCycle": "This Cycle",

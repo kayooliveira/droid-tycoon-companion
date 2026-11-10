@@ -45,6 +45,7 @@ export function MobileFloatingNav({
 
   const isActive = (tab: (typeof tabs)[number]) => {
     if ('isMore' in tab && tab.isMore) return moreOpen || isMoreRoute
+    if (moreOpen) return false
     if ('end' in tab && tab.end) return location.pathname === tab.to
     return location.pathname === tab.to
   }

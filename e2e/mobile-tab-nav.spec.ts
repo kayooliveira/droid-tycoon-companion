@@ -127,7 +127,7 @@ test('tab bar navigates while Mais sheet is open', async ({ page }) => {
     expect(scrimBox!.y).toBeLessThanOrEqual(1)
     expect(scrimBox!.height).toBeGreaterThanOrEqual(viewport.height - 1)
 
-    await clickTabAtCoordinates(page, tabTestId(tab.path))
+    await page.getByTestId(tabTestId(tab.path)).click()
     await expect(page.getByTestId('nav-more-menu')).toHaveCount(0, { timeout: 8000 })
     await expect(page).not.toHaveURL(/\/settings/)
     await expect(page).toHaveURL(new RegExp(`${tab.path}(\\?|$)`), { timeout: 10_000 })
