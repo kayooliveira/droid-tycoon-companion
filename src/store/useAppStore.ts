@@ -100,7 +100,10 @@ export const useAppStore = create<AppStore>()(
           const paths = ['path-1', 'path-2', 'path-3', 'path-4', 'path-5', 'path-6']
           const idx = paths.indexOf(s.progress.pathId)
           const next = paths[(idx + 1) % paths.length]!
-          return { progress: createInitialProgress(next) }
+          return {
+            progress: createInitialProgress(next),
+            inventory: [],
+          }
         }),
 
       updateSettings: (partial) =>
