@@ -1,4 +1,4 @@
-import { droidById, getRebirth } from '../../domain/gameData'
+import { droidById } from '../../domain/gameData'
 import { DroidImage } from '../DroidImage'
 import { ChipRadioGroup } from '../ui/ChipRadioGroup'
 
@@ -19,8 +19,6 @@ function Accordion({
   reqs?: Array<{ id: string; tier: 'default'; qty: number }>
   note?: string
 }) {
-  const entry = getRebirth(GATE_PATH, n)
-  const creditLabel = entry?.credits ?? credits
   return (
     <div className="acc" data-testid={`cycles-rebirth-group-${n}`}>
       <button
@@ -28,13 +26,14 @@ function Accordion({
         className="acc-h"
         aria-expanded={open}
         data-testid={`cycles-rebirth-${n}`}
+        style={{ height: 60 }}
       >
         <span className="row-main">
           <span className="dname" style={{ display: 'block' }}>
             Renascimento #{n}
           </span>
           <span className="hint" style={{ display: 'block' }}>
-            {creditLabel} · {conf}
+            {credits} · {conf}
           </span>
         </span>
         <span className="chev" aria-hidden>

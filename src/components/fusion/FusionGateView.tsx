@@ -48,8 +48,13 @@ function GateSmTile({
   missing?: boolean
 }) {
   return (
-    <span className="dtile dtile--sm" data-tier={tier} data-missing={missing ? '' : undefined}>
+    <span className={`dtile dtile--sm${missing ? ' dtile--missing' : ''}`} data-tier={tier}>
       <span className="dtile-bg" aria-hidden />
+      {!missing ? (
+        <span className="dtile-num" aria-hidden>
+          01
+        </span>
+      ) : null}
       <img src={droidImageSrc(droidId, imageLocal ?? '')} alt="" width={48} height={48} loading="eager" />
       {missing ? (
         <span className="dtile-q" aria-hidden>

@@ -21,7 +21,6 @@ import { setDocumentLanguage } from '../i18n'
 import { initI18n } from '../i18n/index'
 import { APP_PUBLIC_URL, WHATSAPP_SHARE_BASE } from '../lib/constants'
 import { renderShareProgressCard } from '../lib/shareProgressCard'
-import { useGateTabbarAnchor } from '../hooks/useGateTabbarAnchor'
 import { isDesignGateCapture } from '../e2e/designGate'
 import { SettingsGateView } from '../components/settings/SettingsGateView'
 async function downloadOrShare(blob: Blob, filename: string, mime: string) {
@@ -43,7 +42,6 @@ async function downloadOrShare(blob: Blob, filename: string, mime: string) {
 }
 
 export function SettingsPage() {
-  useGateTabbarAnchor()
   const { t, i18n } = useTranslation()
   const gateCopy = isDesignGateCapture()
   const navigate = useNavigate()

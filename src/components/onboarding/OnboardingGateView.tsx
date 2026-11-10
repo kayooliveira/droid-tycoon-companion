@@ -284,7 +284,8 @@ function Step4() {
       <div className="row">
         <span className="row-ic" aria-hidden>
           <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
-            <path d="M4 6h16v12H4z" />
+            <path d="M6 21V3.5" />
+            <path d="M6 4.5h12l-2.5 4 2.5 4H6" />
           </svg>
         </span>
         <span className="row-main">
@@ -297,7 +298,8 @@ function Step4() {
       <div className="row">
         <span className="row-ic" aria-hidden>
           <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
-            <path d="M4 8h16v10H4z" />
+            <path d="M3.5 12.5V4h8.5l8.5 8.5-8 8z" />
+            <circle cx="8" cy="8.5" r="1.2" />
           </svg>
         </span>
         <span className="row-main">
@@ -310,7 +312,8 @@ function Step4() {
       <div className="row">
         <span className="row-ic" aria-hidden>
           <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
-            <path d="M12 4v12M8 12l4 4 4-4" />
+            <path d="M12 15V3.5M7.5 8 12 3.5 16.5 8" />
+            <path d="M5 12v8.5h14V12" />
           </svg>
         </span>
         <span className="row-main">
@@ -320,12 +323,17 @@ function Step4() {
           <span className="hint">Compartilhe progresso ou exporte PDF do ciclo.</span>
         </span>
       </div>
-      <label className="switch-row" style={{ marginTop: 8 }}>
-        <span>
-          <span style={{ display: 'block' }}>Registrar inventário</span>
-        </span>
-        <input type="checkbox" role="switch" defaultChecked readOnly />
-      </label>
+      <div style={{ marginTop: 8 }}>
+        <label className="switch-row">
+          <span>
+            <span style={{ display: 'block' }}>Registrar inventário</span>
+          </span>
+          <span className="switch">
+            <input type="checkbox" role="switch" defaultChecked readOnly />
+            <i />
+          </span>
+        </label>
+      </div>
       <div className="stack" style={{ marginTop: 24 }}>
         <button type="button" className="btn btn--primary">
           Abrir início

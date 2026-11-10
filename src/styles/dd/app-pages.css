@@ -606,6 +606,10 @@ html.e2e-safe-area .row-main .hint {
   line-height: 1.4;
 }
 
+html.e2e-safe-area .row-main .hint {
+  display: inline;
+}
+
 html.e2e-safe-area .sell-empty-gate .hint {
   line-height: 1.35;
 }

@@ -12,8 +12,13 @@ function RowIcon({ children }: { children: ReactNode }) {
 function SwitchRow({ label, on }: { label: string; on: boolean }) {
   return (
     <label className="switch-row">
-      <span>{label}</span>
-      <input type="checkbox" role="switch" defaultChecked={on} readOnly />
+      <span>
+        <span style={{ display: 'block' }}>{label}</span>
+      </span>
+      <span className="switch">
+        <input type="checkbox" role="switch" defaultChecked={on} readOnly />
+        <i />
+      </span>
     </label>
   )
 }
@@ -78,8 +83,15 @@ export function SettingsGateView({ stale }: { stale: boolean }) {
               Ciclo
             </span>
           </span>
-          <button type="button" className="sel" aria-label="Ciclo 5">
+          <button type="button" className="sel" aria-label="Trocar ciclo: Ciclo 5">
+            <svg className="ic" width={20} height={20} viewBox="0 0 24 24" aria-hidden>
+              <path d="M20 12a8 8 0 1 1-2.6-5.9" />
+              <path d="M20.5 3.5v4.5H16" />
+            </svg>
             Ciclo 5
+            <svg className="ic" width={18} height={18} viewBox="0 0 24 24" aria-hidden>
+              <path d="m5 9 7 7 7-7" />
+            </svg>
           </button>
         </div>
         <div className="row">

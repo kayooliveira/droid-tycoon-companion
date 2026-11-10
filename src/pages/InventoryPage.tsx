@@ -50,8 +50,6 @@ import { useAppStore } from '../store/useAppStore'
 export function InventoryPage() {
   const { t } = useTranslation()
   const [params] = useSearchParams()
-  const narrowGateViewport = typeof window !== 'undefined' && window.innerWidth < 375
-  useGateTabbarAnchor(params.get('e2e_inv_filter') !== 'tier' || narrowGateViewport)
   const tierLabels = useTierLabels()
   const inventory = useAppStore((s) => s.inventory)
   const progress = useAppStore((s) => s.progress)
@@ -63,6 +61,15 @@ export function InventoryPage() {
 
   const [filters, setFilters] = usePersistedInventoryFilters()
   const { search, filterMode, rarityFilter, tierFilter, neededFilter, viewMode } = filters
+  const gateFilter = params.get('e2e_inv_filter')
+  const narrowGateViewport = typeof window !== 'undefined' && window.innerWidth < 375
+  useGateTabbarAnchor(
+    !trackInventory ||
+      inventory.length === 0 ||
+      search.length > 0 ||
+      gateFilter === 'rarity' ||
+      (gateFilter === 'tier' && narrowGateViewport),
+  )
 
   useEffect(() => {
     const mode = params.get('e2e_inv_filter')
@@ -157,8 +164,10 @@ export function InventoryPage() {
   )
 
   const gateInv = gateInventoryFilterActive(inventory)
+  const gateForceEmpty = isDesignGateCapture() && params.get('e2e_inv_empty') === '1'
 
   const filtered = useMemo(() => {
+    if (gateForceEmpty) return []
     if (gateInv && filterMode === 'rarity') return gateFilteredMockUnits(inventory, 'rarity')
     if (gateInv && filterMode === 'tier') return gateFilteredMockUnits(inventory, 'tier')
     return inventory
@@ -187,6 +196,7 @@ export function InventoryPage() {
     progress.pathId,
     progress.nextRebirth,
     gateInv,
+    gateForceEmpty,
   ])
 
   const pickerDroids = useMemo(() => {

@@ -54,3 +54,16 @@ Issues discovered while aligning the app with `comparar_1a1.py` (oficina theme).
 - **Static mock:** o `<body>` começa com o texto acidental `('Vender vazio', '` e termina com `')`, deslocando todo o mock em cerca de 22 px.
 - **Fluxo real:** a tela vazia começa diretamente em `<div class="app">`, sem esses nós de texto.
 - **Correção do comparador:** `after_mock_static()` remove somente os nós de texto que são filhos diretos de `body` para esse slug antes da captura. O HTML aprovado permanece intacto para deixar o defeito de geração auditável.
+
+## `inventario-sem-resultado.html` não representa uma busca vazia
+
+- **Static mock:** campo de busca vazio, filtro **Raridade** ativo, chip **Raro** selecionado e nenhum card.
+- **`comparar_1a1.py` (antes):** abria a visão **Todos** e preenchia `zzzzsemresultadoxyz`, deixando controles e copy diferentes do HTML aprovado.
+- **Correção:** a captura usa `e2e_inv_filter=rarity&e2e_inv_empty=1`; o segundo parâmetro força apenas a coleção gate a ficar vazia. O antigo `after_busca_inv` foi removido.
+
+## `fusao-vazio.html` usa a busca estática `xyz`
+
+- **Static mock:** campo de receitas contém `xyz`, sem foco, e exibe “Nenhuma receita bate com a busca.”
+- **`comparar_1a1.py` (antes):** `after_fusao_vazia` preenchia `zzzzfusao` e deixava o campo focado, ativando borda e sombra de foco ausentes no mock.
+- **Correção:** preencher `xyz`, remover o foco e restaurar o scroll interno que o Chrome
+  móvel aplica ao shell em 360 px antes da captura.

@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react'
 import { isDesignGateCapture } from '../e2e/designGate'
 import { CyclesGateView } from '../components/cycles/CyclesGateView'
-import { useGateTabbarAnchor } from '../hooks/useGateTabbarAnchor'
 import { useTranslation } from 'react-i18next'
 import { CycleGuidePdfExport } from '../components/CycleGuidePdfExport'
 import { DroidImage } from '../components/DroidImage'
@@ -16,7 +15,6 @@ import { useTierLabels } from '../i18n/useTierLabels'
 const GATE_VISIBLE_REBIRTHS = 4
 
 export function CyclesPage() {
-  useGateTabbarAnchor()
   const { t, i18n } = useTranslation()
   if (isDesignGateCapture()) {
     return (

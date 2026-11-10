@@ -179,7 +179,18 @@ MOCK_INVENTORY = [
     {"id": "m10", "droidId": "c-3po", "tier": "scourge", "quantity": 1},
 ]
 
-INIT_SCRIPT = "document.documentElement.classList.add('e2e-safe-area')"
+INIT_SCRIPT = """
+if (document.documentElement) {
+  document.documentElement.classList.add('e2e-safe-area');
+} else {
+  new MutationObserver((_, observer) => {
+    if (document.documentElement) {
+      document.documentElement.classList.add('e2e-safe-area');
+      observer.disconnect();
+    }
+  }).observe(document, { childList: true });
+}
+"""
 
 JS_COLLECT = r"""
 ([selectors, props]) => {
@@ -352,12 +363,6 @@ def after_lista(page: Any) -> None:
     page.wait_for_timeout(200)
 
 
-def after_busca_inv(page: Any) -> None:
-    page.get_by_test_id("inventory-page").wait_for(state="visible", timeout=8000)
-    page.get_by_test_id("inventory-page").locator('input.field[type="search"]').fill("zzzzsemresultadoxyz")
-    page.wait_for_timeout(300)
-
-
 def after_add(page: Any) -> None:
     page.get_by_test_id("inventory-add-open").click()
     page.get_by_test_id("inventory-add-modal").wait_for(state="visible", timeout=8000)
@@ -437,8 +442,11 @@ def after_pwa(page: Any) -> None:
 
 
 def after_fusao_vazia(page: Any) -> None:
-    page.locator('input.field[type="search"]').first.fill("zzzzfusao")
+    field = page.locator('input.field[type="search"]').first
+    field.fill("xyz")
     page.wait_for_timeout(300)
+    field.evaluate("el => el.blur()")
+    page.evaluate("document.querySelector('.shell-root').scrollTop = 0")
 
 
 def after_busca(page: Any) -> None:
@@ -521,7 +529,11 @@ CAPTURES: list[Capture] = [
     Capture("inventario-filtro-raridade", "/inventory", query={"e2e_inv_filter": "rarity"}),
     Capture("inventario-filtro-nivel", "/inventory", query={"e2e_inv_filter": "tier"}),
     Capture("inventario-sem-rastreio", "/inventory", profile="no_track"),
-    Capture("inventario-sem-resultado", "/inventory", after=after_busca_inv),
+    Capture(
+        "inventario-sem-resultado",
+        "/inventory",
+        query={"e2e_inv_filter": "rarity", "e2e_inv_empty": "1"},
+    ),
     Capture("vazio-inventario", "/inventory", profile="empty"),
     Capture("inventario-toast-removido", "/inventory", after=after_toast_removido),
     Capture("sheet-adicionar-droid", "/inventory", after=after_add),

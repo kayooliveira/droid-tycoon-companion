@@ -6,7 +6,6 @@ import { AppearanceGateView } from '../components/appearance/AppearanceGateView'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
 import { useAppearance, type AppearanceModePref } from '../hooks/useAppearance'
 import { uiIconProps } from '../components/ui/iconStyle'
-import { useGateTabbarAnchor } from '../hooks/useGateTabbarAnchor'
 import { isDesignGateCapture } from '../e2e/designGate'
 
 const MODES: { value: AppearanceModePref; icon: typeof Moon; labelKey: string }[] = [
@@ -16,7 +15,6 @@ const MODES: { value: AppearanceModePref; icon: typeof Moon; labelKey: string }[
 ]
 
 export function AppearancePage() {
-  useGateTabbarAnchor()
   const { t } = useTranslation()
   const { theme, modePref, setTheme, setModePref } = useAppearance()
   const gate = isDesignGateCapture()

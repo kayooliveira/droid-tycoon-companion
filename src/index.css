@@ -115,8 +115,8 @@
     background-color: rgb(116, 122, 132);
   }
 
-  html.e2e-safe-area [data-testid='appearance-page'] .tcard,
-  html.e2e-safe-area [data-testid='onboarding-step-theme'] .tcard {
+  html.e2e-safe-area [data-testid='appearance-page'] .tcard:first-child,
+  html.e2e-safe-area [data-testid='onboarding-step-theme'] .tcard:first-child {
     min-height: 222.875px;
   }
 }
