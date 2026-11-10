@@ -6,6 +6,7 @@ import { setPwaUpdateFn } from './lib/pwaUpdate.ts'
 import { initI18n, setDocumentLanguage } from './i18n/index.ts'
 import { detectBrowserLocale } from './i18n/detectLocale.ts'
 import { useAppStore } from './store/useAppStore.ts'
+import { applyAppearanceToDom } from './hooks/useAppearance.ts'
 import './index.css'
 
 const stored = localStorage.getItem('droid-tycoon-companion-store')
@@ -52,6 +53,7 @@ createRoot(document.getElementById('root')!).render(
 
 useAppStore.persist.onFinishHydration(() => {
   const s = useAppStore.getState()
+  applyAppearanceToDom(s.settings.appearanceTheme, s.settings.appearanceMode)
   if (s.settings.localeSource === 'auto') {
     const detected = detectBrowserLocale()
     if (detected !== s.settings.locale) {

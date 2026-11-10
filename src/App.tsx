@@ -37,6 +37,9 @@ const SettingsPage = lazy(() =>
   import('./pages/SettingsPage').then((m) => ({ default: m.SettingsPage })),
 )
 const AboutPage = lazy(() => import('./pages/AboutPage').then((m) => ({ default: m.AboutPage })))
+const AppearancePage = lazy(() =>
+  import('./pages/AppearancePage').then((m) => ({ default: m.AppearancePage })),
+)
 
 function OnboardingGate({ children }: { children: ReactNode }) {
   const onboardingComplete = useAppStore((s) => s.onboardingComplete)
@@ -169,6 +172,14 @@ export default function App() {
               element={
                 <LazyPage>
                   <SettingsPage />
+                </LazyPage>
+              }
+            />
+            <Route
+              path="settings/appearance"
+              element={
+                <LazyPage>
+                  <AppearancePage />
                 </LazyPage>
               }
             />

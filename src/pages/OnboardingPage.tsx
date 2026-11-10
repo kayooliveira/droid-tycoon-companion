@@ -21,10 +21,12 @@ import { Logo } from '../components/Logo'
 import { Button } from '../components/ui/Button'
 import { Switch } from '../components/ui/Switch'
 import { useAppStore } from '../store/useAppStore'
+import { ThemeCardGroup } from '../components/appearance/ThemeCard'
+import { useAppearance } from '../hooks/useAppearance'
 import { uiIconProps } from '../components/ui/iconStyle'
 import { cn } from '../lib/utils'
 
-const STEPS = ['welcome', 'cycle', 'progress', 'features'] as const
+const STEPS = ['welcome', 'cycle', 'progress', 'theme', 'features'] as const
 const REBIRTHS_PER_PATH = 40
 
 function cycleHeroDroidId(pathId: string): string {
@@ -58,6 +60,7 @@ export function OnboardingPage() {
   const setProgress = useAppStore((s) => s.setProgress)
   const updateSettings = useAppStore((s) => s.updateSettings)
   const setLocale = useAppStore((s) => s.setLocale)
+  const { theme: appearanceTheme, setTheme: setAppearanceTheme } = useAppearance()
 
   const [step, setStep] = useState(0)
   const [pathId, setPathId] = useState(progressStore.pathId)
@@ -352,6 +355,24 @@ export function OnboardingPage() {
                   </div>
                 ) : null}
               </>
+            ) : null}
+
+            {current === 'theme' ? (
+              <div className="flex-1 min-h-0 overflow-y-auto">
+                <div className="steps" role="img" aria-label={t('onboarding.themeStepProgress')}>
+                  <i className="on" />
+                  <i className="on" />
+                  <i className="on" />
+                  <i />
+                </div>
+                <h1 className="t-display" style={{ marginTop: 22, marginBottom: 8, fontSize: 'min(var(--title-size), 9vw)' }}>
+                  {t('onboarding.themeTitle')}
+                </h1>
+                <p className="hint" style={{ marginBottom: 18 }}>
+                  {t('onboarding.themeHint')}
+                </p>
+                <ThemeCardGroup value={appearanceTheme} onChange={setAppearanceTheme} />
+              </div>
             ) : null}
 
             {current === 'features' ? (

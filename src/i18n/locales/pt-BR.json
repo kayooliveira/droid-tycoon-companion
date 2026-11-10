@@ -286,6 +286,9 @@
     "cycleHint": "Dá pra trocar o Ciclo depois em Ajustes.",
     "rebirthCount_one": "{{count}} renascimento neste Ciclo",
     "rebirthCount_other": "{{count}} renascimentos neste Ciclo",
+    "themeTitle": "Escolha o visual",
+    "themeHint": "Você pode mudar depois em Ajustes, Aparência.",
+    "themeStepProgress": "Passo 3 de 4",
     "progressTitle": "Onde você está neste Ciclo?",
     "progressHint": "Quantos renascimentos você já terminou?",
     "progressHintShort": "Renascimentos feitos",
@@ -314,8 +317,30 @@
     "doneBody": "Volta pro painel quando quiser.",
     "openDashboard": "Abrir início"
   },
+  "appearance": {
+    "themeAndMode": "Tema e modo",
+    "visualTheme": "Visual",
+    "themeGroup": "Tema",
+    "themeAria": "Tema {{name}}",
+    "previewCta": "Concluir",
+    "themes": {
+      "oficina": {
+        "name": "Oficina",
+        "desc": "Plaquinhas, régua e linhas finas. Direto e técnico."
+      },
+      "figurinhas": {
+        "name": "Figurinhas",
+        "desc": "Álbum de figurinhas: cantos redondos e cores vivas."
+      },
+      "cartaz": {
+        "name": "Cartaz",
+        "desc": "Números gigantes, preto e branco, sem cantos."
+      }
+    }
+  },
   "settings": {
     "title": "Ajustes",
+    "preferences": "Preferências",
     "appearance": "Aparência",
     "theme": "Tema",
     "themeDark": "Escuro",

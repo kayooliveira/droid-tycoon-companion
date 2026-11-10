@@ -286,6 +286,9 @@
     "cycleHint": "You can switch Path later in Settings.",
     "rebirthCount_one": "{{count}} rebirth in this cycle",
     "rebirthCount_other": "{{count}} rebirths in this cycle",
+    "themeTitle": "Pick a look",
+    "themeHint": "You can change this later in Settings, Appearance.",
+    "themeStepProgress": "Step 3 of 4",
     "progressTitle": "Where are you on this Path?",
     "progressHint": "How many rebirths have you already finished?",
     "progressHintShort": "Rebirths done",
@@ -314,8 +317,30 @@
     "doneBody": "Open the dashboard when you're ready.",
     "openDashboard": "Open dashboard"
   },
+  "appearance": {
+    "themeAndMode": "Theme & mode",
+    "visualTheme": "Look",
+    "themeGroup": "Theme",
+    "themeAria": "Theme {{name}}",
+    "previewCta": "Done",
+    "themes": {
+      "oficina": {
+        "name": "Workshop",
+        "desc": "Nameplates, ruler lines, and fine strokes. Direct and technical."
+      },
+      "figurinhas": {
+        "name": "Stickers",
+        "desc": "Sticker-album feel: rounded corners and vivid color."
+      },
+      "cartaz": {
+        "name": "Poster",
+        "desc": "Huge numbers, black and white, square edges."
+      }
+    }
+  },
   "settings": {
     "title": "Settings",
+    "preferences": "Preferences",
     "appearance": "Appearance",
     "theme": "Theme",
     "themeDark": "Dark",

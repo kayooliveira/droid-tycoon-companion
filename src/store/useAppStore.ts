@@ -12,6 +12,7 @@ import {
   type UserSettings,
 } from '../storage/types'
 import { uid } from '../lib/utils'
+import { applyAppearanceToDom } from '../hooks/useAppearance'
 
 interface AppStore extends PersistedState {
   _hydrated: boolean
@@ -180,10 +181,12 @@ export const useAppStore = create<AppStore>()(
   ),
 )
 
+/**
+ * @deprecated Use `useAppearance` / `applyAppearanceToDom`. Kept for settings.theme compat sync.
+ */
 export function applyTheme(theme: ThemeMode): void {
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-  const isLight = theme === 'light' || (theme === 'system' && !prefersDark)
-  document.documentElement.classList.toggle('theme-light', isLight)
-  document.body.classList.toggle('theme-light', isLight)
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', isLight ? '#f4f4f5' : '#0c121c')
+  const s = useAppStore.getState().settings
+  const modePref =
+    theme === 'system' || theme === 'light' || theme === 'dark' ? theme : s.appearanceMode
+  applyAppearanceToDom(s.appearanceTheme, modePref)
 }

@@ -4,7 +4,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import {
   DownloadSimple,
   LinkSimple,
-  Moon,
   ShareNetwork,
   UploadSimple,
   WhatsappLogo,
@@ -18,8 +17,8 @@ import { Modal } from '../components/ui/Modal'
 import { SegmentedControl } from '../components/ui/SegmentedControl'
 import { gameDataSource } from '../data/dataSource'
 import type { AppLocale } from '../i18n/detectLocale'
-import { useAppStore, applyTheme } from '../store/useAppStore'
-import type { ThemeMode } from '../storage/types'
+import { useAppStore } from '../store/useAppStore'
+import { useAppearance } from '../hooks/useAppearance'
 import type { PersistedState } from '../storage/types'
 import { downloadJson, exportProgress, parseImportJson } from '../storage/exportImport'
 import { useToast } from '../components/ToastProvider'
@@ -108,10 +107,14 @@ export function SettingsPage() {
     void i18n.changeLanguage(locale)
   }
 
-  const setTheme = (theme: ThemeMode) => {
-    updateSettings({ theme })
-    applyTheme(theme)
-  }
+  const { theme: appearanceTheme, modePref, resolvedMode } = useAppearance()
+  const appearanceSummary = t(`appearance.themes.${appearanceTheme}.name`)
+  const modeSummary =
+    modePref === 'system'
+      ? t('settings.themeSystemShort')
+      : modePref === 'light'
+        ? t('settings.themeLight')
+        : t('settings.themeDark')
 
   const rerunOnboarding = () => {
     navigate('/onboarding?rerun=1')
@@ -186,28 +189,37 @@ export function SettingsPage() {
   }
 
   return (
-    <TabScrollLayout title={t('nav.more')} testId="settings-page">
-      <h2 className="dc-section-header">{t('settings.appearance')}</h2>
-      <InsetGroup>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('settings.theme')}</span>
-          </div>
+    <TabScrollLayout title={t('settings.title')} testId="settings-page">
+      <section className="sec">
+        <div className="sec-h">
+          <h2 className="t-h2">{t('settings.appearance')}</h2>
         </div>
-        <div className="px-4 pb-3">
-          <SegmentedControl
-            compact
-            className="!mx-0"
-            ariaLabel={t('settings.theme')}
-            value={settings.theme}
-            onChange={setTheme}
-            options={[
-              { value: 'dark', label: t('settings.themeDark'), icon: <Moon {...uiIconProps} /> },
-              { value: 'light', label: t('settings.themeLight') },
-              { value: 'system', label: t('settings.themeSystemShort') },
-            ]}
-          />
+        <Link
+          to="/settings/appearance"
+          className="row"
+          data-testid="settings-appearance-link"
+        >
+          <span className="row-main">
+            <span className="dname" style={{ display: 'block' }}>
+              {t('appearance.themeAndMode')}
+            </span>
+            <span className="hint" style={{ display: 'block' }}>
+              {appearanceSummary} · {modeSummary}
+              {modePref === 'system' ? ` (${resolvedMode})` : ''}
+            </span>
+          </span>
+          <span className="chev" aria-hidden>
+            <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+              <path d="m9 5 7 7-7 7" />
+            </svg>
+          </span>
+        </Link>
+      </section>
+      <section className="sec">
+        <div className="sec-h">
+          <h2 className="t-h2">{t('settings.preferences')}</h2>
         </div>
+        <InsetGroup>
         <div className="dc-row">
           <div className="dc-row-main">
             <span className="dc-row-label">{t('settings.animations')}</span>
@@ -233,6 +245,7 @@ export function SettingsPage() {
           </div>
         </div>
       </InsetGroup>
+      </section>
 
       <h2 className="dc-section-header">{t('settings.language')}</h2>
       <InsetGroup>
