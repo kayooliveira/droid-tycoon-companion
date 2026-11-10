@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { Check, Tag, TreeStructure, Warehouse, X } from '@phosphor-icons/react'
 import { CycleProgressStrip } from '../components/home/CycleProgressStrip'
 import { DroidImage } from '../components/DroidImage'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
@@ -11,7 +10,6 @@ import { useTierLabels } from '../i18n/useTierLabels'
 import { evaluateRequirements } from '../domain/requirements'
 import { useAppStore } from '../store/useAppStore'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
-import { uiIconProps } from '../components/ui/iconStyle'
 import { mockHomeSellableCount } from '../e2e/mockInventoryFixture'
 
 export function DashboardPage() {
@@ -58,7 +56,7 @@ export function DashboardPage() {
                   <DroidImage
                     droid={d}
                     tier={c.requirement.rarity}
-                    size="sm"
+                    size="md"
                     quantity={c.neededCount > 1 ? c.ownedCount : undefined}
                   />
                   <span className="dname">{d.name}</span>
@@ -67,12 +65,16 @@ export function DashboardPage() {
                     <i className="tag-sq" aria-hidden />
                     {ok ? (
                       <>
-                        <Check {...uiIconProps} size={14} className="ic" />
+                        <svg className="ic" width={14} height={14} viewBox="0 0 24 24" aria-hidden>
+                          <path d="m4.5 12.5 5 5L19.5 7" />
+                        </svg>
                         {t('status.ready')}
                       </>
                     ) : (
                       <>
-                        <X {...uiIconProps} size={14} className="ic" />
+                        <svg className="ic" width={14} height={14} viewBox="0 0 24 24" aria-hidden>
+                          <path d="M5.5 5.5l13 13M18.5 5.5l-13 13" />
+                        </svg>
                         {t('status.missing')}
                       </>
                     )}
@@ -104,9 +106,12 @@ export function DashboardPage() {
         <div className="sec-h">
           <h2 className="t-h2">{t('home.sellTitle')}</h2>
         </div>
-        <Link to="/sell" className="row row--link">
+        <Link to="/sell" className="row">
           <span className="row-ic" aria-hidden>
-            <Tag {...uiIconProps} width={24} height={24} />
+            <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
+              <path d="M3.5 12.5V4h8.5l8.5 8.5-8 8z" />
+              <circle cx="8" cy="8.5" r="1.2" />
+            </svg>
           </span>
           <span className="row-main">
             <span className="dname" style={{ display: 'block' }}>
@@ -119,6 +124,11 @@ export function DashboardPage() {
             <span className="hint" style={{ display: 'block' }}>
               {fixtureSellCount != null ? t('home.sellInCycle') : cycle ? t('home.sellInCycle') : ''}
             </span>
+          </span>
+          <span className="chev" aria-hidden>
+            <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+              <path d="m9 5 7 7-7 7" />
+            </svg>
           </span>
         </Link>
       </section>
@@ -133,16 +143,21 @@ export function DashboardPage() {
         <div className="sec-h">
           <h2 className="t-h2">{t('home.cycleSummaryTitle')}</h2>
         </div>
-        <div className="row">
+        <Link to="/progress" className="row">
           <span className="row-ic" aria-hidden>
-            <TreeStructure {...uiIconProps} width={24} height={24} />
+            <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
+              <path d="M6 21V3.5" />
+              <path d="M6 4.5h12l-2.5 4 2.5 4H6" />
+            </svg>
           </span>
           <span className="row-main">
-            <span className="dname">{t('pdf.rebirthsDone')}</span>
+            <span className="dname" style={{ display: 'block' }}>
+              {t('pdf.rebirthsDone')}
+            </span>
           </span>
           <span className="row-val">{progress.completedOnPath}</span>
-        </div>
-        <Link to="/progress" className="row row--link">
+        </Link>
+        <Link to="/progress" className="row">
           <span className="row-ic" aria-hidden>
             <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
               <path d="m12 3.5 2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 17l-5.2 2.7 1-5.9L3.5 9.7l5.9-.8z" />
@@ -158,12 +173,18 @@ export function DashboardPage() {
             </svg>
           </span>
         </Link>
-        <Link to="/inventory" className="row row--link">
+        <Link to="/inventory" className="row">
           <span className="row-ic" aria-hidden>
-            <Warehouse {...uiIconProps} width={24} height={24} />
+            <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
+              <path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5z" />
+              <path d="M3.5 7.5 12 12l8.5-4.5" />
+              <path d="M12 12v9" />
+            </svg>
           </span>
           <span className="row-main">
-            <span className="dname">{t('pdf.inventory')}</span>
+            <span className="dname" style={{ display: 'block' }}>
+              {t('pdf.inventory')}
+            </span>
           </span>
           <span className="row-val">{inventory.length}</span>
           <span className="chev" aria-hidden>

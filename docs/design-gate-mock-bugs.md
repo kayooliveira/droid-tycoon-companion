@@ -1,5 +1,13 @@
 # Design gate — documented mock / tooling mismatches
 
+## `sheet-adicionar-droid.html` tier chip scroll inset
+
+- **Mock HTML:** inline script uses `scrollLeft = offsetLeft - containerLeft - 24`.
+- **Live gate sheet:** React layout measures ~7px wider per chip before scroll; capture uses
+  **-17** in `InventoryAddGateSheet` and `after_add` (`JS_ADD_SHEET_CHIP_SCROLL`) so the
+  pressed chip aligns with the static mock at 360/390. Production add flow is unchanged
+  (non-gate sheet scrolls on user interaction only).
+
 Issues discovered while aligning the app with `comparar_1a1.py` (oficina theme). The app may apply **capture-only** fixtures via `isDesignGateCapture()` when the mock or seed disagrees without changing production behavior.
 
 ## Settings `ajustes` / modals — range slider + tab bar rasterization

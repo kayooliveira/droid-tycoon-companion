@@ -544,7 +544,7 @@
     "generated": "Gerado em {{date}}",
     "dataVersion": "Dados v{{version}} · jogo {{game}}",
     "overviewTitle": "Visão geral do Ciclo",
-    "rebirthsDone": "Renascimentos feitos",
+    "rebirthsDone": "Renascimentos concluídos",
     "pathPct": "Progresso do Ciclo",
     "nextRebirth": "Próximo renascimento",
     "inventory": "Droids no inventário",
