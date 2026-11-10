@@ -111,6 +111,11 @@
   html.e2e-safe-area [data-testid='droiddex-detail-modal'] .dtile-bg {
     background-color: rgb(116, 122, 132);
   }
+
+  html.e2e-safe-area [data-testid='appearance-page'] .tcard,
+  html.e2e-safe-area [data-testid='onboarding-step-theme'] .tcard {
+    min-height: 222.875px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

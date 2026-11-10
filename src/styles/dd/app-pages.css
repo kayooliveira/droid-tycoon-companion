@@ -591,9 +591,9 @@ html.e2e-safe-area .app-shell .tabbar {
 }
 
 /* Back-bar routes: app (is_mobile) sits ~22px above static mock HTML. */
-/* Vender (+ vazio): mock backbar ~22px lower than default app capture. */
-html.e2e-safe-area .app-shell.app:has([data-testid='sell-page']):not([data-fixed]) .backbar {
-  margin-top: 22.39px;
+/* Vender (+ vazio): mock viewport ~22px lower (is_mobile); pad tab-page, not margin on backbar. */
+html.e2e-safe-area .app-shell.app:has([data-testid='sell-page']):not([data-fixed]) .tab-page {
+  padding-top: 22.39px;
 }
 
 html.e2e-safe-area .app-shell.app:has([data-testid='sell-page']):not([data-fixed]) .tabbar {
