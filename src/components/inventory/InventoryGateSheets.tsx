@@ -46,7 +46,7 @@ export function InventoryAddGateSheet({ onClose }: { onClose: () => void }) {
     const c = chipsRef.current
     if (!c) return
     const selected = c.querySelector<HTMLElement>('[aria-pressed="true"]')
-    if (selected) c.scrollLeft = Math.max(0, selected.offsetLeft - c.offsetLeft - 17)
+    if (selected) c.scrollLeft = Math.max(0, selected.offsetLeft - c.offsetLeft - 24)
   }, [])
   return (
     <OverlayPortal>
@@ -60,7 +60,7 @@ export function InventoryAddGateSheet({ onClose }: { onClose: () => void }) {
         <span className="grab" aria-hidden />
         <div className="sheet-h">
           <h2 className="t-h2">Adicionar droid</h2>
-          <button type="button" className="btn btn--icon btn--ghost" aria-label="Fechar" onClick={onClose}>
+          <button type="button" className="btn btn--icon btn--secondary" aria-label="Fechar" onClick={onClose}>
             <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
               <path d="M5.5 5.5l13 13M18.5 5.5l-13 13" />
             </svg>

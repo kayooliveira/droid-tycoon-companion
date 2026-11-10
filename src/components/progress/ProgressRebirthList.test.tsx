@@ -63,8 +63,9 @@ describe('ProgressRebirthList', () => {
 
   it('respects persisted collapsed preference on mount', () => {
     renderList(false)
-    expect(screen.getByTestId('progress-list-item-2')).toHaveAttribute('aria-expanded', 'false')
-    expect(screen.getByText('Expand all')).toBeInTheDocument()
+    expect(screen.getByTestId('progress-list-item-1')).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.getByTestId('progress-list-item-2')).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByText('Collapse all')).toBeInTheDocument()
   })
 
   it('individual toggle still works', () => {

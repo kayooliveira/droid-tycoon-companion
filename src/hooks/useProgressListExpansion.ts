@@ -46,7 +46,9 @@ export function useProgressListExpansion(
 
   useEffect(() => {
     setExpanded(defaultExpanded())
-  }, [pathId, rebirthKey, defaultExpanded])
+    // Only re-seed when the path or step list changes (not when persist toggles in-session).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathId, rebirthKey])
 
   const allExpanded = useMemo(
     () => areAllExpanded(rebirthNumbers, expanded),
