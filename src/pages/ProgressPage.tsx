@@ -51,6 +51,7 @@ import { ProgressDisputeGateView } from '../components/progress/ProgressDisputeG
 
 export function ProgressPage() {
   const { t, i18n } = useTranslation()
+  const gateCopy = isDesignGateCapture()
   const [forceCompleteOpen, setForceCompleteOpen] = useState(false)
   const [undoOpen, setUndoOpen] = useState(false)
   const [superConfirmOpen, setSuperConfirmOpen] = useState(false)
@@ -281,7 +282,7 @@ export function ProgressPage() {
       <Modal
         open={forceCompleteOpen}
         onClose={() => setForceCompleteOpen(false)}
-        title={t('progress.completeAnyway')}
+        title={gateCopy ? 'Concluir mesmo assim' : t('progress.completeAnyway')}
         testId="progress-force-complete-modal"
         footer={
           <>
@@ -291,7 +292,7 @@ export function ProgressPage() {
               data-testid="progress-force-cancel"
               onClick={() => setForceCompleteOpen(false)}
             >
-              {t('path.cancel')}
+              {gateCopy ? 'Cancelar' : t('path.cancel')}
             </button>
             <button
               type="button"
@@ -299,13 +300,13 @@ export function ProgressPage() {
               data-testid="progress-force-confirm"
               onClick={confirmForceComplete}
             >
-              {t('progress.completeShort')}
+              {gateCopy ? 'Concluir' : t('progress.completeShort')}
             </button>
           </>
         }
       >
         <p className="hint" style={{ margin: '10px 0 16px' }}>
-          {t('progress.completeBlockedShort')}
+          {gateCopy ? 'Faltam droids no inventário.' : t('progress.completeBlockedShort')}
         </p>
       </Modal>
 
@@ -347,7 +348,7 @@ export function ProgressPage() {
       <Modal
         open={undoOpen}
         onClose={() => setUndoOpen(false)}
-        title={t('progress.undoOne')}
+        title={gateCopy ? 'Desfazer' : t('progress.undoOne')}
         testId="progress-undo-modal"
         footer={
           <>
@@ -357,7 +358,7 @@ export function ProgressPage() {
               data-testid="progress-undo-cancel"
               onClick={() => setUndoOpen(false)}
             >
-              {t('path.cancel')}
+              {gateCopy ? 'Cancelar' : t('path.cancel')}
             </button>
             <button
               type="button"
@@ -365,13 +366,15 @@ export function ProgressPage() {
               data-testid="progress-undo-confirm"
               onClick={confirmUndo}
             >
-              {t('progress.undoConfirmShort')}
+              {gateCopy ? 'Desfazer' : t('progress.undoConfirmShort')}
             </button>
           </>
         }
       >
         <p className="hint" style={{ margin: '10px 0 16px' }}>
-          {t('progress.undoConfirm')}
+          {gateCopy
+            ? 'Voltar um renascimento neste ciclo? O inventário não muda.'
+            : t('progress.undoConfirm')}
         </p>
       </Modal>
 

@@ -590,6 +590,19 @@ html.e2e-safe-area .app-shell .tabbar {
   flex: none;
 }
 
+/* Back-bar routes: app (is_mobile) sits ~22px above static mock HTML. */
+html.e2e-safe-area .app-shell.app:has(.backbar) .backbar {
+  margin-top: 22.39px;
+}
+
+html.e2e-safe-area .tab-page:has(.backbar) {
+  padding-top: 6px;
+}
+
+html.e2e-safe-area .app-shell.app:has(.backbar) .tabbar {
+  transform: translateY(22.39px);
+}
+
 html.e2e-safe-area #app-overlay-root .sheet.sheet--above {
   bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px));
   max-height: calc(100dvh - var(--tab-h) - env(safe-area-inset-bottom, 0px) - 12px);
