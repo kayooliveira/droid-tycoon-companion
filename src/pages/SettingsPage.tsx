@@ -8,7 +8,7 @@ import { PathProgressSwitcher, ProgressSummaryLine } from '../components/PathPro
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
 import { MoreBackBar } from '../components/layout/MoreBackBar'
 import { Modal } from '../components/ui/Modal'
-import { GateCaptureModal } from '../components/ui/GateCaptureModal'
+import { SettingsGateStaticModal } from '../components/settings/SettingsGateStaticModal'
 import { SegmentedControl } from '../components/ui/SegmentedControl'
 import { DsSwitch } from '../components/ui/DsSwitch'
 import { gameDataSource } from '../data/dataSource'
@@ -84,6 +84,20 @@ export function SettingsPage() {
     else shell.removeAttribute('data-fixed')
     return () => shell.removeAttribute('data-fixed')
   }, [gateCopy, importOpen, resetOpen])
+
+  useEffect(() => {
+    if (!gateCopy) return
+    const page = document.querySelector('[data-testid="settings-page"]')
+    if (!page) return
+    const onClick = (e: Event) => {
+      const target = e.target as HTMLElement | null
+      if (!target?.closest('[data-testid="settings-reset-trigger"]')) return
+      e.preventDefault()
+      setResetOpen(true)
+    }
+    page.addEventListener('click', onClick)
+    return () => page.removeEventListener('click', onClick)
+  }, [gateCopy])
 
   const changeLanguage = (locale: AppLocale) => {
     setLocale(locale, 'user')
@@ -526,32 +540,8 @@ export function SettingsPage() {
 
       {gateCopy ? (
         <>
-          <GateCaptureModal
-            open={importOpen}
-            title="Importar progresso?"
-            hint="Substitui inventário, ciclo e renascimentos pelos dados do arquivo. Não dá para desfazer."
-            testId="modal-importar"
-            primaryLabel="Confirmar"
-            onClose={() => {
-              setImportOpen(false)
-              setPendingImport(null)
-            }}
-            onPrimary={confirmImport}
-            primaryTestId="settings-import-confirm"
-            secondaryTestId="settings-import-cancel"
-          />
-          <GateCaptureModal
-            open={resetOpen}
-            title="Apagar tudo?"
-            hint="Remove progresso, inventário e ajustes deste aparelho. Não dá para desfazer."
-            testId="modal-apagar-tudo"
-            primaryLabel="Confirmar"
-            primaryVariant="danger-solid"
-            onClose={() => setResetOpen(false)}
-            onPrimary={confirmReset}
-            primaryTestId="settings-reset-confirm"
-            secondaryTestId="settings-reset-cancel"
-          />
+          <SettingsGateStaticModal open={importOpen} testId="modal-importar" />
+          <SettingsGateStaticModal open={resetOpen} testId="modal-apagar-tudo" />
         </>
       ) : (
         <>

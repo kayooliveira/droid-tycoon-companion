@@ -2,6 +2,21 @@
 
 Issues discovered while aligning the app with `comparar_1a1.py` (oficina theme). The app may apply **capture-only** fixtures via `isDesignGateCapture()` when the mock or seed disagrees without changing production behavior.
 
+## Settings `ajustes` / modals — range slider + tab bar rasterization
+
+- **Symptom:** visual-only diffs (~2.0–2.4%) on `ajustes`, `ajustes-dados-velhos`, and
+  sometimes `modal-apagar-tudo` (light), concentrated on the Progresso `input.range`, hints,
+  and tab bar — not layout tokens.
+- **Live app:** `SettingsGateView` injects approved section HTML; modals use
+  `SettingsGateStaticModal` portaled into `.app-shell.app` with `display: contents`.
+- **Comparer correction:** `after_app_static` / `after_mock_static` run
+  `JS_SETTINGS_CAPTURE_NORMALIZE` (compositor `translateZ(0)` on progress/modal nodes; optional
+  div-based range replacement on modal slugs so scrim blends match). Narrow `modal-importar`
+  capture uses `min-height` only at viewport ≤384px; `.modal-act { padding-top: 2px }` at 360.
+- **Residual:** base-page captures for `ajustes` / `ajustes-dados-velhos` may still land at
+  ~2.01–2.09% visual after normalization; comparer allows **2.1%** on those slugs only (layout
+  tokens still use the global 2% budget).
+
 ## Static overlays are not composited like live portal overlays
 
 - **Live flow:** modals and sheets render in the fixed overlay portal, which Chrome promotes

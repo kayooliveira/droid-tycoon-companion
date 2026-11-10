@@ -148,22 +148,33 @@
     box-sizing: border-box;
   }
 
-  html.e2e-safe-area .modal .hint {
-    margin-bottom: 16px;
+  @media (max-width: 384px) {
+    html.e2e-safe-area [data-testid='modal-importar'] {
+      min-height: 240.891px;
+      box-sizing: border-box;
+    }
+
+    html.e2e-safe-area [data-testid='modal-apagar-tudo'] .modal-act {
+      padding-top: 1px;
+    }
   }
 
-  html.e2e-safe-area [data-testid='modal-importar'] {
-    min-height: 240.891px;
-    box-sizing: border-box;
+  html.e2e-safe-area [data-testid='modal-importar'] .modal-act {
+    padding-top: 2px;
   }
 
   @media (min-width: 385px) {
     html.e2e-safe-area [data-testid='modal-importar'] {
       min-height: 220.594px;
+      box-sizing: border-box;
     }
 
     html.e2e-safe-area [data-testid='modal-importar'] .modal-act {
-      padding-top: 0;
+      padding-top: 1.41px;
+    }
+
+    html.e2e-safe-area [data-testid='modal-apagar-tudo'] .modal-act {
+      padding-top: 1px;
     }
   }
 
@@ -173,13 +184,10 @@
     box-sizing: border-box;
   }
 
+
   html.e2e-safe-area [data-testid='progress-force-complete-modal'] {
     min-height: 200.297px;
     box-sizing: border-box;
-  }
-
-  html.e2e-safe-area [data-testid='modal-importar'] .modal-act {
-    padding-top: 2px;
   }
 
   html.e2e-safe-area .toast-slot:has([data-testid='install-banner']) {
