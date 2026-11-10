@@ -120,7 +120,7 @@ export function gateCompletePrimaryDisabled(
   wouldDisable: boolean,
 ): boolean {
   if (isGateMockProgressBase(progress, inventory)) return false
-  if (isGateIncompleteProgressCapture(progress, inventory)) return true
+  if (isGateIncompleteProgressCapture(progress, inventory)) return false
   return wouldDisable
 }
 

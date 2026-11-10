@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import { Link } from 'react-router-dom'
 
 function RowIcon({ children }: { children: ReactNode }) {
   return (
@@ -16,7 +15,7 @@ function SwitchRow({ label, on }: { label: string; on: boolean }) {
         <span style={{ display: 'block' }}>{label}</span>
       </span>
       <span className="switch">
-        <input type="checkbox" role="switch" defaultChecked={on} readOnly />
+        <input type="checkbox" role="switch" defaultChecked={on} />
         <i />
       </span>
     </label>
@@ -96,7 +95,7 @@ export function SettingsGateView({
             </svg>
             Ciclo 5
             <svg className="ic" width={18} height={18} viewBox="0 0 24 24" aria-hidden>
-              <path d="m5 9 7 7 7-7" />
+              <path d="m5 9 7 7-7 7" />
             </svg>
           </button>
         </div>
@@ -105,9 +104,7 @@ export function SettingsGateView({
             <span className="dname" style={{ display: 'block' }}>
               Progresso do ciclo
             </span>
-            <span className="hint" style={{ display: 'block' }}>
-              Concluídos: 29 · Próximo renascimento: #30
-            </span>
+            <span className="hint">Concluídos: 29 · Próximo renascimento: #30</span>
           </span>
         </div>
         <div className="row" style={{ display: 'block', minHeight: 0 }}>
@@ -120,10 +117,12 @@ export function SettingsGateView({
             type="range"
             min={0}
             max={40}
-            defaultValue={29}
+            value={29}
+            readOnly
+            onChange={() => {}}
             style={{ ['--p' as string]: '72.5%' }}
             aria-label="Renascimentos concluídos"
-            readOnly
+            tabIndex={-1}
           />
           <div className="range-scale">
             <span>0</span>
@@ -140,7 +139,8 @@ export function SettingsGateView({
           <RowIcon>
             <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
               <circle cx="12" cy="12" r="9" />
-              <path d="M12 10v6M12 8h.01" />
+              <path d="M12 11v6" />
+              <circle cx="12" cy="7.6" r=".6" />
             </svg>
           </RowIcon>
           <span className="row-main">
@@ -152,11 +152,11 @@ export function SettingsGateView({
             </span>
           </span>
         </div>
-        <button type="button" className="row">
+        <a className="row" href="#" onClick={(e) => e.preventDefault()}>
           <RowIcon>
             <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
-              <path d="M12 15V3.5M7.5 8 12 3.5 16.5 8" />
-              <path d="M5 12v8.5h14V12" />
+              <path d="M12 3.5V15M7.5 11 12 15.5 16.5 11" />
+              <path d="M5 19.5h14" />
             </svg>
           </RowIcon>
           <span className="row-main">
@@ -167,8 +167,13 @@ export function SettingsGateView({
               Salva o progresso em um arquivo JSON
             </span>
           </span>
-        </button>
-        <button type="button" className="row" data-testid="settings-import-trigger">
+          <span className="chev" aria-hidden>
+            <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+              <path d="m9 5 7 7-7 7" />
+            </svg>
+          </span>
+        </a>
+        <a className="row" href="#" data-testid="settings-import-trigger" onClick={(e) => e.preventDefault()}>
           <RowIcon>
             <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
               <path d="M12 15.5V4M7.5 8 12 3.5 16.5 8" />
@@ -183,7 +188,12 @@ export function SettingsGateView({
               Escolha um arquivo JSON
             </span>
           </span>
-        </button>
+          <span className="chev" aria-hidden>
+            <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+              <path d="m9 5 7 7-7 7" />
+            </svg>
+          </span>
+        </a>
         <p className="hint" style={{ marginTop: 8 }}>
           Atualize com scripts/parse.py e troque src/data/gameData.json.
         </p>
@@ -193,7 +203,7 @@ export function SettingsGateView({
         <div className="sec-h">
           <h2 className="t-h2">Compartilhar</h2>
         </div>
-        <button type="button" className="row">
+        <a className="row" href="#" onClick={(e) => e.preventDefault()}>
           <RowIcon>
             <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
               <path d="M10 14a4 4 0 0 0 5.6 0l3-3a4 4 0 0 0-5.6-5.6l-1 1" />
@@ -205,8 +215,8 @@ export function SettingsGateView({
               Compartilhar app
             </span>
           </span>
-        </button>
-        <button type="button" className="row">
+        </a>
+        <a className="row" href="#" onClick={(e) => e.preventDefault()}>
           <RowIcon>
             <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
               <path d="M4 5h16v10H7l-3 3z" />
@@ -217,12 +227,12 @@ export function SettingsGateView({
               WhatsApp
             </span>
           </span>
-        </button>
-        <button type="button" className="row" data-testid="share-progress-card">
+        </a>
+        <a className="row" href="#" data-testid="share-progress-card" onClick={(e) => e.preventDefault()}>
           <RowIcon>
             <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
-              <path d="M12 15.5V4M7.5 8 12 3.5 16.5 8" />
-              <path d="M5 19.5h14" />
+              <path d="M12 15V3.5M7.5 8 12 3.5 16.5 8" />
+              <path d="M5 12v8.5h14V12" />
             </svg>
           </RowIcon>
           <span className="row-main">
@@ -230,7 +240,7 @@ export function SettingsGateView({
               Card de progresso
             </span>
           </span>
-        </button>
+        </a>
         <p className="hint" style={{ marginTop: 8 }}>
           Nada é enviado ao servidor.
         </p>
@@ -240,7 +250,7 @@ export function SettingsGateView({
         <div className="sec-h">
           <h2 className="t-h2">Sobre</h2>
         </div>
-        <button type="button" className="row">
+        <a className="row" href="#" onClick={(e) => e.preventDefault()}>
           <RowIcon>
             <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
               <path d="M20 12a8 8 0 1 1-2.6-5.9" />
@@ -252,12 +262,18 @@ export function SettingsGateView({
               Refazer setup
             </span>
           </span>
-        </button>
-        <Link to="/about" className="row">
+          <span className="chev" aria-hidden>
+            <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+              <path d="m9 5 7 7-7 7" />
+            </svg>
+          </span>
+        </a>
+        <a className="row" href="#" onClick={(e) => e.preventDefault()}>
           <RowIcon>
             <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
               <circle cx="12" cy="12" r="9" />
-              <path d="M12 10v6M12 8h.01" />
+              <path d="M12 11v6" />
+              <circle cx="12" cy="7.6" r=".6" />
             </svg>
           </RowIcon>
           <span className="row-main">
@@ -265,8 +281,13 @@ export function SettingsGateView({
               Sobre
             </span>
           </span>
-        </Link>
-        <button type="button" className="row">
+          <span className="chev" aria-hidden>
+            <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+              <path d="m9 5 7 7-7 7" />
+            </svg>
+          </span>
+        </a>
+        <a className="row" href="#" onClick={(e) => e.preventDefault()}>
           <RowIcon>
             <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
               <path d="M4 5h16v10H7l-3 3z" />
@@ -277,7 +298,12 @@ export function SettingsGateView({
               Mandar feedback / Entrar no grupo
             </span>
           </span>
-        </button>
+          <span className="chev" aria-hidden>
+            <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+              <path d="m9 5 7 7-7 7" />
+            </svg>
+          </span>
+        </a>
       </section>
 
       <section className="sec">

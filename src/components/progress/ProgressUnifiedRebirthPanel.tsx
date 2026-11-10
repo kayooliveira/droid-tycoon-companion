@@ -59,8 +59,14 @@ export function ProgressUnifiedRebirthPanel({
   return (
     <section className="sec" data-testid="progress-unified-section">
       <div className="sec-h">
-        <h2 className="t-h2">{t('progress.listRebirthHeading', { n: rebirth })}</h2>
-        {entry.credits ? <span className="t-label">{t('pdf.credits')} {entry.credits}</span> : null}
+        <h2 className="t-h2">
+          {gateRows ? `Renascimento #${rebirth}` : t('progress.listRebirthHeading', { n: rebirth })}
+        </h2>
+        {entry.credits ? (
+          <span className="t-label">
+            {gateRows ? `Créditos ${entry.credits}` : `${t('pdf.credits')} ${entry.credits}`}
+          </span>
+        ) : null}
       </div>
       {gateRows
         ? (

@@ -1,7 +1,3 @@
-import { Link } from 'react-router-dom'
-import { MORE_MENU_ICONS } from '../tabBarIcons'
-import { APP_PUBLIC_URL, REPORT_FEEDBACK_URL } from '../../lib/constants'
-
 /** Static layout for `sobre.html` (capture-only). */
 export function AboutGateView() {
   return (
@@ -35,35 +31,42 @@ export function AboutGateView() {
           <h2 className="t-h2">Dado errado ou sugestão?</h2>
         </div>
         <p style={{ marginBottom: 12 }}>Conta o que você viu no jogo versus o que o app mostra.</p>
-        <a className="btn btn--secondary" href={REPORT_FEEDBACK_URL}>
+        <button type="button" className="btn btn--secondary">
           <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
             <path d="M4 5h16v10H7l-3 3z" />
           </svg>
           Mandar feedback / Entrar no grupo
-        </a>
+        </button>
       </section>
 
       <div style={{ marginTop: 16 }}>
-        <Link to="/settings" className="row">
+        <a className="row" href="#" onClick={(e) => e.preventDefault()}>
           <span className="row-ic" aria-hidden>
-            {MORE_MENU_ICONS.settings}
+            <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
+              <path d="M4 7h9M17 7h3M4 17h3M11 17h9" />
+              <circle cx="15" cy="7" r="2" />
+              <circle cx="9" cy="17" r="2" />
+            </svg>
           </span>
           <span className="row-main">
             <span className="dname" style={{ display: 'block' }}>
               Ajustes
             </span>
           </span>
-        </Link>
+          <span className="chev" aria-hidden>
+            <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+              <path d="m9 5 7 7-7 7" />
+            </svg>
+          </span>
+        </a>
       </div>
 
-      <div className="about-gate-spacer" aria-hidden />
-
-      <footer className="credits" style={{ marginTop: 18 }}>
+      <footer className="credits" style={{ marginTop: 20 }}>
         <p>Imagens: Star Wars Droid Tycoon Wiki (Fandom), licença CC BY-SA 4.0.</p>
         <p style={{ marginTop: 6 }}>Wikis e guias da comunidade (sem vínculo com sites de terceiros).</p>
         <p style={{ marginTop: 6 }}>
           Site:{' '}
-          <a className="link-btn" style={{ minHeight: 44 }} href={APP_PUBLIC_URL}>
+          <a className="link-btn" style={{ minHeight: 44 }} href="#" onClick={(e) => e.preventDefault()}>
             dthelper.kayooliveira.com
           </a>
         </p>

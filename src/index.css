@@ -120,18 +120,36 @@
     min-height: 222.875px;
   }
 
-  html.e2e-safe-area [data-testid='about-page'] .about-gate-spacer {
-    min-height: min(120px, 18vh);
+  html.e2e-safe-area .app-shell.app {
+    position: relative;
+  }
+
+  html.e2e-safe-area #app-overlay-root {
+    position: absolute;
+    inset: 0;
+    left: 0;
+    right: 0;
+    max-width: 390px;
+    margin: 0 auto;
+    z-index: var(--z-modal);
+  }
+
+  html.e2e-safe-area #app-overlay-root .scrim {
+    position: absolute;
+    inset: 0;
+  }
+
+  html.e2e-safe-area #app-overlay-root .modal-wrap {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    box-sizing: border-box;
   }
 
   html.e2e-safe-area .modal .hint {
     margin-bottom: 16px;
-  }
-
-  html.e2e-safe-area .toast-slot:has([data-testid='install-banner']) {
-    height: 197.984px;
-    box-sizing: border-box;
-    overflow: hidden;
   }
 
   html.e2e-safe-area [data-testid='modal-importar'] {
@@ -164,29 +182,19 @@
     padding-top: 2px;
   }
 
+  html.e2e-safe-area .toast-slot:has([data-testid='install-banner']) {
+    height: 197.984px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
   html.e2e-safe-area .settings-page-pad,
   html.e2e-safe-area .progress-page-pad {
     padding-bottom: 0;
   }
 
-  html.e2e-safe-area [data-testid='about-page'] {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-    min-height: 100%;
-  }
-
   html.e2e-safe-area [data-testid='sell-page'] .sell-empty-gate .btn.btn--primary {
     transform: translateY(1.41px);
-  }
-
-  html.e2e-safe-area [data-testid='about-page'] .about-gate-spacer {
-    min-height: 120px;
-  }
-
-  html.e2e-safe-area [data-testid='about-page'] .about-gate-spacer {
-    flex: 1 1 auto;
-    min-height: 48px;
   }
 
   html.e2e-safe-area.gate-inv-toast #app-overlay-root > * {

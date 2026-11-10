@@ -611,6 +611,25 @@ html.e2e-safe-area .row-main .hint {
   margin-top: 0;
 }
 
+html.e2e-safe-area [data-testid='settings-page'] .row-main .hint {
+  display: block;
+  margin-top: 2px;
+  line-height: 1.35;
+}
+
+html.e2e-safe-area .app-shell.app > .scrim,
+html.e2e-safe-area .app-shell.app > .modal-wrap {
+  position: absolute;
+  z-index: var(--z-modal);
+}
+
+html.e2e-safe-area .app-shell.app > .modal-wrap {
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
 html.e2e-safe-area .empty > .hint {
   margin-top: 0;
 }

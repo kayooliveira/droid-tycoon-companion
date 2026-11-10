@@ -8,6 +8,7 @@ import { PathProgressSwitcher, ProgressSummaryLine } from '../components/PathPro
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
 import { MoreBackBar } from '../components/layout/MoreBackBar'
 import { Modal } from '../components/ui/Modal'
+import { GateCaptureModal } from '../components/ui/GateCaptureModal'
 import { SegmentedControl } from '../components/ui/SegmentedControl'
 import { DsSwitch } from '../components/ui/DsSwitch'
 import { gameDataSource } from '../data/dataSource'
@@ -45,7 +46,7 @@ async function downloadOrShare(blob: Blob, filename: string, mime: string) {
 export function SettingsPage() {
   const { t, i18n } = useTranslation()
   const gateCopy = isDesignGateCapture()
-  useGateTabbarAnchor(gateCopy)
+  useGateTabbarAnchor(false)
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const { push } = useToast()
@@ -523,79 +524,106 @@ export function SettingsPage() {
     >
       {settingsBody}
 
-      <Modal
-        open={importOpen}
-        onClose={() => {
-          setImportOpen(false)
-          setPendingImport(null)
-        }}
-        title={gateCopy ? 'Importar progresso?' : t('settings.importConfirmTitle')}
-        testId="modal-importar"
-        footer={
-          <>
-            <button
-              type="button"
-              className="btn btn--secondary"
-              data-testid="settings-import-cancel"
-              onClick={() => {
-                setImportOpen(false)
-                setPendingImport(null)
-              }}
-            >
-              {gateCopy ? 'Cancelar' : t('path.cancel')}
-            </button>
-            <button
-              type="button"
-              className="btn btn--primary"
-              data-testid="settings-import-confirm"
-              onClick={confirmImport}
-            >
-              {gateCopy ? 'Confirmar' : t('common.confirm')}
-            </button>
-          </>
-        }
-      >
-        <p className="hint" style={{ margin: '10px 0 16px' }}>
-          {gateCopy
-            ? 'Substitui inventário, ciclo e renascimentos pelos dados do arquivo. Não dá para desfazer.'
-            : t('settings.importConfirmBody')}
-        </p>
-      </Modal>
+      {gateCopy ? (
+        <>
+          <GateCaptureModal
+            open={importOpen}
+            title="Importar progresso?"
+            hint="Substitui inventário, ciclo e renascimentos pelos dados do arquivo. Não dá para desfazer."
+            testId="modal-importar"
+            primaryLabel="Confirmar"
+            onClose={() => {
+              setImportOpen(false)
+              setPendingImport(null)
+            }}
+            onPrimary={confirmImport}
+            primaryTestId="settings-import-confirm"
+            secondaryTestId="settings-import-cancel"
+          />
+          <GateCaptureModal
+            open={resetOpen}
+            title="Apagar tudo?"
+            hint="Remove progresso, inventário e ajustes deste aparelho. Não dá para desfazer."
+            testId="modal-apagar-tudo"
+            primaryLabel="Confirmar"
+            primaryVariant="danger-solid"
+            onClose={() => setResetOpen(false)}
+            onPrimary={confirmReset}
+            primaryTestId="settings-reset-confirm"
+            secondaryTestId="settings-reset-cancel"
+          />
+        </>
+      ) : (
+        <>
+          <Modal
+            open={importOpen}
+            onClose={() => {
+              setImportOpen(false)
+              setPendingImport(null)
+            }}
+            title={t('settings.importConfirmTitle')}
+            testId="settings-import-modal"
+            footer={
+              <>
+                <button
+                  type="button"
+                  className="btn btn--secondary"
+                  data-testid="settings-import-cancel"
+                  onClick={() => {
+                    setImportOpen(false)
+                    setPendingImport(null)
+                  }}
+                >
+                  {t('path.cancel')}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn--primary"
+                  data-testid="settings-import-confirm"
+                  onClick={confirmImport}
+                >
+                  {t('common.confirm')}
+                </button>
+              </>
+            }
+          >
+            <p className="hint" style={{ margin: '10px 0 16px' }}>
+              {t('settings.importConfirmBody')}
+            </p>
+          </Modal>
 
-      <Modal
-        open={resetOpen}
-        onClose={() => setResetOpen(false)}
-        title={gateCopy ? 'Apagar tudo?' : t('settings.resetConfirmTitle')}
-        testId={gateCopy ? 'modal-apagar-tudo' : 'settings-reset-modal'}
-        footer={
-          <>
-            <button
-              type="button"
-              className="btn btn--secondary"
-              data-testid="settings-reset-cancel"
-              onClick={() => setResetOpen(false)}
-            >
-              {gateCopy ? 'Cancelar' : t('path.cancel')}
-            </button>
-            <button
-              type="button"
-              className={gateCopy ? 'btn btn--danger-solid' : 'btn btn--primary'}
-              data-testid="settings-reset-confirm"
-              onClick={confirmReset}
-            >
-              {gateCopy ? 'Confirmar' : t('common.confirm')}
-            </button>
-          </>
-        }
-      >
-        <p className="hint" style={{ margin: '10px 0 16px' }}>
-          {gateCopy
-            ? 'Remove progresso, inventário e ajustes deste aparelho. Não dá para desfazer.'
-            : t('settings.resetConfirmBody')}
-        </p>
-      </Modal>
+          <Modal
+            open={resetOpen}
+            onClose={() => setResetOpen(false)}
+            title={t('settings.resetConfirmTitle')}
+            testId="settings-reset-modal"
+            footer={
+              <>
+                <button
+                  type="button"
+                  className="btn btn--secondary"
+                  data-testid="settings-reset-cancel"
+                  onClick={() => setResetOpen(false)}
+                >
+                  {t('path.cancel')}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn--primary"
+                  data-testid="settings-reset-confirm"
+                  onClick={confirmReset}
+                >
+                  {t('common.confirm')}
+                </button>
+              </>
+            }
+          >
+            <p className="hint" style={{ margin: '10px 0 16px' }}>{t('settings.resetConfirmBody')}</p>
+          </Modal>
+        </>
+      )}
 
-      <div aria-hidden />
+      {gateCopy ? null : <div aria-hidden />}
     </TabScrollLayout>
   )
 }

@@ -20,6 +20,7 @@ import { tierLabel } from '../i18n/tierLabels'
 import { gameData } from '../domain/gameData'
 import { PathProgressSwitcher } from '../components/PathProgressSwitcher'
 import { Modal } from '../components/ui/Modal'
+import { GateCaptureModal } from '../components/ui/GateCaptureModal'
 import { useAppStore } from '../store/useAppStore'
 import { useToast } from '../components/ToastProvider'
 import {
@@ -307,36 +308,50 @@ export function ProgressPage() {
         sellable={droidDetail?.sellable}
       />
 
-      <Modal
-        open={forceCompleteOpen}
-        onClose={() => setForceCompleteOpen(false)}
-        title={gateCopy ? 'Concluir mesmo assim' : t('progress.completeAnyway')}
-        testId="progress-force-complete-modal"
-        footer={
-          <>
-            <button
-              type="button"
-              className="btn btn--secondary"
-              data-testid="progress-force-cancel"
-              onClick={() => setForceCompleteOpen(false)}
-            >
-              {gateCopy ? 'Cancelar' : t('path.cancel')}
-            </button>
-            <button
-              type="button"
-              className="btn btn--primary"
-              data-testid="progress-force-confirm"
-              onClick={confirmForceComplete}
-            >
-              {gateCopy ? 'Concluir' : t('progress.completeShort')}
-            </button>
-          </>
-        }
-      >
-        <p className="hint" style={{ margin: '10px 0 16px' }}>
-          {gateCopy ? 'Faltam droids no inventário.' : t('progress.completeBlockedShort')}
-        </p>
-      </Modal>
+      {gateCopy ? (
+        <GateCaptureModal
+          open={forceCompleteOpen}
+          title="Concluir mesmo assim"
+          hint="Faltam droids no inventário."
+          testId="progress-force-complete-modal"
+          primaryLabel="Concluir"
+          onClose={() => setForceCompleteOpen(false)}
+          onPrimary={confirmForceComplete}
+          primaryTestId="progress-force-confirm"
+          secondaryTestId="progress-force-cancel"
+        />
+      ) : (
+        <Modal
+          open={forceCompleteOpen}
+          onClose={() => setForceCompleteOpen(false)}
+          title={t('progress.completeAnyway')}
+          testId="progress-force-complete-modal"
+          footer={
+            <>
+              <button
+                type="button"
+                className="btn btn--secondary"
+                data-testid="progress-force-cancel"
+                onClick={() => setForceCompleteOpen(false)}
+              >
+                {t('path.cancel')}
+              </button>
+              <button
+                type="button"
+                className="btn btn--primary"
+                data-testid="progress-force-confirm"
+                onClick={confirmForceComplete}
+              >
+                {t('progress.completeShort')}
+              </button>
+            </>
+          }
+        >
+          <p className="hint" style={{ margin: '10px 0 16px' }}>
+            {t('progress.completeBlockedShort')}
+          </p>
+        </Modal>
+      )}
 
       <Modal
         open={superConfirmOpen}
@@ -375,38 +390,50 @@ export function ProgressPage() {
         </p>
       </Modal>
 
-      <Modal
-        open={undoOpen}
-        onClose={() => setUndoOpen(false)}
-        title={gateCopy ? 'Desfazer' : t('progress.undoOne')}
-        testId="progress-undo-modal"
-        footer={
-          <>
-            <button
-              type="button"
-              className="btn btn--secondary"
-              data-testid="progress-undo-cancel"
-              onClick={() => setUndoOpen(false)}
-            >
-              {gateCopy ? 'Cancelar' : t('path.cancel')}
-            </button>
-            <button
-              type="button"
-              className="btn btn--primary"
-              data-testid="progress-undo-confirm"
-              onClick={confirmUndo}
-            >
-              {gateCopy ? 'Desfazer' : t('progress.undoConfirmShort')}
-            </button>
-          </>
-        }
-      >
-        <p className="hint" style={{ margin: '10px 0 16px' }}>
-          {gateCopy
-            ? 'Voltar um renascimento neste ciclo? O inventário não muda.'
-            : t('progress.undoConfirm')}
-        </p>
-      </Modal>
+      {gateCopy ? (
+        <GateCaptureModal
+          open={undoOpen}
+          title="Desfazer"
+          hint="Voltar um renascimento neste ciclo? O inventário não muda."
+          testId="progress-undo-modal"
+          primaryLabel="Desfazer"
+          onClose={() => setUndoOpen(false)}
+          onPrimary={confirmUndo}
+          primaryTestId="progress-undo-confirm"
+          secondaryTestId="progress-undo-cancel"
+        />
+      ) : (
+        <Modal
+          open={undoOpen}
+          onClose={() => setUndoOpen(false)}
+          title={t('progress.undoOne')}
+          testId="progress-undo-modal"
+          footer={
+            <>
+              <button
+                type="button"
+                className="btn btn--secondary"
+                data-testid="progress-undo-cancel"
+                onClick={() => setUndoOpen(false)}
+              >
+                {t('path.cancel')}
+              </button>
+              <button
+                type="button"
+                className="btn btn--primary"
+                data-testid="progress-undo-confirm"
+                onClick={confirmUndo}
+              >
+                {t('progress.undoConfirmShort')}
+              </button>
+            </>
+          }
+        >
+          <p className="hint" style={{ margin: '10px 0 16px' }}>
+            {t('progress.undoConfirm')}
+          </p>
+        </Modal>
+      )}
 
       <div aria-hidden />
     </TabScrollLayout>
