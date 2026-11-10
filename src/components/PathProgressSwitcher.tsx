@@ -1,6 +1,4 @@
 import { useState } from 'react'
-import { CaretDown, Path } from '@phosphor-icons/react'
-import { UI_ICON_SIZE, UI_ICON_WEIGHT } from './ui/iconStyle'
 import { useTranslation } from 'react-i18next'
 import { cycleById, gameData } from '../domain/gameData'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
@@ -45,11 +43,22 @@ export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
         onClick={openSwitch}
         data-testid="path-switcher-trigger"
         className={compact ? 'sel' : 'inline-flex items-center gap-2 rounded-xl border border-ui bg-ui-hover px-4 py-2 text-sm hover:bg-ui-hover-strong'}
-        aria-label={`${t('path.switchTitle')} ${cycleLabel(progress.pathId)}`}
+        aria-label={
+          compact
+            ? `${t('path.switchCycleLabel', { defaultValue: 'Trocar ciclo' })}: ${cycleLabel(progress.pathId)}`
+            : `${t('path.switchTitle')} ${cycleLabel(progress.pathId)}`
+        }
       >
-        <Path size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} className="ic shrink-0" aria-hidden />
-        <span className="truncate max-w-[10rem]">{cycleLabel(progress.pathId)}</span>
-        <CaretDown size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} className="ic shrink-0" aria-hidden />
+        <svg className="ic shrink-0" width={20} height={20} viewBox="0 0 24 24" aria-hidden>
+          <path d="M20 12a8 8 0 1 1-2.6-5.9" />
+          <path d="M20.5 3.5v4.5H16" />
+        </svg>
+        {compact ? cycleLabel(progress.pathId) : (
+          <span className="truncate max-w-[10rem]">{cycleLabel(progress.pathId)}</span>
+        )}
+        <svg className="ic shrink-0" width={18} height={18} viewBox="0 0 24 24" aria-hidden>
+          <path d="m5 9 7 7 7-7" />
+        </svg>
       </button>
 
       <Modal
@@ -116,11 +125,11 @@ export function ProgressSummaryLine() {
   const { t } = useTranslation()
   const progress = useAppStore((s) => s.progress)
   return (
-    <p className="text-sm text-ui-muted">
-      {t('progress.completed')}: <span className="text-ui-fg">{progress.completedOnPath}</span>
-      {' · '}
-      {t('progress.nextRebirth')}:{' '}
-      <span className="text-ui-fg">#{Math.min(progress.nextRebirth, 40)}</span>
-    </p>
+    <>
+      {t('progress.cycleFootSummary', {
+        done: progress.completedOnPath,
+        next: Math.min(progress.nextRebirth, 40),
+      })}
+    </>
   )
 }

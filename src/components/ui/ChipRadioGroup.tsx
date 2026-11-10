@@ -19,7 +19,7 @@ export function ChipRadioGroup<T extends string>({
 }) {
   return (
     <div
-      role="radiogroup"
+      role={grid ? 'group' : 'radiogroup'}
       aria-label={ariaLabel}
       data-testid={testId}
       className={cn(

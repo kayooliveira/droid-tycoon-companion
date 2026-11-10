@@ -20,7 +20,7 @@ export function TabScrollLayout({
   hideBrand?: boolean
 }) {
   return (
-    <div data-testid={testId} className={cn('stack', className)}>
+    <div data-testid={testId} className={cn('tab-page', className)}>
       {backBar}
       <header className="top">
         {!hideBrand ? (

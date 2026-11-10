@@ -179,38 +179,52 @@ export function OnboardingPage() {
   return (
     <div
       data-testid="onboarding-shell"
-      className="app min-h-dvh flex flex-col pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
+      className={cn(
+        'app min-h-dvh flex flex-col pb-[env(safe-area-inset-bottom)]',
+        current !== 'welcome' && 'pt-[env(safe-area-inset-top)]',
+        current === 'welcome' && 'onboarding-welcome-shell',
+      )}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
-      <main className="scroll mx-auto w-full max-w-lg flex-1 flex flex-col px-4 sm:px-6 py-4 min-h-0">
-        <div className="flex items-center justify-between gap-2 mb-2 shrink-0">
-          <div
-            className="seg onboarding-lang-pill"
-            data-testid="onboarding-lang-pill"
-            role="group"
-            aria-label={t('onboarding.language')}
-          >
-            {(['pt-BR', 'en'] as const).map((loc) => (
-              <button
-                key={loc}
-                type="button"
-                aria-pressed={settings.locale === loc}
-                onClick={() => changeLanguage(loc)}
-              >
-                {loc === 'pt-BR' ? 'PT' : 'EN'}
-              </button>
-            ))}
+      <main
+        className={cn(
+          'scroll mx-auto w-full max-w-lg',
+          current === 'welcome'
+            ? 'onboarding-welcome-scroll'
+            : 'flex-1 flex flex-col min-h-0 px-4 sm:px-6 py-4',
+        )}
+      >
+        {step > 0 ? (
+          <div className="flex items-center justify-between gap-2 mb-2 shrink-0">
+            <div
+              className="seg onboarding-lang-pill"
+              data-testid="onboarding-lang-pill"
+              role="group"
+              aria-label={t('onboarding.language')}
+            >
+              {(['pt-BR', 'en'] as const).map((loc) => (
+                <button
+                  key={loc}
+                  type="button"
+                  aria-pressed={settings.locale === loc}
+                  onClick={() => changeLanguage(loc)}
+                >
+                  {loc === 'pt-BR' ? 'PT' : 'EN'}
+                </button>
+              ))}
+            </div>
+            <span className="w-11" aria-hidden />
           </div>
-          <span className="w-11" aria-hidden />
-        </div>
+        ) : null}
 
         <div
           key={current}
           data-testid={`onboarding-step-${current}`}
           className={cn(
-            'flex-1 flex flex-col min-h-0 gap-3',
-            current === 'welcome' && 'onboarding-welcome-compact',
+            current === 'welcome'
+              ? 'onboarding-welcome-compact'
+              : 'flex-1 flex flex-col min-h-0 gap-3',
           )}
         >
           {current === 'welcome' ? (
@@ -233,17 +247,29 @@ export function OnboardingPage() {
               <p className="hint" style={{ marginTop: 8 }}>
                 {t('onboarding.welcomeSub')}
               </p>
-              <div className="trio">
+              <div className="trio onboarding-welcome-tiles" style={{ margin: '28px 0 24px' }}>
                 {WELCOME_TRIO.map(({ id, tier }) => {
                   const droid = droidById.get(id)
                   if (!droid) return null
-                  return (
-                    <div key={id}>
-                      <DroidImage droid={droid} tier={tier} size="lg" priority />
-                    </div>
-                  )
+                  return <DroidImage key={id} droid={droid} tier={tier} priority />
                 })}
               </div>
+              <div className="stack">
+                <button
+                  type="button"
+                  className="btn btn--primary"
+                  data-testid="onboarding-start"
+                  onClick={goNext}
+                >
+                  {t('onboarding.start')}
+                </button>
+                <button type="button" className="btn btn--ghost" onClick={skip}>
+                  {t('onboarding.skip')}
+                </button>
+              </div>
+              <p className="hint" style={{ marginTop: 20 }}>
+                {t('onboarding.welcomeFootnote')}
+              </p>
             </>
           ) : null}
 
@@ -457,12 +483,9 @@ export function OnboardingPage() {
           ) : null}
         </div>
 
+        {current === 'welcome' ? null : (
         <div className="stack shrink-0 pt-4" style={{ marginTop: 'auto' }}>
-          {current === 'welcome' ? (
-            <button type="button" className="btn btn--primary btn--block w-full" data-testid="onboarding-start" onClick={goNext}>
-              {t('onboarding.start')}
-            </button>
-          ) : step < STEPS.length - 1 ? (
+          {step < STEPS.length - 1 ? (
             <Button className="w-full btn btn--primary" data-testid="onboarding-next" onClick={goNext}>
               {t('onboarding.continue')}
             </Button>
@@ -485,11 +508,10 @@ export function OnboardingPage() {
               {t('onboarding.skip')}
             </Button>
           )}
-          {current === 'welcome' ? (
-            <p className="hint hint--footnote text-center">{t('onboarding.welcomeFootnote')}</p>
-          ) : null}
         </div>
+        )}
       </main>
+      {current === 'welcome' ? <div className="toast-slot" hidden /> : null}
     </div>
   )
 }

@@ -17,6 +17,8 @@ export function Sheet({
   title,
   labelledBy,
   aboveTabBar = false,
+  renderHeader = true,
+  ariaLabel,
 }: {
   open: boolean
   onClose: () => void
@@ -28,6 +30,8 @@ export function Sheet({
   title?: string
   labelledBy?: string
   aboveTabBar?: boolean
+  renderHeader?: boolean
+  ariaLabel?: string
 }) {
   useScrollLock(open)
   useOverlayStackRegister(open)
@@ -57,13 +61,13 @@ export function Sheet({
         data-testid={testId}
         role="dialog"
         aria-modal="true"
-        aria-label={title}
+        aria-label={ariaLabel ?? title}
         aria-labelledby={labelledBy}
       >
         <span className="grab" aria-hidden />
-        {headerLabel != null ? (
+        {renderHeader && (title != null || headerLabel != null) ? (
           <div className="sheet-h">
-            <span className="t-label">{headerLabel}</span>
+            <h2 className="t-h2">{title ?? headerLabel}</h2>
             <button
               type="button"
               className="btn btn--icon btn--secondary"

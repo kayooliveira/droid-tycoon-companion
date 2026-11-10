@@ -1,30 +1,15 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Backpack, List, MapTrifold, SquaresFour, TreeStructure } from '@phosphor-icons/react'
-import { UI_ICON_WEIGHT } from './ui/iconStyle'
 import { persistLastTab } from '../hooks/useLastTab'
+import { TAB_BAR_ICONS } from './tabBarIcons'
 
 const tabs = [
-  { to: '/', labelKey: 'nav.dashboard', Icon: SquaresFour, end: true as const },
-  { to: '/progress', labelKey: 'nav.progress', Icon: TreeStructure },
-  { to: '/inventory', labelKey: 'nav.inventory', Icon: Backpack },
-  { to: '/cycles', labelKey: 'nav.cycles', Icon: MapTrifold },
-  { to: 'more', labelKey: 'nav.more', Icon: List, isMore: true as const },
+  { to: '/', labelKey: 'nav.dashboard', icon: TAB_BAR_ICONS.home, end: true as const },
+  { to: '/progress', labelKey: 'nav.progress', icon: TAB_BAR_ICONS.progress },
+  { to: '/inventory', labelKey: 'nav.inventory', icon: TAB_BAR_ICONS.inventory },
+  { to: '/cycles', labelKey: 'nav.cycles', icon: TAB_BAR_ICONS.cycles },
+  { to: 'more', labelKey: 'nav.more', icon: TAB_BAR_ICONS.more, isMore: true as const },
 ] as const
-
-function TabIcon({ children, active }: { children: React.ReactNode; active: boolean }) {
-  return (
-    <span className="tab-ic">
-      <span
-        className="ic inline-flex"
-        style={{ color: active ? undefined : 'currentColor' }}
-        aria-hidden
-      >
-        {children}
-      </span>
-    </span>
-  )
-}
 
 export function MobileFloatingNav({
   moreOpen,
@@ -55,39 +40,41 @@ export function MobileFloatingNav({
       {tabs.map((tab) => {
         const active = isActive(tab)
         const isMore = 'isMore' in tab && tab.isMore
-        const weight = active ? 'fill' : UI_ICON_WEIGHT
         const label = t(tab.labelKey)
 
         if (isMore) {
           return (
-            <button
+            <a
               key={tab.labelKey}
-              type="button"
+              href="#"
+              role="button"
               className="tab"
               data-testid="mobile-more-nav"
               aria-label={t('a11y.openMoreNav')}
               aria-expanded={moreOpen}
               aria-current={active ? 'page' : undefined}
-              onClick={onMoreToggle}
+              onClick={(e) => {
+                e.preventDefault()
+                onMoreToggle()
+              }}
             >
-              <TabIcon active={active}>
-                <tab.Icon size={24} weight={weight} />
-              </TabIcon>
-              {label}
-            </button>
+              <span className="tab-ic">{tab.icon}</span>
+              <span>{label}</span>
+            </a>
           )
         }
 
         return (
-          <button
+          <a
             key={tab.labelKey}
-            type="button"
+            href={tab.to}
             className="tab"
             data-testid={
               tab.to === '/' ? 'mobile-nav-home' : `mobile-nav-${String(tab.to).slice(1)}`
             }
             aria-current={active ? 'page' : undefined}
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault()
               onCloseMore()
               if (typeof tab.to === 'string') {
                 persistLastTab(tab.to)
@@ -95,11 +82,9 @@ export function MobileFloatingNav({
               }
             }}
           >
-            <TabIcon active={active}>
-              <tab.Icon size={24} weight={weight} />
-            </TabIcon>
-            {label}
-          </button>
+            <span className="tab-ic">{tab.icon}</span>
+            <span>{label}</span>
+          </a>
         )
       })}
     </nav>

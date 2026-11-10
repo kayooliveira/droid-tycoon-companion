@@ -28,8 +28,8 @@ export function RequirementInventoryControls({
   const addLabel = t('progress.inventoryAddAria', { name: droidName, tier: tierLabel })
   const removeLabel = t('progress.inventoryRemoveAria', { name: droidName, tier: tierLabel })
 
-  const showPlus = ownedCount < neededCount
-  const showRemove = ownedCount >= 1
+  const canAdd = ownedCount < neededCount
+  const canRemove = ownedCount >= 1
 
   const adjust = (delta: 1 | -1) => {
     runWithUndoToast(() => {
@@ -52,45 +52,40 @@ export function RequirementInventoryControls({
     e.stopPropagation()
   }
 
-  if (!showPlus && !showRemove) return null
-
   return (
-    <div
-      data-testid="requirement-inventory-actions"
-      className="row-val row2"
-      onClick={stopRowActivation}
-      onPointerDown={stopRowActivation}
-    >
-      {showPlus ? (
-        <button
-          type="button"
-          data-testid="requirement-inventory-add"
-          aria-label={addLabel}
-          onClick={(e) => {
-            stopRowActivation(e)
-            adjust(1)
-          }}
-          onPointerDown={stopRowActivation}
-          className="act-add"
-        >
-          +
-        </button>
-      ) : null}
-      {showRemove ? (
+    <>
+      {canRemove ? (
         <button
           type="button"
           data-testid="requirement-inventory-remove"
           aria-label={removeLabel}
+          className="btn btn--icon btn--secondary"
           onClick={(e) => {
             stopRowActivation(e)
             adjust(-1)
           }}
           onPointerDown={stopRowActivation}
-          className="act-remove"
         >
-          ×
+          <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
+            <path d="M5.5 5.5l13 13M18.5 5.5l-13 13" />
+          </svg>
         </button>
       ) : null}
-    </div>
+      <button
+        type="button"
+        data-testid="requirement-inventory-add"
+        aria-label={addLabel}
+        className="btn btn--icon btn--primary"
+        onClick={(e) => {
+          stopRowActivation(e)
+          if (canAdd) adjust(1)
+        }}
+        onPointerDown={stopRowActivation}
+      >
+        <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+      </button>
+    </>
   )
 }

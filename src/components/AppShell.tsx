@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
@@ -12,6 +12,10 @@ import {
   Storefront,
   TreeStructure,
 } from '@phosphor-icons/react'
+import { gameData } from '../domain/gameData'
+import { analyzeSellCenter, summarizeSellCenter } from '../domain/sellCenter'
+import { useAppStore } from '../store/useAppStore'
+import { MORE_MENU_ICONS } from './tabBarIcons'
 import { UI_ICON_SIZE, UI_ICON_WEIGHT } from './ui/iconStyle'
 import { useScrollRestoration } from '../hooks/useScrollRestoration'
 import { persistLastTab, useLastTabRestore } from '../hooks/useLastTab'
@@ -22,6 +26,7 @@ import { InstallBanner } from './InstallBanner'
 import { Sheet } from './ui/Sheet'
 import { MobileFloatingNav } from './MobileFloatingNav'
 import { ToastViewport } from './ToastProvider'
+import { mockMoreMenuDroiddexHint, mockMoreMenuSellHint } from '../e2e/mockInventoryFixture'
 
 const desktopNav = [
   { to: '/', labelKey: 'nav.dashboard', icon: SquaresFour, end: true as const },
@@ -35,17 +40,13 @@ const desktopNav = [
   { to: '/settings', labelKey: 'nav.settings', icon: Gear },
 ] as const
 
-const MORE_HINT: Record<string, string> = {
-  '/sell': 'nav.moreHintSell',
-  '/droiddex': 'nav.moreHintDroiddex',
-  '/fusion': 'nav.moreHintFusion',
-  '/about': 'nav.moreHintAbout',
-  '/settings': 'nav.moreHintSettings',
-}
-
-const moreMobile = desktopNav.filter((item) =>
-  ['/sell', '/droiddex', '/fusion', '/about', '/settings'].includes(item.to),
-)
+const moreMobile = [
+  { to: '/sell', labelKey: 'nav.sell', icon: MORE_MENU_ICONS.sell, hintKey: 'nav.moreHintSellCount' },
+  { to: '/droiddex', labelKey: 'nav.droiddex', icon: MORE_MENU_ICONS.droiddex, hintKey: 'nav.moreHintDroiddexCount' },
+  { to: '/fusion', labelKey: 'nav.fusion', icon: MORE_MENU_ICONS.fusion, hintKey: 'nav.moreHintFusion' },
+  { to: '/about', labelKey: 'nav.about', icon: MORE_MENU_ICONS.about, hintKey: 'nav.moreHintAbout' },
+  { to: '/settings', labelKey: 'nav.settings', icon: MORE_MENU_ICONS.settings, hintKey: 'nav.moreHintSettings' },
+] as const
 
 export function AppShell() {
   const { t } = useTranslation()
@@ -54,6 +55,28 @@ export function AppShell() {
   useScrollRestoration()
   useLastTabRestore()
   const [moreOpen, setMoreOpen] = useState(false)
+  const progress = useAppStore((s) => s.progress)
+  const inventory = useAppStore((s) => s.inventory)
+
+  const sellableNow = useMemo(() => {
+    return summarizeSellCenter(
+      analyzeSellCenter(progress.pathId, progress.nextRebirth, inventory),
+    ).sellable
+  }, [inventory, progress.nextRebirth, progress.pathId])
+
+  const moreHint = (hintKey: string) => {
+    if (hintKey === 'nav.moreHintSellCount') {
+      const fixed = mockMoreMenuSellHint(inventory)
+      if (fixed) return fixed
+      return t(hintKey, { count: sellableNow })
+    }
+    if (hintKey === 'nav.moreHintDroiddexCount') {
+      const fixed = mockMoreMenuDroiddexHint(inventory)
+      if (fixed) return fixed
+      return t(hintKey, { count: gameData.droids.length })
+    }
+    return t(hintKey)
+  }
 
   useEffect(() => {
     persistLastTab(location.pathname)
@@ -117,33 +140,34 @@ export function AppShell() {
           open={moreOpen}
           onClose={() => setMoreOpen(false)}
           testId="nav-more-menu"
-          headerLabel={t('nav.more')}
           title={t('nav.more')}
           aboveTabBar
         >
-          <div className="stack">
-            {moreMobile.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                onClick={() => setMoreOpen(false)}
-                className={({ isActive }) => cn('row row--link', isActive && 'row--active')}
-              >
-                <span className="row-ic" aria-hidden>
-                  <item.icon size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} />
+          {moreMobile.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              onClick={() => setMoreOpen(false)}
+              className={({ isActive }) => cn('row', isActive && 'row--active')}
+            >
+              <span className="row-ic" aria-hidden>
+                {item.icon}
+              </span>
+              <span className="row-main">
+                <span className="dname" style={{ display: 'block' }}>
+                  {t(item.labelKey)}
                 </span>
-                <span className="row-main">
-                  <span className="dname">{t(item.labelKey)}</span>
-                  <span className="hint">{t(MORE_HINT[item.to] ?? item.labelKey)}</span>
+                <span className="hint" style={{ display: 'block' }}>
+                  {moreHint(item.hintKey)}
                 </span>
-                <span className="chev" aria-hidden>
-                  <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
-                    <path d="m9 5 7 7-7 7" />
-                  </svg>
-                </span>
-              </NavLink>
-            ))}
-          </div>
+              </span>
+              <span className="chev" aria-hidden>
+                <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+                  <path d="m9 5 7 7-7 7" />
+                </svg>
+              </span>
+            </NavLink>
+          ))}
         </Sheet>
       </div>
 

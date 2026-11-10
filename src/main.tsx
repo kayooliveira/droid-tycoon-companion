@@ -7,7 +7,12 @@ import { initI18n, setDocumentLanguage } from './i18n/index.ts'
 import { detectBrowserLocale } from './i18n/detectLocale.ts'
 import { useAppStore } from './store/useAppStore.ts'
 import { applyAppearanceToDom } from './hooks/useAppearance.ts'
+import { shouldBypassOnboarding } from './lib/e2eOnboardingBypass.ts'
 import './index.css'
+
+if (typeof window !== 'undefined' && shouldBypassOnboarding()) {
+  document.documentElement.classList.add('e2e-safe-area')
+}
 
 const stored = localStorage.getItem('droid-tycoon-companion-store')
 let initialLocale = detectBrowserLocale()

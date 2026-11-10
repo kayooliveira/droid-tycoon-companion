@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { gameDataSource } from '../data/dataSource'
+import { formatLocaleDate } from '../lib/formatLocaleDate'
 import { gameData } from '../domain/gameData'
 import { APP_PUBLIC_URL } from '../lib/constants'
 import { FeedbackWhatsAppLink } from '../components/FeedbackWhatsAppLink'
@@ -9,7 +10,7 @@ import { MoreBackBar } from '../components/layout/MoreBackBar'
 import { InsetGroup } from '../components/ui/InsetGroup'
 
 export function AboutPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const meta = gameDataSource.getMeta()
   const stale = gameDataSource.isStale()
 
@@ -30,7 +31,7 @@ export function AboutPage() {
             <span className="row-title">{t('about.dataLine', {
               version: meta.dataVersion,
               game: meta.gameVersion,
-              date: meta.lastUpdated,
+              date: formatLocaleDate(meta.lastUpdated, i18n.language),
             })}</span>
             <span className="hint">
               {stale

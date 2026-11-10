@@ -20,14 +20,14 @@ STORE_KEY = 'droid-tycoon-companion-store'
 ARTIFACT_ROOT = os.environ.get('DD_ARTIFACT_ROOT', '/opt/cursor/artifacts/theme-shots')
 
 MOCK_INVENTORY: list[dict[str, Any]] = [
-    {'id': 'm1', 'droidId': 'r7', 'tier': 'galactic', 'quantity': 2},
-    {'id': 'm2', 'droidId': 'lep', 'tier': 'beskar', 'quantity': 1},
-    {'id': 'm3', 'droidId': 'cyclens', 'tier': 'galactic', 'quantity': 1},
-    {'id': 'm4', 'droidId': 'kx', 'tier': 'beskar', 'quantity': 1},
-    {'id': 'm5', 'droidId': 'r2-d2', 'tier': 'default', 'quantity': 1},
-    {'id': 'm6', 'droidId': 'bb-8', 'tier': 'gold', 'quantity': 1},
-    {'id': 'm7', 'droidId': 'c-3po', 'tier': 'diamond', 'quantity': 1},
-    {'id': 'm8', 'droidId': 'chopper', 'tier': 'rainbow', 'quantity': 1},
+    {'id': 'm1', 'droidId': 'lep', 'tier': 'kyber', 'quantity': 1},
+    {'id': 'm2', 'droidId': 'r7', 'tier': 'galactic', 'quantity': 2},
+    {'id': 'm3', 'droidId': 'lep', 'tier': 'beskar', 'quantity': 1},
+    {'id': 'm4', 'droidId': 'mecha-droid', 'tier': 'stellar', 'quantity': 1},
+    {'id': 'm5', 'droidId': 'util-tec-ulti-tech', 'tier': 'gold', 'quantity': 1},
+    {'id': 'm6', 'droidId': 'mouse', 'tier': 'default', 'quantity': 2},
+    {'id': 'm7', 'droidId': 'kx', 'tier': 'beskar', 'quantity': 1},
+    {'id': 'm8', 'droidId': 'orb-walker', 'tier': 'diamond', 'quantity': 1},
     {'id': 'm9', 'droidId': 'bb-8', 'tier': 'rainbow', 'quantity': 1},
     {'id': 'm10', 'droidId': 'c-3po', 'tier': 'scourge', 'quantity': 1},
 ]

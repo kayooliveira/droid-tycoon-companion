@@ -86,28 +86,35 @@ export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: Pro
   const cycleLabel = (pathId: string) =>
     cycleDisplayNameForId(pathId, cycleById.get(pathId)?.name ?? pathId, i18n.language)
 
-  return (
-    <div className="stack" data-testid="progress-droid-search">
+  const searchField = (
+    <>
       <label className="sr-only" htmlFor="progress-droid-search-input">
         {t('progress.search.label')}
       </label>
-      <div className="field-wrap">
-        <SearchInput
-          id="progress-droid-search-input"
-          autoComplete="off"
-          spellCheck={false}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="progress-search-field"
-          placeholder={t('progress.search.placeholder')}
-          aria-controls="progress-droid-search-results"
-          aria-expanded={effectiveQuery.length > 0}
-          data-testid="progress-droid-search-input"
-          clearLabel={t('progress.search.clear')}
-          clearTestId="progress-droid-search-clear"
-          onClear={() => setQuery('')}
-        />
-      </div>
+      <SearchInput
+        id="progress-droid-search-input"
+        autoComplete="off"
+        spellCheck={false}
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder={t('progress.search.placeholder')}
+        aria-controls="progress-droid-search-results"
+        aria-expanded={effectiveQuery.length > 0}
+        data-testid="progress-droid-search-input"
+        clearLabel={t('progress.search.clear')}
+        clearTestId="progress-droid-search-clear"
+        onClear={() => setQuery('')}
+      />
+    </>
+  )
+
+  if (effectiveQuery.length === 0) {
+    return <div data-testid="progress-droid-search">{searchField}</div>
+  }
+
+  return (
+    <div className="stack" data-testid="progress-droid-search">
+      <div>{searchField}</div>
 
       <div id="progress-droid-search-results" className="space-y-3">
         {effectiveQuery.length > 0 && !selectedDroid ? (

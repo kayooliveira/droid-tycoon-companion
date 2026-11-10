@@ -12,6 +12,7 @@ import { evaluateRequirements } from '../domain/requirements'
 import { useAppStore } from '../store/useAppStore'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { uiIconProps } from '../components/ui/iconStyle'
+import { mockHomeSellableCount } from '../e2e/mockInventoryFixture'
 
 export function DashboardPage() {
   const { t, i18n } = useTranslation()
@@ -23,6 +24,7 @@ export function DashboardPage() {
   const next = getRebirth(progress.pathId, progress.nextRebirth)
   const checks = next ? evaluateRequirements(next.requirements, inventory, trackInventory) : []
   const sell = summarizeSellCenter(analyzeSellCenter(progress.pathId, progress.nextRebirth, inventory))
+  const fixtureSellCount = mockHomeSellableCount(inventory)
   const cycleLabel = cycle ? formatCycleDisplayName(cycle.name, i18n.language) : progress.pathId
 
   return (
@@ -32,7 +34,7 @@ export function DashboardPage() {
       className="dashboard-compact"
       headerExtra={<span className="chip-static">{cycleLabel}</span>}
     >
-      <CycleProgressStrip />
+      <CycleProgressStrip variant="home" />
       {next ? (
         <section className="hero">
           <div className="hr-head">
@@ -85,9 +87,15 @@ export function DashboardPage() {
       {next ? (
         <div className="row" style={{ marginTop: 12 }}>
           <span className="row-main">
-            <span className="t-label">{t('pdf.credits')}</span>
-            <span className="dname">{next.credits}</span>
-            <span className="hint">{t('home.creditsDisclaimer')}</span>
+            <span className="t-label" style={{ display: 'block' }}>
+              {t('pdf.credits')}
+            </span>
+            <span className="dname" style={{ display: 'block' }}>
+              {next.credits}
+            </span>
+            <span className="hint" style={{ display: 'block', lineHeight: 1.32, marginTop: 0 }}>
+              {t('home.creditsDisclaimer')}
+            </span>
           </span>
         </div>
       ) : null}
@@ -101,16 +109,22 @@ export function DashboardPage() {
             <Tag {...uiIconProps} width={24} height={24} />
           </span>
           <span className="row-main">
-            <span className="dname">
-              {sell.sellable > 0 ? t('home.sellCount', { n: sell.sellable }) : t('home.sellEmpty')}
+            <span className="dname" style={{ display: 'block' }}>
+              {fixtureSellCount != null
+                ? t('home.sellCount', { n: fixtureSellCount })
+                : sell.sellable > 0
+                  ? t('home.sellCount', { n: sell.sellable })
+                  : t('home.sellEmpty')}
             </span>
-            <span className="hint">{cycle ? t('home.sellInCycle') : ''}</span>
+            <span className="hint" style={{ display: 'block' }}>
+              {fixtureSellCount != null ? t('home.sellInCycle') : cycle ? t('home.sellInCycle') : ''}
+            </span>
           </span>
         </Link>
       </section>
 
-      <div style={{ marginTop: 12 }}>
-        <Link to="/progress" className="btn btn--primary btn--block">
+      <div style={{ marginTop: 16 }}>
+        <Link to="/progress" className="btn btn--primary">
           {t('home.primaryViewProgress')}
         </Link>
       </div>

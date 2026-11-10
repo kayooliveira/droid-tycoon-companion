@@ -57,7 +57,91 @@ button.row.row--link::after {
   top: 0;
   z-index: var(--z-content);
   background: var(--c-bg);
-  padding-bottom: var(--sp-2);
+  padding-bottom: 0;
+}
+
+.inv-field-full {
+  width: 100%;
+  max-width: 358px;
+}
+
+.inv-field-full .field-wrap {
+  width: 100%;
+  max-width: 358px;
+  box-sizing: border-box;
+}
+
+.inv-field-full .field {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.inv-toolbar .seg {
+  min-width: 0;
+}
+
+.inv-toolbar .seg > button {
+  overflow: visible;
+  white-space: nowrap;
+  padding: 0 4px;
+}
+
+.inv-view-toggle {
+  display: inline-flex;
+  gap: 6px;
+  flex: none;
+  align-items: center;
+}
+
+.inv-list .inv-list-item {
+  min-height: 56px;
+}
+
+.inv-list .inv-list-item .item-open {
+  min-height: 56px;
+}
+
+.inv-list .inv-list-tile,
+.inv-list .dtile--sm {
+  width: 56px;
+  height: 56px;
+  flex: none;
+}
+
+.inv-list .dtile-num {
+  display: none;
+}
+
+.inv-list .item {
+  margin-bottom: var(--row-gap);
+}
+
+.inv-grid .dcard {
+  border-radius: var(--tile-r);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: inherit;
+}
+
+.inv-grid .dmeta {
+  text-transform: var(--meta-case);
+}
+
+.onboarding-welcome-shell {
+  max-width: 390px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.onboarding-welcome-scroll {
+  display: block;
+  padding: 0 var(--sp-page) var(--sp-4);
+}
+
+.row-main .hint {
+  display: block;
+  line-height: 1.32;
 }
 
 .ds-overlay-anchor {
@@ -464,6 +548,55 @@ button.row.row--link::after {
   min-width: 44px;
 }
 
+.tab-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* 1:1 mock capture: document grows; tab bar follows content (not sticky in viewport). */
+html.e2e-safe-area .app-shell.app {
+  height: auto;
+  min-height: 844px;
+  max-height: none;
+  overflow: visible;
+}
+
+html.e2e-safe-area .app-shell.app[data-fixed] {
+  height: 844px;
+  min-height: 844px;
+  max-height: 844px;
+  overflow: hidden;
+}
+
+html.e2e-safe-area .app-shell .scroll {
+  flex: none;
+  overflow: visible;
+}
+
+html.e2e-safe-area .app-shell.app[data-fixed] .scroll {
+  overflow: hidden;
+}
+
+html.e2e-safe-area .app-shell .tabbar {
+  position: relative;
+  bottom: auto;
+}
+
+.app-shell .scroll > div {
+  max-width: none;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+@media (min-width: 768px) {
+  .app-shell .scroll > div {
+    max-width: 72rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+}
+
 .dashboard-compact .sec:last-child {
   margin-bottom: calc(var(--tab-h) + 8px);
 }
@@ -523,6 +656,21 @@ button.row.row--link::after {
 
 .settings-page-pad {
   padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px) + 12px);
+}
+
+.progress-page-pad {
+  padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px) + 12px);
+}
+
+.progress-page-pad .field-wrap {
+  width: 100%;
+  max-width: 358px;
+  box-sizing: border-box;
+}
+
+.progress-page-pad .field-wrap .field {
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .install-banner-ds .banner-act .btn {

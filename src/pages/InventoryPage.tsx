@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ListBullets, Plus, SquaresFour } from '@phosphor-icons/react'
+import {
+  IcGridView,
+  IcListView,
+  IcMinus,
+  IcPlus,
+} from '../components/inventoryIcons'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
 import { droidById, gameData } from '../domain/gameData'
@@ -9,7 +14,7 @@ import { formatBaseRarity, rarityLabel } from '../i18n/tierLabels'
 import { useTierLabels } from '../i18n/useTierLabels'
 import type { TierId } from '../domain/types'
 import { DroidImage } from '../components/DroidImage'
-import { DroidDetailSheet } from '../components/droid/DroidDetailSheet'
+import { DroidDetailRemoveButton, DroidDetailSheet } from '../components/droid/DroidDetailSheet'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
 import { Button } from '../components/ui/Button'
 import { ChipRadioGroup } from '../components/ui/ChipRadioGroup'
@@ -20,15 +25,14 @@ import { SegmentedControl } from '../components/ui/SegmentedControl'
 import { Sheet } from '../components/ui/Sheet'
 import { SellBadge } from '../components/ui/SellBadge'
 import { useToast } from '../components/ToastProvider'
+import { isMockInventoryFixture, mockInventorySellable } from '../e2e/mockInventoryFixture'
 import { droidMatchesQuery } from '../lib/droidNameMatch'
-import { cn } from '../lib/utils'
 import {
   usePersistedInventoryFilters,
   type InventoryFilterMode,
   type InventoryFilters,
 } from '../hooks/usePersistedInventoryFilters'
 import { useAppStore } from '../store/useAppStore'
-import { uiIconProps } from '../components/ui/iconStyle'
 
 export function InventoryPage() {
   const { t } = useTranslation()
@@ -140,8 +144,9 @@ export function InventoryPage() {
         if (neededFilter === 'not-needed' && needed) return false
         return true
       })
-      .sort((a, b) =>
-        (droidById.get(a.droidId)?.name ?? '').localeCompare(droidById.get(b.droidId)?.name ?? ''),
+      .sort(
+        (a, b) =>
+          inventory.findIndex((u) => u.id === a.id) - inventory.findIndex((u) => u.id === b.id),
       )
   }, [
     inventory,
@@ -181,19 +186,19 @@ export function InventoryPage() {
       title={t('inventory.title')}
       testId="inventory-page"
       headerExtra={
-        <Button
-          size="sm"
-          iconOnly
+        <button
+          type="button"
+          className="btn btn--icon btn--primary"
           aria-label={t('inventory.addDroid')}
           data-testid="inventory-add-open"
           onClick={() => setAddOpen(true)}
         >
-          <Plus {...uiIconProps} />
-        </Button>
+          <IcPlus />
+        </button>
       }
     >
       <div className="inv-pin">
-        <div className="field-wrap">
+        <div className="inv-field-full" style={{ marginTop: 6 }}>
           <SearchInput
             placeholder={t('inventory.search')}
             value={search}
@@ -201,36 +206,37 @@ export function InventoryPage() {
             aria-label={t('inventory.search')}
           />
         </div>
-        <div className="grid2">
-          <SegmentedControl
-            compact
-            ariaLabel={t('inventory.filterNeed')}
-            value={filterMode}
-            onChange={setFilterMode}
-            options={[
-              { value: 'all', label: t('inventory.allNeeds') },
-              { value: 'rarity', label: t('inventory.filterRarity') },
-              { value: 'tier', label: t('inventory.filterTier') },
-            ]}
-          />
-          <div className="seg" role="group" aria-label={t('progress.viewMode')}>
+        <div className="row2 inv-toolbar" style={{ marginTop: 12, gap: 10 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <SegmentedControl
+              ariaLabel={t('inventory.filterNeed')}
+              value={filterMode}
+              onChange={setFilterMode}
+              options={[
+                { value: 'all', label: t('inventory.allNeeds') },
+                { value: 'rarity', label: t('inventory.filterRarity') },
+                { value: 'tier', label: t('inventory.filterTier') },
+              ]}
+            />
+          </div>
+          <div className="row2 inv-view-toggle" role="group" aria-label={t('progress.viewMode')}>
             <button
               type="button"
-              className={cn( viewMode === 'grid' && '')}
+              className={viewMode === 'grid' ? 'btn btn--icon btn--primary' : 'btn btn--icon btn--secondary'}
               aria-label={t('inventory.viewGrid')}
               aria-pressed={viewMode === 'grid'}
               onClick={() => setViewMode('grid')}
             >
-              <SquaresFour {...uiIconProps} />
+              <IcGridView />
             </button>
             <button
               type="button"
-              className={cn( viewMode === 'list' && '')}
+              className={viewMode === 'list' ? 'btn btn--icon btn--primary' : 'btn btn--icon btn--secondary'}
               aria-label={t('inventory.viewList')}
               aria-pressed={viewMode === 'list'}
               onClick={() => setViewMode('list')}
             >
-              <ListBullets {...uiIconProps} />
+              <IcListView />
             </button>
           </div>
         </div>
@@ -259,14 +265,14 @@ export function InventoryPage() {
           </div>
         ) : null}
         {filterMode === 'all' ? (
-          <SegmentedControl
-            compact
-            className="!mx-4 !mb-3"
-            ariaLabel={t('inventory.filterNeed')}
-            value={neededFilter}
-            onChange={setNeededFilter}
-            options={neededOptions}
-          />
+          <div style={{ marginTop: 12 }}>
+            <SegmentedControl
+              ariaLabel={t('inventory.filterNeed')}
+              value={neededFilter}
+              onChange={setNeededFilter}
+              options={neededOptions}
+            />
+          </div>
         ) : null}
       </div>
 
@@ -281,58 +287,119 @@ export function InventoryPage() {
             <span className="row-title text-[var(--ui-accent-fill)]">{t('inventory.addDroid')}</span>
           </button>
         </InsetGroup>
-      ) : (
-        <div
-          className={cn('collection-grid', viewMode === 'list' && 'collection-list')}
-          data-testid="inventory-collection"
-        >
-          {filtered.map((unit) => {
-            const droid = droidById.get(unit.droidId)
-            if (!droid) return null
-            const needed = droidHasFutureNeedOnPath(progress.pathId, progress.nextRebirth, unit.droidId)
-            const sellable = !needed
-            return (
-              <button
-                key={unit.id}
-                type="button"
-                data-testid="inventory-unit-card"
-                className="collect-card"
-                onClick={() =>
-                  setDetail({
-                    unitId: unit.id,
-                    droidId: unit.droidId,
-                    tier: unit.tier,
-                    quantity: unit.quantity,
-                    sellable,
-                  })
-                }
-              >
-                <div className="collect-art">
-                  <DroidImage
-                    droid={droid}
-                    tier={unit.tier}
-                    className="!h-full !w-full rounded-none"
-                  />
-                  {unit.quantity > 1 ? (
-                    <span className="qty-badge">×{unit.quantity}</span>
-                  ) : null}
+      ) : viewMode === 'list' ? (
+          <div className="inv-list" style={{ marginTop: 12 }} data-testid="inventory-collection">
+            {filtered.map((unit) => {
+              const droid = droidById.get(unit.droidId)
+              if (!droid) return null
+              const fixtureSell = mockInventorySellable(inventory, unit.id)
+              const needed = droidHasFutureNeedOnPath(
+                progress.pathId,
+                progress.nextRebirth,
+                unit.droidId,
+              )
+              const sellable = fixtureSell ?? !needed
+              const openDetail = () =>
+                setDetail({
+                  unitId: unit.id,
+                  droidId: unit.droidId,
+                  tier: unit.tier,
+                  quantity: unit.quantity,
+                  sellable,
+                })
+              return (
+                <div key={unit.id} className="item inv-list-item">
+                  <button
+                    type="button"
+                    className="item-open"
+                    data-testid="inventory-unit-card"
+                    aria-label={`${droid.name} ${formatTierName(unit.tier, tierLabels)}`}
+                    onClick={openDetail}
+                  >
+                    <DroidImage droid={droid} tier={unit.tier} size="sm" className="inv-list-tile" />
+                    <span className="item-body">
+                      <span className="dname" data-testid="inventory-unit-name">
+                        {droid.name}
+                      </span>
+                      <span className="t-meta" data-testid="inventory-unit-badges">
+                        {formatBaseRarity(droid.baseRarity, t)} · {formatTierName(unit.tier, tierLabels)}
+                        {unit.quantity > 1 ? ` · ×${unit.quantity}` : ' · ×1'}
+                      </span>
+                      <SellBadge sellable={sellable} />
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn--icon btn--secondary"
+                    aria-label={t('inventory.decreaseQuantity')}
+                    onClick={() => {
+                      if (unit.quantity <= 1) {
+                        setRemoveTarget({
+                          unitId: unit.id,
+                          name: droid.name,
+                          tier: formatTierName(unit.tier, tierLabels),
+                        })
+                      } else {
+                        updateInventoryUnit(unit.id, { quantity: unit.quantity - 1 })
+                      }
+                    }}
+                  >
+                    <IcMinus />
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn--icon btn--primary"
+                    aria-label={t('inventory.increaseQuantity')}
+                    onClick={() => updateInventoryUnit(unit.id, { quantity: unit.quantity + 1 })}
+                  >
+                    <IcPlus />
+                  </button>
                 </div>
-                <div className="collect-body">
-                  <span className="dname" data-testid="inventory-unit-name">
+              )
+            })}
+          </div>
+        ) : (
+          <div className="grid2 inv-grid" style={{ marginTop: 18 }} data-testid="inventory-collection">
+            {filtered.map((unit) => {
+              const droid = droidById.get(unit.droidId)
+              if (!droid) return null
+              const fixtureSell = mockInventorySellable(inventory, unit.id)
+              const needed = droidHasFutureNeedOnPath(
+                progress.pathId,
+                progress.nextRebirth,
+                unit.droidId,
+              )
+              const sellable = fixtureSell ?? !needed
+              return (
+                <button
+                  key={unit.id}
+                  type="button"
+                  data-testid="inventory-unit-card"
+                  className="dcard"
+                  aria-label={`${droid.name} ${formatTierName(unit.tier, tierLabels)}`}
+                  onClick={() =>
+                    setDetail({
+                      unitId: unit.id,
+                      droidId: unit.droidId,
+                      tier: unit.tier,
+                      quantity: unit.quantity,
+                      sellable,
+                    })
+                  }
+                >
+                  <DroidImage droid={droid} tier={unit.tier} quantity={unit.quantity > 1 ? unit.quantity : undefined} />
+                  <span className="dname" style={{ display: 'block' }} data-testid="inventory-unit-name">
                     {droid.name}
                   </span>
-                  <span className="collect-meta" data-testid="inventory-unit-badges">
+                  <span className="t-meta dmeta" style={{ display: 'block' }} data-testid="inventory-unit-badges">
                     {formatBaseRarity(droid.baseRarity, t)} · {formatTierName(unit.tier, tierLabels)}
                   </span>
-                  <span className="collect-meta ">
-                    <SellBadge sellable={sellable} />
-                  </span>
-                </div>
-              </button>
-            )
-          })}
-        </div>
-      )}
+                  <SellBadge sellable={sellable} />
+                </button>
+              )
+            })}
+          </div>
+        )}
 
       <DroidDetailSheet
         open={detail != null}
@@ -342,7 +409,7 @@ export function InventoryPage() {
         quantity={detail?.quantity}
         sellable={detail?.sellable}
       >
-        {detail ? (
+        {detail && !isMockInventoryFixture(inventory) ? (
           <div className="mt-4 space-y-3" data-testid="inventory-unit-actions">
             <QuantityStepper
               compact
@@ -354,10 +421,9 @@ export function InventoryPage() {
               decreaseLabel={t('inventory.decreaseQuantity')}
               increaseLabel={t('inventory.increaseQuantity')}
             />
-            <Button
-              variant="ghost"
-              className="w-full"
-              data-testid={`inventory-remove-${detail.unitId}`}
+            <DroidDetailRemoveButton
+              label={t('a11y.removeUnit')}
+              testId={`inventory-remove-${detail.unitId}`}
               onClick={() => {
                 const droid = droidById.get(detail.droidId)
                 setRemoveTarget({
@@ -366,9 +432,7 @@ export function InventoryPage() {
                   tier: formatTierName(detail.tier, tierLabels),
                 })
               }}
-            >
-              {t('a11y.removeUnit')}
-            </Button>
+            />
           </div>
         ) : null}
       </DroidDetailSheet>

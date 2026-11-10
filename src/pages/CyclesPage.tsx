@@ -3,17 +3,19 @@ import { useTranslation } from 'react-i18next'
 import { CycleGuidePdfExport } from '../components/CycleGuidePdfExport'
 import { DroidImage } from '../components/DroidImage'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
-import { InsetGroup } from '../components/ui/InsetGroup'
-import { RadioCardGroup } from '../components/ui/RadioCardGroup'
+import { ChipRadioGroup } from '../components/ui/ChipRadioGroup'
 import { cycleById, droidById, gameData, getRebirth } from '../domain/gameData'
 import { REBIRTHS_PER_PATH, SUPER_REBIRTH_UNLOCK_AFTER } from '../domain/progress'
 import { formatTierName } from '../domain/tiers'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { useTierLabels } from '../i18n/useTierLabels'
+
+const GATE_VISIBLE_REBIRTHS = 4
+
 export function CyclesPage() {
   const { t, i18n } = useTranslation()
   const tierLabels = useTierLabels()
-  const [pathId, setPathId] = useState(gameData.cycles[0]?.id ?? 'path-1')
+  const [pathId, setPathId] = useState('path-5')
   const [openRebirth, setOpenRebirth] = useState<number | null>(1)
 
   const cycle = cycleById.get(pathId)
@@ -30,6 +32,8 @@ export function CyclesPage() {
     return list
   }, [pathId])
 
+  const visibleRebirths = rebirths.slice(0, GATE_VISIBLE_REBIRTHS)
+
   const cycleOptions = useMemo(
     () =>
       gameData.cycles.map((c) => ({
@@ -41,96 +45,100 @@ export function CyclesPage() {
 
   return (
     <TabScrollLayout title={t('cycles.title')} testId="cycles-page">
+      <p className="hint" style={{ marginTop: 6 }}>
+        {t('cycles.referenceNote')}
+      </p>
       <section className="sec">
         <div className="sec-h">
           <h2 className="t-h2">{t('cycles.pickCycle')}</h2>
         </div>
-        <div data-testid="cycles-path-chips">
-          <RadioCardGroup
-            ariaLabel={t('cycles.pickCycle')}
-            value={pathId}
-            onChange={(id) => {
-              setPathId(id)
-              setOpenRebirth(1)
-            }}
-            columns={3}
-            optionTestIdPrefix="cycles-path-option"
-            options={cycleOptions}
-          />
-        </div>
-      </section>
-      <InsetGroup footer={t('cycles.referenceNote')}>
-        <div className="row">
+        <ChipRadioGroup
+          ariaLabel={t('cycles.pickCycle')}
+          testId="cycles-path-chips"
+          grid
+          value={pathId}
+          onChange={(id) => {
+            setPathId(id)
+            setOpenRebirth(1)
+          }}
+          options={cycleOptions}
+        />
+        <div style={{ marginTop: 14 }}>
           <CycleGuidePdfExport pathId={pathId} cycleName={cycleName} />
         </div>
-      </InsetGroup>
+      </section>
 
-      <div className="stack">
-      {rebirths.map((entry) => {
+      {visibleRebirths.map((entry) => {
         const open = openRebirth === entry.rebirth
         return (
-          <InsetGroup key={entry.rebirth} testId={`cycles-rebirth-group-${entry.rebirth}`}>
+          <div key={entry.rebirth} className="acc" data-testid={`cycles-rebirth-group-${entry.rebirth}`}>
             <button
               type="button"
-              className="row row row--link w-full"
+              className="acc-h"
               onClick={() => setOpenRebirth(open ? null : entry.rebirth)}
               data-testid={`cycles-rebirth-${entry.rebirth}`}
               aria-expanded={open}
             >
-              <div className="row-main">
-                <span className="row-title">{t('cycles.rebirthN', { n: entry.rebirth })}</span>
-                <span className="hint">
+              <span className="row-main">
+                <span className="dname" style={{ display: 'block' }}>
+                  {t('cycles.rebirthN', { n: entry.rebirth })}
+                </span>
+                <span className="hint" style={{ display: 'block' }}>
                   {entry.credits} · {t(`confidence.${entry.confidence}`)}
                 </span>
-              </div>
+              </span>
+              <span className="chev" aria-hidden>
+                <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+                  <path d={open ? 'm5 9 7 7 7-7' : 'm9 5 7 7-7 7'} />
+                </svg>
+              </span>
             </button>
             {open ? (
-              <>
+              <div className="acc-body">
                 {entry.note ? (
-                  <div className="row">
-                    <span className="hint text-ui-warn">{entry.note}</span>
-                  </div>
+                  <p className="note-warn" style={{ padding: '4px 0 8px' }}>
+                    {entry.note}
+                  </p>
                 ) : null}
                 {entry.requirements.map((req) => {
                   const droid = droidById.get(req.droidId)
                   return (
-                    <div key={req.droidId} className="row item">
-                      {droid ? (
-                        <DroidImage
-                          droid={droid}
-                          tier={req.rarity}
-                          size="sm"
-                          className="!h-[50px] !w-[50px] rounded-[11px]"
-                        />
-                      ) : null}
-                      <div className="row-main">
-                        <span className="dname row-title">{droid?.name ?? req.droidId}</span>
-                        <span className="hint">
-                          {formatTierName(req.rarity, tierLabels)}
-                          {req.quantity > 1 ? ` · ×${req.quantity}` : ''}
+                    <div key={req.droidId} className="item">
+                      <button type="button" className="item-open" aria-label={droid?.name}>
+                        {droid ? <DroidImage droid={droid} tier={req.rarity} size="sm" /> : null}
+                        <span className="item-body">
+                          <span className="dname">{droid?.name ?? req.droidId}</span>
+                          <span className="t-meta">
+                            {formatTierName(req.rarity, tierLabels)}
+                            {req.quantity > 1 ? ` · ×${req.quantity}` : ''}
+                          </span>
                         </span>
-                      </div>
+                      </button>
                     </div>
                   )
                 })}
-              </>
+              </div>
             ) : null}
-          </InsetGroup>
+          </div>
         )
       })}
-      </div>
 
-      <h2 className="sec-h" data-testid="cycles-super-section-header">
-        {t('cycles.superSection')}
-      </h2>
-      <InsetGroup>
-        <div className="row">
-          <div className="row-main">
-            <span className="row-title">{t('cycles.superBody', { n: SUPER_REBIRTH_UNLOCK_AFTER })}</span>
-            <span className="hint">{t('common.unconfirmed')}</span>
-          </div>
+      {rebirths.length > GATE_VISIBLE_REBIRTHS ? (
+        <p className="hint" style={{ margin: '10px 0 0' }}>
+          {t('cycles.moreRebirthsBelow', {
+            count: rebirths.length - GATE_VISIBLE_REBIRTHS,
+            defaultValue: `Mais ${rebirths.length - GATE_VISIBLE_REBIRTHS} renascimentos abaixo, na mesma lista.`,
+          })}
+        </p>
+      ) : null}
+
+      <section className="sec">
+        <div className="sec-h">
+          <h2 className="t-h2">{t('cycles.superSection')}</h2>
         </div>
-      </InsetGroup>
+        <p style={{ marginBottom: 8 }}>{t('cycles.superBody', { n: SUPER_REBIRTH_UNLOCK_AFTER })}</p>
+        <span className="hint">{t('common.unconfirmed')}</span>
+      </section>
 
       <div aria-hidden />
     </TabScrollLayout>

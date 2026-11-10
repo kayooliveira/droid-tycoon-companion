@@ -1,7 +1,4 @@
-import { ArrowCounterClockwise } from '@phosphor-icons/react'
 import { useTranslation } from 'react-i18next'
-import { Button } from '../ui/Button'
-import { uiIconProps } from '../ui/iconStyle'
 
 export function ProgressActionStack({
   showComplete,
@@ -24,45 +21,55 @@ export function ProgressActionStack({
 }) {
   const { t } = useTranslation()
 
+  if (!showComplete && !showSuper) return null
+
   return (
-    <div className="stack" data-testid="progress-actions">
+    <div className="stack" style={{ marginTop: 16 }} data-testid="progress-actions">
       {showComplete ? (
-        <Button
-          variant="primary"
-          className="w-full min-h-12"
+        <button
+          type="button"
+          className="btn btn--primary"
           data-testid="progress-complete-main"
           disabled={completeDisabled}
           onClick={onComplete}
         >
           {t('progress.completeShort')}
-        </Button>
+        </button>
       ) : null}
-      {showSuper ? (
-        <Button variant="accentSoft" className="w-full min-h-12" data-testid="progress-super-cta" onClick={onSuper}>
-          {t('progress.superRebirthCta')}
-        </Button>
-      ) : null}
-      {showForceComplete ? (
-        <Button
-          variant="secondary"
-          size="sm"
-          className="w-full"
+      {showComplete && showForceComplete ? (
+        <button
+          type="button"
+          className="btn btn--secondary"
           data-testid="progress-force-complete-inline"
           onClick={onForceComplete}
         >
           {t('progress.completeAnyway')}
-        </Button>
+        </button>
       ) : null}
-      <Button
-        variant="ghost"
-        size="sm"
-        className="w-full"
-        data-testid="progress-undo-inline"
-        icon={<ArrowCounterClockwise {...uiIconProps} />}
-        onClick={onUndo}
-      >
-        {t('progress.undoOne')}
-      </Button>
+      {showSuper ? (
+        <button
+          type="button"
+          className="btn btn--secondary"
+          data-testid="progress-super-cta"
+          onClick={onSuper}
+        >
+          {t('progress.superRebirthCta')}
+        </button>
+      ) : null}
+      {showComplete ? (
+        <button
+          type="button"
+          className="btn btn--ghost"
+          data-testid="progress-undo-inline"
+          onClick={onUndo}
+        >
+          <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
+            <path d="M9 5 4.5 9.5 9 14" />
+            <path d="M4.5 9.5H14a5.5 5.5 0 0 1 0 11h-3" />
+          </svg>
+          {t('progress.undoOne')}
+        </button>
+      ) : null}
     </div>
   )
 }

@@ -7,6 +7,7 @@ import {
 } from './useProgressListExpansion'
 
 const STEPS = [1, 2, 3]
+const CURRENT = 2
 
 describe('buildExpandedMap', () => {
   it('defaults all steps to expanded', () => {
@@ -15,26 +16,28 @@ describe('buildExpandedMap', () => {
 })
 
 describe('useProgressListExpansion', () => {
-  it('starts expanded when persisted preference is true', () => {
+  it('opens the current rebirth step on load', () => {
     const { result } = renderHook(() =>
-      useProgressListExpansion(STEPS, 'path-1', true, vi.fn()),
-    )
-    expect(result.current.allExpanded).toBe(true)
-    expect(result.current.isExpanded(2)).toBe(true)
-  })
-
-  it('starts collapsed when persisted preference is false', () => {
-    const { result } = renderHook(() =>
-      useProgressListExpansion(STEPS, 'path-1', false, vi.fn()),
+      useProgressListExpansion(STEPS, 'path-1', CURRENT, true, vi.fn()),
     )
     expect(result.current.allExpanded).toBe(false)
+    expect(result.current.isExpanded(2)).toBe(true)
+    expect(result.current.isExpanded(1)).toBe(false)
+  })
+
+  it('opens the current step regardless of persisted preference', () => {
+    const { result } = renderHook(() =>
+      useProgressListExpansion(STEPS, 'path-1', CURRENT, false, vi.fn()),
+    )
+    expect(result.current.allExpanded).toBe(false)
+    expect(result.current.isExpanded(2)).toBe(true)
     expect(result.current.isExpanded(1)).toBe(false)
   })
 
   it('toggleAll collapses and persists false', () => {
     const persist = vi.fn()
     const { result } = renderHook(() =>
-      useProgressListExpansion(STEPS, 'path-1', true, persist),
+      useProgressListExpansion(STEPS, 'path-1', CURRENT, true, persist),
     )
     act(() => result.current.toggleAll())
     expect(result.current.allExpanded).toBe(false)
@@ -44,7 +47,7 @@ describe('useProgressListExpansion', () => {
   it('toggleAll expands and persists true after collapse', () => {
     const persist = vi.fn()
     const { result } = renderHook(() =>
-      useProgressListExpansion(STEPS, 'path-1', false, persist),
+      useProgressListExpansion(STEPS, 'path-1', CURRENT, false, persist),
     )
     act(() => result.current.toggleAll())
     expect(result.current.allExpanded).toBe(true)
@@ -54,7 +57,7 @@ describe('useProgressListExpansion', () => {
   it('toggleAll collapses when only some steps are expanded', () => {
     const persist = vi.fn()
     const { result } = renderHook(() =>
-      useProgressListExpansion(STEPS, 'path-1', true, persist),
+      useProgressListExpansion(STEPS, 'path-1', CURRENT, true, persist),
     )
     act(() => result.current.toggleOne(2))
     expect(result.current.allExpanded).toBe(false)
@@ -64,13 +67,13 @@ describe('useProgressListExpansion', () => {
     expect(persist).toHaveBeenCalledWith(false)
   })
 
-  it('individual toggle still works when list starts expanded', () => {
+  it('individual toggle still works when current step starts open', () => {
     const { result } = renderHook(() =>
-      useProgressListExpansion(STEPS, 'path-1', true, vi.fn()),
+      useProgressListExpansion(STEPS, 'path-1', CURRENT, true, vi.fn()),
     )
     act(() => result.current.toggleOne(2))
     expect(result.current.isExpanded(2)).toBe(false)
-    expect(result.current.isExpanded(1)).toBe(true)
-    expect(areAllExpanded(STEPS, { 1: true, 2: false, 3: true })).toBe(false)
+    expect(result.current.isExpanded(1)).toBe(false)
+    expect(areAllExpanded(STEPS, { 1: false, 2: false, 3: false })).toBe(false)
   })
 })

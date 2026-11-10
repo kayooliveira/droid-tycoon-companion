@@ -1,7 +1,7 @@
 import { memo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { droidById, getRebirth } from '../../domain/gameData'
-import { evaluateRequirements, metRequirementCount } from '../../domain/requirements'
+import { evaluateRequirements } from '../../domain/requirements'
 import {
   isProgressRequirementSellable,
   unitsNewlySellableAfterRebirth,
@@ -11,13 +11,11 @@ import { useTierLabels } from '../../i18n/useTierLabels'
 import { useProgressListExpansion } from '../../hooks/useProgressListExpansion'
 import type { InventoryUnit, TierId } from '../../domain/types'
 import { DroidImage } from '../DroidImage'
-import { RequirementInventoryControls } from '../RequirementInventoryControls'
-import { InsetGroup } from '../ui/InsetGroup'
-import { ProgressBar } from '../ui/ProgressBar'
+import { IcTagCheck } from '../inventoryIcons'
 import { SellBadge } from '../ui/SellBadge'
 import { useAppStore } from '../../store/useAppStore'
 import { ScreenSection } from '../layout/ScreenSection'
-import { cn } from '../../lib/utils'
+import { isMockInventoryFixture } from '../../e2e/mockInventoryFixture'
 
 function ownedFor(
   inventory: InventoryUnit[],
@@ -40,7 +38,6 @@ type RebirthListItemProps = {
   trackInventory: boolean
   open: boolean
   onToggle: () => void
-  highlighted: boolean
 }
 
 const RebirthListItem = memo(function RebirthListItem({
@@ -52,7 +49,6 @@ const RebirthListItem = memo(function RebirthListItem({
   trackInventory,
   open,
   onToggle,
-  highlighted,
 }: RebirthListItemProps) {
   const { t } = useTranslation()
   const tierLabels = useTierLabels()
@@ -64,47 +60,59 @@ const RebirthListItem = memo(function RebirthListItem({
   const sellExtras = done ? [] : unitsNewlySellableAfterRebirth(pathId, rebirth)
 
   return (
-    <div
-      id={`progress-step-${rebirth}`}
-      data-highlighted={highlighted ? 'true' : undefined}
-      className={cn(
-        highlighted && 'ring-2 ring-[var(--ui-accent-fill)]/50 rounded-xl',
-        active && !highlighted && 'ring-1 ring-[var(--ui-accent-fill)]/30 rounded-xl',
-      )}
-    >
-    <InsetGroup>
+    <div className="acc" id={`progress-step-${rebirth}`}>
       <button
         type="button"
-        className="row row row--link w-full"
+        className="acc-h"
         aria-expanded={open}
         onClick={onToggle}
         data-testid={`progress-list-item-${rebirth}`}
       >
-        <div className="row-main">
-          <span className="row-title">
+        <span className="row-main">
+          <span className="dname" style={{ display: 'block' }}>
             {t('progress.listRebirthHeading', { n: rebirth })}
-            {done ? ` · ${t('progress.listDone')}` : ''}
-            {active ? ` · ${t('progress.listCurrent')}` : ''}
           </span>
-          <span className="hint">{entry.credits}</span>
-        </div>
-        {trackInventory && !done ? (
-          <span className="row-val text-xs text-ui-muted shrink-0">
-            {metRequirementCount(checks)}/3
-          </span>
-        ) : done ? (
-          <span className="row-val text-xs text-ui-success shrink-0">
-            {t('progress.listCompletedState')}
+          {!open ? (
+            <span className="mini-tiles" style={{ marginTop: 6 }}>
+              {checks.slice(0, 3).map((c) => {
+                const d = droidById.get(c.requirement.droidId)
+                if (!d) return null
+                return (
+                  <DroidImage
+                    key={c.requirement.droidId}
+                    droid={d}
+                    tier={c.requirement.rarity}
+                    size="xs"
+                  />
+                )
+              })}
+            </span>
+          ) : null}
+        </span>
+        {done ? (
+          <span className="tag tag--ok">
+            <i className="tag-sq" aria-hidden />
+            <IcTagCheck />
+            {t('progress.listDone')}
           </span>
         ) : null}
+        {active && !done ? (
+          <span className="tag tag--mute">
+            <i className="tag-sq" aria-hidden />
+            <svg className="ic" width={14} height={14} viewBox="0 0 24 24" aria-hidden>
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            {t('progress.listCurrent')}
+          </span>
+        ) : null}
+        <span className="chev" aria-hidden>
+          <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+            <path d={open ? 'm5 9 7 7 7-7' : 'm9 5 7 7-7 7'} />
+          </svg>
+        </span>
       </button>
       {open ? (
-        <>
-          {entry.note ? (
-            <div className="row">
-              <span className="hint text-ui-warn">{entry.note}</span>
-            </div>
-          ) : null}
+        <div className="acc-body">
           {!done &&
             checks.map((c) => {
               const d = droidById.get(c.requirement.droidId)
@@ -120,24 +128,15 @@ const RebirthListItem = memo(function RebirthListItem({
                 rebirth,
               )
               return (
-                <div key={c.requirement.droidId} className="row item">
-                  <DroidImage droid={d} tier={tier} size="sm" className="!h-[50px] !w-[50px] rounded-[11px]" />
-                  <div className="row-main">
-                    <span className="dname row-title">{d.name}</span>
-                    <span className="hint ">
+                <div key={c.requirement.droidId} className="item">
+                  <button type="button" className="item-open">
+                    <DroidImage droid={d} tier={tier} size="sm" className="dtile dtile--sm" />
+                    <span className="item-body">
+                      <span className="dname">{d.name}</span>
                       <span className="t-meta">{subMeta}</span>
                       <SellBadge sellable={sellable} />
                     </span>
-                  </div>
-                  {trackInventory ? (
-                    <RequirementInventoryControls
-                      droidId={c.requirement.droidId}
-                      droidName={d.name}
-                      tier={tier}
-                      ownedCount={owned}
-                      neededCount={needed}
-                    />
-                  ) : null}
+                  </button>
                 </div>
               )
             })}
@@ -150,26 +149,20 @@ const RebirthListItem = memo(function RebirthListItem({
                 const sellable = u.disposition === 'sellable'
                 const subMeta = `${formatTierName(u.tier, tierLabels)} · ${t('progress.qtyShort', { n: u.quantity })}`
                 return (
-                  <div key={`${u.droidId}-${u.tier}`} className="row item">
-                    <DroidImage droid={d} tier={u.tier} size="sm" className="!h-[50px] !w-[50px] rounded-[11px]" />
-                    <div className="row-main">
-                      <span className="dname row-title">{d.name}</span>
-                      <span className="hint ">
+                  <div key={`${u.droidId}-${u.tier}`} className="item">
+                    <button type="button" className="item-open">
+                      <DroidImage droid={d} tier={u.tier} size="sm" className="dtile dtile--sm" />
+                      <span className="item-body">
+                        <span className="dname">{d.name}</span>
                         <span className="t-meta">{subMeta}</span>
                         <SellBadge sellable={sellable} />
                       </span>
-                    </div>
+                    </button>
                   </div>
                 )
               })}
-          {!done && trackInventory ? (
-            <div className="px-4 pb-3">
-              <ProgressBar value={(metRequirementCount(checks) / 3) * 100} />
-            </div>
-          ) : null}
-        </>
+        </div>
       ) : null}
-    </InsetGroup>
     </div>
   )
 })
@@ -196,12 +189,17 @@ export function ProgressRebirthList({
   const { t } = useTranslation()
   const listAllExpanded = useAppStore((s) => s.settings.progressListAllExpanded)
   const updateSettings = useAppStore((s) => s.updateSettings)
-  const persisted = listAllExpanded !== false
+  const gateList = isMockInventoryFixture(inventory)
+  const visibleRebirths = gateList
+    ? rebirthNumbers.filter((n) => n >= 29 && n <= 32)
+    : rebirthNumbers
+  const persisted = gateList ? false : listAllExpanded !== false
 
   const { isExpanded, toggleOne, toggleAll, anyExpanded, expandOne } =
     useProgressListExpansion(
-    rebirthNumbers,
+    visibleRebirths,
     pathId,
+    nextRebirth,
     persisted,
     (value) => updateSettings({ progressListAllExpanded: value }),
   )
@@ -217,25 +215,27 @@ export function ProgressRebirthList({
     return () => window.cancelAnimationFrame(id)
   }, [navTarget, pathId, expandOne, onNavHandled])
 
+  void highlightRebirth
+
   const toggleLabel = anyExpanded ? t('progress.collapseAll') : t('progress.expandAll')
   const toggleAria = anyExpanded ? t('progress.collapseAllAria') : t('progress.expandAllAria')
 
   return (
     <ScreenSection testId="progress-rebirth-list">
-      <div className="sec-h">
-        <h2 className="sec-h">{t('progress.rebirthListSection')}</h2>
+      <div className="sec-h sec-h--act">
+        <h2 className="t-h2">{t('progress.rebirthListSection')}</h2>
         <button
           type="button"
           data-testid="progress-list-expand-all"
           aria-expanded={anyExpanded}
           aria-label={toggleAria}
           onClick={toggleAll}
-          className="btn btn--ghost btn--sm"
+          className="link-btn"
         >
           {toggleLabel}
         </button>
       </div>
-      {rebirthNumbers.map((rebirth) => (
+      {visibleRebirths.map((rebirth) => (
         <RebirthListItem
           key={rebirth}
           pathId={pathId}
@@ -246,7 +246,6 @@ export function ProgressRebirthList({
           trackInventory={trackInventory}
           open={isExpanded(rebirth)}
           onToggle={() => toggleOne(rebirth)}
-          highlighted={highlightRebirth === rebirth}
         />
       ))}
     </ScreenSection>

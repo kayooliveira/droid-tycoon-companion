@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { gameData } from '../../domain/gameData'
 import { formatCycleDisplayName } from '../../lib/cycleLabel'
@@ -5,7 +6,13 @@ import { useAppStore } from '../../store/useAppStore'
 
 const REBIRTHS_PER_PATH = 40
 
-export function CycleProgressStrip() {
+export function CycleProgressStrip({
+  variant = 'default',
+  afterMeter,
+}: {
+  variant?: 'default' | 'home' | 'progress'
+  afterMeter?: ReactNode
+}) {
   const { t, i18n } = useTranslation()
   const progress = useAppStore((s) => s.progress)
   const cycle = gameData.cycles.find((c) => c.id === progress.pathId)
@@ -23,12 +30,23 @@ export function CycleProgressStrip() {
     return <i key={step} className={parts.join(' ') || undefined} />
   })
 
+  const showFoot = true
+  const compact = variant === 'progress'
+
+  const footText =
+    variant === 'progress'
+      ? t('progress.cycleFootSummary', {
+          done,
+          next: Math.min(progress.nextRebirth, total),
+        })
+      : t('home.superAfterRebirth', { n: total })
+
   return (
     <section className="sec" data-testid="home-cycle-strip">
       <div className="sec-h">
         <h2 className="t-h2">{t('progress.pathProgress')}</h2>
       </div>
-      <div className="cm">
+      <div className={compact ? 'cm cm--compact' : 'cm'}>
         <div className="cm-top">
           <span className="cm-num">{done}</span>
           <span className="cm-of">{t('home.cycleProgressOf', { total })}</span>
@@ -44,10 +62,13 @@ export function CycleProgressStrip() {
             </span>
           ))}
         </div>
-        <div className="cm-foot">
-          <span className="t-meta">{t('home.superAfterRebirth', { n: total })}</span>
-        </div>
+        {showFoot ? (
+          <div className="cm-foot">
+            <span className="t-meta">{footText}</span>
+          </div>
+        ) : null}
       </div>
+      {afterMeter}
     </section>
   )
 }

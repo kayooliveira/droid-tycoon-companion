@@ -1,18 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import {
-  DownloadSimple,
-  LinkSimple,
-  ShareNetwork,
-  UploadSimple,
-  WhatsappLogo,
-} from '@phosphor-icons/react'
-import { FeedbackWhatsAppLink } from '../components/FeedbackWhatsAppLink'
+import { MORE_MENU_ICONS } from '../components/tabBarIcons'
+import { TAB_BAR_ICONS } from '../components/tabBarIcons'
+import { REPORT_FEEDBACK_URL } from '../lib/constants'
 import { PathProgressSwitcher, ProgressSummaryLine } from '../components/PathProgressSwitcher'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
+import { MoreBackBar } from '../components/layout/MoreBackBar'
 import { Button } from '../components/ui/Button'
-import { InsetGroup } from '../components/ui/InsetGroup'
 import { Modal } from '../components/ui/Modal'
 import { SegmentedControl } from '../components/ui/SegmentedControl'
 import { DsSwitch } from '../components/ui/DsSwitch'
@@ -25,7 +20,6 @@ import { downloadJson, exportProgress, parseImportJson } from '../storage/export
 import { useToast } from '../components/ToastProvider'
 import { setDocumentLanguage } from '../i18n'
 import { initI18n } from '../i18n/index'
-import { uiIconProps } from '../components/ui/iconStyle'
 import { APP_PUBLIC_URL, WHATSAPP_SHARE_BASE } from '../lib/constants'
 import { renderShareProgressCard } from '../lib/shareProgressCard'
 async function downloadOrShare(blob: Blob, filename: string, mime: string) {
@@ -84,11 +78,11 @@ export function SettingsPage() {
     void i18n.changeLanguage(locale)
   }
 
-  const { theme: appearanceTheme, modePref, resolvedMode } = useAppearance()
+  const { theme: appearanceTheme, modePref } = useAppearance()
   const appearanceSummary = t(`appearance.themes.${appearanceTheme}.name`)
   const modeSummary =
     modePref === 'system'
-      ? t('settings.themeSystemShort')
+      ? t('settings.themeFollowSystem')
       : modePref === 'light'
         ? t('settings.themeLight')
         : t('settings.themeDark')
@@ -166,7 +160,12 @@ export function SettingsPage() {
   }
 
   return (
-    <TabScrollLayout title={t('settings.title')} testId="settings-page" className="settings-page-pad">
+    <TabScrollLayout
+      title={t('settings.title')}
+      testId="settings-page"
+      className="settings-page-pad"
+      backBar={<MoreBackBar />}
+    >
       <section className="sec">
         <div className="sec-h">
           <h2 className="t-h2">{t('settings.appearance')}</h2>
@@ -176,13 +175,15 @@ export function SettingsPage() {
           className="row"
           data-testid="settings-appearance-link"
         >
+          <span className="row-ic" aria-hidden>
+            {MORE_MENU_ICONS.settings}
+          </span>
           <span className="row-main">
             <span className="dname" style={{ display: 'block' }}>
               {t('appearance.themeAndMode')}
             </span>
             <span className="hint" style={{ display: 'block' }}>
               {appearanceSummary} · {modeSummary}
-              {modePref === 'system' ? ` (${resolvedMode})` : ''}
             </span>
           </span>
           <span className="chev" aria-hidden>
@@ -191,11 +192,6 @@ export function SettingsPage() {
             </svg>
           </span>
         </Link>
-      </section>
-      <section className="sec">
-        <div className="sec-h">
-          <h2 className="t-h2">{t('settings.preferences')}</h2>
-        </div>
         <DsSwitch
           label={t('settings.animations')}
           checked={settings.animationsEnabled}
@@ -213,35 +209,39 @@ export function SettingsPage() {
           <h2 className="t-h2">{t('settings.language')}</h2>
         </div>
         <div data-testid="language-select">
-        <SegmentedControl
-          ariaLabel={t('settings.language')}
-          value={settings.locale}
-          onChange={changeLanguage}
-          options={[
-            { value: 'pt-BR', label: t('settings.langPt') },
-            { value: 'en', label: t('settings.langEn') },
-          ]}
-        />
+          <SegmentedControl
+            ariaLabel={t('settings.language')}
+            value={settings.locale}
+            onChange={changeLanguage}
+            options={[
+              { value: 'pt-BR', label: t('settings.langPt') },
+              { value: 'en', label: t('settings.langEn') },
+            ]}
+          />
         </div>
       </section>
 
-      <h2 className="sec-h">{t('settings.progress')}</h2>
-      <InsetGroup>
-        <div className="row">
-          <div className="row-main">
-            <span className="row-title">{t('settings.path')}</span>
-            <span className="hint">
-              <PathProgressSwitcher compact />
-            </span>
-          </div>
+      <section className="sec">
+        <div className="sec-h">
+          <h2 className="t-h2">{t('settings.progress')}</h2>
         </div>
         <div className="row">
-          <div className="row-main">
-            <span className="row-title">{t('progress.pathProgress')}</span>
+          <span className="row-main">
+            <span className="t-label" style={{ display: 'block' }}>
+              {t('settings.path')}
+            </span>
+          </span>
+          <PathProgressSwitcher compact />
+        </div>
+        <div className="row">
+          <span className="row-main">
+            <span className="dname" style={{ display: 'block' }}>
+              {t('progress.pathProgress')}
+            </span>
             <span className="hint">
               <ProgressSummaryLine />
             </span>
-          </div>
+          </span>
         </div>
         <div className="row" style={{ display: 'block', minHeight: 0 }}>
           <div className="lbl-row">
@@ -266,39 +266,76 @@ export function SettingsPage() {
             <span>40</span>
           </div>
         </div>
-      </InsetGroup>
+      </section>
 
-      <h2 className="sec-h">{t('settings.dataSection')}</h2>
-      <InsetGroup footer={t('settings.updateHint')}>
+      <section className="sec">
+        <div className="sec-h">
+          <h2 className="t-h2">{t('settings.dataSection')}</h2>
+        </div>
         <div className="row">
-          <div className="row-main">
-            <span className="row-title">{t('settings.gameData')}</span>
-            <span className="hint">
+          <span className="row-ic" aria-hidden>
+            {MORE_MENU_ICONS.about}
+          </span>
+          <span className="row-main">
+            <span className="dname" style={{ display: 'block' }}>
+              {t('settings.gameData')}
+            </span>
+            <span className="hint" style={{ display: 'block' }}>
               {`v${meta.dataVersion} · ${meta.gameVersion}`}
               {stale ? ` · ${t('settings.dataStaleShort')}` : ` · ${t('settings.dataFresh')}`}
             </span>
-          </div>
+          </span>
         </div>
         <button
           type="button"
-          className="row row row--link"
+          className="row"
           onClick={() => downloadJson('droid-tycoon-progress.json', exportProgress(toPersisted()))}
         >
-          <div className="row-main">
-            <span className="row-title">{t('settings.exportShort')}</span>
-          </div>
-          <DownloadSimple {...uiIconProps} className="row-val shrink-0 opacity-60" />
+          <span className="row-ic" aria-hidden>
+            <svg className="ic" width={24} height={24} viewBox="0 0 24 24">
+              <path d="M12 3.5V15M7.5 11 12 15.5 16.5 11" />
+              <path d="M5 19.5h14" />
+            </svg>
+          </span>
+          <span className="row-main">
+            <span className="dname" style={{ display: 'block' }}>
+              {t('settings.exportShort')}
+            </span>
+            <span className="hint" style={{ display: 'block' }}>
+              {t('settings.exportHint', { defaultValue: 'Salva o progresso em um arquivo JSON' })}
+            </span>
+          </span>
+          <span className="chev" aria-hidden>
+            <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+              <path d="m9 5 7 7-7 7" />
+            </svg>
+          </span>
         </button>
         <button
           type="button"
-          className="row row row--link"
+          className="row"
           data-testid="settings-import-trigger"
           onClick={() => fileRef.current?.click()}
         >
-          <div className="row-main">
-            <span className="row-title">{t('settings.importShort')}</span>
-          </div>
-          <UploadSimple {...uiIconProps} className="row-val shrink-0 opacity-60" />
+          <span className="row-ic" aria-hidden>
+            <svg className="ic" width={24} height={24} viewBox="0 0 24 24">
+              <path d="M12 15.5V4M7.5 8 12 3.5 16.5 8" />
+              <path d="M5 19.5h14" />
+            </svg>
+          </span>
+          <span className="row-main">
+            <span className="dname" style={{ display: 'block' }}>
+              {t('settings.importShort')}
+            </span>
+            <span className="hint" style={{ display: 'block' }}>
+              {t('settings.importHint', { defaultValue: 'Escolha um arquivo JSON' })}
+            </span>
+          </span>
+          <span className="chev" aria-hidden>
+            <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+              <path d="m9 5 7 7-7 7" />
+            </svg>
+          </span>
         </button>
         <input
           ref={fileRef}
@@ -322,52 +359,129 @@ export function SettingsPage() {
             setImportOpen(true)
           }}
         />
-      </InsetGroup>
+        <p className="hint" style={{ marginTop: 8 }}>
+          {t('settings.updateHint')}
+        </p>
+      </section>
 
-      <h2 className="sec-h">{t('shareExport.title')}</h2>
-      <InsetGroup footer={t('shareExport.footer')} testId="share-export-card">
-        <button type="button" className="row row row--link" data-testid="share-app" onClick={() => void shareApp()}>
-          <div className="row-main">
-            <span className="row-title">{t('share.shareApp')}</span>
-          </div>
-          <LinkSimple {...uiIconProps} className="shrink-0 opacity-60" />
+      <section className="sec" data-testid="share-export-card">
+        <div className="sec-h">
+          <h2 className="t-h2">{t('shareExport.title')}</h2>
+        </div>
+        <button type="button" className="row" data-testid="share-app" onClick={() => void shareApp()}>
+          <span className="row-ic" aria-hidden>
+            <svg className="ic" width={24} height={24} viewBox="0 0 24 24">
+              <path d="M10 14a4 4 0 0 0 5.6 0l3-3a4 4 0 0 0-5.6-5.6l-1 1" />
+              <path d="M14 10a4 4 0 0 0-5.6 0l-3 3a4 4 0 0 0 5.6 5.6l1-1" />
+            </svg>
+          </span>
+          <span className="row-main">
+            <span className="dname" style={{ display: 'block' }}>
+              {t('share.shareApp')}
+            </span>
+            <span className="hint" style={{ display: 'block' }} />
+          </span>
         </button>
-        <button type="button" className="row row row--link" onClick={shareWhatsApp}>
-          <div className="row-main">
-            <span className="row-title">{t('share.whatsapp')}</span>
-          </div>
-          <WhatsappLogo {...uiIconProps} className="shrink-0 opacity-60" />
+        <button type="button" className="row" onClick={shareWhatsApp}>
+          <span className="row-ic" aria-hidden>
+            <svg className="ic" width={24} height={24} viewBox="0 0 24 24">
+              <path d="M4 5h16v11H9l-5 4z" />
+            </svg>
+          </span>
+          <span className="row-main">
+            <span className="dname" style={{ display: 'block' }}>
+              {t('share.whatsapp')}
+            </span>
+            <span className="hint" style={{ display: 'block' }} />
+          </span>
         </button>
         <button
           type="button"
-          className="row row row--link"
+          className="row"
           disabled={shareBusy}
           data-testid="share-progress-card"
           onClick={() => void shareProgressImage()}
         >
-          <div className="row-main">
-            <span className="row-title">{t('share.progressCard')}</span>
-          </div>
-          <ShareNetwork {...uiIconProps} className="shrink-0 opacity-60" />
+          <span className="row-ic" aria-hidden>
+            <svg className="ic" width={24} height={24} viewBox="0 0 24 24">
+              <path d="M12 15V3.5M7.5 8 12 3.5 16.5 8" />
+              <path d="M5 12v8.5h14V12" />
+            </svg>
+          </span>
+          <span className="row-main">
+            <span className="dname" style={{ display: 'block' }}>
+              {t('share.progressCard')}
+            </span>
+            <span className="hint" style={{ display: 'block' }} />
+          </span>
         </button>
-      </InsetGroup>
+        <p className="hint" style={{ marginTop: 8 }}>
+          {t('shareExport.footer')}
+        </p>
+      </section>
 
-      <h2 className="sec-h">{t('settings.aboutSection')}</h2>
-      <InsetGroup>
-        <button type="button" className="row row row--link" onClick={rerunOnboarding}>
-          <div className="row-main">
-            <span className="row-title">{t('settings.rerunOnboardingShort')}</span>
-          </div>
-        </button>
-        <Link to="/about" className="row row row--link">
-          <div className="row-main">
-            <span className="row-title">{t('nav.about')}</span>
-          </div>
-        </Link>
-        <div className="row">
-          <FeedbackWhatsAppLink variant="link" className="text-sm" />
+      <section className="sec">
+        <div className="sec-h">
+          <h2 className="t-h2">{t('settings.aboutSection')}</h2>
         </div>
-      </InsetGroup>
+        <button type="button" className="row" onClick={rerunOnboarding}>
+          <span className="row-ic" aria-hidden>
+            {TAB_BAR_ICONS.cycles}
+          </span>
+          <span className="row-main">
+            <span className="dname" style={{ display: 'block' }}>
+              {t('settings.rerunOnboardingShort')}
+            </span>
+            <span className="hint" style={{ display: 'block' }} />
+          </span>
+          <span className="chev" aria-hidden>
+            <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+              <path d="m9 5 7 7-7 7" />
+            </svg>
+          </span>
+        </button>
+        <Link to="/about" className="row">
+          <span className="row-ic" aria-hidden>
+            {MORE_MENU_ICONS.about}
+          </span>
+          <span className="row-main">
+            <span className="dname" style={{ display: 'block' }}>
+              {t('nav.about')}
+            </span>
+            <span className="hint" style={{ display: 'block' }} />
+          </span>
+          <span className="chev" aria-hidden>
+            <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+              <path d="m9 5 7 7-7 7" />
+            </svg>
+          </span>
+        </Link>
+        {REPORT_FEEDBACK_URL ? (
+          <a
+            href={REPORT_FEEDBACK_URL}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="row"
+          >
+            <span className="row-ic" aria-hidden>
+              <svg className="ic" width={24} height={24} viewBox="0 0 24 24">
+                <path d="M4 5h16v11H9l-5 4z" />
+              </svg>
+            </span>
+            <span className="row-main">
+              <span className="dname" style={{ display: 'block' }}>
+                {t('feedback.whatsappCta')}
+              </span>
+              <span className="hint" style={{ display: 'block' }} />
+            </span>
+            <span className="chev" aria-hidden>
+              <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+                <path d="m9 5 7 7-7 7" />
+              </svg>
+            </span>
+          </a>
+        ) : null}
+      </section>
 
       <section className="sec">
         <div className="sec-h">
@@ -379,6 +493,11 @@ export function SettingsPage() {
           data-testid="settings-reset-trigger"
           onClick={() => setResetOpen(true)}
         >
+          <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
+            <path d="M4 7h16" />
+            <path d="M9.5 7V4h5v3" />
+            <path d="M6 7l1 13.5h10L18 7" />
+          </svg>
           {t('settings.resetShort')}
         </button>
       </section>

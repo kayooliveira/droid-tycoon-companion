@@ -18,7 +18,9 @@
     "more": "More",
     "cycles": "Cycles",
     "moreHintSell": "Sell advice for your cycle",
+    "moreHintSellCount": "Can sell {{count}} droids now",
     "moreHintDroiddex": "Droids and where each is used",
+    "moreHintDroiddexCount": "{{count}} droids and where each is used",
     "moreHintFusion": "Recipes and rules",
     "moreHintAbout": "Data sources and notices",
     "moreHintSettings": "Look, language, data"
@@ -32,7 +34,8 @@
     "superBody": "Unlocks after rebirth #{{n}}. Resets credits, base upgrades, and most droids (Iconics stay).",
     "exportGuidePdf": "Export cycle PDF",
     "exportGuideHint": "Printable guide for {{name}} with every rebirth requirement. No personal progress.",
-    "exportGuideDone": "Cycle guide PDF ready."
+    "exportGuideDone": "Cycle guide PDF ready.",
+    "moreRebirthsBelow": "{{count}} more rebirths below in the same list."
   },
   "exportProgress": {
     "title": "My progress PDF",
@@ -71,6 +74,7 @@
     "listRebirthHeading": "Rebirth #{{n}}",
     "badgeCanSell": "Can sell",
     "badgeDoNotSell": "Do not sell",
+    "cycleFootSummary": "Completed: {{done}} · Next rebirth: #{{next}}",
     "unifiedListFooter": "Green badge: safe to sell in this Cycle. Red badge: still needed or reserved.",
     "qtyShort": "Qty. {{n}}",
     "inventoryAddedToStep": "{{name}} added to Rebirth #{{n}}",
@@ -91,7 +95,7 @@
     "expandAllAria": "Expand all rebirth steps in the list",
     "search": {
       "label": "Search droids in Progress",
-      "placeholder": "Search droid…",
+      "placeholder": "Search by droid name",
       "clear": "Clear search",
       "noMatch": "No droid matches that name.",
       "needsSummary": "Where you will need this droid",
@@ -153,6 +157,9 @@
     "nextStepSell_one": "You can sell one extra droid. Check Sell before rebirthing.",
     "nextStepSell_other": "You can sell {{count}} droids. Check Sell before rebirthing.",
     "nextStepComplete": "Looks good. Mark the rebirth done here after you finish in-game."
+  },
+  "droid": {
+    "sheetKicker": "Droid sheet"
   },
   "inventory": {
     "title": "Inventory",
@@ -365,7 +372,8 @@
     "trackInventory": "Track inventory",
     "language": "Language",
     "langEn": "English",
-    "langPt": "Português (Brasil)",
+    "langPt": "Português",
+    "themeFollowSystem": "follows system",
     "rerunOnboarding": "Run setup again",
     "progress": "Progress",
     "path": "Path",

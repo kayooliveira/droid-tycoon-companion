@@ -19,18 +19,26 @@ export function areAnyExpanded(rebirthNumbers: number[], expanded: Record<number
 export function useProgressListExpansion(
   rebirthNumbers: number[],
   pathId: string,
-  persistedAllExpanded: boolean,
+  nextRebirth: number,
+  _persistedAllExpanded: boolean,
   onPersistAllExpanded: (value: boolean) => void,
 ) {
-  const [expanded, setExpanded] = useState<Record<number, boolean>>(() =>
-    buildExpandedMap(rebirthNumbers, persistedAllExpanded),
-  )
-
   const rebirthKey = useMemo(() => rebirthNumbers.join(','), [rebirthNumbers])
 
+  const defaultExpanded = useCallback(() => {
+    if (_persistedAllExpanded) {
+      return buildExpandedMap(rebirthNumbers, true)
+    }
+    const map = buildExpandedMap(rebirthNumbers, false)
+    map[nextRebirth] = true
+    return map
+  }, [_persistedAllExpanded, rebirthNumbers, nextRebirth])
+
+  const [expanded, setExpanded] = useState<Record<number, boolean>>(defaultExpanded)
+
   useEffect(() => {
-    setExpanded(buildExpandedMap(rebirthNumbers, persistedAllExpanded))
-  }, [pathId, persistedAllExpanded, rebirthKey, rebirthNumbers])
+    setExpanded(defaultExpanded())
+  }, [pathId, rebirthKey, defaultExpanded])
 
   const allExpanded = useMemo(
     () => areAllExpanded(rebirthNumbers, expanded),

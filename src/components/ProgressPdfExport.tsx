@@ -1,13 +1,8 @@
-import { FilePdf } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { exportCycleProgressPdf } from '../lib/exportCycle'
 import { useAppStore } from '../store/useAppStore'
 import { useToast } from './ToastProvider'
-import { GlassCard } from './ui/GlassCard'
-import { IconButton } from './ui/IconButton'
-import { SectionHeader } from './ui/SectionHeader'
-import { uiIconProps } from './ui/iconStyle'
 
 async function downloadOrShare(blob: Blob, filename: string) {
   const file = new File([blob], filename, { type: 'application/pdf' })
@@ -55,18 +50,26 @@ export function ProgressPdfExport() {
   }
 
   return (
-    <GlassCard className="p-4" id="progress-export" data-testid="progress-pdf-export">
-      <SectionHeader icon={<FilePdf {...uiIconProps} />} title={t('exportProgress.title')} />
-      <p className="text-xs text-ui-muted mb-3 text-pretty">{t('exportProgress.hint')}</p>
-      <IconButton
-        variant="soft"
-        label={t('exportProgress.pdf')}
+    <section className="sec" id="progress-export" data-testid="progress-pdf-export">
+      <div className="sec-h">
+        <h2 className="t-h2">{t('exportProgress.title')}</h2>
+      </div>
+      <p className="hint" style={{ marginBottom: 12 }}>
+        {t('exportProgress.hint')}
+      </p>
+      <button
+        type="button"
+        className="btn btn--secondary"
         disabled={busy}
         data-testid="export-progress-pdf"
         onClick={() => void run()}
       >
-        {busy ? '…' : <FilePdf {...uiIconProps} />}
-      </IconButton>
-    </GlassCard>
+        <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
+          <path d="M6 3.5h8l4 4V20.5H6z" />
+          <path d="M14 3.5v4h4" />
+        </svg>
+        {t('exportProgress.pdf')}
+      </button>
+    </section>
   )
 }

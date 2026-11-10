@@ -18,7 +18,9 @@
     "more": "Mais",
     "cycles": "Ciclos",
     "moreHintSell": "Pode vender agora",
+    "moreHintSellCount": "Pode vender {{count}} droids agora",
     "moreHintDroiddex": "Droids e onde cada um entra",
+    "moreHintDroiddexCount": "{{count}} droids e onde cada um entra",
     "moreHintFusion": "Receitas e regras",
     "moreHintAbout": "Fonte dos dados e avisos",
     "moreHintSettings": "Visual, idioma, dados"
@@ -32,7 +34,8 @@
     "superBody": "Libera depois do renascimento #{{n}}. Reseta créditos e melhorias da base; quase todos os droids somem, exceto os Icônicos.",
     "exportGuidePdf": "Exportar PDF do Ciclo",
     "exportGuideHint": "Guia imprimível de {{name}} com cada renascimento. Sem progresso pessoal.",
-    "exportGuideDone": "PDF do ciclo pronto."
+    "exportGuideDone": "PDF do ciclo pronto.",
+    "moreRebirthsBelow": "Mais {{count}} renascimentos abaixo, na mesma lista."
   },
   "exportProgress": {
     "title": "PDF do meu progresso",
@@ -71,6 +74,7 @@
     "listRebirthHeading": "Renascimento #{{n}}",
     "badgeCanSell": "Pode vender",
     "badgeDoNotSell": "Não venda",
+    "cycleFootSummary": "Concluídos: {{done}} · Próximo renascimento: #{{next}}",
     "unifiedListFooter": "Badge verde: pode vender neste Ciclo. Badge vermelho: ainda necessário ou reservado.",
     "qtyShort": "Qtd. {{n}}",
     "inventoryAddedToStep": "{{name}} adicionado ao Renascimento #{{n}}",
@@ -91,7 +95,7 @@
     "expandAllAria": "Expandir todos os renascimentos da lista",
     "search": {
       "label": "Buscar droids no Progresso",
-      "placeholder": "Buscar droid…",
+      "placeholder": "Buscar pelo nome do droid",
       "clear": "Limpar busca",
       "noMatch": "Nenhum droid com esse nome.",
       "needsSummary": "Onde você vai precisar deste droid",
@@ -154,6 +158,9 @@
     "nextStepSell_other": "Tem {{count}} droids que dá pra vender. Dá uma olhada em Vender antes do renascimento.",
     "nextStepComplete": "Deu certo. Quando terminar no jogo, marca o renascimento aqui."
   },
+  "droid": {
+    "sheetKicker": "Ficha do droid"
+  },
   "inventory": {
     "title": "Inventário",
     "trackingOff": "Inventário desligado",
@@ -196,7 +203,7 @@
     "emptyStateTitle": "Cadastra o inventário pra ver o que vender",
     "emptyStateBody": "Marca os droids que você tem pra comparar com os próximos renascimentos.",
     "emptyStateCta": "Ir pro inventário",
-    "keep": "Guardar",
+    "keep": "GUARDAR",
     "useNext": "USAR NO PRÓXIMO",
     "sellable": "Vender",
     "upgrade": "Upar",
@@ -207,7 +214,7 @@
     "useNextNote": "Entrega no Renascimento #{{rebirth}} e depois pode vender.",
     "upgradeRebirth": "Upe {{name}} pra pelo menos {{tier}} antes do renascimento #{{rebirth}}.",
     "keepForUpgrade": "Guarda: vira {{tier}} no #{{rebirth}}",
-    "safeNowTitle": "Pode vender agora",
+    "safeNowTitle": "PODE VENDER AGORA",
     "safeNowHint": "Com base nos renascimentos concluídos até o #{{rebirth}} e no que ainda falta neste ciclo.",
     "safeNowLine": "Está no seu inventário e pode vender antes do próximo renascimento.",
     "keepGroupFooter": "Ainda entra em renascimentos que faltam neste ciclo.",
@@ -365,7 +372,8 @@
     "trackInventory": "Registrar inventário",
     "language": "Idioma",
     "langEn": "English",
-    "langPt": "Português (Brasil)",
+    "langPt": "Português",
+    "themeFollowSystem": "segue o sistema",
     "rerunOnboarding": "Refazer configuração",
     "progress": "Progresso",
     "path": "Ciclo",

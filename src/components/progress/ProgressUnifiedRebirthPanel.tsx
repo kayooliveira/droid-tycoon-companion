@@ -9,8 +9,6 @@ import {
 import { formatTierName } from '../../domain/tiers'
 import { useTierLabels } from '../../i18n/useTierLabels'
 import type { InventoryUnit, TierId } from '../../domain/types'
-import { ScreenSection } from '../layout/ScreenSection'
-import { InsetGroup } from '../ui/InsetGroup'
 import { ProgressDroidRequirementRow } from './ProgressDroidRequirementRow'
 
 function ownedFor(
@@ -52,11 +50,11 @@ export function ProgressUnifiedRebirthPanel({
   const reqKeys = new Set(checks.map((c) => `${c.requirement.droidId}:${c.requirement.rarity}`))
 
   return (
-    <ScreenSection testId="progress-unified-section">
-      <h2 className="sec-h">
-        {t('progress.listRebirthHeading', { n: rebirth })}
-      </h2>
-      <InsetGroup testId="progress-unified-group">
+    <section className="sec" data-testid="progress-unified-section">
+      <div className="sec-h">
+        <h2 className="t-h2">{t('progress.listRebirthHeading', { n: rebirth })}</h2>
+        {entry.credits ? <span className="t-label">{t('pdf.credits')} {entry.credits}</span> : null}
+      </div>
         {checks.map((c) => {
           const d = droidById.get(c.requirement.droidId)
           if (!d) return null
@@ -105,7 +103,6 @@ export function ProgressUnifiedRebirthPanel({
               />
             )
           })}
-      </InsetGroup>
-    </ScreenSection>
+    </section>
   )
 }
