@@ -16,6 +16,7 @@ export function Sheet({
   headerLabel,
   title,
   labelledBy,
+  aboveTabBar = false,
 }: {
   open: boolean
   onClose: () => void
@@ -26,6 +27,7 @@ export function Sheet({
   headerLabel?: string
   title?: string
   labelledBy?: string
+  aboveTabBar?: boolean
 }) {
   useScrollLock(open)
   useOverlayStackRegister(open)
@@ -45,13 +47,13 @@ export function Sheet({
     <OverlayPortal>
       <button
         type="button"
-        className="scrim"
+        className={cn('scrim', aboveTabBar && 'scrim--above')}
         aria-label={closeLabel}
         data-testid={testId ? `${testId}-backdrop` : undefined}
         onClick={onClose}
       />
       <section
-        className={cn('sheet', className)}
+        className={cn('sheet', aboveTabBar && 'sheet--above', className)}
         data-testid={testId}
         role="dialog"
         aria-modal="true"

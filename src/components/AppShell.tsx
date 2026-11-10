@@ -19,7 +19,7 @@ import { cn } from '../lib/utils'
 import { APP_OVERLAY_ROOT_ID } from '../lib/overlayRoot'
 import { Logo } from './Logo'
 import { InstallBanner } from './InstallBanner'
-import { Modal } from './ui/Modal'
+import { Sheet } from './ui/Sheet'
 import { MobileFloatingNav } from './MobileFloatingNav'
 import { ToastViewport } from './ToastProvider'
 
@@ -101,12 +101,13 @@ export function AppShell() {
           onCloseMore={() => setMoreOpen(false)}
         />
         <div id={APP_OVERLAY_ROOT_ID} className="ds-overlay-anchor" data-testid="app-overlay-root" />
-        <Modal
+        <Sheet
           open={moreOpen}
           onClose={() => setMoreOpen(false)}
+          testId="nav-more-menu"
+          headerLabel={t('nav.more')}
           title={t('nav.more')}
-          testId="nav-more-modal"
-          anchorAboveMobileNav
+          aboveTabBar
         >
           <div className="stack">
             {moreMobile.map((item) => (
@@ -114,9 +115,7 @@ export function AppShell() {
                 key={item.to}
                 to={item.to}
                 onClick={() => setMoreOpen(false)}
-                className={({ isActive }) =>
-                  cn('row row--link', isActive && 'ring-2 ring-[var(--c-accent)]')
-                }
+                className={({ isActive }) => cn('row row--link', isActive && 'row--active')}
               >
                 <span className="row-ic" aria-hidden>
                   <item.icon size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} />
@@ -127,7 +126,7 @@ export function AppShell() {
               </NavLink>
             ))}
           </div>
-        </Modal>
+        </Sheet>
       </div>
 
       <InstallBanner />

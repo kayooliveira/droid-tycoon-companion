@@ -99,6 +99,22 @@ button.row.row--link::after {
   overflow-y: auto;
 }
 
+.row--active {
+  outline: 2px solid var(--c-focus-border);
+  outline-offset: 2px;
+}
+
+#app-overlay-root {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: var(--z-scrim);
+}
+
+#app-overlay-root > * {
+  pointer-events: auto;
+}
+
 .grab {
   display: block;
   width: 36px;

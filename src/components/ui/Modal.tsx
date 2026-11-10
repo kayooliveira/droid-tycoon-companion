@@ -70,14 +70,14 @@ export function Modal({
       <OverlayPortal>
         <button
           type="button"
-          className="scrim"
+          className="scrim scrim--above"
           aria-label={t('common.close')}
           data-testid={`${testId}-scrim`}
           onClick={onClose}
         />
         <div
           ref={dialogRef}
-          className={cn('sheet', className)}
+          className={cn('sheet sheet--above', className)}
           data-testid={testId}
           tabIndex={-1}
           role="dialog"

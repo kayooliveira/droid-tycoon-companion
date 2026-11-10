@@ -17,12 +17,12 @@ export function SearchInput({
 }) {
   const showClear = onClear && value && String(value).length > 0
   return (
-    <div className={cn('field-wrap', className)}>
+    <div className={cn('field-wrap', showClear && 'field-wrap--clear', className)}>
       <MagnifyingGlass {...uiIconProps} width={20} height={20} className="ic" aria-hidden />
       <input
         type="search"
         enterKeyHint="search"
-        className={cn('field', showClear ? 'pr-10' : undefined)}
+        className="field"
         value={value}
         {...props}
       />
@@ -32,16 +32,7 @@ export function SearchInput({
           aria-label={clearLabel}
           data-testid={clearTestId}
           onClick={onClear}
-          className="btn btn--icon btn--secondary"
-          style={{
-            position: 'absolute',
-            right: 4,
-            top: '50%',
-            transform: 'translateY(-50%)',
-            width: 36,
-            height: 36,
-            minHeight: 36,
-          }}
+          className="field-clear"
         >
           <X {...uiIconProps} width={18} height={18} className="ic" />
         </button>
