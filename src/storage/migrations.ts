@@ -82,7 +82,9 @@ function sanitize(partial: Partial<PersistedState>): PersistedState {
           ? settingsIn.appearanceTheme
           : 'oficina',
       appearanceMode:
-        settingsIn.appearanceMode === 'light' || settingsIn.appearanceMode === 'dark'
+        settingsIn.appearanceMode === 'light' ||
+        settingsIn.appearanceMode === 'dark' ||
+        settingsIn.appearanceMode === 'system'
           ? settingsIn.appearanceMode
           : 'system',
     },

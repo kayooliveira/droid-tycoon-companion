@@ -1,0 +1,58 @@
+/* Maps legacy Direction C / Tailwind helpers to DD token surfaces until TSX migrates. */
+.btn-filled,
+a.btn-filled,
+.btn-wide {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--btn-h);
+  padding: 0 16px;
+  font-family: var(--btn-font);
+  font-size: var(--btn-size);
+  font-weight: var(--btn-weight);
+  text-transform: var(--btn-case);
+  letter-spacing: var(--btn-ls);
+  border-radius: var(--btn-r);
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-fg);
+  border: var(--btn-primary-bd);
+  box-shadow: var(--btn-sh);
+  text-decoration: none;
+}
+
+.btn-wide {
+  width: 100%;
+}
+
+.dc-section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: var(--sech-pad, 12px 0);
+  border-top: var(--sech-bt);
+  border-bottom: var(--sech-bb);
+  margin-bottom: var(--sech-mb, 8px);
+  margin-top: var(--sec-mt, 20px);
+  font-family: var(--h2-font);
+  font-size: var(--h2-size);
+  font-weight: var(--h2-weight);
+  line-height: 1.1;
+  text-transform: var(--h2-case);
+  letter-spacing: var(--h2-ls);
+}
+
+.dc-droid-name {
+  font-family: var(--name-font);
+  font-size: var(--name-size);
+  font-weight: var(--name-weight);
+}
+
+.rebirth-hero {
+  position: relative;
+  background: var(--hero-bg);
+  border-radius: var(--panel-r);
+  padding: var(--hero-pad);
+  box-shadow: var(--panel-sh);
+  margin-top: var(--hero-mt);
+}

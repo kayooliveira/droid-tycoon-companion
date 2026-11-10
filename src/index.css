@@ -2,6 +2,8 @@
 @import './styles/dd/fonts.css';
 @import './styles/dd/tokens.css';
 @import './styles/dd/components.css';
+@import './styles/app-shell.css';
+@import './styles/dc-dd-bridge.css';
 @import './styles/theme-tokens.css';
 @import './styles/design-tokens.css';
 @import './styles/tier-visuals.css';
