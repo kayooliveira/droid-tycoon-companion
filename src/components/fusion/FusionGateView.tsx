@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { droidById } from '../../domain/gameData'
 import { DroidImage } from '../DroidImage'
@@ -94,6 +95,8 @@ export function FusionGateView() {
   const { t } = useTranslation()
   const partial = t('confidence.partial')
   const partialBadge = t('fusion.partialBadge')
+  const [search, setSearch] = useState('')
+  const searchActive = search.trim().length > 0
 
   return (
     <>
@@ -148,16 +151,24 @@ export function FusionGateView() {
         <div className="sec-h">
           <h2 className="t-h2">{t('fusion.helpsNext')}</h2>
         </div>
-        <RecipeRow
-          ingredients={[
-            { id: 'cb', qty: 1 },
-            { id: 'bb', qty: 1 },
-            { id: 'mouse', qty: 1 },
-          ]}
-          resultId="r7"
-          label="R7"
-          partialLabel={partialBadge}
-        />
+        {searchActive ? (
+          <div className="row">
+            <span className="row-main">
+              <span className="hint">{t('fusion.helpsNextEmpty')}</span>
+            </span>
+          </div>
+        ) : (
+          <RecipeRow
+            ingredients={[
+              { id: 'cb', qty: 1 },
+              { id: 'bb', qty: 1 },
+              { id: 'mouse', qty: 1 },
+            ]}
+            resultId="r7"
+            label="R7"
+            partialLabel={partialBadge}
+          />
+        )}
       </section>
 
       <section className="sec">
@@ -165,7 +176,7 @@ export function FusionGateView() {
           <h2 className="t-h2">{t('fusion.recipes')}</h2>
         </div>
         <div style={{ marginBottom: 12 }}>
-          <div className="field-wrap">
+          <div className={searchActive ? 'field-wrap field-wrap--clear' : 'field-wrap'}>
             <svg className="ic" width={20} height={20} viewBox="0 0 24 24" aria-hidden>
               <circle cx="10.5" cy="10.5" r="6.5" />
               <path d="m20 20-4.9-4.9" />
@@ -174,40 +185,62 @@ export function FusionGateView() {
               className="field"
               type="search"
               placeholder={t('fusion.search')}
-              defaultValue=""
+              value={search}
               aria-label={t('fusion.search')}
-              readOnly
+              onChange={(e) => setSearch(e.target.value)}
             />
+            {searchActive ? (
+              <button
+                type="button"
+                className="field-clear"
+                aria-label={t('progress.search.clear')}
+                onClick={() => setSearch('')}
+              >
+                <svg className="ic" width={20} height={20} viewBox="0 0 24 24" aria-hidden>
+                  <path d="M5.5 5.5l13 13M18.5 5.5l-13 13" />
+                </svg>
+              </button>
+            ) : null}
           </div>
         </div>
-        <RecipeRow
-          ingredients={[
-            { id: 'r2', qty: 2 },
-            { id: 'b2-super', qty: 1 },
-          ]}
-          resultId="opt-ar"
-          label="OPT-AR"
-          partialLabel={partialBadge}
-        />
-        <RecipeRow
-          ingredients={[
-            { id: 'kx', qty: 1 },
-            { id: 'ig', qty: 1 },
-            { id: 'ric', qty: 1 },
-          ]}
-          resultId="riv-3t"
-          label="RIV-3T"
-          partialLabel={partialBadge}
-        />
-        <RecipeRow
-          ingredients={[
-            { id: 'mouse', qty: 2 },
-            { id: 'pit', qty: 1 },
-          ]}
-          resultId="whl-ex"
-          label="WHL-EX"
-          partialLabel={partialBadge}
-        />
+        {searchActive ? (
+          <div className="row">
+            <span className="row-main">
+              <span className="hint">{t('fusion.emptySearch')}</span>
+            </span>
+          </div>
+        ) : (
+          <>
+            <RecipeRow
+              ingredients={[
+                { id: 'r2', qty: 2 },
+                { id: 'b2-super', qty: 1 },
+              ]}
+              resultId="opt-ar"
+              label="OPT-AR"
+              partialLabel={partialBadge}
+            />
+            <RecipeRow
+              ingredients={[
+                { id: 'kx', qty: 1 },
+                { id: 'ig', qty: 1 },
+                { id: 'ric', qty: 1 },
+              ]}
+              resultId="riv-3t"
+              label="RIV-3T"
+              partialLabel={partialBadge}
+            />
+            <RecipeRow
+              ingredients={[
+                { id: 'mouse', qty: 2 },
+                { id: 'pit', qty: 1 },
+              ]}
+              resultId="whl-ex"
+              label="WHL-EX"
+              partialLabel={partialBadge}
+            />
+          </>
+        )}
       </section>
     </>
   )

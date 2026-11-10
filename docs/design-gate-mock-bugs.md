@@ -14,6 +14,12 @@ Issues discovered while aligning the app with `comparar_1a1.py` (oficina theme).
 - **Static mock backdrop:** meter **40/40**, copy “Ciclo completo…”, **no** `btn--icon btn--primary` rows (0 icon primaries); first `.btn.btn--primary` is full-width **Super Renascimento** in the action stack.
 - **App handling:** capture-only `isGateSuperModalBackdrop()` hides the +/- rebirth panel and presents the completed-cycle UI; see `src/e2e/gateProgressFixture.ts`.
 
+## `toast-atualizacao-pwa.html`
+
+- **Mock (`screens3.py`):** início com toast sticky “Nova versão do app disponível.” + **Atualizar** (`inicio3(toast_html=…)`).
+- **`comparar_1a1.py` (antes):** navegava para `/settings` — viewport de Ajustes, não do Início.
+- **Correção:** captura em `/` + `after_pwa` (dispara `pwa-need-refresh` global em `App.tsx`).
+
 ## Global selector `.btn.btn--primary`
 
 - Comparer uses `document.querySelector('.btn.btn--primary')` (first match only). Modal and progress captures are sensitive to DOM order and to icon `+` buttons sharing the same classes as stack/modal primaries.
