@@ -15,7 +15,7 @@ export function SearchInput({
   clearLabel?: string
   clearTestId?: string
 }) {
-  const showClear = onClear && value && String(value).length > 0
+  const showClear = Boolean(onClear && value != null && String(value).length > 0)
   return (
     <div className={cn('field-wrap', showClear ? 'field-wrap--clear' : undefined, className)}>
       <MagnifyingGlass {...uiIconProps} width={20} height={20} className="ic" aria-hidden />

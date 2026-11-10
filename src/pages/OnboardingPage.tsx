@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import {
@@ -63,6 +63,12 @@ export function OnboardingPage() {
   const { theme: appearanceTheme, setTheme: setAppearanceTheme } = useAppearance()
 
   const [step, setStep] = useState(0)
+  const onbStep = params.get('e2e_onb_step')
+  useEffect(() => {
+    if (!onbStep) return
+    const n = Number(onbStep)
+    if (Number.isFinite(n) && n >= 0 && n < STEPS.length) setStep(n)
+  }, [onbStep])
   const [pathId, setPathId] = useState(progressStore.pathId)
   const [completed, setCompleted] = useState(isRerun ? progressStore.completedOnPath : 0)
   const touchStartX = useRef<number | null>(null)
