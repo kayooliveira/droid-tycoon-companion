@@ -54,7 +54,7 @@ export function ProgressDroidSearchGateView({ query }: { query: string }) {
     <div data-testid="progress-droid-search-gate-results">
       <div className="row" style={{ marginTop: 14, gap: 12 }}>
         <span style={{ width: 'var(--item-tile)', flex: 'none' }}>
-          <DroidImage droid={r7} tier="default" size="sm" />
+          <DroidImage droid={r7} tier="default" size="md" />
         </span>
         <span className="row-main">
           <span className="dname" style={{ display: 'block' }}>

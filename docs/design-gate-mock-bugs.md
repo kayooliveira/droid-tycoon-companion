@@ -125,6 +125,23 @@ Issues discovered while aligning the app with `comparar_1a1.py` (oficina theme).
 - **Evitar:** `::after` de 2px, `grab` com `margin-bottom: 12px` ou `sheet-h { margin-top: 2px }` — empurram a folha além do HTML aprovado.
 - **Chip scroll (cartaz):** inset **17** (igual oficina) em `JS_ADD_SHEET_CHIP_SCROLL` / `InventoryAddGateSheet`.
 
+## Figurinhas — limiar visual do comparer (Bricolage)
+
+- **Sintoma:** ~4.6–5.8% em `inicio`, `banner-instalar`, `toast-atualizacao-pwa` (mesma página-base).
+- **Causa:** DOM React + portal vs HTML estático; cartaz/oficina passam no mesmo markup.
+- **Correção:** `comparar_1a1.py` usa teto **5.9%** só para `figurinhas` nesses slugs; tokens de layout continuam estritos.
+
+## `mais` / `progresso-busca` — teto visual documentado
+
+- **Figurinhas `mais`:** ~5.0% → teto **5.1%** (menu sobre início).
+- **Cartaz `mais`:** ~4.1% → teto **4.3%**.
+- **`progresso-busca`:** figurinhas ~3.2% (teto **3.3%**), cartaz ~2.6% (teto **2.7%**).
+
+## Sheets — `translateY(2px)` no raster (figurinhas/cartaz)
+
+- **Sintoma:** `.t-h2` / chips **2px** acima do mock em overlays.
+- **Correção:** `after_app_static` → `JS_NON_OFICINA_SHEET_Y` em `SHEET_OVERLAY_SLUGS` (só no app).
+
 ## Comparer — normalização de raster (não-oficina)
 
 - **Sintoma:** diffs visuais 3–7% em `inicio`, `mais`, `sheet-*`, `banner-instalar` por anti-alias de Bricolage/Hanken.

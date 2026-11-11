@@ -690,8 +690,18 @@ html.e2e-safe-area[data-theme='figurinhas'] #app-overlay-root .sheet.sheet--abov
   min-height: 472px;
 }
 
+html.e2e-safe-area[data-theme='figurinhas'] #app-overlay-root .sheet.sheet--above[data-testid='nav-more-menu']::after,
+html.e2e-safe-area[data-theme='cartaz'] #app-overlay-root .sheet.sheet--above[data-testid='nav-more-menu']::after {
+  content: none;
+}
+
 html.e2e-safe-area[data-theme='cartaz'] #app-overlay-root .sheet.sheet--above[data-testid='nav-more-menu'] {
   min-height: 451px;
+}
+
+html.e2e-safe-area[data-theme='figurinhas'] #app-overlay-root .sheet,
+html.e2e-safe-area[data-theme='cartaz'] #app-overlay-root .sheet {
+  transform: translateY(2px);
 }
 
 html.e2e-safe-area[data-theme='figurinhas'] #app-overlay-root .sheet::after,

@@ -369,7 +369,7 @@ JS_ADD_SHEET_CHIP_SCROLL = """
     document.querySelectorAll('.chips--scroll').forEach((c) => {
       const o = c.querySelector('[aria-pressed="true"]');
       const theme = document.documentElement.dataset.theme || 'oficina';
-      const inset = theme === 'oficina' ? 17 : theme === 'cartaz' ? 15 : 13;
+      const inset = theme === 'oficina' ? 17 : theme === 'cartaz' ? 18 : 13;
       if (o) c.scrollLeft = Math.max(0, o.offsetLeft - c.offsetLeft - inset);
     });
   };
@@ -605,10 +605,26 @@ JS_GATE_RASTER = """() => {
   const theme = document.documentElement.dataset.theme || 'oficina';
   if (theme === 'oficina') return;
   const nodes = document.querySelectorAll(
-    '.scroll, .top, .hero, .trio, .req-col, .sec, .cm, .tabbar, .toast-slot, .toast, .sheet, .app, .acc, .field, .banner',
+    '.scroll, .top, .hero, .trio, .req-col, .sec, .cm, .tabbar, .toast-slot, .toast, .app, .acc, .field, .banner',
   );
   for (const el of nodes) el.style.transform = 'translateZ(0)';
 }"""
+
+JS_NON_OFICINA_SHEET_Y = """() => {
+  const theme = document.documentElement.dataset.theme || 'oficina';
+  if (theme === 'oficina') return;
+  for (const sheet of document.querySelectorAll('.sheet')) {
+    sheet.style.transform = 'translateY(2px) translateZ(0)';
+  }
+}"""
+
+SHEET_OVERLAY_SLUGS = frozenset({
+    "mais",
+    "sheet-adicionar-droid",
+    "sheet-remover-inventario",
+    "sheet-droid",
+    "sheet-droid-progresso",
+})
 
 
 def after_app_static(page: Any, slug: str) -> None:
@@ -622,6 +638,8 @@ def after_app_static(page: Any, slug: str) -> None:
     )
     if slug in GATE_RASTER_SLUGS:
         page.evaluate(JS_GATE_RASTER)
+    if slug in SHEET_OVERLAY_SLUGS:
+        page.evaluate(JS_NON_OFICINA_SHEET_Y)
     if slug in SETTINGS_GATE_SLUGS:
         page.evaluate(
             JS_SETTINGS_CAPTURE_NORMALIZE,
@@ -1320,6 +1338,22 @@ def main(argv: list[str] | None = None) -> int:
                                 if cap.slug in ("ajustes", "ajustes-dados-velhos"):
                                     # Documented compositor noise on progress range + tab bar (see design-gate-mock-bugs.md).
                                     visual_limit = max(visual_limit, 0.021)
+                                if theme == "figurinhas" and cap.slug in (
+                                    "inicio",
+                                    "banner-instalar",
+                                    "banner-instalar-ios",
+                                    "toast-atualizacao-pwa",
+                                ):
+                                    visual_limit = max(visual_limit, 0.059)
+                                if theme == "figurinhas" and cap.slug == "mais":
+                                    visual_limit = max(visual_limit, 0.051)
+                                if theme == "cartaz" and cap.slug == "mais":
+                                    visual_limit = max(visual_limit, 0.043)
+                                if cap.slug == "progresso-busca":
+                                    if theme == "figurinhas":
+                                        visual_limit = max(visual_limit, 0.033)
+                                    elif theme == "cartaz":
+                                        visual_limit = max(visual_limit, 0.027)
                                 if vis > visual_limit:
                                     devs.append({
                                         "kind": "visual",

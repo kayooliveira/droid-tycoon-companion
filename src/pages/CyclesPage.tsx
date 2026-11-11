@@ -16,13 +16,6 @@ const GATE_VISIBLE_REBIRTHS = 4
 
 export function CyclesPage() {
   const { t, i18n } = useTranslation()
-  if (isDesignGateCapture()) {
-    return (
-      <TabScrollLayout title={t('cycles.title')} testId="cycles-page">
-        <CyclesGateView />
-      </TabScrollLayout>
-    )
-  }
   const tierLabels = useTierLabels()
   const [pathId, setPathId] = useState('path-5')
   const [openRebirth, setOpenRebirth] = useState<number | null>(1)
@@ -51,6 +44,14 @@ export function CyclesPage() {
       })),
     [i18n.language],
   )
+
+  if (isDesignGateCapture()) {
+    return (
+      <TabScrollLayout title={t('cycles.title')} testId="cycles-page">
+        <CyclesGateView />
+      </TabScrollLayout>
+    )
+  }
 
   return (
     <TabScrollLayout title={t('cycles.title')} testId="cycles-page">
