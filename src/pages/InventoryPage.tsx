@@ -478,7 +478,6 @@ export function InventoryPage() {
             <ChipRadioGroup
               ariaLabel={t('inventory.pickTier')}
               testId="inventory-add-tier-chips"
-              scrollX
               value={newTier}
               onChange={setNewTier}
               options={tierPickOptions}

@@ -536,7 +536,7 @@ button.row.row--link::after {
   margin-top: 14px;
 }
 
-[data-theme='figurinhas'] .add-droid-tier-block .chips--scroll .chip {
+.add-droid-tier-block .chips .chip {
   flex: none;
   min-width: 102px;
   justify-content: center;
@@ -608,7 +608,7 @@ button.row.row--link::after {
   }
 
   [data-theme='oficina'] .dashboard-compact .hero {
-    margin-top: 9px;
+    margin-top: 4px;
     padding-block: 10px;
   }
 
@@ -621,7 +621,7 @@ button.row.row--link::after {
   }
 
   [data-theme='oficina'] .dashboard-compact .sec:has(+ .home-primary-cta) {
-    margin-top: 11px;
+    margin-top: 16px;
   }
 
   [data-theme='oficina'] .dashboard-compact .home-primary-cta {

@@ -109,8 +109,8 @@ def oficina_ok(data: dict) -> tuple[bool, list[str]]:
     if data.get("error"):
         return False, [data["error"]]
     g = data.get("tabGap", -999)
-    if not (12 <= g <= 16):
-        reasons.append(f"tabGap {g} not in [12,16]")
+    if not (8 <= g <= 16):
+        reasons.append(f"tabGap {g} not in [8,16]")
     ug = data.get("upperGap")
     if ug is not None and ug < 8:
         reasons.append(f"upperGap {ug} < 8")
