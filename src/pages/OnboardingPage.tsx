@@ -124,7 +124,8 @@ function OnboardingFlow() {
     useAppearance()
 
   const [step, setStep] = useState(0)
-  const onbStep = params.get('e2e_onb_step')
+  const onbStep =
+    import.meta.env.VITE_E2E_HOOKS === '1' ? params.get('e2e_onb_step') : null
   useEffect(() => {
     if (!onbStep) return
     const n = Number(onbStep)

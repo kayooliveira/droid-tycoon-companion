@@ -49,6 +49,7 @@ export function InventoryPage() {
   const { search, filterMode, rarityFilter, tierFilter, neededFilter, viewMode } = filters
 
   useEffect(() => {
+    if (import.meta.env.VITE_E2E_HOOKS !== '1') return
     const mode = params.get('e2e_inv_filter')
     if (mode === 'rarity' || mode === 'tier' || mode === 'all') {
       setFilters((f) => ({ ...f, filterMode: mode }))
@@ -451,7 +452,7 @@ export function InventoryPage() {
         title={t('inventory.modalTitle')}
         headerLabel={t('inventory.modalTitle')}
       >
-        <div className="stack">
+        <div className="add-droid-sheet-body">
           <SearchInput
             placeholder={t('inventory.searchDroids')}
             value={pickerSearch}

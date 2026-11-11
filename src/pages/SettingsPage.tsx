@@ -64,6 +64,7 @@ export function SettingsPage() {
   const stale = gameDataSource.isStale()
 
   useEffect(() => {
+    if (import.meta.env.VITE_E2E_HOOKS !== '1') return
     if (params.get('e2e_import_modal') === '1') {
       setPendingImport(toPersisted())
       setImportOpen(true)

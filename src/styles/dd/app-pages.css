@@ -169,7 +169,7 @@ button.row.row--link::after {
   bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px));
   max-height: min(
     92dvh,
-    calc(100dvh - var(--tab-h) - env(safe-area-inset-bottom, 0px) - 12px)
+    calc(100dvh - var(--tab-h) - env(safe-area-inset-bottom, 0px) - 36px)
   );
 }
 
@@ -523,11 +523,37 @@ button.row.row--link::after {
   line-height: 1.15;
 }
 
+.add-droid-sheet-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .add-droid-tier-block {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 4px;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.add-droid-tier-block .chips .chip {
+  flex: none;
+  min-width: 102px;
+  justify-content: center;
+}
+
+[data-theme='figurinhas'] .add-droid-tier-block .chip:not([aria-pressed='true']) {
+  background: transparent;
+  color: var(--c-text);
+  border-color: var(--c-control-border);
+}
+
+[data-theme='cartaz'] .sheet .sheet-h {
+  margin-bottom: 12px;
+}
+
+[data-theme='figurinhas'] .sheet .sheet-h .t-h2 {
+  line-height: 1.1;
 }
 
 
@@ -567,11 +593,65 @@ button.row.row--link::after {
   padding-block: min(var(--hero-pad, 14px), 12px);
 }
 
+[data-theme='oficina'] .dashboard-compact .hero {
+  padding-block: calc(min(var(--hero-pad, 14px), 12px) + 1px);
+}
 
+.home-primary-cta {
+  margin-top: 12px;
+  margin-bottom: 16px;
+}
 
+@media (max-width: 767px) {
+  [data-theme='oficina'] .dashboard-compact .cm {
+    margin-top: 9px;
+  }
 
+  [data-theme='oficina'] .dashboard-compact .hero {
+    margin-top: 4px;
+    padding-block: 10px;
+  }
 
+  [data-theme='oficina'] .dashboard-compact .trio {
+    margin-top: 7px;
+  }
 
+  [data-theme='oficina'] .dashboard-compact .hero + .row {
+    margin-top: 9px !important;
+  }
+
+  [data-theme='oficina'] .dashboard-compact .sec:has(+ .home-primary-cta) {
+    margin-top: 16px;
+  }
+
+  [data-theme='oficina'] .dashboard-compact .home-primary-cta {
+    margin-top: 8px;
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 390px) {
+  [data-theme='oficina'] .tabbar .tab-lbl {
+    display: block;
+    max-width: 100%;
+    font-size: 10px;
+    letter-spacing: 0.008em;
+    line-height: 1.08;
+    padding-inline: 1px;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+}
+
+[data-theme='oficina'] .cycles-page .acc-body .item-open,
+[data-theme='cartaz'] .cycles-page .acc-body .item-open {
+  align-items: flex-start;
+}
+
+[data-theme='oficina'] .cycles-page .item-open .dtile,
+[data-theme='cartaz'] .cycles-page .item-open .dtile {
+  transform: translateY(2px);
+}
 
 
 

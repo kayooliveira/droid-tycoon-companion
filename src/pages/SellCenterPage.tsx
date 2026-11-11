@@ -119,6 +119,9 @@ export function SellCenterPage() {
       <section key={testId} className="sec" data-testid={testId}>
         <div className="sec-h">
           <h2 className="t-h2">{t(titleKey)}</h2>
+          <span className="t-label" aria-hidden>
+            {rows.length}
+          </span>
         </div>
         {rows.map((item, idx) => renderAnalysisRow(item, idx, safeNowLine))}
         {headerHint ? (
