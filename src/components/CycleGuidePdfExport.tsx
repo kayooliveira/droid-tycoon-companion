@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next'
 import { exportCycleGuidePdf } from '../lib/exportCycle'
 import { useAppStore } from '../store/useAppStore'
 import { useToast } from './ToastProvider'
-import { Button } from './ui/Button'
 import { uiIconProps } from './ui/iconStyle'
 
 async function downloadBlob(blob: Blob, filename: string) {
@@ -46,20 +45,20 @@ export function CycleGuidePdfExport({
   }
 
   return (
-    <div className="pt-1 space-y-1">
-      <Button
-        variant="secondary"
-        className="w-full sm:w-auto"
+    <>
+      <button
+        type="button"
+        className="btn btn--secondary"
         data-testid="export-cycle-guide-pdf"
         disabled={busy}
-        icon={<FilePdf {...uiIconProps} />}
         onClick={() => void run()}
       >
+        <FilePdf {...uiIconProps} className="ic" />
         {busy ? '…' : t('cycles.exportGuidePdf')}
-      </Button>
-      <p className="text-xs text-ui-soft text-pretty">
+      </button>
+      <p className="hint" style={{ marginTop: 8 }}>
         {t('cycles.exportGuideHint', { name: cycleName })}
       </p>
-    </div>
+    </>
   )
 }

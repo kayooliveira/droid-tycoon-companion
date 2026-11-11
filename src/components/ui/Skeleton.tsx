@@ -15,7 +15,7 @@ export function Skeleton({
   }[rounded]
   return (
     <div
-      className={cn('skeleton-block bg-ui-hover', radius, className)}
+      className={cn('skeleton-block', radius, className)}
       aria-hidden
     />
   )

@@ -1,15 +1,11 @@
 import { useState } from 'react'
-import { CaretDown, Path } from '@phosphor-icons/react'
-import { UI_ICON_SIZE, UI_ICON_WEIGHT } from './ui/iconStyle'
 import { useTranslation } from 'react-i18next'
 import { cycleById, gameData } from '../domain/gameData'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { useAppStore } from '../store/useAppStore'
 import { useToast } from './ToastProvider'
-import { Button } from './ui/Button'
 import { Modal } from './ui/Modal'
-import { RadioCardGroup } from './ui/RadioCardGroup'
-import { Switch } from './ui/Switch'
+import { ChipRadioGroup } from './ui/ChipRadioGroup'
 
 export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
   const { t, i18n } = useTranslation()
@@ -45,15 +41,23 @@ export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
         type="button"
         onClick={openSwitch}
         data-testid="path-switcher-trigger"
-        className={
+        className={compact ? 'sel' : 'inline-flex items-center gap-2 rounded-xl border border-ui bg-ui-hover px-4 py-2 text-sm hover:bg-ui-hover-strong'}
+        aria-label={
           compact
-            ? 'inline-flex items-center gap-1.5 rounded-xl border border-ui bg-ui-hover px-3 py-1.5 text-xs font-medium hover:bg-ui-hover-strong'
-            : 'inline-flex items-center gap-2 rounded-xl border border-ui bg-ui-hover px-4 py-2 text-sm hover:bg-ui-hover-strong'
+            ? `${t('path.switchCycleLabel', { defaultValue: 'Trocar ciclo' })}: ${cycleLabel(progress.pathId)}`
+            : `${t('path.switchTitle')} ${cycleLabel(progress.pathId)}`
         }
       >
-        <Path size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} className="text-ui-accent shrink-0" />
-        <span className="truncate max-w-[10rem]">{cycleLabel(progress.pathId)}</span>
-        <CaretDown size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} className="opacity-60 shrink-0" />
+        <svg className="ic shrink-0" width={20} height={20} viewBox="0 0 24 24" aria-hidden>
+          <path d="M20 12a8 8 0 1 1-2.6-5.9" />
+          <path d="M20.5 3.5v4.5H16" />
+        </svg>
+        {compact ? cycleLabel(progress.pathId) : (
+          <span className="truncate max-w-[10rem]">{cycleLabel(progress.pathId)}</span>
+        )}
+        <svg className="ic shrink-0" width={18} height={18} viewBox="0 0 24 24" aria-hidden>
+          <path d="m5 9 7 7 7-7" />
+        </svg>
       </button>
 
       <Modal
@@ -63,46 +67,69 @@ export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
         testId="path-switch-modal"
         footer={
           <>
-            <Button
-              variant="secondary"
-              size="sm"
+            <button
+              type="button"
+              className="btn btn--secondary"
               data-testid="path-switch-cancel"
               onClick={() => setOpen(false)}
             >
               {t('path.cancel')}
-            </Button>
-            <Button size="sm" data-testid="path-switcher-confirm" onClick={confirm}>
+            </button>
+            <button
+              type="button"
+              className="btn btn--primary"
+              data-testid="path-switcher-confirm"
+              onClick={confirm}
+            >
               {t('common.confirm')}
-            </Button>
+            </button>
           </>
         }
       >
-        <div className="space-y-3">
-          <p className="text-sm text-ui-secondary text-pretty">
+        <>
+          <p
+            style={{
+              margin: '10px 0 14px',
+              color: 'var(--c-text-2)',
+            }}
+          >
             {t('path.switchBody', { name: cycleLabel(targetPath) })}
           </p>
           {resetProgress ? (
-            <p className="text-sm text-ui-warn/90 text-pretty">
+            <p className="hint" style={{ margin: '0 0 14px' }}>
               {t('path.switchBodyReset', { name: cycleLabel(targetPath) })}
             </p>
           ) : null}
-          <RadioCardGroup
-            ariaLabel={t('settings.path')}
-            value={targetPath}
-            onChange={setTargetPath}
-            columns={3}
-            optionTestIdPrefix="path-switcher-option"
-            options={gameData.cycles.map((c) => ({
-              value: c.id,
-              label: formatCycleDisplayName(c.name, i18n.language),
-            }))}
-          />
-          <Switch
-            label={t('path.resetRebirthOnSwitch')}
-            checked={resetProgress}
-            onChange={setResetProgress}
-          />
-        </div>
+          <div style={{ marginBottom: 14 }}>
+            <ChipRadioGroup
+              ariaLabel={t('settings.path')}
+              value={targetPath}
+              onChange={setTargetPath}
+              grid
+              testId="path-switcher-option"
+              options={gameData.cycles.map((c) => ({
+                value: c.id,
+                label: formatCycleDisplayName(c.name, i18n.language),
+              }))}
+            />
+          </div>
+          <label className="switch-row">
+            <span>
+              <span style={{ display: 'block' }}>{t('path.resetRebirthOnSwitch')}</span>
+            </span>
+            <span className="switch">
+              <input
+                type="checkbox"
+                role="switch"
+                checked={resetProgress}
+                onChange={(e) => setResetProgress(e.target.checked)}
+                aria-label={t('path.resetRebirthOnSwitch')}
+              />
+              <i aria-hidden />
+            </span>
+          </label>
+          <div style={{ height: 16 }} />
+        </>
       </Modal>
     </>
   )
@@ -112,11 +139,11 @@ export function ProgressSummaryLine() {
   const { t } = useTranslation()
   const progress = useAppStore((s) => s.progress)
   return (
-    <p className="text-sm text-ui-muted">
-      {t('progress.completed')}: <span className="text-ui-fg">{progress.completedOnPath}</span>
-      {' · '}
-      {t('progress.nextRebirth')}:{' '}
-      <span className="text-ui-fg">#{Math.min(progress.nextRebirth, 40)}</span>
-    </p>
+    <>
+      {t('progress.cycleFootSummary', {
+        done: progress.completedOnPath,
+        next: Math.min(progress.nextRebirth, 40),
+      })}
+    </>
   )
 }

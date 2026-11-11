@@ -1,5 +1,6 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { cn } from '../../lib/utils'
+import { APP_BRAND_NAME } from '../../lib/brand'
 
 export function TabScrollLayout({
   title,
@@ -7,39 +8,32 @@ export function TabScrollLayout({
   children,
   className,
   headerExtra,
+  backBar,
+  hideBrand,
 }: {
   title: string
   testId: string
   children: ReactNode
   className?: string
   headerExtra?: ReactNode
+  backBar?: ReactNode
+  hideBrand?: boolean
 }) {
-  const rootRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const el = rootRef.current
-    if (!el) return
-    const onScroll = () => {
-      el.classList.toggle('scrolled', el.scrollTop > 36)
-    }
-    el.addEventListener('scroll', onScroll, { passive: true })
-    return () => el.removeEventListener('scroll', onScroll)
-  }, [])
-
   return (
-    <div
-      ref={rootRef}
-      className={cn('dc-scroll-view -mx-4 min-h-0 flex-1 md:mx-0', className)}
-      data-testid={testId}
-    >
-      <div className="dc-inline-title-bar" aria-hidden>
-        <span className="dc-inline-title">{title}</span>
-      </div>
-      <div className="flex items-start justify-between gap-3 px-0">
-        <h1 className="dc-large-title flex-1">{title}</h1>
-        {headerExtra ? <div className="shrink-0 pr-4 pt-2">{headerExtra}</div> : null}
-      </div>
-      <div className="dc-screen-stack">{children}</div>
+    <div data-testid={testId} className={cn('tab-page', className)}>
+      {backBar}
+      <header className="top">
+        {!hideBrand ? (
+          <span className="top-brand" aria-hidden>
+            {APP_BRAND_NAME}
+          </span>
+        ) : (
+          <span className="top-brand" aria-hidden style={{ display: 'none' }} />
+        )}
+        <div className="top-aside">{headerExtra}</div>
+        <h1 className="t-display">{title}</h1>
+      </header>
+      {children}
     </div>
   )
 }

@@ -9,8 +9,6 @@ import {
 import { formatTierName } from '../../domain/tiers'
 import { useTierLabels } from '../../i18n/useTierLabels'
 import type { InventoryUnit, TierId } from '../../domain/types'
-import { ScreenSection } from '../layout/ScreenSection'
-import { InsetGroup } from '../ui/InsetGroup'
 import { ProgressDroidRequirementRow } from './ProgressDroidRequirementRow'
 
 function ownedFor(
@@ -52,60 +50,63 @@ export function ProgressUnifiedRebirthPanel({
   const reqKeys = new Set(checks.map((c) => `${c.requirement.droidId}:${c.requirement.rarity}`))
 
   return (
-    <ScreenSection testId="progress-unified-section">
-      <h2 className="dc-section-header">
-        {t('progress.listRebirthHeading', { n: rebirth })}
-      </h2>
-      <InsetGroup testId="progress-unified-group">
-        {checks.map((c) => {
-          const d = droidById.get(c.requirement.droidId)
+    <section className="sec" data-testid="progress-unified-section">
+      <div className="sec-h">
+        <h2 className="t-h2">{t('progress.listRebirthHeading', { n: rebirth })}</h2>
+        {entry.credits ? (
+          <span className="t-label">
+            {`${t('pdf.credits')} ${entry.credits}`}
+          </span>
+        ) : null}
+      </div>
+      {checks.map((c) => {
+        const d = droidById.get(c.requirement.droidId)
+        if (!d) return null
+        const tier = c.requirement.rarity
+        const owned = ownedFor(inventory, c.requirement.droidId, tier, trackInventory)
+        const needed = c.requirement.quantity
+        const subMeta = `${formatTierName(tier, tierLabels)} · ${owned}/${needed}`
+        const sellable = isProgressRequirementSellable(
+          pathId,
+          c.requirement.droidId,
+          tier,
+          rebirth,
+        )
+        return (
+          <ProgressDroidRequirementRow
+            key={c.requirement.droidId}
+            droid={d}
+            tier={tier}
+            subMeta={subMeta}
+            sellable={sellable}
+            owned={owned}
+            needed={needed}
+            trackInventory={trackInventory}
+            onOpenDroid={() => onOpenDroid(c.requirement.droidId, tier, sellable, owned)}
+          />
+        )
+      })}
+      {sellExtras
+        .filter((u) => !reqKeys.has(`${u.droidId}:${u.tier}`))
+        .map((u) => {
+          const d = droidById.get(u.droidId)
           if (!d) return null
-          const tier = c.requirement.rarity
-          const owned = ownedFor(inventory, c.requirement.droidId, tier, trackInventory)
-          const needed = c.requirement.quantity
-          const subMeta = `${formatTierName(tier, tierLabels)} · ${owned}/${needed}`
-          const sellable = isProgressRequirementSellable(
-            pathId,
-            c.requirement.droidId,
-            tier,
-            rebirth,
-          )
+          const sellable = u.disposition === 'sellable'
+          const subMeta = `${formatTierName(u.tier, tierLabels)} · ${t('progress.qtyShort', { n: u.quantity })}`
           return (
             <ProgressDroidRequirementRow
-              key={c.requirement.droidId}
+              key={`${u.droidId}-${u.tier}`}
               droid={d}
-              tier={tier}
+              tier={u.tier}
               subMeta={subMeta}
               sellable={sellable}
-              owned={owned}
-              needed={needed}
-              trackInventory={trackInventory}
-              onOpenDroid={() => onOpenDroid(c.requirement.droidId, tier, sellable, owned)}
+              owned={u.quantity}
+              needed={0}
+              trackInventory={false}
+              onOpenDroid={() => onOpenDroid(u.droidId, u.tier, sellable, u.quantity)}
             />
           )
         })}
-        {sellExtras
-          .filter((u) => !reqKeys.has(`${u.droidId}:${u.tier}`))
-          .map((u) => {
-            const d = droidById.get(u.droidId)
-            if (!d) return null
-            const sellable = u.disposition === 'sellable'
-            const subMeta = `${formatTierName(u.tier, tierLabels)} · ${t('progress.qtyShort', { n: u.quantity })}`
-            return (
-              <ProgressDroidRequirementRow
-                key={`${u.droidId}-${u.tier}`}
-                droid={d}
-                tier={u.tier}
-                subMeta={subMeta}
-                sellable={sellable}
-                owned={u.quantity}
-                needed={0}
-                trackInventory={false}
-                onOpenDroid={() => onOpenDroid(u.droidId, u.tier, sellable, u.quantity)}
-              />
-            )
-          })}
-      </InsetGroup>
-    </ScreenSection>
+    </section>
   )
 }

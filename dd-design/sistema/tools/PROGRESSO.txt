@@ -1,0 +1,9 @@
+T3: lidos tambem MobileFloatingNav, InstallBanner, ToastProvider, Sell, Cycles, Dashboard, Droiddex, Fusion, About, NotFound, PathProgressSwitcher, DownloadCycleMenu, ShareMenu. Faltam: Modal, Sheet, ProgressDroidSearch, ProgressRebirthList, DroidDetailSheet, main, EmptyState, HelpHint, skeletons, ShareExportCard, locales
+T3: lidos tambem Progress*(Search,RebirthList,Unified,ActionStack), DroidDetailSheet, Modal, Sheet, PdfExport, EmptyState, TabScreenSkeleton. Achados: Mais=Modal menu (nao pagina), Ajustes real tem Idioma/Dados/Compartilhar/Sobre; filtros inventario = seg+chips; add droid e remover = Sheet; toasts 5 variantes+detail, no topo
+T3: AUDITORIA LIDA (todas as paginas+componentes). Proximo: escrever auditoria/inventario.md e desenhar faltantes
+T3: ESTRATEGIA: reconstruir fieis ao codigo: progresso(unico), busca, vender(secoes), ciclos, droiddex, fusao, ajustes completo, sobre, 404, mais-menu(modal), inventario filtros reais+sheets, banners, toasts variantes. Remover slugs progresso-foco/lista/modal-remover; ver auditoria/inventario.md
+T3: prints ok (57 telas). Rodando validar.py (completo) -> tools/_resultado_*.json; depois resumo.py
+T3: auditoria/inventario.md escrito
+T3: corrigido validador (hClip) e telas (tile wrapper); rodando validar completo de novo
+T3: validacao 0 falhas (684 pag). docs gerados. Falta: revisao visual, relatorio final
+T3: CONCLUIDO. so falta relatorio final

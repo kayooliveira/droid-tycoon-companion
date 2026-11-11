@@ -2,7 +2,6 @@ import { Suspense, lazy, useEffect, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AppShell } from './components/AppShell'
-import { GlassFilters } from './components/GlassFilters'
 import { TabScreenSkeleton } from './components/layout/TabScreenSkeleton'
 import { SeoManager } from './components/SeoManager'
 import { OverlayStackProvider } from './components/OverlayStackProvider'
@@ -12,7 +11,9 @@ import { NotFoundPage } from './pages/NotFoundPage'
 import { OnboardingPage } from './pages/OnboardingPage'
 import { setDocumentLanguage } from './i18n'
 import { reloadForPwaUpdate } from './lib/pwaUpdate'
-import { applyTheme, useAppStore } from './store/useAppStore'
+import { AppearanceSync } from './components/AppearanceSync'
+import { shouldBypassOnboarding } from './lib/e2eOnboardingBypass'
+import { useAppStore } from './store/useAppStore'
 
 const ProgressPage = lazy(() =>
   import('./pages/ProgressPage').then((m) => ({ default: m.ProgressPage })),
@@ -36,10 +37,15 @@ const SettingsPage = lazy(() =>
   import('./pages/SettingsPage').then((m) => ({ default: m.SettingsPage })),
 )
 const AboutPage = lazy(() => import('./pages/AboutPage').then((m) => ({ default: m.AboutPage })))
+const AppearancePage = lazy(() =>
+  import('./pages/AppearancePage').then((m) => ({ default: m.AppearancePage })),
+)
 
 function OnboardingGate({ children }: { children: ReactNode }) {
   const onboardingComplete = useAppStore((s) => s.onboardingComplete)
-  if (!onboardingComplete) return <Navigate to="/onboarding" replace />
+  if (!onboardingComplete && !shouldBypassOnboarding()) {
+    return <Navigate to="/onboarding" replace />
+  }
   return children
 }
 
@@ -80,40 +86,11 @@ function LazyPage({ children }: { children: ReactNode }) {
 }
 
 export default function App() {
-  const theme = useAppStore((s) => s.settings.theme)
-
-  useEffect(() => {
-    applyTheme(theme)
-  }, [theme])
-
-  useEffect(() => {
-    if (theme !== 'system') return
-    const mq = window.matchMedia('(prefers-color-scheme: dark)')
-    const onChange = () => applyTheme('system')
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
-  }, [theme])
-
-  useEffect(() => {
-    const root = document.documentElement
-    const supportsSvgBackdrop =
-      typeof CSS !== 'undefined' &&
-      (CSS.supports('(-webkit-backdrop-filter: url(#lg-nav))') ||
-        CSS.supports('(backdrop-filter: url(#lg-nav))') ||
-        CSS.supports('(-webkit-backdrop-filter: url(#lg))') ||
-        CSS.supports('(backdrop-filter: url(#lg))'))
-    if (supportsSvgBackdrop) {
-      root.classList.add('glass-refraction-enabled')
-    } else {
-      root.classList.add('glass-refraction-fallback')
-    }
-  }, [])
-
   return (
     <OverlayStackProvider>
       <ToastProvider>
-        <GlassFilters />
         <BrowserRouter>
+        <AppearanceSync />
         <LocaleSync />
         <SeoManager />
         <PwaRefreshListener />
@@ -181,6 +158,14 @@ export default function App() {
               element={
                 <LazyPage>
                   <SettingsPage />
+                </LazyPage>
+              }
+            />
+            <Route
+              path="settings/appearance"
+              element={
+                <LazyPage>
+                  <AppearancePage />
                 </LazyPage>
               }
             />

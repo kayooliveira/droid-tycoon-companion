@@ -63,44 +63,45 @@ test.describe('Progresso inventory toasts and sheet', () => {
     await expect(page.getByTestId('toast-item')).toHaveCount(0, { timeout: 6000 })
   })
 
-  test('toast capsule styling — blur and single-line title', async ({ page, browserName }) => {
-    test.skip(browserName !== 'chromium', 'backdrop-filter assertion targets Chromium')
+  test('toast lives in in-flow slot above tab bar', async ({ page }) => {
     await page.getByTestId('requirement-inventory-add').first().click()
     await expect(page.getByTestId('toast-item')).toBeVisible()
-    const styles = await page.getByTestId('toast-item').evaluate((el) => {
-      const cs = getComputedStyle(el)
+    const layout = await page.evaluate(() => {
+      const slot = document.querySelector('[data-testid="toast-stack"]')
+      const nav = document.querySelector('[data-testid="mobile-floating-nav"]')
+      const toast = document.querySelector('[data-testid="toast-item"]')
+      if (!slot || !nav || !toast) return null
+      const sr = slot.getBoundingClientRect()
+      const nr = nav.getBoundingClientRect()
+      const tr = toast.getBoundingClientRect()
       return {
-        backdropFilter: cs.backdropFilter,
-        webkitBackdropFilter: cs.getPropertyValue('-webkit-backdrop-filter'),
-        borderRadius: cs.borderRadius,
+        inAppShell: Boolean(slot.closest('.app-shell')),
+        slotBeforeNav: slot.compareDocumentPosition(nav) & Node.DOCUMENT_POSITION_FOLLOWING,
+        slotAboveNav: sr.bottom <= nr.top + 2,
+        toastInsideSlot: slot.contains(toast),
+        toastAboveNav: tr.bottom <= nr.top + 2,
       }
     })
-    expect(styles.backdropFilter).not.toBe('none')
-    expect(styles.webkitBackdropFilter).not.toBe('none')
-
-    const titleMetrics = await page.getByTestId('toast-title').evaluate((el) => {
-      const cs = getComputedStyle(el)
-      const lh = parseFloat(cs.lineHeight)
-      const h = el.getBoundingClientRect().height
-      return { h, lh }
-    })
-    expect(Math.abs(titleMetrics.h - titleMetrics.lh)).toBeLessThan(1.5)
+    expect(layout).not.toBeNull()
+    expect(layout!.inAppShell).toBe(true)
+    expect(layout!.slotBeforeNav).toBeTruthy()
+    expect(layout!.slotAboveNav).toBe(true)
+    expect(layout!.toastInsideSlot).toBe(true)
+    expect(layout!.toastAboveNav).toBe(true)
   })
 
-  test('sheet open: toast on top and close stays tappable', async ({ page }) => {
+  test('sheet open: toast stays in slot and close stays tappable', async ({ page }) => {
     await page.getByTestId('requirement-inventory-add').first().click()
     await expect(page.getByTestId('toast-item')).toBeVisible()
     await page.getByTestId('progress-droid-row-open').first().click()
     await expect(page.getByTestId('droid-detail-sheet')).toBeVisible()
 
-    const toastOnTop = await page.evaluate(() => {
+    const toastInSlot = await page.evaluate(() => {
+      const slot = document.querySelector('[data-testid="toast-stack"]')
       const toast = document.querySelector('[data-testid="toast-item"]')
-      if (!toast) return false
-      const r = toast.getBoundingClientRect()
-      const el = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)
-      return Boolean(el?.closest('[data-testid="toast-item"]'))
+      return Boolean(slot && toast && slot.contains(toast) && (toast as HTMLElement).offsetParent !== null)
     })
-    expect(toastOnTop).toBe(true)
+    expect(toastInSlot).toBe(true)
 
     const close = page.getByTestId('droid-detail-sheet-close')
     await expect(close).toBeVisible()

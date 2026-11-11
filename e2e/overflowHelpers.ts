@@ -68,6 +68,8 @@ export function heavyAppState(theme: 'dark' | 'light') {
     settings: {
       locale: 'pt-BR',
       localeSource: 'user',
+      appearanceTheme: 'oficina',
+      appearanceMode: theme,
       theme,
       trackInventory: true,
       animationsEnabled: false,

@@ -1,37 +1,39 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { gameDataSource } from '../data/dataSource'
+import { formatLocaleDate } from '../lib/formatLocaleDate'
 import { gameData } from '../domain/gameData'
 import { APP_PUBLIC_URL } from '../lib/constants'
 import { FeedbackWhatsAppLink } from '../components/FeedbackWhatsAppLink'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
+import { MoreBackBar } from '../components/layout/MoreBackBar'
 import { InsetGroup } from '../components/ui/InsetGroup'
 
 export function AboutPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const meta = gameDataSource.getMeta()
   const stale = gameDataSource.isStale()
 
   return (
-    <TabScrollLayout title={t('about.title')} testId="about-page">
+    <TabScrollLayout title={t('about.title')} testId="about-page" backBar={<MoreBackBar />}>
       <InsetGroup footer={t('app.disclaimer')}>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('about.intro')}</span>
+        <div className="row">
+          <div className="row-main">
+            <span className="row-title">{t('about.intro')}</span>
           </div>
         </div>
       </InsetGroup>
 
-      <h2 className="dc-section-header">{t('about.dataTitle')}</h2>
+      <h2 className="sec-h">{t('about.dataTitle')}</h2>
       <InsetGroup footer={t('about.disputedNote')}>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('about.dataLine', {
+        <div className="row">
+          <div className="row-main">
+            <span className="row-title">{t('about.dataLine', {
               version: meta.dataVersion,
               game: meta.gameVersion,
-              date: meta.lastUpdated,
+              date: formatLocaleDate(meta.lastUpdated, i18n.language),
             })}</span>
-            <span className="dc-row-sub">
+            <span className="hint">
               {stale
                 ? t('settings.dataStale', { days: gameData.staleAfterDays })
                 : t('settings.dataFresh')}
@@ -40,22 +42,22 @@ export function AboutPage() {
         </div>
       </InsetGroup>
 
-      <h2 className="dc-section-header">{t('about.feedbackTitle')}</h2>
+      <h2 className="sec-h">{t('about.feedbackTitle')}</h2>
       <InsetGroup>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('about.feedbackBody')}</span>
+        <div className="row">
+          <div className="row-main">
+            <span className="row-title">{t('about.feedbackBody')}</span>
           </div>
         </div>
-        <div className="dc-row">
+        <div className="row">
           <FeedbackWhatsAppLink />
         </div>
       </InsetGroup>
 
       <InsetGroup>
-        <Link to="/settings" className="dc-row dc-row-chevron">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('nav.settings')}</span>
+        <Link to="/settings" className="row row row--link">
+          <div className="row-main">
+            <span className="row-title">{t('nav.settings')}</span>
           </div>
         </Link>
       </InsetGroup>

@@ -8,6 +8,7 @@ import { Badge } from '../components/ui/Badge'
 import { droidMatchesQuery } from '../lib/droidNameMatch'
 import { useAppStore } from '../store/useAppStore'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
+import { MoreBackBar } from '../components/layout/MoreBackBar'
 import { InsetGroup } from '../components/ui/InsetGroup'
 import { SearchInput } from '../components/ui/SearchInput'
 
@@ -47,50 +48,50 @@ export function FusionLabPage() {
   const showResultTierRule = gameData.fusions.some((f) => f.resultTierRule)
 
   return (
-    <TabScrollLayout title={t('fusion.title')} testId="fusion-page">
-      <section className="dc-section">
-        <h2 className="dc-section-header">{t('fusion.rulesTitle')}</h2>
+    <TabScrollLayout title={t('fusion.title')} testId="fusion-page" backBar={<MoreBackBar />}>
+      <section className="sec">
+        <h2 className="sec-h">{t('fusion.rulesTitle')}</h2>
         <InsetGroup testId="fusion-rules-card" footer={t('fusion.rulesFootnote')}>
         {gameData.fusionRules.map((rule) => {
           const key = fusionRuleKey(rule)
           const text = key ? t(key) : (rule.description ?? rule.summary ?? rule.text ?? '')
           return (
-            <div key={rule.id} className="dc-row">
-              <div className="dc-row-main">
-                <span className="dc-row-label">{text}</span>
-                <span className="dc-row-sub">{t(`confidence.${rule.confidence ?? 'partial'}`)}</span>
+            <div key={rule.id} className="row">
+              <div className="row-main">
+                <span className="row-title">{text}</span>
+                <span className="hint">{t(`confidence.${rule.confidence ?? 'partial'}`)}</span>
               </div>
             </div>
           )
         })}
         {showResultTierRule ? (
-          <div className="dc-row">
-            <div className="dc-row-main">
-              <span className="dc-row-sub">{t('fusion.resultTierRule')}</span>
+          <div className="row">
+            <div className="row-main">
+              <span className="hint">{t('fusion.resultTierRule')}</span>
             </div>
           </div>
         ) : null}
         </InsetGroup>
       </section>
 
-      <section className="dc-section">
-        <h2 className="dc-section-header">{t('fusion.helpsNext')}</h2>
+      <section className="sec">
+        <h2 className="sec-h">{t('fusion.helpsNext')}</h2>
         {helpful.length > 0 ? (
           helpful.map((f) => <RecipeCard key={f.id} fusion={f} />)
         ) : (
           <InsetGroup>
-            <div className="dc-row">
-              <div className="dc-row-main">
-                <span className="dc-row-sub">{t('fusion.helpsNextEmpty')}</span>
+            <div className="row">
+              <div className="row-main">
+                <span className="hint">{t('fusion.helpsNextEmpty')}</span>
               </div>
             </div>
           </InsetGroup>
         )}
       </section>
 
-      <section className="dc-section">
-        <h2 className="dc-section-header">{t('fusion.recipes')}</h2>
-        <div className="dc-search-wrap !px-0">
+      <section className="sec">
+        <h2 className="sec-h">{t('fusion.recipes')}</h2>
+        <div className="field-wrap !px-0">
           <SearchInput
             placeholder={t('fusion.search')}
             value={search}
@@ -100,9 +101,9 @@ export function FusionLabPage() {
         </div>
         {recipes.length === 0 ? (
           <InsetGroup>
-            <div className="dc-row">
-              <div className="dc-row-main">
-                <span className="dc-row-sub">{t('fusion.emptySearch')}</span>
+            <div className="row">
+              <div className="row-main">
+                <span className="hint">{t('fusion.emptySearch')}</span>
               </div>
             </div>
           </InsetGroup>
@@ -119,13 +120,13 @@ function RecipeCard({ fusion }: { fusion: FusionRecipe }) {
   const result = droidById.get(fusion.resultDroidId)
   return (
     <InsetGroup>
-      <div className="dc-row dc-row-droid">
+      <div className="row item">
         {result ? (
           <DroidImage droid={result} tier={showcaseTierForDroid(result)} size="sm" className="!h-[50px] !w-[50px] rounded-[11px]" />
         ) : null}
-        <div className="dc-row-main">
-          <span className="dc-droid-name dc-row-label">{result?.name ?? fusion.resultDroidId}</span>
-          <span className="dc-row-sub">
+        <div className="row-main">
+          <span className="dname row-title">{result?.name ?? fusion.resultDroidId}</span>
+          <span className="hint">
             <Badge tone="warn">{t(`confidence.${fusion.confidence ?? 'partial'}`)}</Badge>
           </span>
         </div>
@@ -133,10 +134,10 @@ function RecipeCard({ fusion }: { fusion: FusionRecipe }) {
       {fusion.ingredients.map((ing) => {
         const d = droidById.get(ing.droidId)
         return (
-          <div key={ing.droidId} className="dc-row">
-            <div className="dc-row-main">
-              <span className="dc-row-label">{d?.name ?? ing.droidId}</span>
-              <span className="dc-row-sub">{t('common.quantity', { n: ing.quantity })}</span>
+          <div key={ing.droidId} className="row">
+            <div className="row-main">
+              <span className="row-title">{d?.name ?? ing.droidId}</span>
+              <span className="hint">{t('common.quantity', { n: ing.quantity })}</span>
             </div>
           </div>
         )

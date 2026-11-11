@@ -1,34 +1,26 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useNavigate } from 'react-router-dom'
-import {
-  DownloadSimple,
-  LinkSimple,
-  Moon,
-  ShareNetwork,
-  UploadSimple,
-  WhatsappLogo,
-} from '@phosphor-icons/react'
-import { FeedbackWhatsAppLink } from '../components/FeedbackWhatsAppLink'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { MORE_MENU_ICONS } from '../components/tabBarIcons'
+import { TAB_BAR_ICONS } from '../components/tabBarIcons'
+import { REPORT_FEEDBACK_URL } from '../lib/constants'
 import { PathProgressSwitcher, ProgressSummaryLine } from '../components/PathProgressSwitcher'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
-import { Button } from '../components/ui/Button'
-import { InsetGroup } from '../components/ui/InsetGroup'
+import { MoreBackBar } from '../components/layout/MoreBackBar'
 import { Modal } from '../components/ui/Modal'
 import { SegmentedControl } from '../components/ui/SegmentedControl'
+import { DsSwitch } from '../components/ui/DsSwitch'
 import { gameDataSource } from '../data/dataSource'
 import type { AppLocale } from '../i18n/detectLocale'
-import { useAppStore, applyTheme } from '../store/useAppStore'
-import type { ThemeMode } from '../storage/types'
+import { useAppStore } from '../store/useAppStore'
+import { useAppearance } from '../hooks/useAppearance'
 import type { PersistedState } from '../storage/types'
 import { downloadJson, exportProgress, parseImportJson } from '../storage/exportImport'
 import { useToast } from '../components/ToastProvider'
 import { setDocumentLanguage } from '../i18n'
 import { initI18n } from '../i18n/index'
-import { uiIconProps } from '../components/ui/iconStyle'
 import { APP_PUBLIC_URL, WHATSAPP_SHARE_BASE } from '../lib/constants'
 import { renderShareProgressCard } from '../lib/shareProgressCard'
-import { cn } from '../lib/utils'
 async function downloadOrShare(blob: Blob, filename: string, mime: string) {
   const file = new File([blob], filename, { type: mime })
   if (navigator.canShare?.({ files: [file] })) {
@@ -47,40 +39,10 @@ async function downloadOrShare(blob: Blob, filename: string, mime: string) {
   URL.revokeObjectURL(url)
 }
 
-function SettingsSwitch({
-  checked,
-  onChange,
-  label,
-}: {
-  checked: boolean
-  onChange: (v: boolean) => void
-  label: string
-}) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      aria-label={label}
-      onClick={() => onChange(!checked)}
-      className={cn(
-        'relative h-7 w-12 shrink-0 rounded-full border transition-colors',
-        checked ? 'bg-[var(--ui-accent-fill)] border-transparent' : 'bg-ui-field-muted border-ui',
-      )}
-    >
-      <span
-        className={cn(
-          'absolute top-0.5 left-0.5 h-6 w-6 rounded-full bg-white shadow transition-transform',
-          checked && 'translate-x-5',
-        )}
-      />
-    </button>
-  )
-}
-
 export function SettingsPage() {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
+  const [params] = useSearchParams()
   const { push } = useToast()
   const fileRef = useRef<HTMLInputElement>(null)
   const [resetOpen, setResetOpen] = useState(false)
@@ -101,6 +63,13 @@ export function SettingsPage() {
   const meta = gameDataSource.getMeta()
   const stale = gameDataSource.isStale()
 
+  useEffect(() => {
+    if (params.get('e2e_import_modal') === '1') {
+      setPendingImport(toPersisted())
+      setImportOpen(true)
+    }
+  }, [params, toPersisted])
+
   const changeLanguage = (locale: AppLocale) => {
     setLocale(locale, 'user')
     void initI18n(locale)
@@ -108,10 +77,14 @@ export function SettingsPage() {
     void i18n.changeLanguage(locale)
   }
 
-  const setTheme = (theme: ThemeMode) => {
-    updateSettings({ theme })
-    applyTheme(theme)
-  }
+  const { theme: appearanceTheme, modePref } = useAppearance()
+  const appearanceSummary = t(`appearance.themes.${appearanceTheme}.name`)
+  const modeSummary =
+    modePref === 'system'
+      ? t('settings.themeFollowSystem')
+      : modePref === 'light'
+        ? t('settings.themeLight')
+        : t('settings.themeDark')
 
   const rerunOnboarding = () => {
     navigate('/onboarding?rerun=1')
@@ -185,137 +158,178 @@ export function SettingsPage() {
     }
   }
 
-  return (
-    <TabScrollLayout title={t('nav.more')} testId="settings-page">
-      <h2 className="dc-section-header">{t('settings.appearance')}</h2>
-      <InsetGroup>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('settings.theme')}</span>
-          </div>
+  const settingsBody = (
+    <>
+      <section className="sec">
+        <div className="sec-h">
+          <h2 className="t-h2">{t('settings.appearance')}</h2>
         </div>
-        <div className="px-4 pb-3">
-          <SegmentedControl
-            compact
-            className="!mx-0"
-            ariaLabel={t('settings.theme')}
-            value={settings.theme}
-            onChange={setTheme}
-            options={[
-              { value: 'dark', label: t('settings.themeDark'), icon: <Moon {...uiIconProps} /> },
-              { value: 'light', label: t('settings.themeLight') },
-              { value: 'system', label: t('settings.themeSystemShort') },
-            ]}
-          />
-        </div>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('settings.animations')}</span>
-          </div>
-          <div className="dc-row-trail">
-            <SettingsSwitch
-              label={t('settings.animations')}
-              checked={settings.animationsEnabled}
-              onChange={(v) => updateSettings({ animationsEnabled: v })}
-            />
-          </div>
-        </div>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('settings.trackInventory')}</span>
-          </div>
-          <div className="dc-row-trail">
-            <SettingsSwitch
-              label={t('settings.trackInventory')}
-              checked={settings.trackInventory}
-              onChange={(v) => updateSettings({ trackInventory: v })}
-            />
-          </div>
-        </div>
-      </InsetGroup>
+        <Link
+          to="/settings/appearance"
+          className="row"
+          data-testid="settings-appearance-link"
+        >
+          <span className="row-ic" aria-hidden>
+            {MORE_MENU_ICONS.settings}
+          </span>
+          <span className="row-main">
+            <span className="dname" style={{ display: 'block' }}>
+              {t('appearance.themeAndMode')}
+            </span>
+            <span className="hint" style={{ display: 'block' }}>
+              {appearanceSummary} · {modeSummary}
+            </span>
+          </span>
+          <span className="chev" aria-hidden>
+            <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+              <path d="m9 5 7 7-7 7" />
+            </svg>
+          </span>
+        </Link>
+        <DsSwitch
+          label={t('settings.animations')}
+          checked={settings.animationsEnabled}
+          onChange={(v) => updateSettings({ animationsEnabled: v })}
+        />
+        <DsSwitch
+          label={t('settings.trackInventory')}
+          checked={settings.trackInventory}
+          onChange={(v) => updateSettings({ trackInventory: v })}
+        />
+      </section>
 
-      <h2 className="dc-section-header">{t('settings.language')}</h2>
-      <InsetGroup>
-        <div className="px-4 py-3" data-testid="language-select">
+      <section className="sec">
+        <div className="sec-h">
+          <h2 className="t-h2">{t('settings.language')}</h2>
+        </div>
+        <div data-testid="language-select">
           <SegmentedControl
-            compact
-            className="!mx-0"
             ariaLabel={t('settings.language')}
             value={settings.locale}
             onChange={changeLanguage}
             options={[
-              { value: 'pt-BR', label: '🇧🇷 PT' },
-              { value: 'en', label: '🇺🇸 EN' },
+              { value: 'pt-BR', label: t('settings.langPt') },
+              { value: 'en', label: t('settings.langEn') },
             ]}
           />
         </div>
-      </InsetGroup>
+      </section>
 
-      <h2 className="dc-section-header">{t('settings.progress')}</h2>
-      <InsetGroup>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('settings.path')}</span>
-            <span className="dc-row-sub">
-              <PathProgressSwitcher compact />
-            </span>
-          </div>
+      <section className="sec">
+        <div className="sec-h">
+          <h2 className="t-h2">{t('settings.progress')}</h2>
         </div>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('progress.pathProgress')}</span>
-            <span className="dc-row-sub">
+        <div className="row">
+          <span className="row-main">
+            <span className="t-label" style={{ display: 'block' }}>
+              {t('settings.path')}
+            </span>
+          </span>
+          <PathProgressSwitcher compact />
+        </div>
+        <div className="row">
+          <span className="row-main">
+            <span className="dname" style={{ display: 'block' }}>
+              {t('progress.pathProgress')}
+            </span>
+            <span className="hint">
               <ProgressSummaryLine />
             </span>
-          </div>
+          </span>
         </div>
-        <div className="dc-row flex-col !items-stretch gap-2">
-          <span className="dc-row-label">{t('settings.completedRebirths', { n: progress.completedOnPath })}</span>
+        <div className="row" style={{ display: 'block', minHeight: 0 }}>
+          <div className="lbl-row">
+            <span className="lbl">{t('settings.completedRebirths', { n: progress.completedOnPath })}</span>
+            <span className="val">{progress.completedOnPath}</span>
+          </div>
           <input
             type="range"
+            className="range"
             min={0}
             max={40}
             value={progress.completedOnPath}
-            className="w-full accent-[var(--ui-accent-fill)]"
+            style={{ ['--p' as string]: `${(progress.completedOnPath / 40) * 100}%` }}
+            aria-label={t('settings.completedRebirths', { n: progress.completedOnPath })}
             onChange={(e) => {
               const completed = Number(e.target.value)
               setProgress(completed + 1, completed)
             }}
           />
+          <div className="range-scale">
+            <span>0</span>
+            <span>40</span>
+          </div>
         </div>
-      </InsetGroup>
+      </section>
 
-      <h2 className="dc-section-header">{t('settings.dataSection')}</h2>
-      <InsetGroup footer={t('settings.updateHint')}>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('settings.gameData')}</span>
-            <span className="dc-row-sub">
+      <section className="sec">
+        <div className="sec-h">
+          <h2 className="t-h2">{t('settings.dataSection')}</h2>
+        </div>
+        <div className="row">
+          <span className="row-ic" aria-hidden>
+            {MORE_MENU_ICONS.about}
+          </span>
+          <span className="row-main">
+            <span className="dname" style={{ display: 'block' }}>
+              {t('settings.gameData')}
+            </span>
+            <span className="hint" style={{ display: 'block' }}>
               {`v${meta.dataVersion} · ${meta.gameVersion}`}
               {stale ? ` · ${t('settings.dataStaleShort')}` : ` · ${t('settings.dataFresh')}`}
             </span>
-          </div>
+          </span>
         </div>
         <button
           type="button"
-          className="dc-row dc-row-chevron"
+          className="row"
           onClick={() => downloadJson('droid-tycoon-progress.json', exportProgress(toPersisted()))}
         >
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('settings.exportShort')}</span>
-          </div>
-          <DownloadSimple {...uiIconProps} className="dc-row-trail shrink-0 opacity-60" />
+          <span className="row-ic" aria-hidden>
+            <svg className="ic" width={24} height={24} viewBox="0 0 24 24">
+              <path d="M12 3.5V15M7.5 11 12 15.5 16.5 11" />
+              <path d="M5 19.5h14" />
+            </svg>
+          </span>
+          <span className="row-main">
+            <span className="dname" style={{ display: 'block' }}>
+              {t('settings.exportShort')}
+            </span>
+            <span className="hint" style={{ display: 'block' }}>
+              {t('settings.exportHint', { defaultValue: 'Salva o progresso em um arquivo JSON' })}
+            </span>
+          </span>
+          <span className="chev" aria-hidden>
+            <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+              <path d="m9 5 7 7-7 7" />
+            </svg>
+          </span>
         </button>
         <button
           type="button"
-          className="dc-row dc-row-chevron"
+          className="row"
           data-testid="settings-import-trigger"
           onClick={() => fileRef.current?.click()}
         >
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('settings.importShort')}</span>
-          </div>
-          <UploadSimple {...uiIconProps} className="dc-row-trail shrink-0 opacity-60" />
+          <span className="row-ic" aria-hidden>
+            <svg className="ic" width={24} height={24} viewBox="0 0 24 24">
+              <path d="M12 15.5V4M7.5 8 12 3.5 16.5 8" />
+              <path d="M5 19.5h14" />
+            </svg>
+          </span>
+          <span className="row-main">
+            <span className="dname" style={{ display: 'block' }}>
+              {t('settings.importShort')}
+            </span>
+            <span className="hint" style={{ display: 'block' }}>
+              {t('settings.importHint', { defaultValue: 'Escolha um arquivo JSON' })}
+            </span>
+          </span>
+          <span className="chev" aria-hidden>
+            <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+              <path d="m9 5 7 7-7 7" />
+            </svg>
+          </span>
         </button>
         <input
           ref={fileRef}
@@ -339,120 +353,229 @@ export function SettingsPage() {
             setImportOpen(true)
           }}
         />
-      </InsetGroup>
+        <p className="hint" style={{ marginTop: 8 }}>
+          {t('settings.updateHint')}
+        </p>
+      </section>
 
-      <h2 className="dc-section-header">{t('shareExport.title')}</h2>
-      <InsetGroup footer={t('shareExport.footer')} testId="share-export-card">
-        <button type="button" className="dc-row dc-row-chevron" data-testid="share-app" onClick={() => void shareApp()}>
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('share.shareApp')}</span>
-          </div>
-          <LinkSimple {...uiIconProps} className="shrink-0 opacity-60" />
+      <section className="sec" data-testid="share-export-card">
+        <div className="sec-h">
+          <h2 className="t-h2">{t('shareExport.title')}</h2>
+        </div>
+        <button type="button" className="row" data-testid="share-app" onClick={() => void shareApp()}>
+          <span className="row-ic" aria-hidden>
+            <svg className="ic" width={24} height={24} viewBox="0 0 24 24">
+              <path d="M10 14a4 4 0 0 0 5.6 0l3-3a4 4 0 0 0-5.6-5.6l-1 1" />
+              <path d="M14 10a4 4 0 0 0-5.6 0l-3 3a4 4 0 0 0 5.6 5.6l1-1" />
+            </svg>
+          </span>
+          <span className="row-main">
+            <span className="dname" style={{ display: 'block' }}>
+              {t('share.shareApp')}
+            </span>
+            <span className="hint" style={{ display: 'block' }} />
+          </span>
         </button>
-        <button type="button" className="dc-row dc-row-chevron" onClick={shareWhatsApp}>
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('share.whatsapp')}</span>
-          </div>
-          <WhatsappLogo {...uiIconProps} className="shrink-0 opacity-60" />
+        <button type="button" className="row" onClick={shareWhatsApp}>
+          <span className="row-ic" aria-hidden>
+            <svg className="ic" width={24} height={24} viewBox="0 0 24 24">
+              <path d="M4 5h16v11H9l-5 4z" />
+            </svg>
+          </span>
+          <span className="row-main">
+            <span className="dname" style={{ display: 'block' }}>
+              {t('share.whatsapp')}
+            </span>
+            <span className="hint" style={{ display: 'block' }} />
+          </span>
         </button>
         <button
           type="button"
-          className="dc-row dc-row-chevron"
+          className="row"
           disabled={shareBusy}
           data-testid="share-progress-card"
           onClick={() => void shareProgressImage()}
         >
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('share.progressCard')}</span>
-          </div>
-          <ShareNetwork {...uiIconProps} className="shrink-0 opacity-60" />
+          <span className="row-ic" aria-hidden>
+            <svg className="ic" width={24} height={24} viewBox="0 0 24 24">
+              <path d="M12 15V3.5M7.5 8 12 3.5 16.5 8" />
+              <path d="M5 12v8.5h14V12" />
+            </svg>
+          </span>
+          <span className="row-main">
+            <span className="dname" style={{ display: 'block' }}>
+              {t('share.progressCard')}
+            </span>
+            <span className="hint" style={{ display: 'block' }} />
+          </span>
         </button>
-      </InsetGroup>
+        <p className="hint" style={{ marginTop: 8 }}>
+          {t('shareExport.footer')}
+        </p>
+      </section>
 
-      <h2 className="dc-section-header">{t('settings.aboutSection')}</h2>
-      <InsetGroup>
-        <button type="button" className="dc-row dc-row-chevron" onClick={rerunOnboarding}>
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('settings.rerunOnboardingShort')}</span>
-          </div>
-        </button>
-        <Link to="/about" className="dc-row dc-row-chevron">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('nav.about')}</span>
-          </div>
-        </Link>
-        <div className="dc-row">
-          <FeedbackWhatsAppLink variant="link" className="text-sm" />
+      <section className="sec">
+        <div className="sec-h">
+          <h2 className="t-h2">{t('settings.aboutSection')}</h2>
         </div>
-      </InsetGroup>
+        <button type="button" className="row" onClick={rerunOnboarding}>
+          <span className="row-ic" aria-hidden>
+            {TAB_BAR_ICONS.cycles}
+          </span>
+          <span className="row-main">
+            <span className="dname" style={{ display: 'block' }}>
+              {t('settings.rerunOnboardingShort')}
+            </span>
+            <span className="hint" style={{ display: 'block' }} />
+          </span>
+          <span className="chev" aria-hidden>
+            <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+              <path d="m9 5 7 7-7 7" />
+            </svg>
+          </span>
+        </button>
+        <Link to="/about" className="row">
+          <span className="row-ic" aria-hidden>
+            {MORE_MENU_ICONS.about}
+          </span>
+          <span className="row-main">
+            <span className="dname" style={{ display: 'block' }}>
+              {t('nav.about')}
+            </span>
+            <span className="hint" style={{ display: 'block' }} />
+          </span>
+          <span className="chev" aria-hidden>
+            <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+              <path d="m9 5 7 7-7 7" />
+            </svg>
+          </span>
+        </Link>
+        {REPORT_FEEDBACK_URL ? (
+          <a
+            href={REPORT_FEEDBACK_URL}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="row"
+          >
+            <span className="row-ic" aria-hidden>
+              <svg className="ic" width={24} height={24} viewBox="0 0 24 24">
+                <path d="M4 5h16v11H9l-5 4z" />
+              </svg>
+            </span>
+            <span className="row-main">
+              <span className="dname" style={{ display: 'block' }}>
+                {t('feedback.whatsappCta')}
+              </span>
+              <span className="hint" style={{ display: 'block' }} />
+            </span>
+            <span className="chev" aria-hidden>
+              <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
+                <path d="m9 5 7 7-7 7" />
+              </svg>
+            </span>
+          </a>
+        ) : null}
+      </section>
 
-      <h2 className="dc-section-header">{t('settings.danger')}</h2>
-      <InsetGroup>
+      <section className="sec">
+        <div className="sec-h">
+          <h2 className="t-h2">{t('settings.danger')}</h2>
+        </div>
         <button
           type="button"
-          className="dc-row"
+          className="btn btn--danger"
           data-testid="settings-reset-trigger"
           onClick={() => setResetOpen(true)}
         >
-          <span className="dc-row-label text-red-500">{t('settings.resetShort')}</span>
+          <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
+            <path d="M4 7h16" />
+            <path d="M9.5 7V4h5v3" />
+            <path d="M6 7l1 13.5h10L18 7" />
+          </svg>
+          {t('settings.resetShort')}
         </button>
-      </InsetGroup>
+      </section>
+    </>
+  )
 
-      <Modal
-        open={importOpen}
-        onClose={() => {
-          setImportOpen(false)
-          setPendingImport(null)
-        }}
-        title={t('settings.importConfirmTitle')}
-        testId="settings-import-modal"
-        footer={
-          <>
-            <Button
-              variant="secondary"
-              size="sm"
-              data-testid="settings-import-cancel"
-              onClick={() => {
-                setImportOpen(false)
-                setPendingImport(null)
-              }}
-            >
-              {t('path.cancel')}
-            </Button>
-            <Button size="sm" data-testid="settings-import-confirm" onClick={confirmImport}>
-              {t('common.confirm')}
-            </Button>
-          </>
-        }
-      >
-        <p className="text-sm text-ui-secondary text-pretty">{t('settings.importConfirmBody')}</p>
-      </Modal>
+  return (
+    <TabScrollLayout
+      title={t('settings.title')}
+      testId="settings-page"
+      className="settings-page-pad"
+      backBar={<MoreBackBar />}
+    >
+      {settingsBody}
 
-      <Modal
-        open={resetOpen}
-        onClose={() => setResetOpen(false)}
-        title={t('settings.resetConfirmTitle')}
-        testId="settings-reset-modal"
-        footer={
-          <>
-            <Button
-              variant="secondary"
-              size="sm"
-              data-testid="settings-reset-cancel"
-              onClick={() => setResetOpen(false)}
-            >
-              {t('path.cancel')}
-            </Button>
-            <Button variant="danger" size="sm" data-testid="settings-reset-confirm" onClick={confirmReset}>
-              {t('common.confirm')}
-            </Button>
-          </>
-        }
-      >
-        <p className="text-sm text-ui-secondary text-pretty">{t('settings.resetConfirmBody')}</p>
-      </Modal>
+      <>
+          <Modal
+            open={importOpen}
+            onClose={() => {
+              setImportOpen(false)
+              setPendingImport(null)
+            }}
+            title={t('settings.importConfirmTitle')}
+            testId="settings-import-modal"
+            footer={
+              <>
+                <button
+                  type="button"
+                  className="btn btn--secondary"
+                  data-testid="settings-import-cancel"
+                  onClick={() => {
+                    setImportOpen(false)
+                    setPendingImport(null)
+                  }}
+                >
+                  {t('path.cancel')}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn--primary"
+                  data-testid="settings-import-confirm"
+                  onClick={confirmImport}
+                >
+                  {t('common.confirm')}
+                </button>
+              </>
+            }
+          >
+            <p className="hint" style={{ margin: '10px 0 16px' }}>
+              {t('settings.importConfirmBody')}
+            </p>
+          </Modal>
 
-      <div className="dc-scroll-spacer" aria-hidden />
+          <Modal
+            open={resetOpen}
+            onClose={() => setResetOpen(false)}
+            title={t('settings.resetConfirmTitle')}
+            testId="settings-reset-modal"
+            footer={
+              <>
+                <button
+                  type="button"
+                  className="btn btn--secondary"
+                  data-testid="settings-reset-cancel"
+                  onClick={() => setResetOpen(false)}
+                >
+                  {t('path.cancel')}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn--primary"
+                  data-testid="settings-reset-confirm"
+                  onClick={confirmReset}
+                >
+                  {t('common.confirm')}
+                </button>
+              </>
+            }
+          >
+            <p className="hint" style={{ margin: '10px 0 16px' }}>{t('settings.resetConfirmBody')}</p>
+          </Modal>
+      </>
+
+      <div aria-hidden />
     </TabScrollLayout>
   )
 }

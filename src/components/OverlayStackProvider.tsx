@@ -10,10 +10,13 @@ let overlayCount = 0
 
 function syncOverlayDataset() {
   if (typeof document === 'undefined') return
+  const app = document.querySelector('.app-shell.app')
   if (overlayCount > 0) {
     document.documentElement.dataset.overlayOpen = 'true'
+    app?.setAttribute('data-fixed', '')
   } else {
     delete document.documentElement.dataset.overlayOpen
+    app?.removeAttribute('data-fixed')
   }
 }
 

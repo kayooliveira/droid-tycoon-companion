@@ -1,13 +1,9 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { X } from '@phosphor-icons/react'
 import { useScrollLock } from '../../hooks/useScrollLock'
 import { cn } from '../../lib/utils'
 import { useOverlayStackRegister } from '../OverlayStackProvider'
-import { IconButton } from './IconButton'
-import { Glass } from './Glass'
 import { OverlayPortal } from './OverlayPortal'
-import { uiIconProps } from './iconStyle'
 
 const FOCUSABLE =
   'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -67,86 +63,86 @@ export function Modal({
 
   if (!open) return null
 
-  const dialogBody = (
-    <div
-      ref={dialogRef}
-      tabIndex={-1}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby={titleId}
-      className="bg-ui-modal backdrop-saturate-150 min-h-full outline-none text-ui-fg"
-    >
-      <div className="flex justify-center pt-2 sm:hidden" aria-hidden>
-        <span className="h-1 w-10 rounded-full bg-ui-handle" />
-      </div>
-      <div className="flex items-center justify-between gap-2 px-4 pt-3 pb-2 sm:px-5 sm:pt-4 border-b border-ui">
-        <h2 id={titleId} className="font-display text-base font-semibold tracking-wide text-balance text-ui-fg">
-          {title}
-        </h2>
-        <IconButton label={t('common.close')} onClick={onClose} data-testid={`${testId}-close`}>
-          <X {...uiIconProps} />
-        </IconButton>
-      </div>
-      <div className="px-4 py-4 sm:px-5 text-sm">{children}</div>
-      {footer ? (
-        <div className="px-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5 sm:pb-5 pt-0 flex flex-wrap gap-2 justify-end border-t border-ui-subtle">
-          {footer}
+  if (anchorAboveMobileNav) {
+    return (
+      <OverlayPortal>
+        <button
+          type="button"
+          className="scrim scrim--above"
+          aria-label={t('common.close')}
+          data-testid={`${testId}-scrim`}
+          onClick={onClose}
+        />
+        <div
+          ref={dialogRef}
+          className={cn('sheet sheet--above', className)}
+          data-testid={testId}
+          tabIndex={-1}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={titleId}
+        >
+          <span className="grab" aria-hidden />
+          <div className="sheet-h">
+            <span className="t-label">{title}</span>
+            <button
+              type="button"
+              className="btn btn--icon btn--secondary"
+              aria-label={t('common.close')}
+              data-testid={`${testId}-close`}
+              onClick={onClose}
+            >
+              <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
+                <path d="M5.5 5.5l13 13M18.5 5.5l-13 13" />
+              </svg>
+            </button>
+          </div>
+          {children}
         </div>
-      ) : null}
-    </div>
-  )
+      </OverlayPortal>
+    )
+  }
 
   return (
     <OverlayPortal>
-      <div
-        data-overlay-root
-        data-testid={testId}
-        className={cn(
-          'fixed inset-0',
-          anchorAboveMobileNav && 'z-overlay isolate pointer-events-none',
-          !anchorAboveMobileNav &&
-            'z-modal flex items-end sm:items-center justify-center overlay-scrim backdrop-blur-md p-0 sm:p-4',
-        )}
-        role="presentation"
-        onMouseDown={
-          anchorAboveMobileNav
-            ? undefined
-            : (e) => {
-                if (e.target === e.currentTarget) onClose()
-              }
-        }
-      >
-        {anchorAboveMobileNav ? (
+      <div data-overlay-root role="presentation">
+        <button
+          type="button"
+          className="scrim"
+          aria-label={t('common.close')}
+          data-testid={`${testId}-scrim`}
+          onClick={onClose}
+        />
+        <div className="modal-wrap">
           <div
-            data-testid={`${testId}-scrim`}
-            className="modal-above-mobile-nav-scrim overlay-scrim backdrop-blur-md pointer-events-auto"
-            role="presentation"
-            onMouseDown={(e) => {
-              if (e.target === e.currentTarget) onClose()
-            }}
-          />
-        ) : null}
-        <div
-          className={cn(
-            anchorAboveMobileNav
-              ? 'modal-above-mobile-nav-panel relative z-[1] flex justify-center pointer-events-none'
-              : 'contents',
-          )}
-        >
-          <Glass
-            as="div"
-            variant="regular"
-            className={cn(
-              'relative w-full overflow-auto pointer-events-auto',
-              !anchorAboveMobileNav && 'z-modal',
-              anchorAboveMobileNav
-                ? 'max-h-[min(70dvh,calc(100dvh-var(--mobile-nav-clearance)-24px))] rounded-t-2xl'
-                : 'sm:max-w-md max-h-[88dvh] rounded-t-2xl sm:rounded-2xl pb-[calc(env(safe-area-inset-bottom,0px)+12px)] sm:pb-[calc(env(safe-area-inset-bottom,0px)+12px)]',
-              className,
-            )}
+            ref={dialogRef}
+            tabIndex={-1}
+            role="dialog"
+            aria-modal="true"
+            aria-label={title}
+            data-testid={testId}
+            className={cn('modal', className)}
           >
-            {dialogBody}
-          </Glass>
+            <div
+              className="row2"
+              style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}
+            >
+              <h2 id={titleId}>{title}</h2>
+              <button
+                type="button"
+                className="btn btn--icon btn--ghost"
+                aria-label={t('common.close')}
+                data-testid={`${testId}-close`}
+                onClick={onClose}
+              >
+                <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
+                  <path d="M5.5 5.5l13 13M18.5 5.5l-13 13" />
+                </svg>
+              </button>
+            </div>
+            {children}
+            {footer ? <div className="modal-act">{footer}</div> : null}
+          </div>
         </div>
       </div>
     </OverlayPortal>

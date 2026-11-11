@@ -1,6 +1,7 @@
 import { cleanup, render, screen } from '@testing-library/react'
+import { useEffect } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { ToastProvider, useToast } from './ToastProvider'
+import { ToastProvider, ToastViewport, useToast } from './ToastProvider'
 
 function PushOnMount({
   message,
@@ -10,7 +11,9 @@ function PushOnMount({
   options?: Parameters<ReturnType<typeof useToast>['push']>[1]
 }) {
   const { push } = useToast()
-  push(message, options)
+  useEffect(() => {
+    push(message, options)
+  }, [message, options, push])
   return null
 }
 
@@ -20,16 +23,16 @@ describe('ToastProvider', () => {
     vi.useRealTimers()
   })
 
-  it('renders stack at top with safe-area padding class', () => {
+  it('renders in-flow toast slot above tab bar', () => {
     render(
       <ToastProvider>
         <PushOnMount message="Hello" options={{ variant: 'info' }} />
+        <ToastViewport />
       </ToastProvider>,
     )
     const stack = screen.getByTestId('toast-stack')
-    expect(stack.className).toMatch(/z-toast/)
-    expect(stack.className).toMatch(/max-w-\[360px\]/)
-    expect(stack.className).toMatch(/pointer-events-none/)
+    expect(stack.className).toMatch(/toast-slot/)
+    expect(stack).not.toHaveAttribute('hidden')
   })
 
   it('renders variant data attribute and text action', () => {
@@ -42,6 +45,7 @@ describe('ToastProvider', () => {
             action: { label: 'Undo', onClick: () => {} },
           }}
         />
+        <ToastViewport />
       </ToastProvider>,
     )
     expect(screen.getByText('Undo me').closest('[data-testid="toast-item"]')).toHaveAttribute(
@@ -55,6 +59,7 @@ describe('ToastProvider', () => {
     render(
       <ToastProvider>
         <PushOnMount message="Failed" options={{ variant: 'error' }} />
+        <ToastViewport />
       </ToastProvider>,
     )
     expect(screen.getByText('Failed').closest('[data-testid="toast-item"]')).toHaveAttribute(

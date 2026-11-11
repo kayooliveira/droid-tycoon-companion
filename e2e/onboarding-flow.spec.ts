@@ -24,7 +24,7 @@ test.beforeEach(async ({ page }) => {
   await page.reload()
 })
 
-test('four-step onboarding completes to dashboard', async ({ page }) => {
+test('five-step onboarding completes to dashboard', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await waitOnboardingStep(page, 'welcome')
   await page.getByTestId('onboarding-start').click()
@@ -34,7 +34,10 @@ test('four-step onboarding completes to dashboard', async ({ page }) => {
   await page.getByTestId('onboarding-next').click()
 
   await waitOnboardingStep(page, 'progress')
-  await expect(page.getByTestId('onboarding-rebirth-input')).toBeVisible()
+  await expect(page.getByTestId('onboarding-rebirth-input')).toBeAttached()
+  await page.getByTestId('onboarding-next').click()
+
+  await waitOnboardingStep(page, 'theme')
   await page.getByTestId('onboarding-next').click()
 
   await waitOnboardingStep(page, 'features')

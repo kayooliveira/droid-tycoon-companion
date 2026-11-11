@@ -22,15 +22,19 @@ import { DroidImage } from '../DroidImage'
 import { Badge } from '../ui/Badge'
 import { SearchInput } from '../ui/SearchInput'
 import { uiIconProps } from '../ui/iconStyle'
-
 export type ProgressNavTarget = { pathId: string; rebirth: number }
 
 type ProgressDroidSearchProps = {
   initialQuery?: string
   onNavigateToStep: (target: ProgressNavTarget) => void
+  onQueryChange?: (query: string) => void
 }
 
-export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: ProgressDroidSearchProps) {
+export function ProgressDroidSearch({
+  initialQuery = '',
+  onNavigateToStep,
+  onQueryChange,
+}: ProgressDroidSearchProps) {
   const { t, i18n } = useTranslation()
   const tierLabels = useTierLabels()
   const progress = useAppStore((s) => s.progress)
@@ -39,6 +43,9 @@ export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: Pro
 
   const trimmedQuery = query.trim()
   const debouncedQuery = useDebouncedValue(trimmedQuery, 200)
+  useEffect(() => {
+    onQueryChange?.(trimmedQuery)
+  }, [trimmedQuery, onQueryChange])
   /** Cleared input hides results immediately; debounce only applies while typing. */
   const effectiveQuery = trimmedQuery.length === 0 ? '' : debouncedQuery
 
@@ -86,27 +93,35 @@ export function ProgressDroidSearch({ initialQuery = '', onNavigateToStep }: Pro
   const cycleLabel = (pathId: string) =>
     cycleDisplayNameForId(pathId, cycleById.get(pathId)?.name ?? pathId, i18n.language)
 
-  return (
-    <div className="dc-screen-stack-item" data-testid="progress-droid-search">
+  const searchField = (
+    <>
       <label className="sr-only" htmlFor="progress-droid-search-input">
         {t('progress.search.label')}
       </label>
-      <div className="dc-search-wrap">
-        <SearchInput
-          id="progress-droid-search-input"
-          autoComplete="off"
-          spellCheck={false}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={t('progress.search.placeholder')}
-          aria-controls="progress-droid-search-results"
-          aria-expanded={effectiveQuery.length > 0}
-          data-testid="progress-droid-search-input"
-          clearLabel={t('progress.search.clear')}
-          clearTestId="progress-droid-search-clear"
-          onClear={() => setQuery('')}
-        />
-      </div>
+      <SearchInput
+        id="progress-droid-search-input"
+        autoComplete="off"
+        spellCheck={false}
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder={t('progress.search.placeholder')}
+        aria-controls="progress-droid-search-results"
+        aria-expanded={effectiveQuery.length > 0}
+        data-testid="progress-droid-search-input"
+        clearLabel={t('progress.search.clear')}
+        clearTestId="progress-droid-search-clear"
+        onClear={() => setQuery('')}
+      />
+    </>
+  )
+
+  if (effectiveQuery.length === 0) {
+    return <div data-testid="progress-droid-search">{searchField}</div>
+  }
+
+  return (
+    <div className="stack" data-testid="progress-droid-search">
+      <div>{searchField}</div>
 
       <div id="progress-droid-search-results" className="space-y-3">
         {effectiveQuery.length > 0 && !selectedDroid ? (

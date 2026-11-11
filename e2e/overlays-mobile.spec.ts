@@ -80,10 +80,10 @@ test.describe('mobile overlay stacking', () => {
     await seedOnboarded(page)
 
     await page.getByTestId('mobile-more-nav').click()
-    await expect(page.getByTestId('nav-more-modal')).toBeVisible()
-    await assertTopmostTestId(page, 'nav-more-modal-close')
-    await shot(page, 'nav-more-modal')
-    await page.getByTestId('nav-more-modal-close').click()
+    await expect(page.getByTestId('nav-more-menu')).toBeVisible()
+    await assertTopmostTestId(page, 'nav-more-menu-close')
+    await shot(page, 'nav-more-menu')
+    await page.getByTestId('nav-more-menu-close').click()
 
     await page.goto('/droiddex')
     await page.locator('button.glass-panel').first().click()

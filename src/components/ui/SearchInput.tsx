@@ -1,5 +1,6 @@
-import { MagnifyingGlass, X } from '@phosphor-icons/react'
+import { X } from '@phosphor-icons/react'
 import type { InputHTMLAttributes } from 'react'
+import { IcSearch } from '../inventoryIcons'
 import { uiIconProps } from './iconStyle'
 import { cn } from '../../lib/utils'
 
@@ -15,18 +16,14 @@ export function SearchInput({
   clearLabel?: string
   clearTestId?: string
 }) {
-  const showClear = onClear && value && String(value).length > 0
+  const showClear = Boolean(onClear && value != null && String(value).length > 0)
   return (
-    <div className={cn('relative', className)}>
-      <MagnifyingGlass
-        {...uiIconProps}
-        className="pointer-events-none absolute left-[var(--space-3)] top-1/2 size-[var(--ds-search-icon-size)] -translate-y-1/2 text-ui-muted"
-        aria-hidden
-      />
+    <div className={cn('field-wrap', showClear ? 'field-wrap--clear' : undefined, className)}>
+      <IcSearch />
       <input
         type="search"
         enterKeyHint="search"
-        className={cn('ds-search-field', showClear ? 'pr-10' : undefined)}
+        className="field"
         value={value}
         {...props}
       />
@@ -36,9 +33,9 @@ export function SearchInput({
           aria-label={clearLabel}
           data-testid={clearTestId}
           onClick={onClear}
-          className="absolute right-2 top-1/2 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-full text-ui-muted hover:bg-ui-hover hover:text-ui-fg"
+          className="field-clear"
         >
-          <X {...uiIconProps} className="size-4" />
+          <X {...uiIconProps} width={18} height={18} className="ic" />
         </button>
       ) : null}
     </div>

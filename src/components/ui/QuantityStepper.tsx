@@ -1,6 +1,3 @@
-import { Minus, Plus } from '@phosphor-icons/react'
-import { uiIconProps } from './iconStyle'
-import { IconButton } from './IconButton'
 import { cn } from '../../lib/utils'
 
 export function QuantityStepper({
@@ -30,43 +27,40 @@ export function QuantityStepper({
   const inc = () => onChange(Math.min(max, value + 1))
 
   return (
-    <div className={cn(compact ? '' : 'space-y-1', className)}>
-      {label ? <span className="block text-base text-ui-secondary">{label}</span> : null}
-      <div
-        data-testid={testId}
-        className={cn(
-          'flex items-center gap-1 rounded-xl border border-ui bg-ui-field/80',
-          compact ? 'p-0.5' : 'p-1',
-        )}
-      >
-        <IconButton
-          label={decreaseLabel}
-          className={cn('shrink-0', compact ? 'min-h-10 min-w-10' : 'min-h-11 min-w-11')}
+    <div className={cn(compact ? '' : 'stack', className)}>
+      {label ? <span className="t-label">{label}</span> : null}
+      <div className="stepper" data-testid={testId}>
+        <button
+          type="button"
+          className="btn btn--icon btn--secondary"
+          aria-label={decreaseLabel}
           data-testid={testId ? `${testId}-dec` : undefined}
           onClick={dec}
           disabled={value <= min}
         >
-          <Minus {...uiIconProps} />
-        </IconButton>
+          <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
+            <path d="M5 12h14" />
+          </svg>
+        </button>
         <span
-          className={cn(
-            'flex-1 text-center font-semibold tabular-nums text-ui-fg',
-            compact ? 'text-sm min-w-[2rem]' : 'text-base',
-          )}
+          className="stepper-val"
           data-testid={testId ? `${testId}-value` : undefined}
           aria-live="polite"
         >
           {value}
         </span>
-        <IconButton
-          label={increaseLabel}
-          className={cn('shrink-0', compact ? 'min-h-10 min-w-10' : 'min-h-11 min-w-11')}
+        <button
+          type="button"
+          className="btn btn--icon btn--primary"
+          aria-label={increaseLabel}
           data-testid={testId ? `${testId}-inc` : undefined}
           onClick={inc}
           disabled={value >= max}
         >
-          <Plus {...uiIconProps} />
-        </IconButton>
+          <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+        </button>
       </div>
     </div>
   )

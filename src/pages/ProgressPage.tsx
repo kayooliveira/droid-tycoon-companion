@@ -15,11 +15,9 @@ import {
   canSuperRebirth,
   isPathComplete,
 } from '../domain/progress'
-import { formatTierName } from '../domain/tiers'
-import { useTierLabels } from '../i18n/useTierLabels'
+import { tierLabel } from '../i18n/tierLabels'
 import { gameData } from '../domain/gameData'
-import { PathProgressSwitcher, ProgressSummaryLine } from '../components/PathProgressSwitcher'
-import { Button } from '../components/ui/Button'
+import { PathProgressSwitcher } from '../components/PathProgressSwitcher'
 import { Modal } from '../components/ui/Modal'
 import { useAppStore } from '../store/useAppStore'
 import { useToast } from '../components/ToastProvider'
@@ -35,16 +33,15 @@ import {
 } from '../domain/progressDroidSearch'
 import { ProgressPdfExport } from '../components/ProgressPdfExport'
 import { ProgressActionStack } from '../components/progress/ProgressActionStack'
-import { ScreenSummaryCard } from '../components/layout/ScreenSummaryCard'
 import { hapticTap } from '../lib/haptics'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
+import { CycleProgressStrip } from '../components/home/CycleProgressStrip'
 import { DroidDetailSheet } from '../components/droid/DroidDetailSheet'
 import type { TierId } from '../domain/types'
 import { InsetGroup } from '../components/ui/InsetGroup'
 
 export function ProgressPage() {
   const { t, i18n } = useTranslation()
-  const tierLabels = useTierLabels()
   const [forceCompleteOpen, setForceCompleteOpen] = useState(false)
   const [undoOpen, setUndoOpen] = useState(false)
   const [superConfirmOpen, setSuperConfirmOpen] = useState(false)
@@ -69,6 +66,9 @@ export function ProgressPage() {
   const searchQueryFromUrl = searchParams.get('q') ?? ''
 
   const current = getRebirth(progress.pathId, progress.nextRebirth)
+  const pathDone = isPathComplete(progress)
+  const superEligible = canSuperRebirth(progress)
+  const showSuperOnly = !current && pathDone && superEligible
   const canComplete = current
     ? canCompleteRebirth(progress.pathId, current.rebirth, inventory, trackInventory)
     : false
@@ -158,61 +158,62 @@ export function ProgressPage() {
   }
 
   return (
-    <TabScrollLayout title={t('nav.progress')} testId="progress-page">
-      <ScreenSummaryCard testId="progress-summary">
-          <div className="dc-row">
-            <div className="dc-row-main">
-              <span className="dc-row-label">{cycleLabel(progress.pathId)}</span>
-              <span className="dc-row-sub">
-                <PathProgressSwitcher compact />
-              </span>
-            </div>
+    <TabScrollLayout
+      title={t('nav.progress')}
+      testId="progress-page"
+      className="progress-page-pad"
+    >
+      <CycleProgressStrip
+        variant="progress"
+        afterMeter={
+          <div style={{ marginTop: 12 }}>
+            <PathProgressSwitcher compact />
           </div>
-          <div className="dc-row">
-            <div className="dc-row-main">
-              <span className="dc-row-label">{t('progress.pathProgress')}</span>
-              <span className="dc-row-sub">
-                <ProgressSummaryLine />
-              </span>
-              <span className="dc-row-sub text-ui-muted">
-                {t('progress.workingOn', { n: progress.nextRebirth })}
-              </span>
-            </div>
-          </div>
-      </ScreenSummaryCard>
+        }
+      />
 
-      <ProgressDroidSearch initialQuery={searchQueryFromUrl} onNavigateToStep={goToRebirthStep} />
+      <div style={{ marginTop: 14 }}>
+        <ProgressDroidSearch
+          initialQuery={searchQueryFromUrl}
+          onNavigateToStep={goToRebirthStep}
+        />
+      </div>
 
-      {current ? (
+      {current || showSuperOnly ? (
         <>
-          {getDisputeKey(progress.pathId, current.rebirth) ? (
-            <DisputePanel
-              pathId={progress.pathId}
-              rebirth={current.rebirth}
-              tierLabels={tierLabels}
-            />
+          {current ? (
+            <>
+              {getDisputeKey(progress.pathId, current.rebirth) ? (
+                <DisputePanel pathId={progress.pathId} rebirth={current.rebirth} />
+              ) : null}
+              <ProgressUnifiedRebirthPanel
+                pathId={progress.pathId}
+                rebirth={progress.nextRebirth}
+                inventory={inventory}
+                trackInventory={trackInventory}
+                onOpenDroid={openDroidDetail}
+              />
+            </>
           ) : null}
-          <ProgressUnifiedRebirthPanel
-            pathId={progress.pathId}
-            rebirth={progress.nextRebirth}
-            inventory={inventory}
-            trackInventory={trackInventory}
-            onOpenDroid={openDroidDetail}
-          />
+          {showSuperOnly ? (
+            <p className="hint" style={{ marginTop: 16 }}>
+              {t('progress.pathComplete')}
+            </p>
+          ) : null}
           <ProgressActionStack
-            showComplete={!isPathComplete(progress)}
+            showComplete={Boolean(current) && !pathDone}
             completeDisabled={trackInventory && !canComplete}
             onComplete={handleCompleteClick}
-            showSuper={canSuperRebirth(progress)}
+            showSuper={(Boolean(current) && superEligible) || showSuperOnly}
             onSuper={() => setSuperConfirmOpen(true)}
-            showForceComplete={trackInventory && !canComplete && !isPathComplete(progress)}
+            showForceComplete={Boolean(current) && !pathDone}
             onForceComplete={() => setForceCompleteOpen(true)}
             onUndo={() => setUndoOpen(true)}
           />
         </>
       ) : (
         <p className="text-sm text-ui-muted px-4">
-          {isPathComplete(progress) ? t('progress.pathComplete') : t('progress.listCurrent')}
+          {pathDone ? t('progress.pathComplete') : t('progress.listCurrent')}
         </p>
       )}
 
@@ -245,21 +246,28 @@ export function ProgressPage() {
         testId="progress-force-complete-modal"
         footer={
           <>
-            <Button
-              variant="secondary"
-              size="sm"
+            <button
+              type="button"
+              className="btn btn--secondary"
               data-testid="progress-force-cancel"
               onClick={() => setForceCompleteOpen(false)}
             >
               {t('path.cancel')}
-            </Button>
-            <Button size="sm" data-testid="progress-force-confirm" onClick={confirmForceComplete}>
+            </button>
+            <button
+              type="button"
+              className="btn btn--primary"
+              data-testid="progress-force-confirm"
+              onClick={confirmForceComplete}
+            >
               {t('progress.completeShort')}
-            </Button>
+            </button>
           </>
         }
       >
-        <p className="text-xs text-ui-muted text-pretty">{t('progress.completeBlockedShort')}</p>
+        <p className="hint" style={{ margin: '10px 0 16px' }}>
+          {t('progress.completeBlockedShort')}
+        </p>
       </Modal>
 
       <Modal
@@ -269,21 +277,26 @@ export function ProgressPage() {
         testId="progress-super-confirm-modal"
         footer={
           <>
-            <Button
-              variant="secondary"
-              size="sm"
+            <button
+              type="button"
+              className="btn btn--secondary"
               data-testid="progress-super-cancel"
               onClick={() => setSuperConfirmOpen(false)}
             >
               {t('path.cancel')}
-            </Button>
-            <Button size="sm" data-testid="progress-super-confirm" onClick={confirmSuperRebirth}>
+            </button>
+            <button
+              type="button"
+              className="btn btn--primary"
+              data-testid="progress-super-confirm"
+              onClick={confirmSuperRebirth}
+            >
               {t('common.confirm')}
-            </Button>
+            </button>
           </>
         }
       >
-        <p className="text-sm text-ui-secondary text-pretty">
+        <p style={{ margin: '10px 0 16px' }}>
           {t('progress.superConfirmBody', {
             currentCycle: cycleLabel(progress.pathId),
             nextCycle: cycleLabel(nextPathId),
@@ -299,54 +312,58 @@ export function ProgressPage() {
         testId="progress-undo-modal"
         footer={
           <>
-            <Button variant="secondary" size="sm" data-testid="progress-undo-cancel" onClick={() => setUndoOpen(false)}>
+            <button
+              type="button"
+              className="btn btn--secondary"
+              data-testid="progress-undo-cancel"
+              onClick={() => setUndoOpen(false)}
+            >
               {t('path.cancel')}
-            </Button>
-            <Button size="sm" data-testid="progress-undo-confirm" onClick={confirmUndo}>
+            </button>
+            <button
+              type="button"
+              className="btn btn--primary"
+              data-testid="progress-undo-confirm"
+              onClick={confirmUndo}
+            >
               {t('progress.undoConfirmShort')}
-            </Button>
+            </button>
           </>
         }
       >
-        <p className="text-xs text-ui-muted text-pretty">{t('progress.undoConfirm')}</p>
+        <p className="hint" style={{ margin: '10px 0 16px' }}>
+          {t('progress.undoConfirm')}
+        </p>
       </Modal>
 
-      <div className="dc-scroll-spacer" aria-hidden />
+      <div aria-hidden />
     </TabScrollLayout>
   )
 }
 
-function DisputePanel({
-  pathId,
-  rebirth,
-  tierLabels,
-}: {
-  pathId: string
-  rebirth: number
-  tierLabels: Map<string, string>
-}) {
+function DisputePanel({ pathId, rebirth }: { pathId: string; rebirth: number }) {
   const { t } = useTranslation()
   const key = getDisputeKey(pathId, rebirth)
   if (!key) return null
   const dispute = DISPUTED_REBIRTH_ALTERNATIVES[key]
   return (
     <InsetGroup>
-      <div className="dc-row">
-        <div className="dc-row-main">
-          <span className="dc-row-label">{t('dispute.title')}</span>
-          <span className="dc-row-sub">
+      <div className="row">
+        <div className="row-main">
+          <span className="row-title">{t('dispute.title')}</span>
+          <span className="hint">
             {key === 'path-2:17' ? t('dispute.path2r17') : t('dispute.path6r19')}
           </span>
         </div>
       </div>
       {dispute.alternatives.map((alt) => (
-        <div key={alt.labelKey} className="dc-row">
-          <span className="dc-row-sub">
+        <div key={alt.labelKey} className="row">
+          <span className="hint">
             <span className="text-ui-muted">{t(alt.labelKey)}: </span>
             {alt.requirements
               .map(
                 (req) =>
-                  `${droidById.get(req.droidId)?.name ?? req.droidId} ${formatTierName(req.rarity, tierLabels)}`,
+                  `${droidById.get(req.droidId)?.name ?? req.droidId} ${tierLabel(t, req.rarity)}`,
               )
               .join(', ')}
           </span>

@@ -77,10 +77,6 @@
   --ui-chip-active-fg: var(--ui-segment-active-fg);
   --ui-chip-active-border: var(--ui-control-border);
 
-  --glass-bg: rgba(255, 255, 255, 0.08);
-  --glass-nav-bg: rgba(14, 18, 28, 0.62);
-  --glass-solid: #161f2e;
-
   --ui-toast-shadow: 0 8px 24px rgb(0 0 0 / 0.28);
   --ui-toast-hairline: rgb(255 255 255 / 0.14);
   --ui-toast-capsule-bg: rgba(28, 28, 30, 0.72);
@@ -198,10 +194,6 @@ html.theme-light {
   --ui-chip-active-bg: var(--ui-segment-active-bg);
   --ui-chip-active-fg: var(--ui-segment-active-fg);
   --ui-chip-active-border: var(--ui-control-border);
-
-  --glass-bg: rgba(255, 255, 255, 0.62);
-  --glass-nav-bg: rgba(255, 255, 255, 0.72);
-  --glass-solid: #ffffff;
 
   --ui-toast-shadow: 0 8px 22px rgb(15 23 42 / 0.12);
   --ui-toast-hairline: rgb(24 24 27 / 0.12);
@@ -406,10 +398,6 @@ html.theme-light {
     align-items: flex-start;
     padding: 10px 16px;
     border-radius: 22px;
-  }
-
-  html.glass-refraction-fallback .toast-surface {
-    background: var(--ui-toast-capsule-bg);
   }
 
   .toast-icon {

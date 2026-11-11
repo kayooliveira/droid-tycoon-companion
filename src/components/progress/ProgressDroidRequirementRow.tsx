@@ -24,20 +24,18 @@ export function ProgressDroidRequirementRow({
   onOpenDroid: () => void
 }) {
   return (
-    <div className="dc-row dc-row-droid dc-row-droid--split">
+    <div className="item">
       <button
         type="button"
-        className="dc-row-hit"
+        className="item-open"
         data-testid="progress-droid-row-open"
         onClick={onOpenDroid}
       >
-        <DroidImage droid={droid} tier={tier} size="sm" className="!h-[50px] !w-[50px] rounded-[11px]" />
-        <span className="dc-row-main">
-          <span className="dc-droid-name dc-row-label">{droid.name}</span>
-          <span className="dc-row-sub dc-row-sub--badge">
-            <span className="dc-row-sub-meta">{subMeta}</span>
-            <SellBadge sellable={sellable} />
-          </span>
+        <DroidImage droid={droid} tier={tier} size="sm" className="dtile dtile--sm" />
+        <span className="item-body">
+          <span className="dname">{droid.name}</span>
+          <span className="t-meta">{subMeta}</span>
+          <SellBadge sellable={sellable} />
         </span>
       </button>
       {trackInventory ? (

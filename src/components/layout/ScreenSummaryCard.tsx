@@ -10,7 +10,7 @@ export function ScreenSummaryCard({
 }) {
   return (
     <InsetGroup testId={testId}>
-      <div className="dc-screen-summary">{children}</div>
+      <div className="panel">{children}</div>
     </InsetGroup>
   )
 }

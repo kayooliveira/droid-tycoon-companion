@@ -192,7 +192,7 @@ test.describe('confirmation modals', () => {
       mimeType: 'application/json',
       buffer: Buffer.from(JSON.stringify(exportPayload)),
     })
-    await expect(page.getByTestId('settings-import-modal')).toBeVisible()
+    await expect(page.getByTestId('modal-importar')).toBeVisible()
     await shot(page, 'settings-import-confirm')
     await page.getByTestId('settings-import-cancel').click()
   })

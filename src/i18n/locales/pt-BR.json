@@ -16,7 +16,14 @@
     "settings": "Ajustes",
     "about": "Sobre",
     "more": "Mais",
-    "cycles": "Ciclos"
+    "cycles": "Ciclos",
+    "moreHintSell": "Pode vender agora",
+    "moreHintSellCount": "Pode vender {{count}} droids agora",
+    "moreHintDroiddex": "Droids e onde cada um entra",
+    "moreHintDroiddexCount": "{{count}} droids e onde cada um entra",
+    "moreHintFusion": "Receitas e regras",
+    "moreHintAbout": "Fonte dos dados e avisos",
+    "moreHintSettings": "Visual, idioma, dados"
   },
   "cycles": {
     "title": "Ciclos",
@@ -27,7 +34,8 @@
     "superBody": "Libera depois do renascimento #{{n}}. Reseta créditos e melhorias da base; quase todos os droids somem, exceto os Icônicos.",
     "exportGuidePdf": "Exportar PDF do Ciclo",
     "exportGuideHint": "Guia imprimível de {{name}} com cada renascimento. Sem progresso pessoal.",
-    "exportGuideDone": "PDF do ciclo pronto."
+    "exportGuideDone": "PDF do ciclo pronto.",
+    "moreRebirthsBelow": "Mais {{count}} renascimentos abaixo, na mesma lista."
   },
   "exportProgress": {
     "title": "PDF do meu progresso",
@@ -66,6 +74,7 @@
     "listRebirthHeading": "Renascimento #{{n}}",
     "badgeCanSell": "Pode vender",
     "badgeDoNotSell": "Não venda",
+    "cycleFootSummary": "Concluídos: {{done}} · Próximo renascimento: #{{next}}",
     "unifiedListFooter": "Badge verde: pode vender neste Ciclo. Badge vermelho: ainda necessário ou reservado.",
     "qtyShort": "Qtd. {{n}}",
     "inventoryAddedToStep": "{{name}} adicionado ao Renascimento #{{n}}",
@@ -149,6 +158,9 @@
     "nextStepSell_other": "Tem {{count}} droids que dá pra vender. Dá uma olhada em Vender antes do renascimento.",
     "nextStepComplete": "Deu certo. Quando terminar no jogo, marca o renascimento aqui."
   },
+  "droid": {
+    "sheetKicker": "Ficha do droid"
+  },
   "inventory": {
     "title": "Inventário",
     "trackingOff": "Inventário desligado",
@@ -191,7 +203,7 @@
     "emptyStateTitle": "Cadastra o inventário pra ver o que vender",
     "emptyStateBody": "Marca os droids que você tem pra comparar com os próximos renascimentos.",
     "emptyStateCta": "Ir pro inventário",
-    "keep": "Guardar",
+    "keep": "GUARDAR",
     "useNext": "USAR NO PRÓXIMO",
     "sellable": "Vender",
     "upgrade": "Upar",
@@ -202,7 +214,7 @@
     "useNextNote": "Entrega no Renascimento #{{rebirth}} e depois pode vender.",
     "upgradeRebirth": "Upe {{name}} pra pelo menos {{tier}} antes do renascimento #{{rebirth}}.",
     "keepForUpgrade": "Guarda: vira {{tier}} no #{{rebirth}}",
-    "safeNowTitle": "Pode vender agora",
+    "safeNowTitle": "PODE VENDER AGORA",
     "safeNowHint": "Com base nos renascimentos concluídos até o #{{rebirth}} e no que ainda falta neste ciclo.",
     "safeNowLine": "Está no seu inventário e pode vender antes do próximo renascimento.",
     "keepGroupFooter": "Ainda entra em renascimentos que faltam neste ciclo.",
@@ -286,6 +298,9 @@
     "cycleHint": "Dá pra trocar o Ciclo depois em Ajustes.",
     "rebirthCount_one": "{{count}} renascimento neste Ciclo",
     "rebirthCount_other": "{{count}} renascimentos neste Ciclo",
+    "themeTitle": "Escolha o visual",
+    "themeHint": "Você pode mudar depois em Ajustes, Aparência.",
+    "themeStepProgress": "Passo 3 de 4",
     "progressTitle": "Onde você está neste Ciclo?",
     "progressHint": "Quantos renascimentos você já terminou?",
     "progressHintShort": "Renascimentos feitos",
@@ -314,8 +329,31 @@
     "doneBody": "Volta pro painel quando quiser.",
     "openDashboard": "Abrir início"
   },
+  "appearance": {
+    "themeAndMode": "Visual e modo",
+    "visualTheme": "Tema",
+    "themeGroup": "Tema",
+    "themeAria": "Tema {{name}}",
+    "previewCta": "Concluir",
+    "themeCardDemoOfTotal": "de 20",
+    "themes": {
+      "oficina": {
+        "name": "Oficina",
+        "desc": "Plaquinhas, régua e linhas finas. Direto e técnico."
+      },
+      "figurinhas": {
+        "name": "Figurinhas",
+        "desc": "Álbum de figurinhas: cantos redondos e cores vivas."
+      },
+      "cartaz": {
+        "name": "Cartaz",
+        "desc": "Números gigantes, preto e branco, sem cantos."
+      }
+    }
+  },
   "settings": {
     "title": "Ajustes",
+    "preferences": "Preferências",
     "appearance": "Aparência",
     "theme": "Tema",
     "themeDark": "Escuro",
@@ -334,7 +372,8 @@
     "trackInventory": "Registrar inventário",
     "language": "Idioma",
     "langEn": "English",
-    "langPt": "Português (Brasil)",
+    "langPt": "Português",
+    "themeFollowSystem": "segue o sistema",
     "rerunOnboarding": "Refazer configuração",
     "progress": "Progresso",
     "path": "Ciclo",
@@ -443,6 +482,8 @@
     "nowTitle": "Agora",
     "nextRenascimento": "Renascimento #{{n}}",
     "nextRenascimentoSection": "Próximo Renascimento",
+    "cycleProgressOf": "de {{total}}",
+    "superAfterRebirth": "Super Renascimento depois do #{{n}}",
     "creditsDisclaimer": "Confira no jogo antes de vender ou fundir.",
     "sellCount": "{{n}} droids livres",
     "sellInCycle": "Neste Ciclo",
@@ -503,7 +544,7 @@
     "generated": "Gerado em {{date}}",
     "dataVersion": "Dados v{{version}} · jogo {{game}}",
     "overviewTitle": "Visão geral do Ciclo",
-    "rebirthsDone": "Renascimentos feitos",
+    "rebirthsDone": "Renascimentos concluídos",
     "pathPct": "Progresso do Ciclo",
     "nextRebirth": "Próximo renascimento",
     "inventory": "Droids no inventário",

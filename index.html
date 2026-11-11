@@ -8,7 +8,7 @@
     <link rel="shortcut icon" href="/favicon.ico?v=5" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=5" sizes="180x180" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
-    <meta name="theme-color" content="#0c121c" />
+    <meta name="theme-color" content="#121315" />
     <meta name="application-name" content="DroidDeck" />
     <meta name="apple-mobile-web-app-title" content="DroidDeck" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -34,19 +34,60 @@
     <title>DroidDeck · Star Wars Droid Tycoon</title>
     <script>
       (function () {
+        var d = document.documentElement;
+        var q = new URLSearchParams(location.search);
+        var t, p;
         try {
-          var raw = localStorage.getItem('droid-tycoon-companion-store');
-          if (!raw) return;
-          var parsed = JSON.parse(raw);
-          var theme = parsed && parsed.state && parsed.state.settings && parsed.state.settings.theme;
-          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          var light = theme === 'light' || (theme === 'system' && !prefersDark);
-          if (light) {
-            document.documentElement.classList.add('theme-light');
-            var meta = document.querySelector('meta[name="theme-color"]');
-            if (meta) meta.setAttribute('content', '#f4f4f5');
-          }
+          t = localStorage.getItem('dd-theme');
+          p = localStorage.getItem('dd-mode');
         } catch (e) {}
+        if (!t) {
+          try {
+            var raw = localStorage.getItem('droid-tycoon-companion-store');
+            if (raw) {
+              var parsed = JSON.parse(raw);
+              var s = parsed && parsed.state && parsed.state.settings;
+              if (s && (s.appearanceTheme === 'figurinhas' || s.appearanceTheme === 'cartaz')) t = s.appearanceTheme;
+              if (s && (s.appearanceMode === 'light' || s.appearanceMode === 'dark' || s.appearanceMode === 'system'))
+                p = s.appearanceMode;
+              else if (s && s.theme) p = s.theme;
+            }
+          } catch (e2) {}
+        }
+        t = q.get('theme') || t || 'oficina';
+        if (['oficina', 'figurinhas', 'cartaz'].indexOf(t) < 0) t = 'oficina';
+        p = q.get('mode') || p || 'system';
+        if (['system', 'light', 'dark'].indexOf(p) < 0) p = 'system';
+        var mq = matchMedia('(prefers-color-scheme: dark)');
+        var metaColors = {
+          oficina: { dark: '#121315', light: '#ECEBE6' },
+          figurinhas: { dark: '#0F1C2E', light: '#F2EDE0' },
+          cartaz: { dark: '#0A0A0B', light: '#F3F2EE' },
+        };
+        function apply() {
+          var mode = p === 'system' ? (mq.matches ? 'dark' : 'light') : p;
+          d.dataset.mode = mode;
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta && metaColors[t]) meta.setAttribute('content', metaColors[t][mode]);
+        }
+        d.dataset.theme = t;
+        d.dataset.pref = p;
+        apply();
+        if (mq.addEventListener) mq.addEventListener('change', function () { if (p === 'system') apply(); });
+        var F = {
+          oficina: ['archivo-var', 'plex-mono-500', 'plex-mono-400'],
+          figurinhas: ['bricolage-var', 'figtree-var'],
+          cartaz: ['big-shoulders-900', 'big-shoulders-800', 'hanken-var'],
+        }[t];
+        F.forEach(function (n) {
+          var l = document.createElement('link');
+          l.rel = 'preload';
+          l.as = 'font';
+          l.type = 'font/woff2';
+          l.crossOrigin = '';
+          l.href = '/fonts/dd/' + n + '.woff2';
+          document.head.appendChild(l);
+        });
       })();
     </script>
     <script type="application/ld+json">

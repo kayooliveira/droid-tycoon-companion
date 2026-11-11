@@ -1,0 +1,83 @@
+/* App shell: DS .app layout in the real app (desktop + safe areas). */
+@media (min-width: 768px) {
+  .app-shell.app {
+    max-width: none;
+    min-height: 0;
+    flex: 1;
+    width: 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  .shell-root {
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+  }
+}
+
+.app-shell.app {
+  height: 100dvh;
+  min-height: 0;
+  max-height: 100dvh;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.app-shell .scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(var(--sp-4, 16px) + env(safe-area-inset-bottom, 0px));
+}
+
+@media (max-width: 767px) {
+  .app-shell .scroll {
+    padding-bottom: calc(
+      var(--tab-h) + env(safe-area-inset-bottom, 0px) + var(--sp-4, 16px)
+    );
+  }
+
+  .app-shell .toast-slot:not([hidden]) {
+    margin-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
+.app-shell .toast-slot[hidden] {
+  display: none !important;
+}
+
+.app-shell .toast-slot:not([hidden]) {
+  display: block;
+}
+
+.app-shell .tabbar {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  position: sticky;
+  bottom: 0;
+  z-index: var(--z-tabbar);
+  isolation: isolate;
+  background: var(--tab-bg);
+  flex: none;
+}
+
+@media (min-width: 768px) {
+  .app-shell .tabbar {
+    display: none;
+  }
+}
+
+.shell-desktop-aside {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .shell-desktop-aside {
+    display: flex;
+  }
+  .app-shell .scroll {
+    padding-bottom: var(--sp-6, 24px);
+  }
+}

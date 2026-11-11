@@ -2,19 +2,20 @@ import { useMemo } from 'react'
 import { Package } from '@phosphor-icons/react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { analyzeSellCenter } from '../domain/sellCenter'
+import { analyzeSellCenter, type SellAnalysisItem } from '../domain/sellCenter'
 import { cycleById, droidById } from '../domain/gameData'
 import { inventorySafeToSellNow } from '../domain/rebirthSellPlan'
 import { formatTierName } from '../domain/tiers'
 import { useTierLabels } from '../i18n/useTierLabels'
-import { PathProgressSwitcher } from '../components/PathProgressSwitcher'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { DroidImage } from '../components/DroidImage'
-import { InsetGroup } from '../components/ui/InsetGroup'
 import { SellBadge } from '../components/ui/SellBadge'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
+import { MoreBackBar } from '../components/layout/MoreBackBar'
+import { PathProgressSwitcher } from '../components/PathProgressSwitcher'
 import { uiIconProps } from '../components/ui/iconStyle'
 import { useAppStore } from '../store/useAppStore'
+import type { TierId } from '../domain/types'
 
 export function SellCenterPage() {
   const { t, i18n } = useTranslation()
@@ -25,7 +26,10 @@ export function SellCenterPage() {
     cycleById.get(progress.pathId)?.name ?? progress.pathId,
     i18n.language,
   )
-  const items = analyzeSellCenter(progress.pathId, progress.nextRebirth, inventory)
+  const items = useMemo(
+    () => analyzeSellCenter(progress.pathId, progress.nextRebirth, inventory),
+    [inventory, progress.nextRebirth, progress.pathId],
+  )
   const completedRebirth = Math.max(0, progress.nextRebirth - 1)
 
   const safeNow = useMemo(() => {
@@ -36,14 +40,17 @@ export function SellCenterPage() {
         plan: inventorySafeToSellNow(progress.pathId, completedRebirth, item.droidId, item.tier),
       }))
       .filter(({ plan }) => plan?.disposition === 'sellable')
-  }, [items, progress.pathId, completedRebirth])
+      .map(({ item }) => item)
+  }, [completedRebirth, items, progress.pathId])
 
-  const groups = {
-    useNext: items.filter((i) => i.category === 'useNext'),
-    keep: items.filter((i) => i.category === 'keep'),
-    sellable: items.filter((i) => i.category === 'sellable'),
-    upgrade: items.filter((i) => i.category === 'upgrade'),
-  }
+  const groups = useMemo(() => {
+    return {
+      useNext: items.filter((i) => i.category === 'useNext'),
+      keep: items.filter((i) => i.category === 'keep'),
+      sellable: items.filter((i) => i.category === 'sellable'),
+      upgrade: items.filter((i) => i.category === 'upgrade'),
+    }
+  }, [items])
 
   const allEmpty =
     inventory.length === 0 &&
@@ -53,7 +60,19 @@ export function SellCenterPage() {
     groups.sellable.length === 0 &&
     groups.upgrade.length === 0
 
-  const renderItemRow = (item: (typeof items)[number], idx: number) => {
+  const localizeReasonParams = (params: Record<string, string | number>) => {
+    const out = { ...params }
+    if (typeof out.tier === 'string') {
+      out.tier = formatTierName(out.tier as TierId, tierLabels)
+    }
+    return out
+  }
+
+  const renderAnalysisRow = (
+    item: SellAnalysisItem,
+    idx: number,
+    safeNowLine = false,
+  ) => {
     const droid = droidById.get(item.droidId)
     if (!droid) return null
     const plan = inventorySafeToSellNow(
@@ -63,86 +82,102 @@ export function SellCenterPage() {
       item.tier,
     )
     return (
-      <div key={`${item.unitId}-${idx}`} className="dc-row dc-row-droid">
-        <DroidImage droid={droid} tier={item.tier} size="sm" className="!h-[50px] !w-[50px] rounded-[11px]" />
-        <div className="dc-row-main">
-          <span className="dc-droid-name dc-row-label">{droid.name}</span>
-          <span className="dc-row-sub dc-row-sub--badge">
-            <span className="dc-row-sub-meta">
+      <div key={`${item.unitId}-${idx}`} className="item">
+        <button type="button" className="item-open" aria-label={droid.name}>
+          <DroidImage droid={droid} tier={item.tier} size="sm" />
+          <span className="item-body">
+            <span className="dname">{droid.name}</span>
+            <span className="t-meta">
               {`${formatTierName(item.tier, tierLabels)} · ${t('progress.qtyShort', { n: item.quantity })}`}
             </span>
             {item.category === 'useNext' ? <SellBadge sellable /> : null}
+            <span className="item-note">
+              {t(
+                safeNowLine ? 'sell.safeNowLine' : item.reasonKey,
+                localizeReasonParams(item.reasonParams),
+              )}
+            </span>
+            {plan?.disposition === 'fusionHold' ? (
+              <span className="note-warn">{t('sellAfter.fusionHold')}</span>
+            ) : null}
           </span>
-          <span className="dc-row-sub">{t(item.reasonKey, item.reasonParams)}</span>
-          {plan?.disposition === 'fusionHold' ? (
-            <span className="dc-row-sub text-ui-warn">{t('sellAfter.fusionHold')}</span>
-          ) : null}
-        </div>
+        </button>
       </div>
     )
   }
 
-  return (
-    <TabScrollLayout title={t('sell.title')} testId="sell-page">
-      <InsetGroup footer={t('sell.intro', { from: progress.nextRebirth, cycle: cycleName })}>
-        <div className="dc-row">
-          <div className="dc-row-main">
-            <span className="dc-row-label">{t('settings.path')}</span>
-            <span className="dc-row-sub">
-              <PathProgressSwitcher compact />
-            </span>
-          </div>
+  const renderSection = (
+    titleKey: string,
+    testId: string,
+    rows: SellAnalysisItem[],
+    footerKey?: string,
+    headerHint?: string,
+    safeNowLine = false,
+  ) => {
+    if (rows.length === 0) return null
+    return (
+      <section key={testId} className="sec" data-testid={testId}>
+        <div className="sec-h">
+          <h2 className="t-h2">{t(titleKey)}</h2>
         </div>
-      </InsetGroup>
+        {rows.map((item, idx) => renderAnalysisRow(item, idx, safeNowLine))}
+        {headerHint ? (
+          <p className="hint" style={{ marginTop: 8 }}>
+            {headerHint}
+          </p>
+        ) : null}
+        {footerKey ? (
+          <p className="hint" style={{ marginTop: 8 }}>
+            {t(footerKey)}
+          </p>
+        ) : null}
+      </section>
+    )
+  }
+
+  return (
+    <TabScrollLayout title={t('sell.title')} testId="sell-page" backBar={<MoreBackBar />}>
+      <p className="hint" style={{ marginTop: 6 }}>
+        {t('sell.intro', { from: progress.nextRebirth, cycle: cycleName })}
+      </p>
+
+      <div style={{ marginTop: 12 }}>
+        <PathProgressSwitcher compact />
+      </div>
 
       {allEmpty ? (
-        <InsetGroup data-testid="sell-empty-state">
-          <div className="dc-row">
+        <div className="stack" data-testid="sell-empty-state">
+          <div className="row">
             <Package {...uiIconProps} className="shrink-0 text-ui-accent" />
-            <div className="dc-row-main">
-              <span className="dc-row-label">{t('sell.emptyStateTitle')}</span>
-              <span className="dc-row-sub">{t('sell.emptyStateBody')}</span>
+            <div className="row-main">
+              <span className="row-title">{t('sell.emptyStateTitle')}</span>
+              <span className="hint" style={{ display: 'block' }}>
+                {t('sell.emptyStateBody')}
+              </span>
             </div>
           </div>
-          <Link to="/inventory" className="dc-row dc-row-chevron">
-            <span className="dc-row-label">{t('sell.emptyStateCta')}</span>
+          <Link to="/inventory" className="row row--link">
+            <span className="row-title">{t('sell.emptyStateCta')}</span>
           </Link>
-        </InsetGroup>
+        </div>
       ) : (
         <>
-          {safeNow.length > 0 ? (
-            <section className="dc-section" data-testid="sell-center-safe-now">
-              <h2 className="dc-section-header">{t('sell.safeNowTitle')}</h2>
-              <InsetGroup footer={t('sell.safeNowHint', { rebirth: completedRebirth })}>
-                {safeNow.map(({ item }, idx) => renderItemRow(item, idx))}
-              </InsetGroup>
-            </section>
-          ) : null}
-
-          {(['useNext', 'keep', 'upgrade', 'sellable'] as const).map((cat) => {
-            if (groups[cat].length === 0) return null
-            const footerKey =
-              cat === 'keep' &&
-              groups.keep.some((i) => (i.nextNeededAtRebirth ?? 0) > progress.nextRebirth)
-                ? 'sell.keepGroupFooter'
-                : cat === 'upgrade'
-                  ? 'sell.upgradeGroupFooter'
-                  : cat === 'sellable'
-                    ? 'sell.sellableGroupFooter'
-                    : undefined
-            return (
-              <section key={cat} className="dc-section" data-testid={`sell-center-${cat}`}>
-                <h2 className="dc-section-header">{t(`sell.${cat}`)}</h2>
-                <InsetGroup footer={footerKey ? t(footerKey) : undefined}>
-                  {groups[cat].map((item, idx) => renderItemRow(item, idx))}
-                </InsetGroup>
-              </section>
-            )
-          })}
+          {renderSection(
+            'sell.safeNowTitle',
+            'sell-center-safe-now',
+            safeNow,
+            undefined,
+            t('sell.safeNowHint', { rebirth: completedRebirth }),
+            true,
+          )}
+          {renderSection('sell.useNext', 'sell-center-useNext', groups.useNext)}
+          {renderSection('sell.keep', 'sell-center-keep', groups.keep, 'sell.keepGroupFooter')}
+          {renderSection('sell.upgrade', 'sell-center-upgrade', groups.upgrade, 'sell.upgradeGroupFooter')}
+          {renderSection('sell.sellable', 'sell-center-sellable', groups.sellable, 'sell.sellableGroupFooter')}
         </>
       )}
 
-      <div className="dc-scroll-spacer" aria-hidden />
+      <div aria-hidden />
     </TabScrollLayout>
   )
 }
