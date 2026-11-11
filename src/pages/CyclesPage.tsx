@@ -1,6 +1,4 @@
 import { useMemo, useState } from 'react'
-import { isDesignGateCapture } from '../e2e/designGate'
-import { CyclesGateView } from '../components/cycles/CyclesGateView'
 import { useTranslation } from 'react-i18next'
 import { CycleGuidePdfExport } from '../components/CycleGuidePdfExport'
 import { DroidImage } from '../components/DroidImage'
@@ -11,8 +9,6 @@ import { REBIRTHS_PER_PATH, SUPER_REBIRTH_UNLOCK_AFTER } from '../domain/progres
 import { formatTierName } from '../domain/tiers'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { useTierLabels } from '../i18n/useTierLabels'
-
-const GATE_VISIBLE_REBIRTHS = 4
 
 export function CyclesPage() {
   const { t, i18n } = useTranslation()
@@ -34,8 +30,6 @@ export function CyclesPage() {
     return list
   }, [pathId])
 
-  const visibleRebirths = rebirths.slice(0, GATE_VISIBLE_REBIRTHS)
-
   const cycleOptions = useMemo(
     () =>
       gameData.cycles.map((c) => ({
@@ -44,14 +38,6 @@ export function CyclesPage() {
       })),
     [i18n.language],
   )
-
-  if (isDesignGateCapture()) {
-    return (
-      <TabScrollLayout title={t('cycles.title')} testId="cycles-page">
-        <CyclesGateView />
-      </TabScrollLayout>
-    )
-  }
 
   return (
     <TabScrollLayout title={t('cycles.title')} testId="cycles-page">
@@ -78,7 +64,7 @@ export function CyclesPage() {
         </div>
       </section>
 
-      {visibleRebirths.map((entry) => {
+      {rebirths.map((entry) => {
         const open = openRebirth === entry.rebirth
         return (
           <div key={entry.rebirth} className="acc" data-testid={`cycles-rebirth-group-${entry.rebirth}`}>
@@ -132,15 +118,6 @@ export function CyclesPage() {
           </div>
         )
       })}
-
-      {rebirths.length > GATE_VISIBLE_REBIRTHS ? (
-        <p className="hint" style={{ margin: '10px 0 0' }}>
-          {t('cycles.moreRebirthsBelow', {
-            count: rebirths.length - GATE_VISIBLE_REBIRTHS,
-            defaultValue: `Mais ${rebirths.length - GATE_VISIBLE_REBIRTHS} renascimentos abaixo, na mesma lista.`,
-          })}
-        </p>
-      ) : null}
 
       <section className="sec">
         <div className="sec-h">

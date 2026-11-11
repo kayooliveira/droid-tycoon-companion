@@ -4,83 +4,14 @@ import { uiIconProps } from './ui/iconStyle'
 import { useTranslation } from 'react-i18next'
 import { useAppStore } from '../store/useAppStore'
 import { OverlayPortal } from './ui/OverlayPortal'
-import { isDesignGateCapture } from '../e2e/designGate'
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>
   userChoice: Promise<{ outcome: string }>
 }
 
-function BannerBody({
-  onDismiss,
-  onInstall,
-  showInstall,
-  gate,
-}: {
-  onDismiss: () => void
-  onInstall: () => void
-  showInstall: boolean
-  gate: boolean
-}) {
-  const { t } = useTranslation()
-  return (
-    <aside
-      data-testid="install-banner"
-      className="banner install-banner-ds"
-      role="region"
-      aria-label={gate ? 'Instalar no celular' : t('pwa.installTitle')}
-      style={gate ? undefined : { position: 'fixed', zIndex: 50 }}
-    >
-      {gate ? (
-        <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
-          <path d="M12 3.5V15M7.5 11 12 15.5 16.5 11" />
-          <path d="M5 19.5h14" />
-        </svg>
-      ) : (
-        <DownloadSimple {...uiIconProps} className="ic" aria-hidden />
-      )}
-      <div className="banner-body">
-        <span className="banner-title">{gate ? 'Instalar no celular' : t('pwa.installTitle')}</span>
-        <p className="hint">
-          {gate ? 'Atalho na tela inicial enquanto joga.' : t('pwa.installBody')}
-        </p>
-        <div className="banner-act">
-          {showInstall ? (
-            <button
-              type="button"
-              className="btn btn--primary"
-              data-testid="install-banner-install"
-              onClick={onInstall}
-            >
-              {gate ? 'Instalar' : t('pwa.install')}
-            </button>
-          ) : null}
-          <button
-            type="button"
-            className="btn btn--ghost"
-            data-testid="install-banner-dismiss"
-            onClick={onDismiss}
-          >
-            {gate ? 'Agora não' : t('pwa.dismiss')}
-          </button>
-        </div>
-      </div>
-      {!gate ? (
-        <button
-          type="button"
-          className="btn btn--icon btn--ghost"
-          onClick={onDismiss}
-          aria-label={t('pwa.dismiss')}
-        >
-          <X {...uiIconProps} width={22} height={22} className="ic" />
-        </button>
-      ) : null}
-    </aside>
-  )
-}
-
 export function InstallBanner() {
-  const gate = isDesignGateCapture()
+  const { t } = useTranslation()
   const dismissed = useAppStore((s) => s.settings.installBannerDismissed)
   const iosDismissed = useAppStore((s) => s.settings.iosInstallHintDismissed)
   const updateSettings = useAppStore((s) => s.updateSettings)
@@ -124,22 +55,50 @@ export function InstallBanner() {
     dismiss()
   }
 
-  const body = (
-    <BannerBody
-      gate={gate}
-      onDismiss={dismiss}
-      onInstall={install}
-      showInstall={Boolean(deferred) || gate}
-    />
+  return (
+    <OverlayPortal>
+      <aside
+        data-testid="install-banner"
+        className="banner install-banner-ds"
+        role="region"
+        aria-label={t('pwa.installTitle')}
+      >
+        <DownloadSimple {...uiIconProps} className="ic" aria-hidden />
+        <div className="banner-body">
+          <span className="banner-title">{t('pwa.installTitle')}</span>
+          <p className="hint">
+            {isIos && !deferred ? t('pwa.iosHint') : t('pwa.installBody')}
+          </p>
+          <div className="banner-act">
+            {deferred ? (
+              <button
+                type="button"
+                className="btn btn--primary"
+                data-testid="install-banner-install"
+                onClick={install}
+              >
+                {t('pwa.install')}
+              </button>
+            ) : null}
+            <button
+              type="button"
+              className="btn btn--ghost"
+              data-testid="install-banner-dismiss"
+              onClick={dismiss}
+            >
+              {t('pwa.dismiss')}
+            </button>
+          </div>
+        </div>
+        <button
+          type="button"
+          className="btn btn--icon btn--ghost"
+          onClick={dismiss}
+          aria-label={t('pwa.dismiss')}
+        >
+          <X {...uiIconProps} width={22} height={22} className="ic" />
+        </button>
+      </aside>
+    </OverlayPortal>
   )
-
-  if (gate) {
-    return (
-      <div className="toast-slot" data-testid="toast-stack">
-        {body}
-      </div>
-    )
-  }
-
-  return <OverlayPortal>{body}</OverlayPortal>
 }

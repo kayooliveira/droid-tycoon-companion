@@ -26,9 +26,6 @@ import { InstallBanner } from './InstallBanner'
 import { Sheet } from './ui/Sheet'
 import { MobileFloatingNav } from './MobileFloatingNav'
 import { ToastViewport } from './ToastProvider'
-import { mockMoreMenuDroiddexHint, mockMoreMenuSellHint } from '../e2e/mockInventoryFixture'
-import { useGateTabbarAnchor } from '../hooks/useGateTabbarAnchor'
-
 const desktopNav = [
   { to: '/', labelKey: 'nav.dashboard', icon: SquaresFour, end: true as const },
   { to: '/progress', labelKey: 'nav.progress', icon: TreeStructure },
@@ -53,7 +50,6 @@ export function AppShell() {
   const { t } = useTranslation()
   const location = useLocation()
   const [moreOpen, setMoreOpen] = useState(false)
-  useGateTabbarAnchor(moreOpen || location.search.includes('e2e_more=1'))
   const scrollRef = useRef<HTMLElement>(null)
   useScrollRestoration()
   useLastTabRestore()
@@ -68,13 +64,9 @@ export function AppShell() {
 
   const moreHint = (hintKey: string) => {
     if (hintKey === 'nav.moreHintSellCount') {
-      const fixed = mockMoreMenuSellHint(inventory)
-      if (fixed) return fixed
       return t(hintKey, { count: sellableNow })
     }
     if (hintKey === 'nav.moreHintDroiddexCount') {
-      const fixed = mockMoreMenuDroiddexHint(inventory)
-      if (fixed) return fixed
       return t(hintKey, { count: gameData.droids.length })
     }
     return t(hintKey)

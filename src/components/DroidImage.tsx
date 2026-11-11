@@ -3,8 +3,6 @@ import { droidImageSrc, isMissingImageFlag } from '../lib/images'
 import { cn } from '../lib/utils'
 import type { Droid, TierId } from '../domain/types'
 import { uiIconProps } from './ui/iconStyle'
-import { isDesignGateCapture } from '../e2e/designGate'
-import cyclensGateImage from '../../dd-design/sistema/assets/droids/cyclens.webp'
 
 const TIER_NUM: Record<TierId, string> = {
   default: '01',
@@ -43,11 +41,7 @@ export function DroidImage({
   missing?: boolean
 }) {
   const isMissing = missing ?? (isMissingImageFlag(droid) || !droid.imageLocal)
-  const src = isMissing
-    ? null
-    : isDesignGateCapture() && droid.id === 'cyclens'
-      ? cyclensGateImage
-      : droidImageSrc(droid.id, droid.imageLocal)
+  const src = isMissing ? null : droidImageSrc(droid.id, droid.imageLocal)
 
   return (
     <span

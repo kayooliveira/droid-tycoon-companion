@@ -12,11 +12,6 @@ import { DroidImage } from '../DroidImage'
 import { IcTagCheck, IcTagX } from '../inventoryIcons'
 import { DesignSystemTag } from '../ui/DesignSystemTag'
 import { useAppStore } from '../../store/useAppStore'
-import {
-  gateRebirthListNextRebirth,
-  isGateProgressListCapture,
-} from '../../e2e/gateProgressFixture'
-
 type RebirthListItemProps = {
   pathId: string
   rebirth: number
@@ -169,31 +164,17 @@ export function ProgressRebirthList({
   const { t } = useTranslation()
   const listAllExpanded = useAppStore((s) => s.settings.progressListAllExpanded)
   const updateSettings = useAppStore((s) => s.updateSettings)
-  const progress = useAppStore((s) => s.progress)
-  const gateList = isGateProgressListCapture(progress, inventory)
-  const listNextRebirth = gateList
-    ? gateRebirthListNextRebirth(
-        useAppStore.getState().progress,
-        inventory,
-      )
-    : nextRebirth
-  const visibleRebirths = gateList
-    ? ([29, 30, 31, 32] as number[]).filter((n) => rebirthNumbers.includes(n))
-    : rebirthNumbers
-  const persisted = gateList ? false : listAllExpanded !== false
-  const forcedExpanded = gateList
-    ? { 29: false, 30: true, 31: false, 32: false }
-    : null
+  const listNextRebirth = nextRebirth
+  const persisted = listAllExpanded !== false
 
   const { isExpanded, toggleOne, toggleAll, anyExpanded, expandOne } =
     useProgressListExpansion(
-      visibleRebirths,
+      rebirthNumbers,
       pathId,
       listNextRebirth,
       persisted,
-    (value) => updateSettings({ progressListAllExpanded: value }),
-    forcedExpanded,
-  )
+      (value) => updateSettings({ progressListAllExpanded: value }),
+    )
 
   useEffect(() => {
     if (!navTarget || navTarget.pathId !== pathId) return
@@ -226,7 +207,7 @@ export function ProgressRebirthList({
           {toggleLabel}
         </button>
       </div>
-      {visibleRebirths.map((rebirth) => (
+      {rebirthNumbers.map((rebirth) => (
         <RebirthListItem
           key={rebirth}
           pathId={pathId}

@@ -6,8 +6,6 @@ import { DroidImage } from '../components/DroidImage'
 import { showcaseTierForDroid } from '../components/ui/tierVisuals'
 import { Badge } from '../components/ui/Badge'
 import { droidMatchesQuery } from '../lib/droidNameMatch'
-import { isDesignGateCapture } from '../e2e/designGate'
-import { FusionGateView } from '../components/fusion/FusionGateView'
 import { useAppStore } from '../store/useAppStore'
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
 import { MoreBackBar } from '../components/layout/MoreBackBar'
@@ -48,14 +46,6 @@ export function FusionLabPage() {
 
   const helpful = recipes.filter((f) => upcomingIds.has(f.resultDroidId))
   const showResultTierRule = gameData.fusions.some((f) => f.resultTierRule)
-
-  if (isDesignGateCapture()) {
-    return (
-      <TabScrollLayout title={t('fusion.title')} testId="fusion-page" backBar={<MoreBackBar />}>
-        <FusionGateView />
-      </TabScrollLayout>
-    )
-  }
 
   return (
     <TabScrollLayout title={t('fusion.title')} testId="fusion-page" backBar={<MoreBackBar />}>

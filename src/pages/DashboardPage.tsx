@@ -10,7 +10,6 @@ import { useTierLabels } from '../i18n/useTierLabels'
 import { evaluateRequirements } from '../domain/requirements'
 import { useAppStore } from '../store/useAppStore'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
-import { mockHomeSellableCount } from '../e2e/mockInventoryFixture'
 
 export function DashboardPage() {
   const { t, i18n } = useTranslation()
@@ -22,7 +21,6 @@ export function DashboardPage() {
   const next = getRebirth(progress.pathId, progress.nextRebirth)
   const checks = next ? evaluateRequirements(next.requirements, inventory, trackInventory) : []
   const sell = summarizeSellCenter(analyzeSellCenter(progress.pathId, progress.nextRebirth, inventory))
-  const fixtureSellCount = mockHomeSellableCount(inventory)
   const cycleLabel = cycle ? formatCycleDisplayName(cycle.name, i18n.language) : progress.pathId
 
   return (
@@ -115,14 +113,12 @@ export function DashboardPage() {
           </span>
           <span className="row-main">
             <span className="dname" style={{ display: 'block' }}>
-              {fixtureSellCount != null
-                ? t('home.sellCount', { n: fixtureSellCount })
-                : sell.sellable > 0
-                  ? t('home.sellCount', { n: sell.sellable })
-                  : t('home.sellEmpty')}
+              {sell.sellable > 0
+                ? t('home.sellCount', { n: sell.sellable })
+                : t('home.sellEmpty')}
             </span>
             <span className="hint" style={{ display: 'block' }}>
-              {fixtureSellCount != null ? t('home.sellInCycle') : cycle ? t('home.sellInCycle') : ''}
+              {cycle ? t('home.sellInCycle') : ''}
             </span>
           </span>
           <span className="chev" aria-hidden>

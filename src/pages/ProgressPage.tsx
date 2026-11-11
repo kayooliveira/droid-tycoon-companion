@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { isDesignGateCapture } from '../e2e/designGate'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
@@ -20,7 +19,6 @@ import { tierLabel } from '../i18n/tierLabels'
 import { gameData } from '../domain/gameData'
 import { PathProgressSwitcher } from '../components/PathProgressSwitcher'
 import { Modal } from '../components/ui/Modal'
-import { GateCaptureModal } from '../components/ui/GateCaptureModal'
 import { useAppStore } from '../store/useAppStore'
 import { useToast } from '../components/ToastProvider'
 import {
@@ -41,21 +39,9 @@ import { CycleProgressStrip } from '../components/home/CycleProgressStrip'
 import { DroidDetailSheet } from '../components/droid/DroidDetailSheet'
 import type { TierId } from '../domain/types'
 import { InsetGroup } from '../components/ui/InsetGroup'
-import {
-  gateCompletePrimaryDisabled,
-  gateProgressSearchHidesMainListing,
-  gateShowSuperRebirthCta,
-  isGateDisputeCapture,
-  isGateIncompleteProgressCapture,
-  isGateSuperCompleteScreen,
-  isGateSuperModalBackdrop,
-} from '../e2e/gateProgressFixture'
-import { ProgressDisputeGateView } from '../components/progress/ProgressDisputeGateView'
-import { ProgressSuperRebirthGateList } from '../components/progress/ProgressSuperRebirthGateList'
 
 export function ProgressPage() {
   const { t, i18n } = useTranslation()
-  const gateCopy = isDesignGateCapture()
   const [forceCompleteOpen, setForceCompleteOpen] = useState(false)
   const [undoOpen, setUndoOpen] = useState(false)
   const [superConfirmOpen, setSuperConfirmOpen] = useState(false)
@@ -78,54 +64,14 @@ export function ProgressPage() {
   const [highlightRebirth, setHighlightRebirth] = useState<number | null>(null)
   const deepLinkHandled = useRef(false)
   const searchQueryFromUrl = searchParams.get('q') ?? ''
-  const [progressSearchQuery, setProgressSearchQuery] = useState(searchQueryFromUrl)
 
-  const gateDispute = isGateDisputeCapture(progress, inventory)
-  const gateSuperBackdrop = isGateSuperModalBackdrop(progress, inventory)
-  const gateIncomplete = isGateIncompleteProgressCapture(progress, inventory)
-  const gateSuperListing =
-    isGateSuperCompleteScreen(progress, inventory) ||
-    isGateSuperModalBackdrop(progress, inventory)
-  const current = gateSuperBackdrop ? null : getRebirth(progress.pathId, progress.nextRebirth)
+  const current = getRebirth(progress.pathId, progress.nextRebirth)
   const pathDone = isPathComplete(progress)
   const superEligible = canSuperRebirth(progress)
-  const gateHideListing = gateProgressSearchHidesMainListing(
-    progress,
-    inventory,
-    progressSearchQuery || searchQueryFromUrl,
-  )
-  const showSuperOnStack = gateShowSuperRebirthCta(progress, inventory) && superEligible
-  const showSuperOnly = gateSuperBackdrop || (!current && pathDone && superEligible)
+  const showSuperOnly = !current && pathDone && superEligible
   const canComplete = current
     ? canCompleteRebirth(progress.pathId, current.rebirth, inventory, trackInventory)
     : false
-  const completeDisabled = gateCompletePrimaryDisabled(
-    progress,
-    inventory,
-    trackInventory && !canComplete,
-  )
-
-  useEffect(() => {
-    if (!isDesignGateCapture()) return
-    const shell = document.querySelector('.app-shell.app')
-    if (!shell) return
-    if (gateHideListing) shell.classList.add('gate-tabbar-anchor')
-    else shell.classList.remove('gate-tabbar-anchor')
-    return () => shell.classList.remove('gate-tabbar-anchor')
-  }, [gateHideListing])
-
-  useEffect(() => {
-    if (!gateCopy) return
-    const shell = document.querySelector('.app-shell.app')
-    if (!shell) return
-    const fixed =
-      forceCompleteOpen ||
-      undoOpen ||
-      (gateSuperBackdrop && superConfirmOpen)
-    if (fixed) shell.setAttribute('data-fixed', '')
-    else shell.removeAttribute('data-fixed')
-    return () => shell.removeAttribute('data-fixed')
-  }, [gateCopy, forceCompleteOpen, undoOpen, gateSuperBackdrop, superConfirmOpen])
 
   const advanceWithToast = () => {
     const completedStep = progress.nextRebirth
@@ -230,17 +176,14 @@ export function ProgressPage() {
         <ProgressDroidSearch
           initialQuery={searchQueryFromUrl}
           onNavigateToStep={goToRebirthStep}
-          onQueryChange={setProgressSearchQuery}
         />
       </div>
 
-      {(current || showSuperOnly) && !gateHideListing ? (
+      {current || showSuperOnly ? (
         <>
-          {gateDispute ? (
-            <ProgressDisputeGateView />
-          ) : (current && !gateSuperBackdrop) || gateIncomplete ? (
+          {current ? (
             <>
-              {current && getDisputeKey(progress.pathId, current.rebirth) ? (
+              {getDisputeKey(progress.pathId, current.rebirth) ? (
                 <DisputePanel pathId={progress.pathId} rebirth={current.rebirth} />
               ) : null}
               <ProgressUnifiedRebirthPanel
@@ -254,50 +197,38 @@ export function ProgressPage() {
           ) : null}
           {showSuperOnly ? (
             <p className="hint" style={{ marginTop: 16 }}>
-              {gateCopy && isGateSuperCompleteScreen(progress, inventory)
-                ? 'Ciclo completo. Use Super Renascimento para seguir.'
-                : t('progress.pathComplete')}
+              {t('progress.pathComplete')}
             </p>
           ) : null}
-          {!gateDispute ? (
-            <ProgressActionStack
-              showComplete={Boolean(current) && !pathDone}
-              completeDisabled={completeDisabled}
-              onComplete={handleCompleteClick}
-              showSuper={showSuperOnStack}
-              onSuper={() => setSuperConfirmOpen(true)}
-              showForceComplete={Boolean(current) && !pathDone}
-              onForceComplete={() => setForceCompleteOpen(true)}
-              onUndo={() => setUndoOpen(true)}
-            />
-          ) : null}
+          <ProgressActionStack
+            showComplete={Boolean(current) && !pathDone}
+            completeDisabled={trackInventory && !canComplete}
+            onComplete={handleCompleteClick}
+            showSuper={(Boolean(current) && superEligible) || showSuperOnly}
+            onSuper={() => setSuperConfirmOpen(true)}
+            showForceComplete={Boolean(current) && !pathDone}
+            onForceComplete={() => setForceCompleteOpen(true)}
+            onUndo={() => setUndoOpen(true)}
+          />
         </>
-      ) : !gateHideListing ? (
+      ) : (
         <p className="text-sm text-ui-muted px-4">
           {pathDone ? t('progress.pathComplete') : t('progress.listCurrent')}
         </p>
-      ) : null}
+      )}
 
-      {!gateHideListing && !gateDispute ? (
-        gateSuperListing ? (
-          <ProgressSuperRebirthGateList />
-        ) : (
-          <ProgressRebirthList
-            pathId={progress.pathId}
-            rebirthNumbers={rebirthNumbers}
-            nextRebirth={progress.nextRebirth}
-            inventory={inventory}
-            trackInventory={trackInventory}
-            navTarget={navTarget}
-            highlightRebirth={highlightRebirth}
-            onNavHandled={() => setNavTarget(null)}
-          />
-        )
-      ) : null}
+      <ProgressRebirthList
+        pathId={progress.pathId}
+        rebirthNumbers={rebirthNumbers}
+        nextRebirth={progress.nextRebirth}
+        inventory={inventory}
+        trackInventory={trackInventory}
+        navTarget={navTarget}
+        highlightRebirth={highlightRebirth}
+        onNavHandled={() => setNavTarget(null)}
+      />
 
-      {!gateHideListing && !gateDispute && (!gateSuperListing || isGateSuperCompleteScreen(progress, inventory)) ? (
-        <ProgressPdfExport />
-      ) : null}
+      <ProgressPdfExport />
 
       <DroidDetailSheet
         open={droidDetail != null}
@@ -308,55 +239,41 @@ export function ProgressPage() {
         sellable={droidDetail?.sellable}
       />
 
-      {gateCopy ? (
-        <GateCaptureModal
-          open={forceCompleteOpen}
-          title="Concluir mesmo assim"
-          hint="Faltam droids no inventário."
-          testId="progress-force-complete-modal"
-          primaryLabel="Concluir"
-          onClose={() => setForceCompleteOpen(false)}
-          onPrimary={confirmForceComplete}
-          primaryTestId="progress-force-confirm"
-          secondaryTestId="progress-force-cancel"
-        />
-      ) : (
-        <Modal
-          open={forceCompleteOpen}
-          onClose={() => setForceCompleteOpen(false)}
-          title={t('progress.completeAnyway')}
-          testId="progress-force-complete-modal"
-          footer={
-            <>
-              <button
-                type="button"
-                className="btn btn--secondary"
-                data-testid="progress-force-cancel"
-                onClick={() => setForceCompleteOpen(false)}
-              >
-                {t('path.cancel')}
-              </button>
-              <button
-                type="button"
-                className="btn btn--primary"
-                data-testid="progress-force-confirm"
-                onClick={confirmForceComplete}
-              >
-                {t('progress.completeShort')}
-              </button>
-            </>
-          }
-        >
-          <p className="hint" style={{ margin: '10px 0 16px' }}>
-            {t('progress.completeBlockedShort')}
-          </p>
-        </Modal>
-      )}
+      <Modal
+        open={forceCompleteOpen}
+        onClose={() => setForceCompleteOpen(false)}
+        title={t('progress.completeAnyway')}
+        testId="progress-force-complete-modal"
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn--secondary"
+              data-testid="progress-force-cancel"
+              onClick={() => setForceCompleteOpen(false)}
+            >
+              {t('path.cancel')}
+            </button>
+            <button
+              type="button"
+              className="btn btn--primary"
+              data-testid="progress-force-confirm"
+              onClick={confirmForceComplete}
+            >
+              {t('progress.completeShort')}
+            </button>
+          </>
+        }
+      >
+        <p className="hint" style={{ margin: '10px 0 16px' }}>
+          {t('progress.completeBlockedShort')}
+        </p>
+      </Modal>
 
       <Modal
         open={superConfirmOpen}
         onClose={() => setSuperConfirmOpen(false)}
-        title={gateCopy ? 'Super Renascimento?' : t('progress.superConfirmTitle')}
+        title={t('progress.superConfirmTitle')}
         testId="progress-super-confirm-modal"
         footer={
           <>
@@ -366,7 +283,7 @@ export function ProgressPage() {
               data-testid="progress-super-cancel"
               onClick={() => setSuperConfirmOpen(false)}
             >
-              {gateCopy ? 'Cancelar' : t('path.cancel')}
+              {t('path.cancel')}
             </button>
             <button
               type="button"
@@ -374,66 +291,50 @@ export function ProgressPage() {
               data-testid="progress-super-confirm"
               onClick={confirmSuperRebirth}
             >
-              {gateCopy ? 'Confirmar' : t('common.confirm')}
+              {t('common.confirm')}
             </button>
           </>
         }
       >
         <p style={{ margin: '10px 0 16px' }}>
-          {gateCopy
-            ? 'Você sai do Ciclo 5 e entra no Ciclo 6. O renascimento #40 fica fechado no app e o novo ciclo começa do #1. Não dá para desfazer.'
-            : t('progress.superConfirmBody', {
-                currentCycle: cycleLabel(progress.pathId),
-                nextCycle: cycleLabel(nextPathId),
-                currentStep: progress.nextRebirth,
-              })}
+          {t('progress.superConfirmBody', {
+            currentCycle: cycleLabel(progress.pathId),
+            nextCycle: cycleLabel(nextPathId),
+            currentStep: progress.nextRebirth,
+          })}
         </p>
       </Modal>
 
-      {gateCopy ? (
-        <GateCaptureModal
-          open={undoOpen}
-          title="Desfazer"
-          hint="Voltar um renascimento neste ciclo? O inventário não muda."
-          testId="progress-undo-modal"
-          primaryLabel="Desfazer"
-          onClose={() => setUndoOpen(false)}
-          onPrimary={confirmUndo}
-          primaryTestId="progress-undo-confirm"
-          secondaryTestId="progress-undo-cancel"
-        />
-      ) : (
-        <Modal
-          open={undoOpen}
-          onClose={() => setUndoOpen(false)}
-          title={t('progress.undoOne')}
-          testId="progress-undo-modal"
-          footer={
-            <>
-              <button
-                type="button"
-                className="btn btn--secondary"
-                data-testid="progress-undo-cancel"
-                onClick={() => setUndoOpen(false)}
-              >
-                {t('path.cancel')}
-              </button>
-              <button
-                type="button"
-                className="btn btn--primary"
-                data-testid="progress-undo-confirm"
-                onClick={confirmUndo}
-              >
-                {t('progress.undoConfirmShort')}
-              </button>
-            </>
-          }
-        >
-          <p className="hint" style={{ margin: '10px 0 16px' }}>
-            {t('progress.undoConfirm')}
-          </p>
-        </Modal>
-      )}
+      <Modal
+        open={undoOpen}
+        onClose={() => setUndoOpen(false)}
+        title={t('progress.undoOne')}
+        testId="progress-undo-modal"
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn--secondary"
+              data-testid="progress-undo-cancel"
+              onClick={() => setUndoOpen(false)}
+            >
+              {t('path.cancel')}
+            </button>
+            <button
+              type="button"
+              className="btn btn--primary"
+              data-testid="progress-undo-confirm"
+              onClick={confirmUndo}
+            >
+              {t('progress.undoConfirmShort')}
+            </button>
+          </>
+        }
+      >
+        <p className="hint" style={{ margin: '10px 0 16px' }}>
+          {t('progress.undoConfirm')}
+        </p>
+      </Modal>
 
       <div aria-hidden />
     </TabScrollLayout>

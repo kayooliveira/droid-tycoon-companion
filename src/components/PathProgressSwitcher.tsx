@@ -3,13 +3,11 @@ import { useTranslation } from 'react-i18next'
 import { cycleById, gameData } from '../domain/gameData'
 import { formatCycleDisplayName } from '../lib/cycleLabel'
 import { useAppStore } from '../store/useAppStore'
-import { isDesignGateCapture } from '../e2e/designGate'
 import { useToast } from './ToastProvider'
 import { Modal } from './ui/Modal'
 import { ChipRadioGroup } from './ui/ChipRadioGroup'
 
 export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
-  const gateCopy = isDesignGateCapture()
   const { t, i18n } = useTranslation()
   const progress = useAppStore((s) => s.progress)
   const switchPath = useAppStore((s) => s.switchPath)
@@ -91,14 +89,14 @@ export function PathProgressSwitcher({ compact }: { compact?: boolean }) {
         <>
           <p
             style={{
-              margin: gateCopy && resetProgress ? '10px 0 10px' : '10px 0 14px',
+              margin: '10px 0 14px',
               color: 'var(--c-text-2)',
             }}
           >
             {t('path.switchBody', { name: cycleLabel(targetPath) })}
           </p>
           {resetProgress ? (
-            <p className={gateCopy ? 'note-warn' : 'hint'} style={{ margin: '0 0 14px' }}>
+            <p className="hint" style={{ margin: '0 0 14px' }}>
               {t('path.switchBodyReset', { name: cycleLabel(targetPath) })}
             </p>
           ) : null}

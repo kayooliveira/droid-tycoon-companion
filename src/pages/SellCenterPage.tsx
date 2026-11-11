@@ -15,31 +15,24 @@ import { MoreBackBar } from '../components/layout/MoreBackBar'
 import { PathProgressSwitcher } from '../components/PathProgressSwitcher'
 import { uiIconProps } from '../components/ui/iconStyle'
 import { useAppStore } from '../store/useAppStore'
-import { mockSellGateRows, type MockSellGateRow } from '../e2e/mockInventoryFixture'
-import { isDesignGateCapture } from '../e2e/designGate'
-import { SellEmptyGateView } from '../components/sell/SellEmptyGateView'
-import { VenderGateView } from '../components/sell/VenderGateView'
-import { useGateTabbarAnchor } from '../hooks/useGateTabbarAnchor'
+import type { TierId } from '../domain/types'
 
 export function SellCenterPage() {
   const { t, i18n } = useTranslation()
   const tierLabels = useTierLabels()
   const progress = useAppStore((s) => s.progress)
   const inventory = useAppStore((s) => s.inventory)
-  useGateTabbarAnchor(inventory.length === 0)
   const cycleName = formatCycleDisplayName(
     cycleById.get(progress.pathId)?.name ?? progress.pathId,
     i18n.language,
   )
-  const gateRows = useMemo(() => mockSellGateRows(inventory), [inventory])
   const items = useMemo(
-    () => (gateRows ? [] : analyzeSellCenter(progress.pathId, progress.nextRebirth, inventory)),
-    [gateRows, inventory, progress.nextRebirth, progress.pathId],
+    () => analyzeSellCenter(progress.pathId, progress.nextRebirth, inventory),
+    [inventory, progress.nextRebirth, progress.pathId],
   )
   const completedRebirth = Math.max(0, progress.nextRebirth - 1)
 
   const safeNow = useMemo(() => {
-    if (gateRows) return gateRows.filter((r) => r.category === 'safeNow')
     return items
       .filter((i) => i.category === 'sellable')
       .map((item) => ({
@@ -48,27 +41,18 @@ export function SellCenterPage() {
       }))
       .filter(({ plan }) => plan?.disposition === 'sellable')
       .map(({ item }) => item)
-  }, [completedRebirth, gateRows, items, progress.pathId])
+  }, [completedRebirth, items, progress.pathId])
 
   const groups = useMemo(() => {
-    if (gateRows) {
-      return {
-        useNext: gateRows.filter((r) => r.category === 'useNext'),
-        keep: gateRows.filter((r) => r.category === 'keep'),
-        sellable: gateRows.filter((r) => r.category === 'sellable'),
-        upgrade: gateRows.filter((r) => r.category === 'upgrade'),
-      }
-    }
     return {
       useNext: items.filter((i) => i.category === 'useNext'),
       keep: items.filter((i) => i.category === 'keep'),
       sellable: items.filter((i) => i.category === 'sellable'),
       upgrade: items.filter((i) => i.category === 'upgrade'),
     }
-  }, [gateRows, items])
+  }, [items])
 
   const allEmpty =
-    !gateRows &&
     inventory.length === 0 &&
     safeNow.length === 0 &&
     groups.useNext.length === 0 &&
@@ -76,20 +60,12 @@ export function SellCenterPage() {
     groups.sellable.length === 0 &&
     groups.upgrade.length === 0
 
-  if (isDesignGateCapture() && inventory.length === 0) {
-    return (
-      <TabScrollLayout title={t('sell.title')} testId="sell-page" backBar={<MoreBackBar />}>
-        <SellEmptyGateView />
-      </TabScrollLayout>
-    )
-  }
-
-  if (isDesignGateCapture() && gateRows) {
-    return (
-      <TabScrollLayout title="Vender" testId="sell-page" backBar={<MoreBackBar />}>
-        <VenderGateView />
-      </TabScrollLayout>
-    )
+  const localizeReasonParams = (params: Record<string, string | number>) => {
+    const out = { ...params }
+    if (typeof out.tier === 'string') {
+      out.tier = formatTierName(out.tier as TierId, tierLabels)
+    }
+    return out
   }
 
   const renderAnalysisRow = (
@@ -116,7 +92,10 @@ export function SellCenterPage() {
             </span>
             {item.category === 'useNext' ? <SellBadge sellable /> : null}
             <span className="item-note">
-              {t(safeNowLine ? 'sell.safeNowLine' : item.reasonKey, item.reasonParams)}
+              {t(
+                safeNowLine ? 'sell.safeNowLine' : item.reasonKey,
+                localizeReasonParams(item.reasonParams),
+              )}
             </span>
             {plan?.disposition === 'fusionHold' ? (
               <span className="note-warn">{t('sellAfter.fusionHold')}</span>
@@ -127,43 +106,10 @@ export function SellCenterPage() {
     )
   }
 
-  const renderGateRow = (item: MockSellGateRow, idx: number) => {
-    const droid = droidById.get(item.droidId)
-    if (!droid) return null
-    return (
-      <div key={`${item.unitId}-${idx}`}>
-        <div className="item">
-          <button
-            type="button"
-            className="item-open"
-            aria-label={`${droid.name} ${formatTierName(item.tier, tierLabels)}`}
-          >
-            <DroidImage droid={droid} tier={item.tier} size="sm" />
-            <span className="item-body">
-              <span className="dname">{droid.name}</span>
-              <span className="t-meta">
-                {`${formatTierName(item.tier, tierLabels)} · ${t('progress.qtyShort', { n: item.quantity })}`}
-              </span>
-              {item.showSellBadge ? <SellBadge sellable /> : null}
-              <span className="item-note">{t(item.reasonKey, item.reasonParams)}</span>
-            </span>
-          </button>
-        </div>
-        {item.fusionHoldAfter ? (
-          <div className="item">
-            <span className="item-body">
-              <span className="note-warn">{t('sellAfter.fusionHold')}</span>
-            </span>
-          </div>
-        ) : null}
-      </div>
-    )
-  }
-
   const renderSection = (
     titleKey: string,
     testId: string,
-    rows: Array<SellAnalysisItem | MockSellGateRow>,
+    rows: SellAnalysisItem[],
     footerKey?: string,
     headerHint?: string,
     safeNowLine = false,
@@ -174,11 +120,7 @@ export function SellCenterPage() {
         <div className="sec-h">
           <h2 className="t-h2">{t(titleKey)}</h2>
         </div>
-        {rows.map((item, idx) =>
-          gateRows
-            ? renderGateRow(item as MockSellGateRow, idx)
-            : renderAnalysisRow(item as SellAnalysisItem, idx, safeNowLine),
-        )}
+        {rows.map((item, idx) => renderAnalysisRow(item, idx, safeNowLine))}
         {headerHint ? (
           <p className="hint" style={{ marginTop: 8 }}>
             {headerHint}
@@ -223,7 +165,7 @@ export function SellCenterPage() {
           {renderSection(
             'sell.safeNowTitle',
             'sell-center-safe-now',
-            gateRows ? safeNow : (safeNow as SellAnalysisItem[]),
+            safeNow,
             undefined,
             t('sell.safeNowHint', { rebirth: completedRebirth }),
             true,

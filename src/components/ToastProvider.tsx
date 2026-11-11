@@ -19,8 +19,6 @@ import { TOAST_PLACEMENT } from '../lib/toastPlacement'
 import { UI_ICON_SIZE, UI_ICON_WEIGHT } from './ui/iconStyle'
 import { OverlayPortal } from './ui/OverlayPortal'
 import { cn } from '../lib/utils'
-import { isDesignGateCapture } from '../e2e/designGate'
-import { useAppStore } from '../store/useAppStore'
 
 export type ToastVariant = 'success' | 'info' | 'warning' | 'error' | 'neutral'
 
@@ -85,7 +83,6 @@ function ToastItem({
   onDismiss: (id: string) => void
 }) {
   const { Icon, err, warn } = VARIANT_META[toast.variant]
-  const gateToast = isDesignGateCapture()
 
   return (
     <div
@@ -95,21 +92,9 @@ function ToastItem({
       aria-live={toast.live}
       className={cn('toast', err && 'toast--err', warn && 'toast--warn')}
     >
-      {gateToast && toast.variant === 'success' && !err && !warn ? (
-        <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
-          <path d="m4.5 12.5 5 5L19.5 7" />
-        </svg>
-      ) : gateToast && toast.variant === 'info' && !err && !warn ? (
-        <svg className="ic" width={22} height={22} viewBox="0 0 24 24" aria-hidden>
-          <circle cx="12" cy="12" r="9" />
-          <path d="M12 11v6" />
-          <circle cx="12" cy="7.6" r=".6" />
-        </svg>
-      ) : (
-        <span className="ic" aria-hidden>
-          <Icon size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} />
-        </span>
-      )}
+      <span className="ic" aria-hidden>
+        <Icon size={UI_ICON_SIZE} weight={UI_ICON_WEIGHT} />
+      </span>
       <div className="toast-text">
         <span className="toast-msg" data-testid="toast-title">
           {toast.message}
@@ -162,15 +147,7 @@ function ToastSlot({
 
 export function ToastViewport() {
   const ctx = useContext(ToastContext)
-  const installDismissed = useAppStore((s) => s.settings.installBannerDismissed)
   if (TOAST_PLACEMENT !== 'inflow' || !ctx) return null
-  if (isDesignGateCapture() && ctx.toasts.length === 0) {
-    const onHome =
-      typeof window !== 'undefined' &&
-      (window.location.pathname === '/' || window.location.pathname === '')
-    if (onHome && !installDismissed) return null
-    return <div className="toast-slot" hidden data-testid="toast-stack" />
-  }
   return <ToastSlot toasts={ctx.toasts} dismiss={ctx.dismiss} />
 }
 

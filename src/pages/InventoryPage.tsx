@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { flushSync } from 'react-dom'
 import {
   IcGridView,
   IcListView,
@@ -26,26 +25,12 @@ import { SegmentedControl } from '../components/ui/SegmentedControl'
 import { Sheet } from '../components/ui/Sheet'
 import { SellBadge } from '../components/ui/SellBadge'
 import { useToast } from '../components/ToastProvider'
-import { isDesignGateCapture } from '../e2e/designGate'
-import { isMockInventoryFixture, mockInventorySellable } from '../e2e/mockInventoryFixture'
-import {
-  gateFilteredMockUnits,
-  gateInventoryFilterActive,
-  GATE_RARITY_CHIP_INDEX,
-  GATE_RARITY_CHIP_LABELS,
-  GATE_TIER_CHIP_INDEX,
-  GATE_TIER_CHIP_LABELS,
-} from '../e2e/gateInventoryFixture'
-import { InventoryAddGateSheet, InventoryRemoveGateSheet } from '../components/inventory/InventoryGateSheets'
-import { InventoryEmptyGateView } from '../components/inventory/InventoryEmptyGateView'
-import { InventorySemResultadoGateView } from '../components/inventory/InventorySemResultadoGateView'
 import { droidMatchesQuery } from '../lib/droidNameMatch'
 import {
   usePersistedInventoryFilters,
   type InventoryFilterMode,
   type InventoryFilters,
 } from '../hooks/usePersistedInventoryFilters'
-import { useGateTabbarAnchor } from '../hooks/useGateTabbarAnchor'
 import { useAppStore } from '../store/useAppStore'
 
 export function InventoryPage() {
@@ -58,21 +43,10 @@ export function InventoryPage() {
   const updateInventoryUnit = useAppStore((s) => s.updateInventoryUnit)
   const removeInventoryUnit = useAppStore((s) => s.removeInventoryUnit)
   const trackInventory = useAppStore((s) => s.settings.trackInventory)
-  const { push, toasts } = useToast()
+  const { push } = useToast()
 
   const [filters, setFilters] = usePersistedInventoryFilters()
   const { search, filterMode, rarityFilter, tierFilter, neededFilter, viewMode } = filters
-  const gateFilter = params.get('e2e_inv_filter')
-  const narrowGateViewport = typeof window !== 'undefined' && window.innerWidth < 375
-  const gateTheme =
-    typeof document !== 'undefined' ? document.documentElement.dataset.theme : undefined
-  useGateTabbarAnchor(
-    !trackInventory ||
-      inventory.length === 0 ||
-      search.length > 0 ||
-      gateFilter === 'rarity' ||
-      (gateFilter === 'tier' && narrowGateViewport && gateTheme !== 'cartaz'),
-  )
 
   useEffect(() => {
     const mode = params.get('e2e_inv_filter')
@@ -84,27 +58,6 @@ export function InventoryPage() {
     }
   }, [params, setFilters])
 
-  useEffect(() => {
-    if (!isDesignGateCapture() || (filterMode !== 'rarity' && filterMode !== 'tier')) return
-    const chips = document.querySelector<HTMLElement>('[data-testid="inventory-page"] .chips--scroll')
-    const selected = chips?.querySelector<HTMLElement>('[aria-pressed="true"]')
-    if (chips && selected) {
-      const theme = document.documentElement.dataset.theme ?? 'oficina'
-      const correction =
-        filterMode === 'rarity'
-          ? theme === 'oficina'
-            ? 2
-            : theme === 'cartaz'
-              ? 4
-              : 4
-          : theme === 'oficina'
-            ? 7
-            : theme === 'cartaz'
-              ? 11
-              : 9
-      chips.scrollLeft = Math.max(0, selected.offsetLeft - chips.offsetLeft - 24 + correction)
-    }
-  }, [filterMode])
   const setSearch = (search: string) => setFilters((f) => ({ ...f, search }))
   const setFilterMode = (filterMode: InventoryFilterMode) =>
     setFilters((f) => ({
@@ -137,9 +90,6 @@ export function InventoryPage() {
     quantity: number
     sellable: boolean
   } | null>(null)
-  const gateRemovidoToast =
-    isDesignGateCapture() && toasts.some((t) => t.message === 'LEP saiu do inventário.')
-
   const rarityOptions = useMemo(
     () => [
       { value: 'all', label: t('inventory.allRaritiesShort') },
@@ -180,14 +130,7 @@ export function InventoryPage() {
     [t],
   )
 
-  const gateInv = gateInventoryFilterActive(inventory)
-  const gateEmpty = isDesignGateCapture() && inventory.length === 0
-  const gateForceEmpty = isDesignGateCapture() && params.get('e2e_inv_empty') === '1'
-
   const filtered = useMemo(() => {
-    if (gateForceEmpty) return []
-    if (gateInv && filterMode === 'rarity') return gateFilteredMockUnits(inventory, 'rarity')
-    if (gateInv && filterMode === 'tier') return gateFilteredMockUnits(inventory, 'tier')
     return inventory
       .filter((u) => {
         const d = droidById.get(u.droidId)
@@ -213,20 +156,9 @@ export function InventoryPage() {
     neededFilter,
     progress.pathId,
     progress.nextRebirth,
-    gateInv,
-    gateForceEmpty,
   ])
 
   const gridUnits = filtered
-
-  useEffect(() => {
-    if (!isDesignGateCapture()) return
-    if (gateRemovidoToast) {
-      document.documentElement.classList.add('gate-inv-toast')
-      return () => document.documentElement.classList.remove('gate-inv-toast')
-    }
-    document.documentElement.classList.remove('gate-inv-toast')
-  }, [gateRemovidoToast])
 
   const pickerDroids = useMemo(() => {
     const q = pickerSearch.toLowerCase()
@@ -238,39 +170,21 @@ export function InventoryPage() {
   if (!trackInventory) {
     return (
       <TabScrollLayout title={t('inventory.title')} testId="inventory-page">
-        {isDesignGateCapture() ? (
-          <div className="row" style={{ marginTop: 12 }}>
-            <span className="row-ic" aria-hidden>
-              <svg className="ic" width={24} height={24} viewBox="0 0 24 24" aria-hidden>
-                <path d="M4 8h16v10H4z" />
-              </svg>
-            </span>
-            <span className="row-main">
-              <span className="dname" style={{ display: 'block' }}>
-                Inventário desligado
-              </span>
-              <span className="hint" style={{ display: 'block' }}>
-                Liga o inventário em Ajustes pra comparar com os renascimentos.
-              </span>
-            </span>
-          </div>
-        ) : (
-          <InsetGroup>
-            <div className="row">
-              <div className="row-main">
-                <span className="row-title">{t('inventory.trackingOff')}</span>
-                <span className="hint">{t('inventory.trackingOffHint')}</span>
-              </div>
+        <InsetGroup>
+          <div className="row">
+            <div className="row-main">
+              <span className="row-title">{t('inventory.trackingOff')}</span>
+              <span className="hint">{t('inventory.trackingOffHint')}</span>
             </div>
-          </InsetGroup>
-        )}
+          </div>
+        </InsetGroup>
       </TabScrollLayout>
     )
   }
 
   return (
     <TabScrollLayout
-      title={gateRemovidoToast ? 'Inventário' : t('inventory.title')}
+      title={t('inventory.title')}
       testId="inventory-page"
       headerExtra={
         <button
@@ -284,7 +198,7 @@ export function InventoryPage() {
         </button>
       }
     >
-      {!gateEmpty ? <div className="inv-pin">
+      <div className="inv-pin">
         <div className="inv-field-full" style={{ marginTop: 6 }}>
           <SearchInput
             placeholder={t('inventory.search')}
@@ -329,60 +243,30 @@ export function InventoryPage() {
         </div>
         {filterMode === 'rarity' ? (
           <div style={{ marginTop: 12 }}>
-            {gateInv ? (
-              <div className="chips chips--scroll" role="group" aria-label={t('inventory.filterRarity')}>
-                {GATE_RARITY_CHIP_LABELS.map((label, i) => (
-                  <button
-                    key={label}
-                    type="button"
-                    className="chip"
-                    aria-pressed={i === GATE_RARITY_CHIP_INDEX}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <div className="px-4 pb-2">
-                <ChipRadioGroup
-                  ariaLabel={t('inventory.filterRarity')}
-                  testId="inventory-rarity-chips"
-                  scrollX
-                  value={rarityFilter}
-                  onChange={setRarityFilter}
-                  options={rarityOptions}
-                />
-              </div>
-            )}
+            <div className="px-4 pb-2">
+              <ChipRadioGroup
+                ariaLabel={t('inventory.filterRarity')}
+                testId="inventory-rarity-chips"
+                scrollX
+                value={rarityFilter}
+                onChange={setRarityFilter}
+                options={rarityOptions}
+              />
+            </div>
           </div>
         ) : null}
         {filterMode === 'tier' ? (
           <div style={{ marginTop: 12 }}>
-            {gateInv ? (
-              <div className="chips chips--scroll" role="group" aria-label={t('inventory.filterTier')}>
-                {GATE_TIER_CHIP_LABELS.map((label, i) => (
-                  <button
-                    key={label}
-                    type="button"
-                    className="chip"
-                    aria-pressed={i === GATE_TIER_CHIP_INDEX}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <div className="px-4 pb-2">
-                <ChipRadioGroup
-                  ariaLabel={t('inventory.filterTier')}
-                  testId="inventory-tier-chips"
-                  scrollX
-                  value={tierFilter}
-                  onChange={setTierFilter}
-                  options={tierOptions}
-                />
-              </div>
-            )}
+            <div className="px-4 pb-2">
+              <ChipRadioGroup
+                ariaLabel={t('inventory.filterTier')}
+                testId="inventory-tier-chips"
+                scrollX
+                value={tierFilter}
+                onChange={setTierFilter}
+                options={tierOptions}
+              />
+            </div>
           </div>
         ) : null}
         {filterMode === 'all' ? (
@@ -395,13 +279,9 @@ export function InventoryPage() {
             />
           </div>
         ) : null}
-      </div> : null}
+      </div>
 
-      {filtered.length === 0 && gateEmpty ? (
-        <InventoryEmptyGateView onAdd={() => setAddOpen(true)} />
-      ) : filtered.length === 0 && isDesignGateCapture() && gateInv ? (
-        <InventorySemResultadoGateView onAdd={() => setAddOpen(true)} />
-      ) : filtered.length === 0 ? (
+      {filtered.length === 0 ? (
         <InsetGroup>
           <div className="row">
             <div className="row-main">
@@ -417,13 +297,12 @@ export function InventoryPage() {
             {filtered.map((unit) => {
               const droid = droidById.get(unit.droidId)
               if (!droid) return null
-              const fixtureSell = mockInventorySellable(inventory, unit.id)
               const needed = droidHasFutureNeedOnPath(
                 progress.pathId,
                 progress.nextRebirth,
                 unit.droidId,
               )
-              const sellable = fixtureSell ?? !needed
+              const sellable = !needed
               const openDetail = () =>
                 setDetail({
                   unitId: unit.id,
@@ -488,13 +367,12 @@ export function InventoryPage() {
             {gridUnits.map((unit) => {
               const droid = droidById.get(unit.droidId)
               if (!droid) return null
-              const fixtureSell = mockInventorySellable(inventory, unit.id)
               const needed = droidHasFutureNeedOnPath(
                 progress.pathId,
                 progress.nextRebirth,
                 unit.droidId,
               )
-              const sellable = fixtureSell ?? !needed
+              const sellable = !needed
               return (
                 <button
                   key={unit.id}
@@ -526,56 +404,47 @@ export function InventoryPage() {
           </div>
         )}
 
-      {!gateRemovidoToast ? (
-        <DroidDetailSheet
-          open={detail != null && !(isDesignGateCapture() && removeTarget)}
-          onClose={() => setDetail(null)}
-          droidId={detail?.droidId ?? null}
-          tier={detail?.tier ?? 'default'}
-          quantity={detail?.quantity}
-          sellable={detail?.sellable}
-        >
-          {detail &&
-          (!isMockInventoryFixture(inventory) ||
-            isDesignGateCapture()) ? (
-            <div className="stack" style={{ marginTop: 12 }} data-testid="inventory-unit-actions">
-              <div className="row2" style={{ justifyContent: 'space-between' }}>
-                <span className="dname">{t('inventory.quantity')}</span>
-                <QuantityStepper
-                  compact
-                  value={detail.quantity}
-                  onChange={(quantity) => {
-                    if (!isDesignGateCapture()) {
-                      updateInventoryUnit(detail.unitId, { quantity })
-                    }
-                    setDetail((d) => (d ? { ...d, quantity } : d))
-                  }}
-                  decreaseLabel={t('inventory.decreaseQuantity')}
-                  increaseLabel={t('inventory.increaseQuantity')}
-                />
-              </div>
-              <DroidDetailRemoveButton
-                label={t('a11y.removeUnit')}
-                testId={`inventory-remove-${detail.unitId}`}
-                onClick={() => {
-                  const droid = droidById.get(detail.droidId)
-                  setRemoveTarget({
-                    unitId: detail.unitId,
-                    name: droid?.name ?? detail.droidId,
-                    tier: formatTierName(detail.tier, tierLabels),
-                  })
+      <DroidDetailSheet
+        open={detail != null}
+        onClose={() => setDetail(null)}
+        droidId={detail?.droidId ?? null}
+        tier={detail?.tier ?? 'default'}
+        quantity={detail?.quantity}
+        sellable={detail?.sellable}
+      >
+        {detail ? (
+          <div className="stack" style={{ marginTop: 12 }} data-testid="inventory-unit-actions">
+            <div className="row2" style={{ justifyContent: 'space-between' }}>
+              <span className="dname">{t('inventory.quantity')}</span>
+              <QuantityStepper
+                compact
+                value={detail.quantity}
+                onChange={(quantity) => {
+                  updateInventoryUnit(detail.unitId, { quantity })
+                  setDetail((d) => (d ? { ...d, quantity } : d))
                 }}
+                decreaseLabel={t('inventory.decreaseQuantity')}
+                increaseLabel={t('inventory.increaseQuantity')}
               />
             </div>
-          ) : null}
-        </DroidDetailSheet>
-      ) : null}
+            <DroidDetailRemoveButton
+              label={t('a11y.removeUnit')}
+              testId={`inventory-remove-${detail.unitId}`}
+              onClick={() => {
+                const droid = droidById.get(detail.droidId)
+                setRemoveTarget({
+                  unitId: detail.unitId,
+                  name: droid?.name ?? detail.droidId,
+                  tier: formatTierName(detail.tier, tierLabels),
+                })
+              }}
+            />
+          </div>
+        ) : null}
+      </DroidDetailSheet>
 
-      {isDesignGateCapture() && addOpen ? (
-        <InventoryAddGateSheet onClose={() => setAddOpen(false)} />
-      ) : null}
       <Sheet
-        open={addOpen && !isDesignGateCapture()}
+        open={addOpen}
         onClose={() => setAddOpen(false)}
         testId="inventory-add-modal"
         aboveTabBar
@@ -638,24 +507,8 @@ export function InventoryPage() {
         </div>
       </Sheet>
 
-      {isDesignGateCapture() && removeTarget ? (
-        <InventoryRemoveGateSheet
-          onClose={() => setRemoveTarget(null)}
-          onConfirm={() => {
-            if (!removeTarget) return
-            const { name } = removeTarget
-            flushSync(() => {
-              setRemoveTarget(null)
-              setDetail(null)
-            })
-            push(isDesignGateCapture() ? 'LEP saiu do inventário.' : t('inventory.removed', { name }), {
-              variant: 'info',
-            })
-          }}
-        />
-      ) : null}
       <Sheet
-        open={Boolean(removeTarget) && !isDesignGateCapture()}
+        open={Boolean(removeTarget)}
         onClose={() => setRemoveTarget(null)}
         testId="inventory-remove-modal"
       >

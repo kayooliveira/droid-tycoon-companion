@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next'
-import { isDesignGateCapture } from '../../e2e/designGate'
 
 export function ProgressActionStack({
   showComplete,
@@ -21,7 +20,6 @@ export function ProgressActionStack({
   onUndo: () => void
 }) {
   const { t } = useTranslation()
-  const gate = isDesignGateCapture()
 
   if (!showComplete && !showSuper) return null
 
@@ -35,7 +33,7 @@ export function ProgressActionStack({
           disabled={completeDisabled}
           onClick={onComplete}
         >
-          {gate ? 'Concluir' : t('progress.completeShort')}
+          {t('progress.completeShort')}
         </button>
       ) : null}
       {showComplete && showForceComplete ? (
@@ -45,7 +43,7 @@ export function ProgressActionStack({
           data-testid="progress-force-complete-inline"
           onClick={onForceComplete}
         >
-          {gate ? 'Concluir mesmo assim' : t('progress.completeAnyway')}
+          {t('progress.completeAnyway')}
         </button>
       ) : null}
       {showSuper ? (
@@ -69,7 +67,7 @@ export function ProgressActionStack({
             <path d="M9 5 4.5 9.5 9 14" />
             <path d="M4.5 9.5H14a5.5 5.5 0 0 1 0 11h-3" />
           </svg>
-          {gate ? 'Desfazer' : t('progress.undoOne')}
+          {t('progress.undoOne')}
         </button>
       ) : null}
     </div>

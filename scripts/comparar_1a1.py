@@ -179,18 +179,7 @@ MOCK_INVENTORY = [
     {"id": "m10", "droidId": "c-3po", "tier": "scourge", "quantity": 1},
 ]
 
-INIT_SCRIPT = """
-if (document.documentElement) {
-  document.documentElement.classList.add('e2e-safe-area');
-} else {
-  new MutationObserver((_, observer) => {
-    if (document.documentElement) {
-      document.documentElement.classList.add('e2e-safe-area');
-      observer.disconnect();
-    }
-  }).observe(document, { childList: true });
-}
-"""
+INIT_SCRIPT = ""
 
 JS_COLLECT = r"""
 ([selectors, props]) => {
@@ -262,7 +251,7 @@ def seed_state(profile: str, theme: str, mode: str) -> dict[str, Any]:
             "localeSource": "user",
             "theme": mode,
             "appearanceTheme": theme,
-            "appearanceMode": mode,
+            "appearanceMode": "system",
             "trackInventory": True,
             "animationsEnabled": False,
             "disputedPreference": {},

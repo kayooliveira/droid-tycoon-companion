@@ -554,210 +554,60 @@ button.row.row--link::after {
   gap: 0;
 }
 
-/* 1:1 mock capture: document grows; tab bar follows content (not sticky in viewport). */
-html.e2e-safe-area .app-shell.app {
-  height: auto;
-  min-height: 844px;
-  max-height: none;
-  overflow: visible;
+.dashboard-compact .hero {
+  margin-top: min(var(--hero-mt, 14px), 12px);
 }
 
-html.e2e-safe-area .app-shell.app[data-fixed] {
-  height: 844px;
-  min-height: 844px;
-  max-height: 844px;
-  overflow: hidden;
+.dashboard-compact .trio {
+  margin-top: min(var(--trio-mt, 14px), 10px);
 }
 
-html.e2e-safe-area .app-shell .scroll {
-  flex: none;
-  overflow: visible;
+[data-theme='figurinhas'] .dashboard-compact .hero,
+[data-theme='cartaz'] .dashboard-compact .hero {
+  padding-block: min(var(--hero-pad, 14px), 12px);
 }
 
-html.e2e-safe-area .app-shell.app[data-fixed] .scroll {
-  overflow: hidden;
-}
 
-html.e2e-safe-area .app-shell .tabbar {
-  position: relative;
-  bottom: auto;
-}
 
-html.e2e-safe-area .app-shell.app.gate-tabbar-anchor {
-  display: flex;
-  flex-direction: column;
-  min-height: 844px;
-}
 
-html.e2e-safe-area .app-shell.app.gate-tabbar-anchor .scroll,
-html.e2e-safe-area .app-shell.app[data-fixed] .scroll {
-  flex: 1 1 auto;
-  min-height: 0;
-}
 
-html.e2e-safe-area .app-shell.app.gate-tabbar-anchor .tabbar,
-html.e2e-safe-area .app-shell.app[data-fixed] .tabbar {
-  margin-top: auto;
-  flex: none;
-}
 
-html.e2e-safe-area .hint,
-html.e2e-safe-area .row-main .hint {
-  line-height: 1.4;
-}
 
-html.e2e-safe-area .row-main .hint {
-  display: inline;
-  margin-top: 0;
-}
 
-html.e2e-safe-area [data-testid='settings-page'] .row-main .hint {
-  display: block;
-  margin-top: 2px;
-  line-height: 1.35;
-}
 
-html.e2e-safe-area .settings-gate-modal-overlay {
-  display: contents;
-}
 
-html.e2e-safe-area .app-shell.app > .scrim,
-html.e2e-safe-area .app-shell.app .settings-gate-modal-overlay > .scrim {
-  position: absolute;
-  inset: 0;
-  z-index: var(--z-scrim);
-  background: var(--c-scrim);
-}
 
-html.e2e-safe-area .app-shell.app > .modal-wrap,
-html.e2e-safe-area .app-shell.app .settings-gate-modal-overlay > .modal-wrap {
-  position: absolute;
-  z-index: var(--z-modal);
-}
 
-html.e2e-safe-area .app-shell.app > .modal-wrap,
-html.e2e-safe-area .app-shell.app .settings-gate-modal-overlay > .modal-wrap {
-  inset: 0;
-  display: grid;
-  place-items: center;
-  padding: 20px;
-  box-sizing: border-box;
-}
 
-html.e2e-safe-area .settings-gate-body-static {
-  display: contents;
-}
 
-html.e2e-safe-area [data-testid='settings-page'].tab-page {
-  display: contents;
-}
 
-html.e2e-safe-area [data-testid='modal-apagar-tudo'] .modal {
-  transform: translateZ(0);
-}
 
-html.e2e-safe-area .settings-gate-body-static .val {
-  transform: translateZ(0);
-}
 
-html.e2e-safe-area [data-testid='settings-gate-progress-capture'] input.range {
-  pointer-events: none;
-}
 
-html.e2e-safe-area .empty > .hint {
-  margin-top: 0;
-}
 
-html.e2e-safe-area .sheet > .grab {
-  margin: 0 auto 10px;
-}
 
-html.e2e-safe-area .sheet > .hint {
-  margin-top: 0;
-}
 
-html.e2e-safe-area .sell-empty-gate .hint {
-  line-height: 1.35;
-}
 
-html.e2e-safe-area #app-overlay-root .sheet.sheet--above {
-  bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px));
-  max-height: calc(100dvh - var(--tab-h) - env(safe-area-inset-bottom, 0px) - 12px);
-  position: fixed;
-}
 
-html.e2e-safe-area[data-theme='figurinhas'] #app-overlay-root .sheet::after,
-html.e2e-safe-area[data-theme='cartaz'] #app-overlay-root .sheet::after {
-  content: '';
-  display: block;
-  height: 2px;
-}
 
-html.e2e-safe-area[data-theme='figurinhas'] #app-overlay-root .sheet.sheet--above[data-testid='nav-more-menu'] {
-  min-height: 472px;
-}
 
-html.e2e-safe-area[data-theme='figurinhas'] #app-overlay-root .sheet.sheet--above[data-testid='nav-more-menu']::after,
-html.e2e-safe-area[data-theme='cartaz'] #app-overlay-root .sheet.sheet--above[data-testid='nav-more-menu']::after {
-  content: none;
-}
 
-html.e2e-safe-area[data-theme='cartaz'] #app-overlay-root .sheet.sheet--above[data-testid='nav-more-menu'] {
-  min-height: 451px;
-}
 
-html.e2e-safe-area[data-theme='cartaz'] [data-testid='cycles-page'] .acc-body .item {
-  margin-top: 0;
-}
 
-html.e2e-safe-area[data-theme='figurinhas'] [data-testid='fusion-page'] .field-wrap {
-  margin-top: -10px;
-}
 
-html.e2e-safe-area[data-theme='figurinhas'] [data-testid='home-hub'] .top,
-html.e2e-safe-area[data-theme='figurinhas'] [data-testid='home-hub'] .hero,
-html.e2e-safe-area[data-theme='figurinhas'] [data-testid='home-hub'] .sec,
-html.e2e-safe-area[data-theme='figurinhas'] .toast-slot,
-html.e2e-safe-area[data-theme='cartaz'] [data-testid='home-hub'] .top,
-html.e2e-safe-area[data-theme='cartaz'] [data-testid='home-hub'] .hero,
-html.e2e-safe-area[data-theme='cartaz'] [data-testid='home-hub'] .sec,
-html.e2e-safe-area[data-theme='cartaz'] .toast-slot,
-html.e2e-safe-area[data-theme='figurinhas'] [data-testid='about-page'],
-html.e2e-safe-area[data-theme='cartaz'] [data-testid='about-page'],
-html.e2e-safe-area[data-theme='figurinhas'] [data-testid='progress-page'] .scroll > *,
-html.e2e-safe-area[data-theme='cartaz'] [data-testid='progress-page'] .scroll > * {
-  transform: translateZ(0);
-}
 
-html.e2e-safe-area[data-theme='cartaz'] [data-testid='home-hub'] > div:has(> a.btn--primary[href='/progress']) {
-  margin-top: 42px !important;
-}
+
+
 
 @media (max-width: 384px) {
-  html.e2e-safe-area[data-theme='figurinhas'] [data-testid='home-hub'] .hero {
-    min-height: 275.703px;
-    box-sizing: border-box;
-  }
 }
 
 @media (min-width: 385px) {
-  html.e2e-safe-area[data-theme='figurinhas'] [data-testid='home-hub'] .hero {
-    min-height: 285.703px;
-    box-sizing: border-box;
-  }
 }
 
 
-html.e2e-safe-area[data-theme='figurinhas'] [data-testid='onboarding-step-welcome'] .dtile-num,
-html.e2e-safe-area[data-theme='cartaz'] [data-testid='onboarding-step-welcome'] .dtile-num {
-  min-width: 32px;
-}
 
 
-html.e2e-safe-area #app-overlay-root .sheet.sheet--above.sheet--gate-fill {
-  bottom: 0;
-  max-height: min(92dvh, calc(100dvh - 12px));
-}
 
 .app-shell .scroll > div {
   max-width: none;

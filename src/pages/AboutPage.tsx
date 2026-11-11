@@ -1,7 +1,4 @@
 import { useTranslation } from 'react-i18next'
-import { isDesignGateCapture } from '../e2e/designGate'
-import { AboutGateView } from '../components/about/AboutGateView'
-import { useGateTabbarAnchor } from '../hooks/useGateTabbarAnchor'
 import { Link } from 'react-router-dom'
 import { gameDataSource } from '../data/dataSource'
 import { formatLocaleDate } from '../lib/formatLocaleDate'
@@ -13,15 +10,7 @@ import { MoreBackBar } from '../components/layout/MoreBackBar'
 import { InsetGroup } from '../components/ui/InsetGroup'
 
 export function AboutPage() {
-  useGateTabbarAnchor(false)
   const { t, i18n } = useTranslation()
-  if (isDesignGateCapture()) {
-    return (
-      <TabScrollLayout title={t('about.title')} testId="about-page" backBar={<MoreBackBar />}>
-        <AboutGateView />
-      </TabScrollLayout>
-    )
-  }
   const meta = gameDataSource.getMeta()
   const stale = gameDataSource.isStale()
 

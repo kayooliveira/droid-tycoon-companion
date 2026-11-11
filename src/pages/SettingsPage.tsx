@@ -8,7 +8,6 @@ import { PathProgressSwitcher, ProgressSummaryLine } from '../components/PathPro
 import { TabScrollLayout } from '../components/layout/TabScrollLayout'
 import { MoreBackBar } from '../components/layout/MoreBackBar'
 import { Modal } from '../components/ui/Modal'
-import { SettingsGateStaticModal } from '../components/settings/SettingsGateStaticModal'
 import { SegmentedControl } from '../components/ui/SegmentedControl'
 import { DsSwitch } from '../components/ui/DsSwitch'
 import { gameDataSource } from '../data/dataSource'
@@ -22,9 +21,6 @@ import { setDocumentLanguage } from '../i18n'
 import { initI18n } from '../i18n/index'
 import { APP_PUBLIC_URL, WHATSAPP_SHARE_BASE } from '../lib/constants'
 import { renderShareProgressCard } from '../lib/shareProgressCard'
-import { isDesignGateCapture } from '../e2e/designGate'
-import { useGateTabbarAnchor } from '../hooks/useGateTabbarAnchor'
-import { SettingsGateView } from '../components/settings/SettingsGateView'
 async function downloadOrShare(blob: Blob, filename: string, mime: string) {
   const file = new File([blob], filename, { type: mime })
   if (navigator.canShare?.({ files: [file] })) {
@@ -45,8 +41,6 @@ async function downloadOrShare(blob: Blob, filename: string, mime: string) {
 
 export function SettingsPage() {
   const { t, i18n } = useTranslation()
-  const gateCopy = isDesignGateCapture()
-  useGateTabbarAnchor(false)
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const { push } = useToast()
@@ -75,29 +69,6 @@ export function SettingsPage() {
       setImportOpen(true)
     }
   }, [params, toPersisted])
-
-  useEffect(() => {
-    if (!gateCopy) return
-    const shell = document.querySelector('.app-shell.app')
-    if (!shell) return
-    if (importOpen || resetOpen) shell.setAttribute('data-fixed', '')
-    else shell.removeAttribute('data-fixed')
-    return () => shell.removeAttribute('data-fixed')
-  }, [gateCopy, importOpen, resetOpen])
-
-  useEffect(() => {
-    if (!gateCopy) return
-    const page = document.querySelector('[data-testid="settings-page"]')
-    if (!page) return
-    const onClick = (e: Event) => {
-      const target = e.target as HTMLElement | null
-      if (!target?.closest('[data-testid="settings-reset-trigger"]')) return
-      e.preventDefault()
-      setResetOpen(true)
-    }
-    page.addEventListener('click', onClick)
-    return () => page.removeEventListener('click', onClick)
-  }, [gateCopy])
 
   const changeLanguage = (locale: AppLocale) => {
     setLocale(locale, 'user')
@@ -187,9 +158,7 @@ export function SettingsPage() {
     }
   }
 
-  const settingsBody = gateCopy ? (
-    <SettingsGateView stale={stale} onResetTrigger={() => setResetOpen(true)} />
-  ) : (
+  const settingsBody = (
     <>
       <section className="sec">
         <div className="sec-h">
@@ -531,20 +500,14 @@ export function SettingsPage() {
 
   return (
     <TabScrollLayout
-      title={gateCopy ? 'Ajustes' : t('settings.title')}
+      title={t('settings.title')}
       testId="settings-page"
       className="settings-page-pad"
       backBar={<MoreBackBar />}
     >
       {settingsBody}
 
-      {gateCopy ? (
-        <>
-          <SettingsGateStaticModal open={importOpen} testId="modal-importar" />
-          <SettingsGateStaticModal open={resetOpen} testId="modal-apagar-tudo" />
-        </>
-      ) : (
-        <>
+      <>
           <Modal
             open={importOpen}
             onClose={() => {
@@ -610,10 +573,9 @@ export function SettingsPage() {
           >
             <p className="hint" style={{ margin: '10px 0 16px' }}>{t('settings.resetConfirmBody')}</p>
           </Modal>
-        </>
-      )}
+      </>
 
-      {gateCopy ? null : <div aria-hidden />}
+      <div aria-hidden />
     </TabScrollLayout>
   )
 }

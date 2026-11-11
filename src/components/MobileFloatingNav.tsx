@@ -2,8 +2,6 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { persistLastTab } from '../hooks/useLastTab'
 import { TAB_BAR_ICONS } from './tabBarIcons'
-import { isDesignGateCapture } from '../e2e/designGate'
-
 const tabs = [
   { to: '/', labelKey: 'nav.dashboard', icon: TAB_BAR_ICONS.home, end: true as const },
   { to: '/progress', labelKey: 'nav.progress', icon: TAB_BAR_ICONS.progress },
@@ -29,12 +27,7 @@ export function MobileFloatingNav({
     (p) => location.pathname === p || location.pathname.startsWith(`${p}/`),
   )
 
-  const gateNotFound =
-    isDesignGateCapture() && location.pathname.includes('rota-inexistente')
-
   const isActive = (tab: (typeof tabs)[number]) => {
-    if (gateNotFound && tab.to === '/') return true
-    if (gateNotFound) return false
     if ('isMore' in tab && tab.isMore) return moreOpen || isMoreRoute
     if (moreOpen) return false
     if ('end' in tab && tab.end) return location.pathname === tab.to
