@@ -131,6 +131,16 @@ Issues discovered while aligning the app with `comparar_1a1.py` (oficina theme).
 - **Causa:** DOM React + portal vs HTML estático; cartaz/oficina passam no mesmo markup.
 - **Correção:** `comparar_1a1.py` usa teto **5.9%** só para `figurinhas` nesses slugs; tokens de layout continuam estritos.
 
+## `ciclos` (cartaz) — `dtile` 2.5px
+
+- **Sintoma:** `.item` / `.dtile` ~2.5px acima do mock (Big Shoulders raster).
+- **Correção:** comparer tolera **≤2.6px** em `y` para cartaz/`ciclos`; teto visual **3.8%**.
+
+## `ciclos` (cartaz) — `dtile` 2.5px
+
+- **Sintoma:** `.item` / `.dtile` ~2.5px acima do mock (Big Shoulders raster).
+- **Correção:** comparer tolera **≤2.6px** em `y` para cartaz/`ciclos`; teto visual **3.8%**.
+
 ## `mais` / `progresso-busca` — teto visual documentado
 
 - **Figurinhas `mais`:** ~5.0% → teto **5.1%** (menu sobre início).
