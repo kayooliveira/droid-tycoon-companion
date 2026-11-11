@@ -40,7 +40,7 @@ export function CyclesPage() {
   )
 
   return (
-    <TabScrollLayout title={t('cycles.title')} testId="cycles-page">
+    <TabScrollLayout title={t('cycles.title')} testId="cycles-page" className="cycles-page">
       <p className="hint" style={{ marginTop: 6 }}>
         {t('cycles.referenceNote')}
       </p>

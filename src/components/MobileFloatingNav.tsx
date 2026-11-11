@@ -58,7 +58,7 @@ export function MobileFloatingNav({
               }}
             >
               <span className="tab-ic">{tab.icon}</span>
-              <span>{label}</span>
+              <span className="tab-lbl">{label}</span>
             </a>
           )
         }
@@ -82,7 +82,7 @@ export function MobileFloatingNav({
             }}
           >
             <span className="tab-ic">{tab.icon}</span>
-            <span>{label}</span>
+            <span className="tab-lbl">{label}</span>
           </a>
         )
       })}

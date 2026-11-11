@@ -74,6 +74,7 @@ export function AppShell() {
 
   useEffect(() => {
     persistLastTab(location.pathname)
+    if (import.meta.env.VITE_E2E_HOOKS !== '1') return
     const q = new URLSearchParams(location.search)
     if (q.get('e2e_more') === '1') {
       setMoreOpen(true)
