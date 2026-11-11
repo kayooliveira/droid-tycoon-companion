@@ -623,8 +623,12 @@ button.row.row--link::after {
   }
 }
 
+.tab-page.dashboard-compact {
+  padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px));
+}
+
 .dashboard-compact .sec:last-child {
-  margin-bottom: calc(var(--tab-h) + 8px);
+  margin-bottom: 8px;
 }
 
 .droiddex-detail-art {

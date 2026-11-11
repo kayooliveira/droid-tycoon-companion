@@ -85,7 +85,7 @@ export function DashboardPage() {
       ) : null}
 
       {next ? (
-        <div className="row" style={{ marginTop: 12 }}>
+        <div className="row" style={{ marginTop: 8 }}>
           <span className="row-main">
             <span className="t-label" style={{ display: 'block' }}>
               {t('pdf.credits')}
@@ -129,13 +129,13 @@ export function DashboardPage() {
         </Link>
       </section>
 
-      <div style={{ marginTop: 16 }}>
+      <div style={{ marginTop: 12 }}>
         <Link to="/progress" className="btn btn--primary">
           {t('home.primaryViewProgress')}
         </Link>
       </div>
 
-      <section className="sec" style={{ marginTop: 12 }}>
+      <section className="sec" style={{ marginTop: 8 }}>
         <div className="sec-h">
           <h2 className="t-h2">{t('home.cycleSummaryTitle')}</h2>
         </div>

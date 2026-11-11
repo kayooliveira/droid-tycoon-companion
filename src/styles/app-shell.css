@@ -30,9 +30,7 @@
   overflow-y: auto;
   overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: calc(
-    var(--tab-h) + env(safe-area-inset-bottom, 0px) + var(--sp-4, 16px)
-  );
+  padding-bottom: calc(var(--sp-4, 16px) + env(safe-area-inset-bottom, 0px));
 }
 
 .app-shell .toast-slot[hidden] {
