@@ -48,7 +48,7 @@ export function InventoryAddGateSheet({ onClose }: { onClose: () => void }) {
       if (!c) return
       const selected = c.querySelector<HTMLElement>('[aria-pressed="true"]')
       const theme = document.documentElement.dataset.theme ?? 'oficina'
-      const scrollInset = theme === 'oficina' ? 17 : 13
+      const scrollInset = theme === 'oficina' ? 17 : theme === 'cartaz' ? 15 : 13
       if (selected) c.scrollLeft = Math.max(0, selected.offsetLeft - c.offsetLeft - scrollInset)
     }
     alignChips()

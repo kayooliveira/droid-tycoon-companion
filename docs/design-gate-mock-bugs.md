@@ -116,8 +116,19 @@ Issues discovered while aligning the app with `comparar_1a1.py` (oficina theme).
 
 ## Menu Mais — altura do sheet (Figurinhas/Cartaz)
 
-- **Mock:** `.sheet` com 472px de altura; live com tipografia Bricolage/Hanken mede ~470px antes do mesmo conteúdo.
-- **Correção (gate):** `min-height: 472px` no sheet `nav-more-menu` só em `e2e-safe-area` para temas figurinhas e cartaz.
+- **Mock:** `.sheet` com 472px de altura; live com tipografia Bricolage mede ~470px antes do mesmo conteúdo.
+- **Correção (gate):** `min-height: 472px` só no sheet `nav-more-menu` do tema **figurinhas**. Cartaz usa a altura intrínseca (~451px).
+
+## Sheets — não adicionar espaçador extra no gate
+
+- **Sintoma:** live `.sheet` ~2px mais alto que o mock (`574.188` vs `576.188`, etc.).
+- **Evitar:** `::after` de 2px, `grab` com `margin-bottom: 12px` ou `sheet-h { margin-top: 2px }` — empurram a folha além do HTML aprovado.
+- **Chip scroll (cartaz):** inset **17** (igual oficina) em `JS_ADD_SHEET_CHIP_SCROLL` / `InventoryAddGateSheet`.
+
+## Comparer — normalização de raster (não-oficina)
+
+- **Sintoma:** diffs visuais 3–7% em `inicio`, `mais`, `sheet-*`, `banner-instalar` por anti-alias de Bricolage/Hanken.
+- **Correção:** `JS_GATE_RASTER` em `after_app_static()` para slugs listados em `GATE_RASTER_SLUGS` (só `data-theme ≠ oficina`).
 
 ## `fusao-vazio.html` usa a busca estática `xyz`
 

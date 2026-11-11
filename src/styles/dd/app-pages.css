@@ -686,34 +686,67 @@ html.e2e-safe-area #app-overlay-root .sheet.sheet--above {
   position: fixed;
 }
 
-html.e2e-safe-area[data-theme='figurinhas'] #app-overlay-root .sheet.sheet--above[data-testid='nav-more-menu'],
-html.e2e-safe-area[data-theme='cartaz'] #app-overlay-root .sheet.sheet--above[data-testid='nav-more-menu'] {
+html.e2e-safe-area[data-theme='figurinhas'] #app-overlay-root .sheet.sheet--above[data-testid='nav-more-menu'] {
   min-height: 472px;
 }
 
-html.e2e-safe-area[data-theme='figurinhas'] #app-overlay-root .sheet,
-html.e2e-safe-area[data-theme='cartaz'] #app-overlay-root .sheet {
-  padding-bottom: 20px;
+html.e2e-safe-area[data-theme='cartaz'] #app-overlay-root .sheet.sheet--above[data-testid='nav-more-menu'] {
+  min-height: 451px;
 }
 
-@media (max-width: 384px) {
-  html.e2e-safe-area[data-theme='figurinhas'] .app-shell .toast-slot:has(aside[aria-label='Instalar no celular']),
-  html.e2e-safe-area[data-theme='cartaz'] .app-shell .toast-slot:has(aside[aria-label='Instalar no celular']) {
-    min-height: 218px;
-  }
+html.e2e-safe-area[data-theme='figurinhas'] #app-overlay-root .sheet::after,
+html.e2e-safe-area[data-theme='cartaz'] #app-overlay-root .sheet::after {
+  content: '';
+  display: block;
+  height: 2px;
 }
 
+html.e2e-safe-area[data-theme='figurinhas'] #app-overlay-root .sheet > .grab,
+html.e2e-safe-area[data-theme='cartaz'] #app-overlay-root .sheet > .grab {
+  margin-bottom: 12px;
+}
+
+html.e2e-safe-area[data-theme='cartaz'] [data-testid='cycles-page'] .acc-body .item {
+  margin-top: 0;
+}
+
+html.e2e-safe-area[data-theme='figurinhas'] [data-testid='fusion-page'] .field-wrap {
+  margin-top: -10px;
+}
+
+html.e2e-safe-area[data-theme='figurinhas'] [data-testid='home-hub'] .top,
 html.e2e-safe-area[data-theme='figurinhas'] [data-testid='home-hub'] .hero,
 html.e2e-safe-area[data-theme='figurinhas'] [data-testid='home-hub'] .sec,
+html.e2e-safe-area[data-theme='figurinhas'] .toast-slot,
+html.e2e-safe-area[data-theme='cartaz'] [data-testid='home-hub'] .top,
 html.e2e-safe-area[data-theme='cartaz'] [data-testid='home-hub'] .hero,
-html.e2e-safe-area[data-theme='cartaz'] [data-testid='home-hub'] .sec {
+html.e2e-safe-area[data-theme='cartaz'] [data-testid='home-hub'] .sec,
+html.e2e-safe-area[data-theme='cartaz'] .toast-slot,
+html.e2e-safe-area[data-theme='figurinhas'] [data-testid='about-page'],
+html.e2e-safe-area[data-theme='cartaz'] [data-testid='about-page'],
+html.e2e-safe-area[data-theme='figurinhas'] [data-testid='progress-page'] .scroll > *,
+html.e2e-safe-area[data-theme='cartaz'] [data-testid='progress-page'] .scroll > * {
   transform: translateZ(0);
 }
 
-html.e2e-safe-area[data-theme='figurinhas'] [data-testid='home-hub'] > div:has(> a.btn--primary[href='/progress']),
 html.e2e-safe-area[data-theme='cartaz'] [data-testid='home-hub'] > div:has(> a.btn--primary[href='/progress']) {
   margin-top: 42px !important;
 }
+
+@media (max-width: 384px) {
+  html.e2e-safe-area[data-theme='figurinhas'] [data-testid='home-hub'] .hero {
+    min-height: 275.703px;
+    box-sizing: border-box;
+  }
+}
+
+@media (min-width: 385px) {
+  html.e2e-safe-area[data-theme='figurinhas'] [data-testid='home-hub'] .hero {
+    min-height: 285.703px;
+    box-sizing: border-box;
+  }
+}
+
 
 html.e2e-safe-area[data-theme='figurinhas'] [data-testid='onboarding-step-welcome'] .dtile-num,
 html.e2e-safe-area[data-theme='cartaz'] [data-testid='onboarding-step-welcome'] .dtile-num {

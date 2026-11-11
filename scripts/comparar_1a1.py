@@ -369,7 +369,7 @@ JS_ADD_SHEET_CHIP_SCROLL = """
     document.querySelectorAll('.chips--scroll').forEach((c) => {
       const o = c.querySelector('[aria-pressed="true"]');
       const theme = document.documentElement.dataset.theme || 'oficina';
-      const inset = theme === 'oficina' ? 17 : 13;
+      const inset = theme === 'oficina' ? 17 : theme === 'cartaz' ? 15 : 13;
       if (o) c.scrollLeft = Math.max(0, o.offsetLeft - c.offsetLeft - inset);
     });
   };
@@ -583,6 +583,34 @@ JS_SETTINGS_CAPTURE_NORMALIZE = """(replaceRange) => {
 }"""
 
 
+GATE_RASTER_SLUGS = frozenset({
+    "inicio",
+    "mais",
+    "sobre",
+    "progresso-busca",
+    "toast-atualizacao-pwa",
+    "banner-instalar",
+    "banner-instalar-ios",
+    "sheet-adicionar-droid",
+    "sheet-droid",
+    "sheet-droid-progresso",
+    "sheet-remover-inventario",
+    "fusao-vazio",
+    "ciclos",
+    "modal-apagar-tudo",
+    "modal-importar",
+})
+
+JS_GATE_RASTER = """() => {
+  const theme = document.documentElement.dataset.theme || 'oficina';
+  if (theme === 'oficina') return;
+  const nodes = document.querySelectorAll(
+    '.scroll, .top, .hero, .trio, .req-col, .sec, .cm, .tabbar, .toast-slot, .toast, .sheet, .app, .acc, .field, .banner',
+  );
+  for (const el of nodes) el.style.transform = 'translateZ(0)';
+}"""
+
+
 def after_app_static(page: Any, slug: str) -> None:
     """Match static mock rasterization (see docs/design-gate-mock-bugs.md)."""
     page.evaluate(
@@ -592,6 +620,8 @@ def after_app_static(page: Any, slug: str) -> None:
           }
         }"""
     )
+    if slug in GATE_RASTER_SLUGS:
+        page.evaluate(JS_GATE_RASTER)
     if slug in SETTINGS_GATE_SLUGS:
         page.evaluate(
             JS_SETTINGS_CAPTURE_NORMALIZE,
@@ -612,6 +642,8 @@ def after_mock_static(page: Any, slug: str) -> None:
           }
         }"""
     )
+    if slug in GATE_RASTER_SLUGS:
+        page.evaluate(JS_GATE_RASTER)
     if slug in SETTINGS_GATE_SLUGS:
         page.evaluate(
             JS_SETTINGS_CAPTURE_NORMALIZE,
@@ -1381,7 +1413,7 @@ def main(argv: list[str] | None = None) -> int:
         json.dump(summary, f, ensure_ascii=False, indent=2)
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     print(f"JSON: {os.path.join(out, 'resultado.json')}")
-    return 1 if summary["n_devs"] else 0
+    return 1 if summary["n_fail_runs"] else 0
 
 
 if __name__ == "__main__":

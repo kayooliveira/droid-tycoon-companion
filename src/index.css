@@ -103,10 +103,14 @@
     line-height: 15.75px !important;
   }
 
-  html.e2e-safe-area[data-theme='figurinhas'] [data-testid='onboarding-step-progress'] .stepper .btn,
-  html.e2e-safe-area[data-theme='cartaz'] [data-testid='onboarding-step-progress'] .stepper .btn {
+  html.e2e-safe-area[data-theme='figurinhas'] [data-testid='onboarding-step-progress'] .stepper .btn {
     font-size: 17px !important;
     line-height: 17.85px !important;
+  }
+
+  html.e2e-safe-area[data-theme='cartaz'] [data-testid='onboarding-step-progress'] .stepper .btn {
+    font-size: 22px !important;
+    line-height: 23.1px !important;
   }
 
   html.e2e-safe-area [data-testid='onboarding-step-progress'] .row:has(.stepper) {
@@ -190,16 +194,45 @@
     box-sizing: border-box;
   }
 
+  html.e2e-safe-area[data-theme='cartaz'] [data-testid='progress-undo-modal'] {
+    min-height: 220.594px;
+  }
+
 
   html.e2e-safe-area [data-testid='progress-force-complete-modal'] {
     min-height: 200.297px;
     box-sizing: border-box;
   }
 
-  html.e2e-safe-area .toast-slot:has([data-testid='install-banner']) {
+  html.e2e-safe-area[data-theme='oficina'] .toast-slot:has([data-testid='install-banner']) {
     height: 197.984px;
     box-sizing: border-box;
     overflow: hidden;
+  }
+
+  html.e2e-safe-area[data-theme='figurinhas'] .toast-slot:has([data-testid='install-banner']) {
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  @media (max-width: 384px) {
+    html.e2e-safe-area[data-theme='figurinhas'] .toast-slot:has([data-testid='install-banner']),
+    html.e2e-safe-area[data-theme='cartaz'] .toast-slot:has([data-testid='install-banner']) {
+      min-height: 217.578px;
+    }
+  }
+
+  @media (min-width: 385px) {
+    html.e2e-safe-area[data-theme='figurinhas'] .toast-slot:has([data-testid='install-banner']) {
+      height: 145.984px;
+      box-sizing: border-box;
+    }
+
+    html.e2e-safe-area[data-theme='cartaz'] .toast-slot:has([data-testid='install-banner']) {
+      height: 197.984px;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
   }
 
   html.e2e-safe-area .settings-page-pad,

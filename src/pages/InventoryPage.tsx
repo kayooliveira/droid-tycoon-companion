@@ -64,12 +64,14 @@ export function InventoryPage() {
   const { search, filterMode, rarityFilter, tierFilter, neededFilter, viewMode } = filters
   const gateFilter = params.get('e2e_inv_filter')
   const narrowGateViewport = typeof window !== 'undefined' && window.innerWidth < 375
+  const gateTheme =
+    typeof document !== 'undefined' ? document.documentElement.dataset.theme : undefined
   useGateTabbarAnchor(
     !trackInventory ||
       inventory.length === 0 ||
       search.length > 0 ||
       gateFilter === 'rarity' ||
-      (gateFilter === 'tier' && narrowGateViewport),
+      (gateFilter === 'tier' && narrowGateViewport && gateTheme !== 'cartaz'),
   )
 
   useEffect(() => {
@@ -92,10 +94,14 @@ export function InventoryPage() {
         filterMode === 'rarity'
           ? theme === 'oficina'
             ? 2
-            : 4
+            : theme === 'cartaz'
+              ? 4
+              : 4
           : theme === 'oficina'
             ? 7
-            : 9
+            : theme === 'cartaz'
+              ? 11
+              : 9
       chips.scrollLeft = Math.max(0, selected.offsetLeft - chips.offsetLeft - 24 + correction)
     }
   }, [filterMode])
