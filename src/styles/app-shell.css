@@ -33,6 +33,18 @@
   padding-bottom: calc(var(--sp-4, 16px) + env(safe-area-inset-bottom, 0px));
 }
 
+@media (max-width: 767px) {
+  .app-shell .scroll {
+    padding-bottom: calc(
+      var(--tab-h) + env(safe-area-inset-bottom, 0px) + var(--sp-4, 16px)
+    );
+  }
+
+  .app-shell .toast-slot:not([hidden]) {
+    margin-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
 .app-shell .toast-slot[hidden] {
   display: none !important;
 }

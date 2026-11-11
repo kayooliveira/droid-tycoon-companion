@@ -230,7 +230,7 @@ button.row.row--link::after {
   gap: 14px;
   width: 100%;
   min-width: 0;
-  padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px) + 8px);
+  padding-bottom: 8px;
 }
 
 .collection-grid.collection-list {
@@ -623,12 +623,8 @@ button.row.row--link::after {
   }
 }
 
-.tab-page.dashboard-compact {
-  padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px));
-}
-
 .dashboard-compact .sec:last-child {
-  margin-bottom: 8px;
+  margin-bottom: 0;
 }
 
 .droiddex-detail-art {
@@ -685,11 +681,11 @@ button.row.row--link::after {
 }
 
 .settings-page-pad {
-  padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px) + 12px);
+  padding-bottom: var(--sp-4, 16px);
 }
 
 .progress-page-pad {
-  padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px) + 12px);
+  padding-bottom: var(--sp-4, 16px);
 }
 
 .progress-page-pad .field-wrap {
