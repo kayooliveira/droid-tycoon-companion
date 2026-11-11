@@ -94,17 +94,17 @@ button.row.row--link::after {
 }
 
 .inv-list .inv-list-item {
-  min-height: 56px;
+  min-height: var(--item-tile, 56px);
 }
 
 .inv-list .inv-list-item .item-open {
-  min-height: 56px;
+  min-height: var(--item-tile, 56px);
 }
 
 .inv-list .inv-list-tile,
 .inv-list .dtile--sm {
-  width: 56px;
-  height: 56px;
+  width: var(--item-tile, 56px);
+  height: var(--item-tile, 56px);
   flex: none;
 }
 
@@ -685,6 +685,41 @@ html.e2e-safe-area #app-overlay-root .sheet.sheet--above {
   max-height: calc(100dvh - var(--tab-h) - env(safe-area-inset-bottom, 0px) - 12px);
   position: fixed;
 }
+
+html.e2e-safe-area[data-theme='figurinhas'] #app-overlay-root .sheet.sheet--above[data-testid='nav-more-menu'],
+html.e2e-safe-area[data-theme='cartaz'] #app-overlay-root .sheet.sheet--above[data-testid='nav-more-menu'] {
+  min-height: 472px;
+}
+
+html.e2e-safe-area[data-theme='figurinhas'] #app-overlay-root .sheet,
+html.e2e-safe-area[data-theme='cartaz'] #app-overlay-root .sheet {
+  padding-bottom: 20px;
+}
+
+@media (max-width: 384px) {
+  html.e2e-safe-area[data-theme='figurinhas'] .app-shell .toast-slot:has(aside[aria-label='Instalar no celular']),
+  html.e2e-safe-area[data-theme='cartaz'] .app-shell .toast-slot:has(aside[aria-label='Instalar no celular']) {
+    min-height: 218px;
+  }
+}
+
+html.e2e-safe-area[data-theme='figurinhas'] [data-testid='home-hub'] .hero,
+html.e2e-safe-area[data-theme='figurinhas'] [data-testid='home-hub'] .sec,
+html.e2e-safe-area[data-theme='cartaz'] [data-testid='home-hub'] .hero,
+html.e2e-safe-area[data-theme='cartaz'] [data-testid='home-hub'] .sec {
+  transform: translateZ(0);
+}
+
+html.e2e-safe-area[data-theme='figurinhas'] [data-testid='home-hub'] > div:has(> a.btn--primary[href='/progress']),
+html.e2e-safe-area[data-theme='cartaz'] [data-testid='home-hub'] > div:has(> a.btn--primary[href='/progress']) {
+  margin-top: 42px !important;
+}
+
+html.e2e-safe-area[data-theme='figurinhas'] [data-testid='onboarding-step-welcome'] .dtile-num,
+html.e2e-safe-area[data-theme='cartaz'] [data-testid='onboarding-step-welcome'] .dtile-num {
+  min-width: 32px;
+}
+
 
 html.e2e-safe-area #app-overlay-root .sheet.sheet--above.sheet--gate-fill {
   bottom: 0;

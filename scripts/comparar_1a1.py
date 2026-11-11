@@ -368,7 +368,9 @@ JS_ADD_SHEET_CHIP_SCROLL = """
   const align = () => {
     document.querySelectorAll('.chips--scroll').forEach((c) => {
       const o = c.querySelector('[aria-pressed="true"]');
-      if (o) c.scrollLeft = Math.max(0, o.offsetLeft - c.offsetLeft - 17);
+      const theme = document.documentElement.dataset.theme || 'oficina';
+      const inset = theme === 'oficina' ? 17 : 13;
+      if (o) c.scrollLeft = Math.max(0, o.offsetLeft - c.offsetLeft - inset);
     });
   };
   align();
@@ -467,7 +469,14 @@ def after_fusao_vazia(page: Any) -> None:
     field.fill("xyz")
     page.wait_for_timeout(300)
     field.evaluate("el => el.blur()")
-    page.evaluate("document.querySelector('.shell-root').scrollTop = 0")
+    page.evaluate(
+        """() => {
+          const scroll = document.querySelector('.scroll');
+          if (scroll) scroll.scrollTop = 0;
+          const root = document.querySelector('.shell-root');
+          if (root) root.scrollTop = 0;
+        }"""
+    )
 
 
 def after_busca(page: Any) -> None:

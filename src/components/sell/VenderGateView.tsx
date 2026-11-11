@@ -1,5 +1,6 @@
 import { droidById } from '../../domain/gameData'
 import { droidImageSrc } from '../../lib/images'
+import { DesignSystemTag } from '../ui/DesignSystemTag'
 const TIER_NUM: Record<string, string> = {
   default: '01',
   gold: '02',
@@ -31,15 +32,7 @@ function SmTile({ id, tier }: { id: string; tier: string }) {
 }
 
 function GateSellTag() {
-  return (
-    <span className="tag tag--ok">
-      <i className="tag-sq" aria-hidden />
-      <svg className="ic" width={14} height={14} viewBox="0 0 24 24" aria-hidden>
-        <path d="m4.5 12.5 5 5L19.5 7" />
-      </svg>
-      Pode vender
-    </span>
-  )
+  return <DesignSystemTag kind="ok">Pode vender</DesignSystemTag>
 }
 
 function SellItem({

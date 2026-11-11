@@ -1,5 +1,6 @@
 import { droidById } from '../../domain/gameData'
 import { DroidImage } from '../DroidImage'
+import { DesignSystemTag } from '../ui/DesignSystemTag'
 
 /** Full-page middle for `progresso-disputa.html` (Ciclo 2 @ #17). */
 export function ProgressDisputeGateView() {
@@ -8,7 +9,7 @@ export function ProgressDisputeGateView() {
   const r6 = droidById.get('r6')
 
   return (
-    <>
+  <div className="progress-dispute-gate">
       <section className="sec">
         <div className="sec-h">
           <h2 className="t-h2">Requisitos disputados</h2>
@@ -57,10 +58,7 @@ export function ProgressDisputeGateView() {
                   <span className="t-meta">
                     {tier === 'diamond' ? 'Diamante' : 'Galáctico'} · {owned}/1
                   </span>
-                  <span className="tag tag--bad">
-                    <i className="tag-sq" aria-hidden />
-                    Não venda
-                  </span>
+                  <DesignSystemTag kind="bad">Não venda</DesignSystemTag>
                 </span>
               </button>
               {showControls ? (
@@ -97,6 +95,6 @@ export function ProgressDisputeGateView() {
           Desfazer
         </button>
       </div>
-    </>
+    </div>
   )
 }

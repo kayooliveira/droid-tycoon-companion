@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { droidById } from '../../domain/gameData'
 import { DroidImage } from '../DroidImage'
 import { droidImageSrc } from '../../lib/images'
+import { DesignSystemTag } from '../ui/DesignSystemTag'
 
 export function ProgressDroidSearchGateView({ query }: { query: string }) {
   const { t } = useTranslation()
@@ -92,13 +93,7 @@ export function ProgressDroidSearchGateView({ query }: { query: string }) {
             <span className="hint" style={{ display: 'block' }}>
               {t('progress.search.requirementLine', { tier: 'Galáctico', qty: 1 })}
             </span>
-            <span className="tag tag--mute">
-              <i className="tag-sq" aria-hidden />
-              <svg className="ic" width={14} height={14} viewBox="0 0 24 24" aria-hidden>
-                <path d="M12 5v14M5 12h14" />
-              </svg>
-              {t('progress.search.nextNeed')}
-            </span>
+            <DesignSystemTag kind="mute">{t('progress.search.nextNeed')}</DesignSystemTag>
           </span>
           <span className="chev" aria-hidden>
             <svg className="ic" width={20} height={20} viewBox="0 0 24 24">

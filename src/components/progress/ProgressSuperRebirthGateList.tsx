@@ -1,5 +1,6 @@
 import { droidById } from '../../domain/gameData'
 import { droidImageSrc } from '../../lib/images'
+import { DesignSystemTag } from '../ui/DesignSystemTag'
 
 type MiniTile = { id: string; tier: string; num?: string; missing?: boolean }
 
@@ -129,24 +130,8 @@ export function ProgressSuperRebirthGateList() {
                 ))}
               </span>
             </span>
-            {acc.tag === 'done' ? (
-              <span className="tag tag--ok">
-                <i className="tag-sq" aria-hidden />
-                <svg className="ic" width={14} height={14} viewBox="0 0 24 24" aria-hidden>
-                  <path d="m4.5 12.5 5 5L19.5 7" />
-                </svg>
-                Feito
-              </span>
-            ) : null}
-            {acc.tag === 'current' ? (
-              <span className="tag tag--mute">
-                <i className="tag-sq" aria-hidden />
-                <svg className="ic" width={14} height={14} viewBox="0 0 24 24" aria-hidden>
-                  <path d="M12 5v14M5 12h14" />
-                </svg>
-                Atual
-              </span>
-            ) : null}
+            {acc.tag === 'done' ? <DesignSystemTag kind="ok">Feito</DesignSystemTag> : null}
+            {acc.tag === 'current' ? <DesignSystemTag kind="mute">Atual</DesignSystemTag> : null}
             <span className="chev" aria-hidden>
               <svg className="ic" width={20} height={20} viewBox="0 0 24 24">
                 <path d={acc.open ? 'm5 9 7 7 7-7' : 'm9 5 7 7-7 7'} />
@@ -165,17 +150,9 @@ export function ProgressSuperRebirthGateList() {
                       <span className="item-body">
                         <span className="dname">{d.name}</span>
                         <span className="t-meta">{row.meta}</span>
-                        <span className={row.status === 'ok' ? 'tag tag--ok' : 'tag tag--bad'}>
-                          <i className="tag-sq" aria-hidden />
-                          <svg className="ic" width={14} height={14} viewBox="0 0 24 24" aria-hidden>
-                            {row.status === 'ok' ? (
-                              <path d="m4.5 12.5 5 5L19.5 7" />
-                            ) : (
-                              <path d="M5.5 5.5l13 13M18.5 5.5l-13 13" />
-                            )}
-                          </svg>
+                        <DesignSystemTag kind={row.status === 'ok' ? 'ok' : 'bad'}>
                           {row.status === 'ok' ? 'Ok' : 'Falta'}
-                        </span>
+                        </DesignSystemTag>
                       </span>
                     </button>
                   </div>

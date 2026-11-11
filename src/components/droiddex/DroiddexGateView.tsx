@@ -4,6 +4,7 @@ import { droidById } from '../../domain/gameData'
 import { formatBaseRarity } from '../../i18n/tierLabels'
 import { DroidImage } from '../DroidImage'
 import { OverlayPortal } from '../ui/OverlayPortal'
+import { DesignSystemTag } from '../ui/DesignSystemTag'
 import bb8GateImage from '../../../dd-design/sistema/assets/droids/bb-8.webp'
 import bb9GateImage from '../../../dd-design/sistema/assets/droids/bb9.webp'
 import bbGateImage from '../../../dd-design/sistema/assets/droids/bb.webp'
@@ -88,27 +89,9 @@ function LepDetailGateModal({ onClose }: { onClose: () => void }) {
               ) : null}
             </div>
             <div className="stack" style={{ gap: 8, alignItems: 'flex-start' }}>
-              <span className="tag tag--mute">
-                <i className="tag-sq" aria-hidden />
-                <svg className="ic" width={14} height={14} viewBox="0 0 24 24" aria-hidden>
-                  <path d="M12 5v14M5 12h14" />
-                </svg>
-                Worker
-              </span>
-              <span className="tag tag--mute">
-                <i className="tag-sq" aria-hidden />
-                <svg className="ic" width={14} height={14} viewBox="0 0 24 24" aria-hidden>
-                  <path d="M12 5v14M5 12h14" />
-                </svg>
-                Mítico
-              </span>
-              <span className="tag tag--ok">
-                <i className="tag-sq" aria-hidden />
-                <svg className="ic" width={14} height={14} viewBox="0 0 24 24" aria-hidden>
-                  <path d="m4.5 12.5 5 5L19.5 7" />
-                </svg>
-                Confirmado
-              </span>
+              <DesignSystemTag kind="mute">Worker</DesignSystemTag>
+              <DesignSystemTag kind="mute">Mítico</DesignSystemTag>
+              <DesignSystemTag kind="ok">Confirmado</DesignSystemTag>
             </div>
           </div>
           <span className="lbl">Níveis</span>

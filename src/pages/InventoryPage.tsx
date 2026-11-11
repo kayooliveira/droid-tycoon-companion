@@ -87,7 +87,15 @@ export function InventoryPage() {
     const chips = document.querySelector<HTMLElement>('[data-testid="inventory-page"] .chips--scroll')
     const selected = chips?.querySelector<HTMLElement>('[aria-pressed="true"]')
     if (chips && selected) {
-      const correction = filterMode === 'rarity' ? 2 : 7
+      const theme = document.documentElement.dataset.theme ?? 'oficina'
+      const correction =
+        filterMode === 'rarity'
+          ? theme === 'oficina'
+            ? 2
+            : 4
+          : theme === 'oficina'
+            ? 7
+            : 9
       chips.scrollLeft = Math.max(0, selected.offsetLeft - chips.offsetLeft - 24 + correction)
     }
   }, [filterMode])

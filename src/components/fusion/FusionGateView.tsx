@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { droidById } from '../../domain/gameData'
 import { droidImageSrc } from '../../lib/images'
+import { DesignSystemTag } from '../ui/DesignSystemTag'
 
 function RuleIcon({ kind }: { kind: 'tier' | 'random' | 'unlock' }) {
   if (kind === 'tier') {
@@ -26,15 +27,7 @@ function RuleIcon({ kind }: { kind: 'tier' | 'random' | 'unlock' }) {
   )
 }
 
-const partialTag = (label: string) => (
-  <span className="tag tag--mute">
-    <i className="tag-sq" aria-hidden />
-    <svg className="ic" width={14} height={14} viewBox="0 0 24 24" aria-hidden>
-      <path d="M12 5v14M5 12h14" />
-    </svg>
-    {label}
-  </span>
-)
+const partialTag = (label: string) => <DesignSystemTag kind="mute">{label}</DesignSystemTag>
 
 function GateSmTile({
   droidId,

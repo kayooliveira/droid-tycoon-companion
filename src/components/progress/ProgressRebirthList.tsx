@@ -10,6 +10,7 @@ import type { InventoryUnit } from '../../domain/types'
 import { formatBaseRarity } from '../../i18n/tierLabels'
 import { DroidImage } from '../DroidImage'
 import { IcTagCheck, IcTagX } from '../inventoryIcons'
+import { DesignSystemTag } from '../ui/DesignSystemTag'
 import { useAppStore } from '../../store/useAppStore'
 import {
   gateRebirthListNextRebirth,
@@ -76,21 +77,9 @@ const RebirthListItem = memo(function RebirthListItem({
             </span>
           ) : null}
         </span>
-        {done ? (
-          <span className="tag tag--ok">
-            <i className="tag-sq" aria-hidden />
-            <IcTagCheck />
-            {t('progress.listDone')}
-          </span>
-        ) : null}
+        {done ? <DesignSystemTag kind="ok">{t('progress.listDone')}</DesignSystemTag> : null}
         {active && !done ? (
-          <span className="tag tag--mute">
-            <i className="tag-sq" aria-hidden />
-            <svg className="ic" width={14} height={14} viewBox="0 0 24 24" aria-hidden>
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-            {t('progress.listCurrent')}
-          </span>
+          <DesignSystemTag kind="mute">{t('progress.listCurrent')}</DesignSystemTag>
         ) : null}
         <span className="chev" aria-hidden>
           <svg className="ic" width={20} height={20} viewBox="0 0 24 24">

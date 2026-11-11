@@ -96,6 +96,29 @@ Issues discovered while aligning the app with `comparar_1a1.py` (oficina theme).
 - **`comparar_1a1.py` (antes):** abria a visão **Todos** e preenchia `zzzzsemresultadoxyz`, deixando controles e copy diferentes do HTML aprovado.
 - **Correção:** a captura usa `e2e_inv_filter=rarity&e2e_inv_empty=1`; o segundo parâmetro força apenas a coleção gate a ficar vazia. O antigo `after_busca_inv` foi removido.
 
+## Tags no tema Figurinhas — ícone `.ic` obrigatório no DOM
+
+- **Mock generator (`ui.py` `tag()`):** sempre inclui `<i class="tag-sq">` e um `<svg class="ic">` (check / x / plus), mesmo quando `--tag-sq-display: none`.
+- **Tema figurinhas:** `--tag-ic-display: block`; sem o SVG a largura da tag cai ~20px e empurra listas/accordions (ex.: `progresso-disputa`, `vender`).
+- **Correção:** `DesignSystemTag` nos gate views / componentes que replicam HTML estático; o CSS do tema continua escolhendo quem aparece.
+
+## `cyclens.webp` do app vs mock aprovado
+
+- **Mock:** `dd-design/sistema/assets/droids/cyclens.webp` (arte alinhada ao álbum do design system).
+- **App (`public/assets/droids/cyclens.webp`):** arquivo diferente (checksum distinto) — no início aparece vermelho vs azul no comparador.
+- **Correção (gate):** `DroidImage` usa o webp do design system quando `isDesignGateCapture()` e `droid.id === 'cyclens'`. O binário em `public/` fica como no jogo real.
+
+## Lista do inventário e `--item-tile`
+
+- **Mock Figurinhas/Cartaz:** `--item-tile: 58px` para tiles `--sm` na lista.
+- **App (antes):** `.inv-list .dtile--sm { width/height: 56px }` fixo ignorava o token (oficina 56px passava por acidente).
+- **Correção:** usar `var(--item-tile, 56px)` na lista.
+
+## Menu Mais — altura do sheet (Figurinhas/Cartaz)
+
+- **Mock:** `.sheet` com 472px de altura; live com tipografia Bricolage/Hanken mede ~470px antes do mesmo conteúdo.
+- **Correção (gate):** `min-height: 472px` no sheet `nav-more-menu` só em `e2e-safe-area` para temas figurinhas e cartaz.
+
 ## `fusao-vazio.html` usa a busca estática `xyz`
 
 - **Static mock:** campo de receitas contém `xyz`, sem foco, e exibe “Nenhuma receita bate com a busca.”
