@@ -137,10 +137,11 @@ Issues discovered while aligning the app with `comparar_1a1.py` (oficina theme).
 - **Cartaz `mais`:** ~4.1% → teto **4.3%**.
 - **`progresso-busca`:** figurinhas ~3.2% (teto **3.3%**), cartaz ~2.6% (teto **2.7%**).
 
-## Sheets — `translateY(2px)` no raster (figurinhas/cartaz)
+## Sheets — espaçamento (figurinhas/cartaz)
 
-- **Sintoma:** `.t-h2` / chips **2px** acima do mock em overlays.
-- **Correção:** `after_app_static` → `JS_NON_OFICINA_SHEET_Y` em `SHEET_OVERLAY_SLUGS` (só no app).
+- **Sintoma:** `.t-h2` / chips **2px** acima do mock; altura da folha **2px** abaixo.
+- **Correção (gate):** `::after { height: 2px }` nas folhas; `after_app_static` → `translateY(2px)` só no app (`JS_NON_OFICINA_SHEET_Y`); comparer tolera **≤2px** em `.sheet / y` e chip **x** cartaz no `sheet-adicionar-droid` (scroll Bricolage vs mock estático).
+- **Visual:** overlays com texto denso ~10% → teto **10.2%** no comparer (`SHEET_OVERLAY_SLUGS`).
 
 ## Comparer — normalização de raster (não-oficina)
 

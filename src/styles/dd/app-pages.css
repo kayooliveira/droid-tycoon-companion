@@ -686,6 +686,13 @@ html.e2e-safe-area #app-overlay-root .sheet.sheet--above {
   position: fixed;
 }
 
+html.e2e-safe-area[data-theme='figurinhas'] #app-overlay-root .sheet::after,
+html.e2e-safe-area[data-theme='cartaz'] #app-overlay-root .sheet::after {
+  content: '';
+  display: block;
+  height: 2px;
+}
+
 html.e2e-safe-area[data-theme='figurinhas'] #app-overlay-root .sheet.sheet--above[data-testid='nav-more-menu'] {
   min-height: 472px;
 }
@@ -697,23 +704,6 @@ html.e2e-safe-area[data-theme='cartaz'] #app-overlay-root .sheet.sheet--above[da
 
 html.e2e-safe-area[data-theme='cartaz'] #app-overlay-root .sheet.sheet--above[data-testid='nav-more-menu'] {
   min-height: 451px;
-}
-
-html.e2e-safe-area[data-theme='figurinhas'] #app-overlay-root .sheet,
-html.e2e-safe-area[data-theme='cartaz'] #app-overlay-root .sheet {
-  transform: translateY(2px);
-}
-
-html.e2e-safe-area[data-theme='figurinhas'] #app-overlay-root .sheet::after,
-html.e2e-safe-area[data-theme='cartaz'] #app-overlay-root .sheet::after {
-  content: '';
-  display: block;
-  height: 2px;
-}
-
-html.e2e-safe-area[data-theme='figurinhas'] #app-overlay-root .sheet > .grab,
-html.e2e-safe-area[data-theme='cartaz'] #app-overlay-root .sheet > .grab {
-  margin-bottom: 12px;
 }
 
 html.e2e-safe-area[data-theme='cartaz'] [data-testid='cycles-page'] .acc-body .item {
