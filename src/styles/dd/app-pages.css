@@ -791,319 +791,33 @@ button.row.row--link::after {
   max-width: 100%;
 }
 
-.busca-stick {
-  position: sticky;
-  top: 0;
-  z-index: 3;
-  background: var(--c-bg);
-  margin-inline: calc(var(--sp-page) * -1);
-  padding: 8px var(--sp-page) 10px;
+.progress-droid-search .busca-stick {
   width: auto;
   max-width: none;
   box-sizing: border-box;
 }
 
-.busca-stick .field-wrap {
-  width: 100%;
-  max-width: 100%;
-}
-
-.busca-back {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  margin: 2px 0 4px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--c-accent-text, var(--c-text));
-  font: 700 14px/1.2 var(--f-text);
-  text-align: left;
-}
-
-[data-theme='cartaz'] .busca-back {
-  color: var(--c-text);
-}
-
-.busca-hint {
-  margin: 12px 0 0;
-  max-width: 100%;
-}
-
-.busca-results {
-  min-width: 0;
-  max-width: 100%;
-}
-
-.busca-list {
-  margin-top: 4px;
-  min-width: 0;
-  max-width: 100%;
-}
-
-.busca-hit {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  min-height: 56px;
-  padding: 8px 0;
-  margin: 0;
-  border: 0;
-  border-bottom: var(--row-bb);
-  background: transparent;
-  color: var(--c-text);
-  text-align: left;
-  border-radius: 0;
-}
-
-.busca-hit:last-child {
-  border-bottom: 0;
-}
-
-.busca-thumb {
-  width: 44px;
-  height: 44px;
-  flex: none;
-  display: block;
-}
-
-.busca-thumb .dtile {
-  width: 44px;
-  height: 44px;
-  aspect-ratio: 1 / 1;
-  flex: none;
-}
-
-.busca-thumb--head .dtile {
-  aspect-ratio: 1 / 1;
-  flex: none;
-}
-
-.busca-thumb--head {
-  width: 56px;
-  height: 56px;
-}
-
-.busca-thumb--head .dtile {
-  width: 56px;
-  height: 56px;
-}
-
-.busca-hit .row-main,
-.busca-head .row-main {
-  flex: 1;
-  min-width: 0;
-}
-
-.busca-hit .dname,
-.busca-head .dname {
-  overflow-wrap: anywhere;
-  white-space: normal;
-}
-
-.busca-status {
-  margin-top: 16px;
-  max-width: 100%;
-}
-
-.busca-head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  margin: 8px 0 14px;
-}
-
-.busca-sum {
-  margin: 0 0 14px;
-  max-width: 100%;
-}
-
-.need-next {
-  display: block;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  text-align: left;
-  color: inherit;
-  padding: var(--panel-pad);
-  background: var(--panel-bg);
-  border-radius: var(--panel-r);
-  box-shadow: var(--panel-sh);
-  outline: 2px solid var(--c-accent-graph);
-  outline-offset: 0;
-  margin: 0 0 8px;
-  border: 0;
-}
-
-.need-next .need-kicker {
-  display: block;
-  margin-bottom: 6px;
-}
-
-.need-next .dname {
-  display: block;
-}
-
-.need-line {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-  min-width: 0;
-}
-
-.need-qty {
-  font-family: var(--meta-font);
-  font-size: var(--meta-size);
-  font-weight: var(--meta-weight);
-  letter-spacing: var(--meta-ls);
-  text-transform: var(--meta-case);
-  color: var(--c-text);
-}
-
-.need-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  min-height: 56px;
-  padding: var(--row-pad) 0;
-  margin: 0;
-  border: 0;
-  border-bottom: var(--row-bb);
-  background: transparent;
-  color: var(--c-text);
-  text-align: left;
-}
-
-.need-row .row-main {
-  flex: 1;
-  min-width: 0;
-}
-
-.need-row .dname {
-  display: block;
-}
-
-.busca-sec-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.tier-swatch {
-  --tier-bg: var(--tier-default);
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  flex: none;
-  border-radius: var(--r-chip, 3px);
-  background: var(--tier-bg);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.28);
-}
-
-.tier-swatch[data-tier='default'] {
-  --tier-bg: var(--tier-default);
-}
-.tier-swatch[data-tier='gold'] {
-  --tier-bg: var(--tier-gold);
-}
-.tier-swatch[data-tier='diamond'] {
-  --tier-bg: var(--tier-diamond);
-}
-.tier-swatch[data-tier='rainbow'] {
-  --tier-bg: var(--tier-rainbow);
-}
-.tier-swatch[data-tier='beskar'] {
-  --tier-bg: var(--tier-beskar);
-}
-.tier-swatch[data-tier='galactic'] {
-  --tier-bg: var(--tier-galactic);
-}
-.tier-swatch[data-tier='stellar'] {
-  --tier-bg: var(--tier-stellar);
-}
-.tier-swatch[data-tier='kyber'] {
-  --tier-bg: var(--tier-kyber);
-}
-.tier-swatch[data-tier='scourge'] {
-  --tier-bg: var(--tier-scourge);
-}
-
-.tier-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 28px;
-  padding: 0 2px 0 0;
-  color: var(--c-text);
+.progress-droid-search .busca-head .dname {
   font-family: var(--name-font);
-  font-size: 14px;
-  font-weight: 700;
+  font-size: var(--name-size);
+  font-weight: var(--name-weight);
   font-variation-settings: var(--name-var);
-  min-width: 0;
 }
 
-.cycle-fold {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  min-height: 56px;
-  padding: 10px 0;
-  margin: 0;
-  border: 0;
-  border-bottom: var(--row-bb);
-  background: transparent;
-  color: var(--c-text);
-  text-align: left;
+.progress-droid-search .hit-card .dname {
+  font-family: var(--name-font);
+  font-size: var(--name-size);
+  font-weight: var(--name-weight);
+  font-variation-settings: var(--name-var);
 }
 
-.cycle-fold .dname {
-  display: block;
-}
-
-.cycle-fold .hint {
-  display: block;
-}
-
-.need-cta {
-  margin-top: 14px;
-}
-
-.busca-sec {
-  margin-top: 18px;
+.busca-sec-nested {
+  margin-bottom: 4px;
   min-width: 0;
   max-width: 100%;
-}
-
-.progress-droid-search .chev {
-  color: var(--c-text);
-  opacity: 1;
-  flex: none;
-}
-
-.progress-droid-search .chev .ic,
-.progress-droid-search .chev svg {
-  color: inherit;
-  fill: currentColor;
-  stroke: none;
 }
 
 /* Cartaz mock: section ink (--cs-fg) matches primary text; other themes use --c-text. */
-[data-theme='cartaz'] .progress-droid-search .chev,
 [data-theme='cartaz'] .progress-droid-search .field-clear {
   color: var(--cs-fg);
 }
@@ -1118,6 +832,12 @@ button.row.row--link::after {
   color: inherit;
   fill: currentColor;
   stroke: none;
+}
+
+.progress-droid-search .status-tag .ic,
+.progress-droid-search .status-tag svg {
+  fill: currentColor;
+  stroke: currentColor;
 }
 
 .acc-h[data-highlighted='true'] {

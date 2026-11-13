@@ -1,4 +1,3 @@
-import { CaretRight } from '@phosphor-icons/react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { cycleById, droidById, gameData } from '../../domain/gameData'
@@ -11,7 +10,6 @@ import {
   rebirthNeedStatus,
   type ProgressDroidNeedHit,
 } from '../../domain/progressDroidSearch'
-import { formatTierName } from '../../domain/tiers'
 import { useSoftKeyboardVisible } from '../../hooks/useSoftKeyboardVisible'
 import { useTierLabels } from '../../i18n/useTierLabels'
 import { cycleDisplayNameForId } from '../../lib/cycleLabel'
@@ -20,13 +18,16 @@ import { cn } from '../../lib/utils'
 import { useAppStore } from '../../store/useAppStore'
 import { DroidImage } from '../DroidImage'
 import { SearchInput } from '../ui/SearchInput'
-import { uiIconProps } from '../ui/iconStyle'
 import {
-  formatTierList,
-  nextUsePreviewLine,
+  CycleSummaryCard,
+  NeedRowCompact,
+  SearchHitCard,
+} from './progressSearchUi'
+import {
+  nextUseForDroid,
   pickDroidById,
+  sortMatchedDroids,
   tierThumbForDroid,
-  uniqueTiersInHits,
 } from './progressSearchHelpers'
 
 export type ProgressNavTarget = { pathId: string; rebirth: number }
@@ -112,8 +113,9 @@ export function ProgressDroidSearch({
 
   const matchedDroids = useMemo(() => {
     if (trimmedQuery.length < 1) return []
-    return findMatchingDroids(trimmedQuery, gameData.droids, 12)
-  }, [trimmedQuery])
+    const found = findMatchingDroids(trimmedQuery, gameData.droids, 12)
+    return sortMatchedDroids(found, progress)
+  }, [trimmedQuery, progress])
 
   const selectedDroid = useMemo(
     () => pickDroidById(gameData.droids, selectedDroidId),
@@ -136,13 +138,13 @@ export function ProgressDroidSearch({
       let changed = false
       for (const { pathId } of grouped) {
         if (next[pathId] === undefined) {
-          next[pathId] = pathId === progress.pathId
+          next[pathId] = false
           changed = true
         }
       }
       return changed ? next : prev
     })
-  }, [grouped, progress.pathId])
+  }, [grouped])
 
   const nextHit = useMemo(
     () => (needs.length ? nextUpcomingNeedRebirth(needs, progress) : null),
@@ -176,26 +178,6 @@ export function ProgressDroidSearch({
   const showNoMatch = searchActive && !selectedDroid && matchedDroids.length === 0
   const showSelected = searchActive && selectedDroid != null
   const showEmptyHint = !searchActive
-
-  const cycleCount = grouped.length
-  const selectedSummary =
-    selectedDroid && nextHit && !neverNeeded
-      ? nextHit.pathId === progress.pathId
-        ? t('progress.search.appearsSummaryCurrent', {
-            cycleCount,
-            ciclo: cycleNumberFromPathId(progress.pathId),
-            n: nextHit.rebirth,
-            tier: formatTierName(nextHit.tier, tierLabels),
-            qty: nextHit.quantity,
-          })
-        : t('progress.search.appearsSummaryOther', {
-            cycleCount,
-            hitCiclo: cycleNumberFromPathId(nextHit.pathId),
-            n: nextHit.rebirth,
-            tier: formatTierName(nextHit.tier, tierLabels),
-            qty: nextHit.quantity,
-          })
-      : null
 
   return (
     <div
@@ -248,32 +230,26 @@ export function ProgressDroidSearch({
 
         {showTypingList ? (
           <>
-            <p className="t-meta" style={{ margin: '4px 0 0' }}>
+            <p className="t-meta busca-count">
               {t('progress.search.matchCount', { count: matchedDroids.length })}
             </p>
-            <div className="busca-list" role="listbox" aria-label={t('progress.search.pickDroid')}>
+            <div className="hit-list" role="listbox" aria-label={t('progress.search.pickDroid')}>
               {matchedDroids.map((d) => {
-                const tier = tierThumbForDroid(d.id, progress)
+                const hit = nextUseForDroid(d.id, progress)
+                const highlighted =
+                  hit != null &&
+                  hit.pathId === progress.pathId &&
+                  hit.rebirth === progress.nextRebirth
                 return (
-                  <button
+                  <SearchHitCard
                     key={d.id}
-                    type="button"
-                    role="option"
-                    className="busca-hit"
-                    data-testid={`progress-search-pick-${d.id}`}
-                    onPointerDown={holdTabBarDuringTap}
-                    onClick={() => selectDroid(d.id, d.name)}
-                  >
-                    <span className="busca-thumb" aria-hidden>
-                      <DroidImage droid={d} tier={tier} size="sm" />
-                    </span>
-                    <span className="row-main">
-                      <span className="dname">{d.name}</span>
-                      <span className="hint" style={{ display: 'block' }}>
-                        {nextUsePreviewLine(d.id, progress, tierLabels, t)}
-                      </span>
-                    </span>
-                  </button>
+                    droid={d}
+                    hit={hit}
+                    tierLabels={tierLabels}
+                    highlighted={highlighted}
+                    onPick={() => selectDroid(d.id, d.name)}
+                    onHoldPointerDown={holdTabBarDuringTap}
+                  />
                 )
               })}
             </div>
@@ -285,7 +261,6 @@ export function ProgressDroidSearch({
             droid={selectedDroid}
             browseQuery={browseQuery}
             neverNeeded={neverNeeded}
-            summary={selectedSummary}
             grouped={grouped}
             nextHit={nextHit}
             expandedPaths={expandedPaths}
@@ -304,12 +279,13 @@ export function ProgressDroidSearch({
   )
 }
 
-function TierPill({ tier, label }: { tier: string; label: string }) {
+function hitEquals(a: ProgressDroidNeedHit, b: ProgressDroidNeedHit) {
   return (
-    <span className="tier-pill">
-      <i className="tier-swatch" data-tier={tier} aria-hidden />
-      {label}
-    </span>
+    a.pathId === b.pathId &&
+    a.rebirth === b.rebirth &&
+    a.tier === b.tier &&
+    a.kind === b.kind &&
+    a.fusionId === b.fusionId
   )
 }
 
@@ -317,7 +293,6 @@ function SelectedDroidPanel({
   droid,
   browseQuery,
   neverNeeded,
-  summary,
   grouped,
   nextHit,
   expandedPaths,
@@ -331,7 +306,6 @@ function SelectedDroidPanel({
   droid: NonNullable<ReturnType<typeof droidById.get>>
   browseQuery: string
   neverNeeded: boolean
-  summary: string | null
   grouped: Array<{ pathId: string; hits: ProgressDroidNeedHit[] }>
   nextHit: ProgressDroidNeedHit | null
   expandedPaths: Record<string, boolean>
@@ -346,22 +320,18 @@ function SelectedDroidPanel({
   const progress = useAppStore((s) => s.progress)
 
   const thumbTier = nextHit?.tier ?? tierThumbForDroid(droid.id, progress)
-
   const currentPathId = progress.pathId
   const currentGroup = grouped.find((g) => g.pathId === currentPathId)
   const otherGroups = grouped.filter((g) => g.pathId !== currentPathId)
+  const currentHits = currentGroup?.hits ?? []
 
-  const stillInCurrent =
-    currentGroup?.hits.filter(
-      (h) =>
-        !(
-          nextHit &&
-          h.pathId === nextHit.pathId &&
-          h.rebirth === nextHit.rebirth &&
-          h.tier === nextHit.tier &&
-          h.kind === nextHit.kind
-        ),
-    ) ?? []
+  const passedHits = currentHits.filter(
+    (h) => rebirthNeedStatus(h.pathId, h.rebirth, progress) === 'done',
+  )
+  const stillHits = currentHits.filter((h) => {
+    if (nextHit && hitEquals(h, nextHit)) return false
+    return rebirthNeedStatus(h.pathId, h.rebirth, progress) === 'upcoming'
+  })
 
   if (neverNeeded) {
     return (
@@ -372,7 +342,7 @@ function SelectedDroidPanel({
           </button>
         ) : null}
         <div className="busca-head">
-          <span className="busca-thumb busca-thumb--head" aria-hidden>
+          <span className="busca-thumb" aria-hidden>
             <DroidImage droid={droid} size="sm" />
           </span>
           <span className="row-main">
@@ -390,6 +360,11 @@ function SelectedDroidPanel({
     )
   }
 
+  const featuredOnCurrent = nextHit?.pathId === currentPathId
+  const sectionTitle = featuredOnCurrent
+    ? t('progress.search.inYourCycle')
+    : t('progress.search.nextUpcoming')
+
   return (
     <>
       {browseQuery ? (
@@ -399,7 +374,7 @@ function SelectedDroidPanel({
       ) : null}
 
       <div className="busca-head">
-        <span className="busca-thumb busca-thumb--head" aria-hidden>
+        <span className="busca-thumb" aria-hidden>
           <DroidImage droid={droid} tier={thumbTier} size="sm" />
         </span>
         <span className="row-main">
@@ -410,67 +385,87 @@ function SelectedDroidPanel({
         </span>
       </div>
 
-      {summary ? <p className="hint busca-sum">{summary}</p> : null}
-
-      {nextHit && nextHit.pathId === currentPathId ? (
-        <>
-          <NextUseCard
-            hit={nextHit}
-            tierLabels={tierLabels}
-            onHoldPointerDown={onHoldPointerDown}
-            onGo={() => onNavigateToStep({ pathId: nextHit.pathId, rebirth: nextHit.rebirth })}
-          />
-          <div className="need-cta">
-            <button
-              type="button"
-              className="btn btn--primary btn--block"
-              data-testid="progress-search-next-cta"
-              onPointerDown={onHoldPointerDown}
-              onClick={() => onNavigateToStep({ pathId: nextHit.pathId, rebirth: nextHit.rebirth })}
-            >
-              {t('progress.search.viewRebirth', { n: nextHit.rebirth })}
-            </button>
-          </div>
-        </>
-      ) : nextHit ? (
-        <>
-          <NextUseCard
-            hit={nextHit}
-            tierLabels={tierLabels}
-            onHoldPointerDown={onHoldPointerDown}
-            onGo={() => onNavigateToStep({ pathId: nextHit.pathId, rebirth: nextHit.rebirth })}
-          />
-          <div className="need-cta">
-            <button
-              type="button"
-              className="btn btn--primary btn--block"
-              data-testid="progress-search-next-cta"
-              onPointerDown={onHoldPointerDown}
-              onClick={() => onNavigateToStep({ pathId: nextHit.pathId, rebirth: nextHit.rebirth })}
-            >
-              {t('progress.search.viewRebirth', { n: nextHit.rebirth })}
-            </button>
-          </div>
-        </>
-      ) : null}
-
-      {stillInCurrent.length > 0 ? (
+      {nextHit ? (
         <section className="busca-sec" data-testid={`progress-search-path-${currentPathId}`}>
           <div className="sec-h">
-            <h2 className="t-h2">{t('progress.search.stillInCycle', { ciclo: cycleNumberFromPathId(currentPathId) })}</h2>
-            <span className="t-label">{t('progress.search.currentCycle')}</span>
+            <h2 className="t-h2">{sectionTitle}</h2>
+            {featuredOnCurrent ? (
+              <span className="t-label">
+                {t('progress.search.cycleLabelShort', {
+                  ciclo: cycleNumberFromPathId(currentPathId),
+                })}
+              </span>
+            ) : (
+              <span className="t-label">
+                {t('progress.search.cycleLabelShort', {
+                  ciclo: cycleNumberFromPathId(nextHit.pathId),
+                })}
+              </span>
+            )}
           </div>
-          <ul className="busca-sec-list">
-            {stillInCurrent.map((hit) => (
-              <CompactNeedRow
-                key={rowKey(hit)}
-                hit={hit}
-                tierLabels={tierLabels}
-                onHoldPointerDown={onHoldPointerDown}
-                onGo={() => onNavigateToStep({ pathId: hit.pathId, rebirth: hit.rebirth })}
-              />
-            ))}
-          </ul>
+          <NeedRowCompact
+            hit={nextHit}
+            tierLabels={tierLabels}
+            featured
+            showBadge
+            onHoldPointerDown={onHoldPointerDown}
+            onGo={() => onNavigateToStep({ pathId: nextHit.pathId, rebirth: nextHit.rebirth })}
+            testId="progress-search-next-card"
+          />
+          <div className="need-cta">
+            <button
+              type="button"
+              className="btn btn--primary btn--block"
+              data-testid="progress-search-next-cta"
+              onPointerDown={onHoldPointerDown}
+              onClick={() =>
+                onNavigateToStep({ pathId: nextHit.pathId, rebirth: nextHit.rebirth })
+              }
+            >
+              {t('progress.search.viewRebirth', { n: nextHit.rebirth })}
+            </button>
+          </div>
+        </section>
+      ) : null}
+
+      {passedHits.length > 0 ? (
+        <section className="busca-sec">
+          <div className="sec-h">
+            <h2 className="t-h2">
+              {t('progress.search.alreadyPassedInCycle', {
+                ciclo: cycleNumberFromPathId(currentPathId),
+              })}
+            </h2>
+          </div>
+          {passedHits.map((hit) => (
+            <NeedRowCompact
+              key={`${hit.pathId}-${hit.rebirth}-${hit.tier}`}
+              hit={hit}
+              tierLabels={tierLabels}
+              showBadge
+              onHoldPointerDown={onHoldPointerDown}
+              onGo={() => onNavigateToStep({ pathId: hit.pathId, rebirth: hit.rebirth })}
+            />
+          ))}
+        </section>
+      ) : null}
+
+      {stillHits.length > 0 ? (
+        <section className="busca-sec">
+          <div className="sec-h">
+            <h2 className="t-h2">
+              {t('progress.search.stillInCycle', { ciclo: cycleNumberFromPathId(currentPathId) })}
+            </h2>
+          </div>
+          {stillHits.map((hit) => (
+            <NeedRowCompact
+              key={`${hit.pathId}-${hit.rebirth}-${hit.tier}`}
+              hit={hit}
+              tierLabels={tierLabels}
+              onHoldPointerDown={onHoldPointerDown}
+              onGo={() => onNavigateToStep({ pathId: hit.pathId, rebirth: hit.rebirth })}
+            />
+          ))}
         </section>
       ) : null}
 
@@ -480,7 +475,7 @@ function SelectedDroidPanel({
             <h2 className="t-h2">{t('progress.search.otherCycles')}</h2>
           </div>
           {otherGroups.map(({ pathId, hits }) => (
-            <OtherCycleGroup
+            <OtherCycleBlock
               key={pathId}
               pathId={pathId}
               hits={hits}
@@ -498,98 +493,7 @@ function SelectedDroidPanel({
   )
 }
 
-function rowKey(hit: ProgressDroidNeedHit) {
-  return `${hit.pathId}-${hit.rebirth}-${hit.tier}-${hit.kind}-${hit.fusionId ?? ''}`
-}
-
-function NextUseCard({
-  hit,
-  tierLabels,
-  onGo,
-  onHoldPointerDown,
-}: {
-  hit: ProgressDroidNeedHit
-  tierLabels: Map<string, string>
-  onGo: () => void
-  onHoldPointerDown: () => void
-}) {
-  const { t } = useTranslation()
-  const progress = useAppStore((s) => s.progress)
-  const tierLabel = formatTierName(hit.tier, tierLabels)
-  const ciclo = cycleNumberFromPathId(hit.pathId)
-  const onCurrent = hit.pathId === progress.pathId
-  const status = rebirthNeedStatus(hit.pathId, hit.rebirth, progress)
-  const foot =
-    onCurrent && status === 'upcoming'
-      ? t('progress.search.nextCardFootCurrent', { ciclo })
-      : t('progress.search.nextCardFootOther', { ciclo })
-
-  return (
-    <button
-      type="button"
-      className="need-next"
-      data-testid="progress-search-next-card"
-      data-highlighted={onCurrent ? 'true' : undefined}
-      aria-label={t('progress.search.openStepAria', { ciclo, n: hit.rebirth })}
-      onPointerDown={onHoldPointerDown}
-      onClick={onGo}
-    >
-      <span className="t-label need-kicker">
-        {onCurrent ? t('progress.search.nextInYourCycle') : t('progress.search.nextUpcoming')}
-      </span>
-      <span className="dname">{t('progress.search.rebirthStep', { n: hit.rebirth })}</span>
-      <span className="need-line">
-        <TierPill tier={hit.tier} label={tierLabel} />
-        <span className="need-qty">×{hit.quantity}</span>
-      </span>
-      <span className="hint" style={{ display: 'block', marginTop: 8 }}>
-        {foot}
-      </span>
-    </button>
-  )
-}
-
-function CompactNeedRow({
-  hit,
-  tierLabels,
-  onGo,
-  onHoldPointerDown,
-}: {
-  hit: ProgressDroidNeedHit
-  tierLabels: Map<string, string>
-  onGo: () => void
-  onHoldPointerDown: () => void
-}) {
-  const { t } = useTranslation()
-  const tierLabel = formatTierName(hit.tier, tierLabels)
-  const ciclo = cycleNumberFromPathId(hit.pathId)
-
-  return (
-    <li>
-      <button
-        type="button"
-        className="need-row"
-        data-testid={`progress-search-hit-${hit.pathId}-${hit.rebirth}`}
-        aria-label={t('progress.search.openStepAria', { ciclo, n: hit.rebirth })}
-        onPointerDown={onHoldPointerDown}
-        onClick={onGo}
-      >
-        <span className="row-main">
-          <span className="dname">{t('progress.search.rebirthStep', { n: hit.rebirth })}</span>
-          <span className="need-line">
-            <TierPill tier={hit.tier} label={tierLabel} />
-            <span className="need-qty">×{hit.quantity}</span>
-          </span>
-        </span>
-        <span className="chev" aria-hidden>
-          <CaretRight {...uiIconProps} className="ic" width={20} height={20} />
-        </span>
-      </button>
-    </li>
-  )
-}
-
-function OtherCycleGroup({
+function OtherCycleBlock({
   pathId,
   hits,
   expanded,
@@ -608,61 +512,26 @@ function OtherCycleGroup({
   onNavigateToStep: (target: ProgressNavTarget) => void
   onHoldPointerDown: () => void
 }) {
-  const { t } = useTranslation()
-  const rebirthCount = new Set(hits.map((h) => h.rebirth)).size
-  const tiers = formatTierList(uniqueTiersInHits(hits, tierLabels), t)
-
-  if (!expanded) {
-    return (
-      <button
-        type="button"
-        className="cycle-fold"
-        data-testid={`progress-search-path-summary-${pathId}`}
-        aria-expanded={false}
-        onClick={onToggle}
-      >
-        <span className="row-main">
-          <span className="dname">{cycleLabel}</span>
-          <span className="hint">
-            {t('progress.search.cycleFoldHint', { count: rebirthCount, tiers })}
-          </span>
-        </span>
-        <span className="chev" aria-hidden>
-          <CaretRight {...uiIconProps} className="ic" width={20} height={20} />
-        </span>
-      </button>
-    )
-  }
-
   return (
     <section data-testid={`progress-search-path-${pathId}`} className="busca-sec-nested">
-      <button
-        type="button"
-        className="cycle-fold"
-        aria-expanded
-        onClick={onToggle}
-      >
-        <span className="row-main">
-          <span className="dname">{cycleLabel}</span>
-          <span className="hint">
-            {t('progress.search.cycleFoldHint', { count: rebirthCount, tiers })}
-          </span>
-        </span>
-        <span className="chev" aria-hidden>
-          <CaretRight {...uiIconProps} className="ic" width={20} height={20} style={{ transform: 'rotate(90deg)' }} />
-        </span>
-      </button>
-      <ul className="busca-sec-list">
-        {hits.map((hit) => (
-          <CompactNeedRow
-            key={rowKey(hit)}
-            hit={hit}
-            tierLabels={tierLabels}
-            onHoldPointerDown={onHoldPointerDown}
-            onGo={() => onNavigateToStep({ pathId: hit.pathId, rebirth: hit.rebirth })}
-          />
-        ))}
-      </ul>
+      <CycleSummaryCard
+        pathId={pathId}
+        hits={hits}
+        cycleLabel={cycleLabel}
+        expanded={expanded}
+        onToggle={onToggle}
+      />
+      {expanded
+        ? hits.map((hit) => (
+            <NeedRowCompact
+              key={`${hit.pathId}-${hit.rebirth}-${hit.tier}`}
+              hit={hit}
+              tierLabels={tierLabels}
+              onHoldPointerDown={onHoldPointerDown}
+              onGo={() => onNavigateToStep({ pathId: hit.pathId, rebirth: hit.rebirth })}
+            />
+          ))
+        : null}
     </section>
   )
 }

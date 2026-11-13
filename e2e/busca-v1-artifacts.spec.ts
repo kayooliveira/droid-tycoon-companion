@@ -274,9 +274,7 @@ test('busca contraste clear e chevron >= 3:1 (6 temas)', async ({ page }) => {
         return getComputedStyle(document.documentElement).backgroundColor
       }
       const clearBtn = document.querySelector('[data-testid="progress-droid-search-clear"]')
-      const chev =
-        document.querySelector('.progress-droid-search .need-row .chev') ??
-        document.querySelector('.progress-droid-search .chev')
+      const chev = document.querySelector('.progress-droid-search .status-tag--next')
       const field = document.querySelector('.progress-search-field .field')
       const resolveBg = (el: Element | null) => {
         if (!el) return null
@@ -301,10 +299,10 @@ test('busca contraste clear e chevron >= 3:1 (6 temas)', async ({ page }) => {
       mode,
       csFg: samples.csFg,
       clear: clearRatio != null ? Math.round(clearRatio * 100) / 100 : null,
-      chevron: chevRatio != null ? Math.round(chevRatio * 100) / 100 : null,
+      statusNext: chevRatio != null ? Math.round(chevRatio * 100) / 100 : null,
     })
     expect(clearRatio, `${theme}-${mode} clear`).toBeGreaterThanOrEqual(3)
-    expect(chevRatio, `${theme}-${mode} chevron`).toBeGreaterThanOrEqual(3)
+    expect(chevRatio, `${theme}-${mode} status tag`).toBeGreaterThanOrEqual(3)
   }
   console.log(`BUSCA_CONTRAST_REPORT ${JSON.stringify(report)}`)
 })
