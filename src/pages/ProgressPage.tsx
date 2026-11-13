@@ -64,6 +64,7 @@ export function ProgressPage() {
   const [highlightRebirth, setHighlightRebirth] = useState<number | null>(null)
   const deepLinkHandled = useRef(false)
   const searchQueryFromUrl = searchParams.get('q') ?? ''
+  const [searchActive, setSearchActive] = useState(() => searchQueryFromUrl.trim().length > 0)
 
   const current = getRebirth(progress.pathId, progress.nextRebirth)
   const pathDone = isPathComplete(progress)
@@ -163,23 +164,27 @@ export function ProgressPage() {
       testId="progress-page"
       className="progress-page-pad"
     >
-      <CycleProgressStrip
-        variant="progress"
-        afterMeter={
-          <div style={{ marginTop: 12 }}>
-            <PathProgressSwitcher compact />
-          </div>
-        }
-      />
+      {!searchActive ? (
+        <CycleProgressStrip
+          variant="progress"
+          afterMeter={
+            <div style={{ marginTop: 12 }}>
+              <PathProgressSwitcher compact />
+            </div>
+          }
+        />
+      ) : null}
 
-      <div style={{ marginTop: 14 }}>
+      <div style={{ marginTop: searchActive ? 0 : 14 }}>
         <ProgressDroidSearch
           initialQuery={searchQueryFromUrl}
           onNavigateToStep={goToRebirthStep}
+          onSearchActiveChange={setSearchActive}
+          stickySearch={searchActive}
         />
       </div>
 
-      {current || showSuperOnly ? (
+      {!searchActive && (current || showSuperOnly) ? (
         <>
           {current ? (
             <>
@@ -211,12 +216,13 @@ export function ProgressPage() {
             onUndo={() => setUndoOpen(true)}
           />
         </>
-      ) : (
+      ) : !searchActive ? (
         <p className="text-sm text-ui-muted px-4">
           {pathDone ? t('progress.pathComplete') : t('progress.listCurrent')}
         </p>
-      )}
+      ) : null}
 
+      {!searchActive ? (
       <ProgressRebirthList
         pathId={progress.pathId}
         rebirthNumbers={rebirthNumbers}
@@ -227,8 +233,9 @@ export function ProgressPage() {
         highlightRebirth={highlightRebirth}
         onNavHandled={() => setNavTarget(null)}
       />
+      ) : null}
 
-      <ProgressPdfExport />
+      {!searchActive ? <ProgressPdfExport /> : null}
 
       <DroidDetailSheet
         open={droidDetail != null}

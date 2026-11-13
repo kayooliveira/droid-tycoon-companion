@@ -28,3 +28,4 @@ dist-ssr
 __pycache__/
 *.py[cod]
 dd-design/sistema/tools/_resultado_app.json
+dd-handoff/
