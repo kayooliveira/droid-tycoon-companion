@@ -1,12 +1,12 @@
 import type { TFunction } from 'i18next'
 import type { Droid } from '../../domain/types'
+import type { ProgressState } from '../../domain/progress'
 import {
   collectDroidProgressNeeds,
   cycleNumberFromPathId,
   nextUpcomingNeedRebirth,
   type ProgressDroidNeedHit,
 } from '../../domain/progressDroidSearch'
-import type { ProgressState } from '../../domain/progress'
 import { formatTierName } from '../../domain/tiers'
 
 export function nextUseForDroid(
@@ -68,4 +68,20 @@ export function formatTierList(tiers: string[], t: TFunction): string {
 export function pickDroidById(droids: Droid[], id: string | null): Droid | null {
   if (!id) return null
   return droids.find((d) => d.id === id) ?? null
+}
+
+/** Current-rebirth matches first, then same path, then name. */
+export function sortMatchedDroids(droids: Droid[], progress: ProgressState): Droid[] {
+  const score = (droidId: string) => {
+    const hit = nextUseForDroid(droidId, progress)
+    if (!hit) return 4
+    if (hit.pathId === progress.pathId && hit.rebirth === progress.nextRebirth) return 0
+    if (hit.pathId === progress.pathId) return 1
+    return 2
+  }
+  return [...droids].sort((a, b) => {
+    const diff = score(a.id) - score(b.id)
+    if (diff !== 0) return diff
+    return a.name.localeCompare(b.name)
+  })
 }
