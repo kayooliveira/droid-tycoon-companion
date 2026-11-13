@@ -501,7 +501,7 @@ button.row.row--link::after {
 }
 
 .progress-search-field .field {
-  font-size: max(14px, min(16px, 4.1vw));
+  font-size: 16px;
 }
 
 .add-droid-picks {
@@ -770,7 +770,7 @@ button.row.row--link::after {
 
 .progress-page-pad .field-wrap {
   width: 100%;
-  max-width: 358px;
+  max-width: 100%;
   box-sizing: border-box;
 }
 
@@ -785,16 +785,26 @@ button.row.row--link::after {
   max-width: 100%;
 }
 
+.busca-field-block {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
 .busca-stick {
   position: sticky;
   top: 0;
   z-index: 3;
   background: var(--c-bg);
-  margin: 0 calc(var(--sp-page) * -1);
+  margin-inline: calc(var(--sp-page) * -1);
   padding: 8px var(--sp-page) 10px;
+  width: auto;
+  max-width: none;
+  box-sizing: border-box;
 }
 
 .busca-stick .field-wrap {
+  width: 100%;
   max-width: 100%;
 }
 
@@ -863,6 +873,13 @@ button.row.row--link::after {
 .busca-thumb .dtile {
   width: 44px;
   height: 44px;
+  aspect-ratio: 1 / 1;
+  flex: none;
+}
+
+.busca-thumb--head .dtile {
+  aspect-ratio: 1 / 1;
+  flex: none;
 }
 
 .busca-thumb--head {
@@ -1070,6 +1087,23 @@ button.row.row--link::after {
   margin-top: 18px;
   min-width: 0;
   max-width: 100%;
+}
+
+.progress-droid-search .chev {
+  color: var(--c-text);
+  opacity: 0.88;
+  flex: none;
+}
+
+.progress-droid-search .field-clear {
+  color: var(--c-text);
+  opacity: 0.82;
+}
+
+.acc-h[data-highlighted='true'] {
+  outline: 2px solid var(--c-accent-graph);
+  outline-offset: 2px;
+  border-radius: var(--r-control);
 }
 
 .install-banner-ds .banner-act .btn {

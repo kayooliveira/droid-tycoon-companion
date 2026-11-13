@@ -137,6 +137,7 @@ export function ProgressPage() {
       setHighlightRebirth(target.rebirth)
       window.setTimeout(() => setHighlightRebirth(null), 2600)
       const next = new URLSearchParams(searchParams)
+      next.delete('q')
       next.set('ciclo', String(cycleNumberFromPathId(target.pathId)))
       next.set('passo', String(target.rebirth))
       setSearchParams(next, { replace: false })
@@ -153,6 +154,14 @@ export function ProgressPage() {
     const pathId = pathIdFromCycleNumber(ciclo)
     goToRebirthStep({ pathId, rebirth: passo })
   }, [goToRebirthStep, searchParams])
+
+  useEffect(() => {
+    if (searchActive) return
+    if (!searchParams.get('q')) return
+    const next = new URLSearchParams(searchParams)
+    next.delete('q')
+    setSearchParams(next, { replace: true })
+  }, [searchActive, searchParams, setSearchParams])
 
   const openDroidDetail = (droidId: string, tier: TierId, sellable: boolean, qty?: number) => {
     setDroidDetail({ droidId, tier, sellable, qty })

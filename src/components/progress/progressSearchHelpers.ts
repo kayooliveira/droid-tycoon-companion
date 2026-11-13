@@ -53,11 +53,16 @@ export function uniqueTiersInHits(
   return out
 }
 
-export function formatTierListPt(tiers: string[]): string {
+export function formatTierList(tiers: string[], t: TFunction): string {
   if (tiers.length === 0) return ''
   if (tiers.length === 1) return tiers[0]!
-  if (tiers.length === 2) return `${tiers[0]} e ${tiers[1]}`
-  return `${tiers.slice(0, -1).join(', ')} e ${tiers[tiers.length - 1]}`
+  if (tiers.length === 2) {
+    return t('progress.search.tierListPair', { first: tiers[0], second: tiers[1] })
+  }
+  return t('progress.search.tierListMany', {
+    items: tiers.slice(0, -1).join(', '),
+    last: tiers[tiers.length - 1],
+  })
 }
 
 export function pickDroidById(droids: Droid[], id: string | null): Droid | null {

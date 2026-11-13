@@ -21,6 +21,7 @@ type RebirthListItemProps = {
   trackInventory: boolean
   open: boolean
   onToggle: () => void
+  highlighted?: boolean
 }
 
 const RebirthListItem = memo(function RebirthListItem({
@@ -32,6 +33,7 @@ const RebirthListItem = memo(function RebirthListItem({
   trackInventory,
   open,
   onToggle,
+  highlighted = false,
 }: RebirthListItemProps) {
   const { t } = useTranslation()
   const tierLabels = useTierLabels()
@@ -50,6 +52,7 @@ const RebirthListItem = memo(function RebirthListItem({
         aria-expanded={open}
         onClick={onToggle}
         data-testid={`progress-list-item-${rebirth}`}
+        data-highlighted={highlighted ? 'true' : undefined}
       >
         <span className="row-main">
           <span className="dname" style={{ display: 'block' }}>
@@ -187,8 +190,6 @@ export function ProgressRebirthList({
     return () => window.cancelAnimationFrame(id)
   }, [navTarget, pathId, expandOne, onNavHandled])
 
-  void highlightRebirth
-
   const toggleLabel = anyExpanded ? t('progress.collapseAll') : t('progress.expandAll')
   const toggleAria = anyExpanded ? t('progress.collapseAllAria') : t('progress.expandAllAria')
 
@@ -218,6 +219,7 @@ export function ProgressRebirthList({
           trackInventory={trackInventory}
           open={isExpanded(rebirth)}
           onToggle={() => toggleOne(rebirth)}
+          highlighted={highlightRebirth === rebirth}
         />
       ))}
     </div>

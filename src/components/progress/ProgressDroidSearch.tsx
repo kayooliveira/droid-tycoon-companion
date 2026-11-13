@@ -1,5 +1,5 @@
 import { CaretRight } from '@phosphor-icons/react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { cycleById, droidById, gameData } from '../../domain/gameData'
 import {
@@ -22,7 +22,7 @@ import { DroidImage } from '../DroidImage'
 import { SearchInput } from '../ui/SearchInput'
 import { uiIconProps } from '../ui/iconStyle'
 import {
-  formatTierListPt,
+  formatTierList,
   nextUsePreviewLine,
   pickDroidById,
   tierThumbForDroid,
@@ -52,7 +52,8 @@ export function ProgressDroidSearch({
   const [browseQuery, setBrowseQuery] = useState('')
   const [expandedPaths, setExpandedPaths] = useState<Record<string, boolean>>({})
   const [inputFocused, setInputFocused] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const [suppressTabRestore, setSuppressTabRestore] = useState(false)
+  const suppressTabTimerRef = useRef<number | null>(null)
 
   const trimmedQuery = query.trim()
   const searchActive = trimmedQuery.length > 0
@@ -61,16 +62,53 @@ export function ProgressDroidSearch({
     onSearchActiveChange?.(searchActive)
   }, [searchActive, onSearchActiveChange])
 
-  const keyboardOpen = useSoftKeyboardVisible(inputFocused && searchActive)
+  useSoftKeyboardVisible(inputFocused)
+
+  const hideTabBar = inputFocused || suppressTabRestore
 
   useEffect(() => {
     const root = document.documentElement
-    if (keyboardOpen) root.dataset.ddKeyboard = 'open'
+    if (hideTabBar) root.dataset.ddKeyboard = 'open'
     else delete root.dataset.ddKeyboard
     return () => {
       delete root.dataset.ddKeyboard
     }
-  }, [keyboardOpen])
+  }, [hideTabBar])
+
+  const holdTabBarDuringTap = useCallback(() => {
+    setSuppressTabRestore(true)
+    if (suppressTabTimerRef.current != null) {
+      window.clearTimeout(suppressTabTimerRef.current)
+    }
+    suppressTabTimerRef.current = window.setTimeout(() => {
+      setSuppressTabRestore(false)
+      suppressTabTimerRef.current = null
+    }, 400)
+  }, [])
+
+  const dismissSearch = useCallback(() => {
+    setQuery('')
+    setSelectedDroidId(null)
+    setBrowseQuery('')
+    setInputFocused(false)
+    document.getElementById('progress-droid-search-input')?.blur()
+  }, [])
+
+  const handleNavigate = useCallback(
+    (target: ProgressNavTarget) => {
+      holdTabBarDuringTap()
+      dismissSearch()
+      onNavigateToStep(target)
+    },
+    [dismissSearch, holdTabBarDuringTap, onNavigateToStep],
+  )
+
+  const handleBlur = useCallback(() => {
+    window.setTimeout(() => {
+      if (suppressTabRestore) return
+      setInputFocused(false)
+    }, 150)
+  }, [suppressTabRestore])
 
   const matchedDroids = useMemo(() => {
     if (trimmedQuery.length < 1) return []
@@ -142,46 +180,55 @@ export function ProgressDroidSearch({
   const cycleCount = grouped.length
   const selectedSummary =
     selectedDroid && nextHit && !neverNeeded
-      ? t('progress.search.appearsSummary', {
-          cycleCount,
-          ciclo: cycleNumberFromPathId(progress.pathId),
-          n: nextHit.rebirth,
-          tier: formatTierName(nextHit.tier, tierLabels),
-          qty: nextHit.quantity,
-        })
+      ? nextHit.pathId === progress.pathId
+        ? t('progress.search.appearsSummaryCurrent', {
+            cycleCount,
+            ciclo: cycleNumberFromPathId(progress.pathId),
+            n: nextHit.rebirth,
+            tier: formatTierName(nextHit.tier, tierLabels),
+            qty: nextHit.quantity,
+          })
+        : t('progress.search.appearsSummaryOther', {
+            cycleCount,
+            hitCiclo: cycleNumberFromPathId(nextHit.pathId),
+            n: nextHit.rebirth,
+            tier: formatTierName(nextHit.tier, tierLabels),
+            qty: nextHit.quantity,
+          })
       : null
 
   return (
     <div
-      className={cn('progress-droid-search', stickySearch && 'busca-stick')}
+      className="progress-droid-search"
       data-testid="progress-droid-search"
-      data-keyboard-open={keyboardOpen ? 'true' : undefined}
+      data-keyboard-open={hideTabBar ? 'true' : undefined}
     >
-      <label className="sr-only" htmlFor="progress-droid-search-input">
-        {t('progress.search.label')}
-      </label>
-      <SearchInput
-        id="progress-droid-search-input"
-        ref={inputRef}
-        autoComplete="off"
-        spellCheck={false}
-        value={query}
-        onChange={(e) => {
-          setQuery(e.target.value)
-          setSelectedDroidId(null)
-        }}
-        onFocus={() => setInputFocused(true)}
-        onBlur={() => setInputFocused(false)}
-        placeholder={t('progress.search.placeholder')}
-        aria-controls="progress-droid-search-results"
-        aria-expanded={searchActive}
-        data-testid="progress-droid-search-input"
-        clearLabel={t('progress.search.clear')}
-        clearTestId="progress-droid-search-clear"
-        onClear={clearAll}
-        className="progress-search-field"
-        inputClassName={inputFocused ? 'is-focus' : undefined}
-      />
+      <div className={cn(stickySearch && 'busca-stick', 'busca-field-block')}>
+        <label className="sr-only" htmlFor="progress-droid-search-input">
+          {t('progress.search.label')}
+        </label>
+        <SearchInput
+          id="progress-droid-search-input"
+          autoComplete="off"
+          spellCheck={false}
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value)
+            setSelectedDroidId(null)
+          }}
+          onFocus={() => setInputFocused(true)}
+          onBlur={handleBlur}
+          placeholder={t('progress.search.placeholder')}
+          aria-controls="progress-droid-search-results"
+          aria-expanded={searchActive}
+          data-testid="progress-droid-search-input"
+          clearLabel={t('progress.search.clear')}
+          clearTestId="progress-droid-search-clear"
+          onClear={clearAll}
+          className="progress-search-field"
+          inputClassName={inputFocused ? 'is-focus' : undefined}
+        />
+      </div>
 
       {showEmptyHint ? (
         <p className="hint busca-hint" data-testid="progress-droid-search-hint">
@@ -214,6 +261,7 @@ export function ProgressDroidSearch({
                     role="option"
                     className="busca-hit"
                     data-testid={`progress-search-pick-${d.id}`}
+                    onPointerDown={holdTabBarDuringTap}
                     onClick={() => selectDroid(d.id, d.name)}
                   >
                     <span className="busca-thumb" aria-hidden>
@@ -247,7 +295,8 @@ export function ProgressDroidSearch({
             }
             cycleLabel={cycleLabel}
             tierLabels={tierLabels}
-            onNavigateToStep={onNavigateToStep}
+            onNavigateToStep={handleNavigate}
+            onHoldPointerDown={holdTabBarDuringTap}
           />
         ) : null}
       </div>
@@ -277,6 +326,7 @@ function SelectedDroidPanel({
   cycleLabel,
   tierLabels,
   onNavigateToStep,
+  onHoldPointerDown,
 }: {
   droid: NonNullable<ReturnType<typeof droidById.get>>
   browseQuery: string
@@ -290,6 +340,7 @@ function SelectedDroidPanel({
   cycleLabel: (pathId: string) => string
   tierLabels: Map<string, string>
   onNavigateToStep: (target: ProgressNavTarget) => void
+  onHoldPointerDown: () => void
 }) {
   const { t } = useTranslation()
   const progress = useAppStore((s) => s.progress)
@@ -315,6 +366,11 @@ function SelectedDroidPanel({
   if (neverNeeded) {
     return (
       <div className="busca-status" data-testid="progress-droid-search-never">
+        {browseQuery ? (
+          <button type="button" className="busca-back" onClick={onBack}>
+            {t('progress.search.backToResults', { query: browseQuery })}
+          </button>
+        ) : null}
         <div className="busca-head">
           <span className="busca-thumb busca-thumb--head" aria-hidden>
             <DroidImage droid={droid} size="sm" />
@@ -358,12 +414,18 @@ function SelectedDroidPanel({
 
       {nextHit && nextHit.pathId === currentPathId ? (
         <>
-          <NextUseCard hit={nextHit} tierLabels={tierLabels} onGo={() => onNavigateToStep({ pathId: nextHit.pathId, rebirth: nextHit.rebirth })} />
+          <NextUseCard
+            hit={nextHit}
+            tierLabels={tierLabels}
+            onHoldPointerDown={onHoldPointerDown}
+            onGo={() => onNavigateToStep({ pathId: nextHit.pathId, rebirth: nextHit.rebirth })}
+          />
           <div className="need-cta">
             <button
               type="button"
               className="btn btn--primary btn--block"
               data-testid="progress-search-next-cta"
+              onPointerDown={onHoldPointerDown}
               onClick={() => onNavigateToStep({ pathId: nextHit.pathId, rebirth: nextHit.rebirth })}
             >
               {t('progress.search.viewRebirth', { n: nextHit.rebirth })}
@@ -372,11 +434,18 @@ function SelectedDroidPanel({
         </>
       ) : nextHit ? (
         <>
-          <NextUseCard hit={nextHit} tierLabels={tierLabels} onGo={() => onNavigateToStep({ pathId: nextHit.pathId, rebirth: nextHit.rebirth })} />
+          <NextUseCard
+            hit={nextHit}
+            tierLabels={tierLabels}
+            onHoldPointerDown={onHoldPointerDown}
+            onGo={() => onNavigateToStep({ pathId: nextHit.pathId, rebirth: nextHit.rebirth })}
+          />
           <div className="need-cta">
             <button
               type="button"
               className="btn btn--primary btn--block"
+              data-testid="progress-search-next-cta"
+              onPointerDown={onHoldPointerDown}
               onClick={() => onNavigateToStep({ pathId: nextHit.pathId, rebirth: nextHit.rebirth })}
             >
               {t('progress.search.viewRebirth', { n: nextHit.rebirth })}
@@ -393,7 +462,13 @@ function SelectedDroidPanel({
           </div>
           <ul className="busca-sec-list">
             {stillInCurrent.map((hit) => (
-              <CompactNeedRow key={rowKey(hit)} hit={hit} tierLabels={tierLabels} onGo={() => onNavigateToStep({ pathId: hit.pathId, rebirth: hit.rebirth })} />
+              <CompactNeedRow
+                key={rowKey(hit)}
+                hit={hit}
+                tierLabels={tierLabels}
+                onHoldPointerDown={onHoldPointerDown}
+                onGo={() => onNavigateToStep({ pathId: hit.pathId, rebirth: hit.rebirth })}
+              />
             ))}
           </ul>
         </section>
@@ -414,6 +489,7 @@ function SelectedDroidPanel({
               cycleLabel={cycleLabel(pathId)}
               tierLabels={tierLabels}
               onNavigateToStep={onNavigateToStep}
+              onHoldPointerDown={onHoldPointerDown}
             />
           ))}
         </section>
@@ -430,10 +506,12 @@ function NextUseCard({
   hit,
   tierLabels,
   onGo,
+  onHoldPointerDown,
 }: {
   hit: ProgressDroidNeedHit
   tierLabels: Map<string, string>
   onGo: () => void
+  onHoldPointerDown: () => void
 }) {
   const { t } = useTranslation()
   const progress = useAppStore((s) => s.progress)
@@ -453,9 +531,12 @@ function NextUseCard({
       data-testid="progress-search-next-card"
       data-highlighted={onCurrent ? 'true' : undefined}
       aria-label={t('progress.search.openStepAria', { ciclo, n: hit.rebirth })}
+      onPointerDown={onHoldPointerDown}
       onClick={onGo}
     >
-      <span className="t-label need-kicker">{t('progress.search.nextInYourCycle')}</span>
+      <span className="t-label need-kicker">
+        {onCurrent ? t('progress.search.nextInYourCycle') : t('progress.search.nextUpcoming')}
+      </span>
       <span className="dname">{t('progress.search.rebirthStep', { n: hit.rebirth })}</span>
       <span className="need-line">
         <TierPill tier={hit.tier} label={tierLabel} />
@@ -472,10 +553,12 @@ function CompactNeedRow({
   hit,
   tierLabels,
   onGo,
+  onHoldPointerDown,
 }: {
   hit: ProgressDroidNeedHit
   tierLabels: Map<string, string>
   onGo: () => void
+  onHoldPointerDown: () => void
 }) {
   const { t } = useTranslation()
   const tierLabel = formatTierName(hit.tier, tierLabels)
@@ -488,6 +571,7 @@ function CompactNeedRow({
         className="need-row"
         data-testid={`progress-search-hit-${hit.pathId}-${hit.rebirth}`}
         aria-label={t('progress.search.openStepAria', { ciclo, n: hit.rebirth })}
+        onPointerDown={onHoldPointerDown}
         onClick={onGo}
       >
         <span className="row-main">
@@ -513,6 +597,7 @@ function OtherCycleGroup({
   cycleLabel,
   tierLabels,
   onNavigateToStep,
+  onHoldPointerDown,
 }: {
   pathId: string
   hits: ProgressDroidNeedHit[]
@@ -521,10 +606,11 @@ function OtherCycleGroup({
   cycleLabel: string
   tierLabels: Map<string, string>
   onNavigateToStep: (target: ProgressNavTarget) => void
+  onHoldPointerDown: () => void
 }) {
   const { t } = useTranslation()
   const rebirthCount = new Set(hits.map((h) => h.rebirth)).size
-  const tiers = formatTierListPt(uniqueTiersInHits(hits, tierLabels))
+  const tiers = formatTierList(uniqueTiersInHits(hits, tierLabels), t)
 
   if (!expanded) {
     return (
@@ -572,6 +658,7 @@ function OtherCycleGroup({
             key={rowKey(hit)}
             hit={hit}
             tierLabels={tierLabels}
+            onHoldPointerDown={onHoldPointerDown}
             onGo={() => onNavigateToStep({ pathId: hit.pathId, rebirth: hit.rebirth })}
           />
         ))}

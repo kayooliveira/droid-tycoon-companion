@@ -22,7 +22,8 @@ export const SearchInput = forwardRef<
       <IcSearch />
       <input
         ref={ref}
-        type="search"
+        type="text"
+        inputMode="search"
         enterKeyHint="search"
         className={cn('field', inputClassName)}
         value={value}
