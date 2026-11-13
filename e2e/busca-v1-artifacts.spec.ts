@@ -225,6 +225,90 @@ test('regressão dtile: vender @390 oficina dark', async ({ page }) => {
   await shot(page, 'regressao-dtile-vender-oficina-dark-390.png')
 })
 
+const CONTRAST_COMBOS: Array<[string, 'dark' | 'light']> = [
+  ['oficina', 'dark'],
+  ['oficina', 'light'],
+  ['figurinhas', 'dark'],
+  ['figurinhas', 'light'],
+  ['cartaz', 'dark'],
+  ['cartaz', 'light'],
+]
+
+function parseRgb(css: string): [number, number, number] | null {
+  const m = css.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/)
+  if (!m) return null
+  return [Number(m[1]), Number(m[2]), Number(m[3])]
+}
+
+function luminance([r, g, b]: [number, number, number]) {
+  const lin = (v: number) => {
+    v /= 255
+    return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4
+  }
+  return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)
+}
+
+function contrastRatio(fg: string, bg: string): number | null {
+  const fgRgb = parseRgb(fg)
+  const bgRgb = parseRgb(bg)
+  if (!fgRgb || !bgRgb) return null
+  const l1 = luminance(fgRgb)
+  const l2 = luminance(bgRgb)
+  return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05)
+}
+
+test('busca contraste clear e chevron >= 3:1 (6 temas)', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  const report: Array<Record<string, unknown>> = []
+  for (const [theme, mode] of CONTRAST_COMBOS) {
+    await openProgress(page, theme, mode)
+    await setSearchState(page, 'selecionado')
+    const samples = await page.evaluate(() => {
+      const pickBg = (el: Element) => {
+        let node: Element | null = el
+        while (node) {
+          const bg = getComputedStyle(node).backgroundColor
+          if (!bg.includes('rgba(0, 0, 0, 0)') && bg !== 'transparent') return bg
+          node = node.parentElement
+        }
+        return getComputedStyle(document.documentElement).backgroundColor
+      }
+      const clearBtn = document.querySelector('[data-testid="progress-droid-search-clear"]')
+      const chev =
+        document.querySelector('.progress-droid-search .need-row .chev') ??
+        document.querySelector('.progress-droid-search .chev')
+      const field = document.querySelector('.progress-search-field .field')
+      const resolveBg = (el: Element | null) => {
+        if (!el) return null
+        const direct = getComputedStyle(el).backgroundColor
+        if (direct && !direct.includes('rgba(0, 0, 0, 0)')) return direct
+        return pickBg(el)
+      }
+      const fieldBg = resolveBg(field)
+      const sample = (el: Element | null, bg: string | null) =>
+        el && bg ? { fg: getComputedStyle(el).color, bg } : null
+      const chevBg = chev ? pickBg(chev) : null
+      return {
+        clear: sample(clearBtn, fieldBg),
+        chev: sample(chev, chevBg),
+        csFg: getComputedStyle(document.documentElement).getPropertyValue('--cs-fg').trim(),
+      }
+    })
+    const clearRatio = samples.clear ? contrastRatio(samples.clear.fg, samples.clear.bg) : null
+    const chevRatio = samples.chev ? contrastRatio(samples.chev.fg, samples.chev.bg) : null
+    report.push({
+      theme,
+      mode,
+      csFg: samples.csFg,
+      clear: clearRatio != null ? Math.round(clearRatio * 100) / 100 : null,
+      chevron: chevRatio != null ? Math.round(chevRatio * 100) / 100 : null,
+    })
+    expect(clearRatio, `${theme}-${mode} clear`).toBeGreaterThanOrEqual(3)
+    expect(chevRatio, `${theme}-${mode} chevron`).toBeGreaterThanOrEqual(3)
+  }
+  console.log(`BUSCA_CONTRAST_REPORT ${JSON.stringify(report)}`)
+})
+
 test('busca CTA abre renascimento destacado na lista', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await openProgress(page, 'oficina', 'dark')

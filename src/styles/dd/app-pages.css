@@ -1091,13 +1091,33 @@ button.row.row--link::after {
 
 .progress-droid-search .chev {
   color: var(--c-text);
-  opacity: 0.88;
+  opacity: 1;
   flex: none;
+}
+
+.progress-droid-search .chev .ic,
+.progress-droid-search .chev svg {
+  color: inherit;
+  fill: currentColor;
+  stroke: none;
+}
+
+/* Cartaz mock: section ink (--cs-fg) matches primary text; other themes use --c-text. */
+[data-theme='cartaz'] .progress-droid-search .chev,
+[data-theme='cartaz'] .progress-droid-search .field-clear {
+  color: var(--cs-fg);
 }
 
 .progress-droid-search .field-clear {
   color: var(--c-text);
-  opacity: 0.82;
+  opacity: 1;
+}
+
+.progress-droid-search .field-clear .ic,
+.progress-droid-search .field-clear svg {
+  color: inherit;
+  fill: currentColor;
+  stroke: none;
 }
 
 .acc-h[data-highlighted='true'] {
