@@ -19,7 +19,27 @@ describe('ProgressDroidSearch', () => {
     cleanup()
   })
 
-  it('finds MO-TRAK from motrak and groups by cycle', async () => {
+  it('keeps the same input element identity across several keystrokes', async () => {
+    render(
+      <I18nextProvider i18n={i18n}>
+        <MemoryRouter>
+          <ProgressDroidSearch onNavigateToStep={vi.fn()} />
+        </MemoryRouter>
+      </I18nextProvider>,
+    )
+    const input = screen.getByTestId('progress-droid-search-input')
+    const identity = input
+    fireEvent.change(input, { target: { value: 'm' } })
+    fireEvent.change(input, { target: { value: 'mo' } })
+    fireEvent.change(input, { target: { value: 'mot' } })
+    fireEvent.change(input, { target: { value: 'motr' } })
+    await waitFor(() => {
+      expect(screen.getByTestId('progress-droid-search-input')).toBe(identity)
+    })
+    expect(screen.getByTestId('progress-droid-search-input')).toHaveValue('motr')
+  })
+
+  it('finds MO-TRAK from motrak after selecting a match', async () => {
     const onNav = vi.fn()
     render(
       <I18nextProvider i18n={i18n}>
@@ -31,6 +51,8 @@ describe('ProgressDroidSearch', () => {
     fireEvent.change(screen.getByTestId('progress-droid-search-input'), {
       target: { value: 'motrak' },
     })
+    const pick = await screen.findByTestId('progress-search-pick-mo-trak')
+    fireEvent.click(pick)
     await waitFor(() => {
       expect(screen.getByTestId('progress-search-path-path-1')).toBeInTheDocument()
     })
@@ -38,8 +60,6 @@ describe('ProgressDroidSearch', () => {
   })
 
   it('shows never-needed message for unused droids', async () => {
-    const never = useAppStore.getState()
-    void never
     const { gameData } = await import('../../domain/gameData')
     const { isDroidNeverNeededForProgress } = await import('../../domain/progressDroidSearch')
     const droid = gameData.droids.find((d) => isDroidNeverNeededForProgress(d.id))
@@ -55,6 +75,8 @@ describe('ProgressDroidSearch', () => {
     fireEvent.change(screen.getByTestId('progress-droid-search-input'), {
       target: { value: droid!.name },
     })
+    const pick = await screen.findByTestId(`progress-search-pick-${droid!.id}`)
+    fireEvent.click(pick)
     await waitFor(() => {
       expect(screen.getByTestId('progress-droid-search-never')).toBeInTheDocument()
     })
@@ -71,12 +93,10 @@ describe('ProgressDroidSearch', () => {
     fireEvent.change(screen.getByTestId('progress-droid-search-input'), {
       target: { value: 'motrak' },
     })
-    await waitFor(() => {
-      expect(screen.getByTestId('progress-search-path-path-1')).toBeInTheDocument()
-    })
+    await screen.findByTestId('progress-search-pick-mo-trak')
     fireEvent.click(screen.getByTestId('progress-droid-search-clear'))
     expect(screen.queryByTestId('progress-search-path-path-1')).not.toBeInTheDocument()
-    expect(screen.queryByText('MO-TRAK')).not.toBeInTheDocument()
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
   })
 
   it('navigates when tapping a result row', async () => {
@@ -91,6 +111,7 @@ describe('ProgressDroidSearch', () => {
     fireEvent.change(screen.getByTestId('progress-droid-search-input'), {
       target: { value: 'motrak' },
     })
+    fireEvent.click(await screen.findByTestId('progress-search-pick-mo-trak'))
     await waitFor(() => {
       expect(screen.getAllByTestId(/^progress-search-hit-path-1-/).length).toBeGreaterThan(0)
     })

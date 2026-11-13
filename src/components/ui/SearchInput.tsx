@@ -1,29 +1,31 @@
 import { X } from '@phosphor-icons/react'
-import type { InputHTMLAttributes } from 'react'
+import { forwardRef, type InputHTMLAttributes } from 'react'
 import { IcSearch } from '../inventoryIcons'
 import { uiIconProps } from './iconStyle'
 import { cn } from '../../lib/utils'
 
-export function SearchInput({
-  className,
-  onClear,
-  value,
-  clearLabel,
-  clearTestId,
-  ...props
-}: InputHTMLAttributes<HTMLInputElement> & {
-  onClear?: () => void
-  clearLabel?: string
-  clearTestId?: string
-}) {
+export const SearchInput = forwardRef<
+  HTMLInputElement,
+  InputHTMLAttributes<HTMLInputElement> & {
+    onClear?: () => void
+    clearLabel?: string
+    clearTestId?: string
+    inputClassName?: string
+  }
+>(function SearchInput(
+  { className, inputClassName, onClear, value, clearLabel, clearTestId, ...props },
+  ref,
+) {
   const showClear = Boolean(onClear && value != null && String(value).length > 0)
   return (
     <div className={cn('field-wrap', showClear ? 'field-wrap--clear' : undefined, className)}>
       <IcSearch />
       <input
-        type="search"
+        ref={ref}
+        type="text"
+        inputMode="search"
         enterKeyHint="search"
-        className="field"
+        className={cn('field', inputClassName)}
         value={value}
         {...props}
       />
@@ -40,4 +42,4 @@ export function SearchInput({
       ) : null}
     </div>
   )
-}
+})

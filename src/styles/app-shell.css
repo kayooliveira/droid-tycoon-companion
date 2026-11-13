@@ -69,6 +69,16 @@
   }
 }
 
+@media (max-width: 767px) {
+  html[data-dd-keyboard='open'] .app-shell .tabbar {
+    display: none;
+  }
+
+  html[data-dd-keyboard='open'] .app-shell .scroll {
+    padding-bottom: calc(var(--sp-4, 16px) + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 .shell-desktop-aside {
   display: none;
 }

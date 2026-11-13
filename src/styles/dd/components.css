@@ -85,6 +85,7 @@ input{font:inherit;color:inherit}
 .field{width:100%;min-height:var(--field-h);padding:0 14px;background:var(--field-bg);color:var(--c-text);border:var(--field-bw) solid var(--c-control-border);border-radius:var(--r-control);font:500 16px/1.2 var(--f-text);outline:0}
 .field-wrap .field{padding-left:44px}
 .field::placeholder{color:var(--c-text-2);opacity:1}
+.field[type=search]::-webkit-search-cancel-button,.field[type=search]::-webkit-search-decoration,.field[type=search]::-webkit-search-results-button{display:none;-webkit-appearance:none}
 .field:focus-visible,.field.is-focus{border-color:var(--c-focus-border);box-shadow:var(--focus-ring)}
 .field.is-error{border-color:var(--c-bad-fg);background:var(--c-bad-bg);box-shadow:var(--error-sh)}
 .err{display:flex;gap:6px;align-items:center;margin-top:8px;color:var(--c-bad-fg);font-size:var(--fs-small);font-weight:700}
