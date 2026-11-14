@@ -144,7 +144,10 @@
       "canSell": "Pode vender sem medo."
     },
     "superConfirmTitle": "Super Renascimento?",
-    "superConfirmBody": "Você sai do {{currentCycle}} e entra no {{nextCycle}}. O renascimento #{{currentStep}} fica fechado no app e o novo ciclo começa do #1. Não dá para desfazer."
+    "superConfirmBody": "Você sai do {{currentCycle}} e entra no {{nextCycle}}. O renascimento #{{currentStep}} fica fechado no app e o novo ciclo começa do #1. Não dá para desfazer.",
+    "superCelebrationTitle": "Super Renascimento",
+    "superCelebrationCycle": "Ciclo {{n}}",
+    "superCelebrationSkip": "Pular animação do Super Renascimento"
   },
   "path": {
     "switch": "Trocar ciclo",

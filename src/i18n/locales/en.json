@@ -144,7 +144,10 @@
       "canSell": "Safe to sell."
     },
     "superConfirmTitle": "Super Rebirth?",
-    "superConfirmBody": "You leave {{currentCycle}} and start {{nextCycle}}. Rebirth #{{currentStep}} is closed in the app and the new Path begins at #1. This cannot be undone."
+    "superConfirmBody": "You leave {{currentCycle}} and start {{nextCycle}}. Rebirth #{{currentStep}} is closed in the app and the new Path begins at #1. This cannot be undone.",
+    "superCelebrationTitle": "Super Rebirth",
+    "superCelebrationCycle": "Cycle {{n}}",
+    "superCelebrationSkip": "Skip Super Rebirth animation"
   },
   "path": {
     "switch": "Change Path",

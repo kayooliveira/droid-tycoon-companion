@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
@@ -39,6 +39,20 @@ import { CycleProgressStrip } from '../components/home/CycleProgressStrip'
 import { DroidDetailSheet } from '../components/droid/DroidDetailSheet'
 import type { TierId } from '../domain/types'
 import { InsetGroup } from '../components/ui/InsetGroup'
+import { useSuperRebirthConfirm } from '../hooks/useSuperRebirthConfirm'
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
+
+const SuperRebirthCelebration = lazy(() =>
+  import('../components/superRebirth/SuperRebirthCelebration').then((m) => ({
+    default: m.SuperRebirthCelebration,
+  })),
+)
+
+type CelebrationState = {
+  cycleNumber: number
+  cycleName: string
+  revealToast: () => void
+}
 
 export function ProgressPage() {
   const { t, i18n } = useTranslation()
@@ -57,7 +71,10 @@ export function ProgressPage() {
   const switchPath = useAppStore((s) => s.switchPath)
   const completeRebirthAdvance = useAppStore((s) => s.completeRebirthAdvance)
   const undoRebirthStep = useAppStore((s) => s.undoRebirthStep)
-  const superRebirthAdvance = useAppStore((s) => s.superRebirthAdvance)
+  const { runSuperRebirth } = useSuperRebirthConfirm()
+  const animationsEnabled = useAppStore((s) => s.settings.animationsEnabled)
+  const prefersReducedMotion = usePrefersReducedMotion()
+  const [celebration, setCelebration] = useState<CelebrationState | null>(null)
   const { push } = useToast()
   const [searchParams, setSearchParams] = useSearchParams()
   const [navTarget, setNavTarget] = useState<ProgressNavTarget | null>(null)
@@ -109,10 +126,17 @@ export function ProgressPage() {
   }
 
   const confirmSuperRebirth = () => {
-    superRebirthAdvance()
+    const nextName = cycleLabel(nextPathId)
+    const nextCycleNumber = cycleNumberFromPathId(nextPathId)
     hapticTap()
     setSuperConfirmOpen(false)
-    push(t('path.switched', { name: cycleLabel(nextPathId) }), { variant: 'info' })
+    const payload = { cycleNumber: nextCycleNumber, cycleName: nextName }
+    runSuperRebirth(nextName, {
+      celebration: animationsEnabled ? payload : undefined,
+      onCelebrateStart: animationsEnabled
+        ? (p, reveal) => setCelebration({ ...p, revealToast: reveal })
+        : undefined,
+    })
   }
 
   const confirmUndo = () => {
@@ -351,6 +375,20 @@ export function ProgressPage() {
           {t('progress.undoConfirm')}
         </p>
       </Modal>
+
+      {celebration ? (
+        <Suspense fallback={null}>
+          <SuperRebirthCelebration
+            cycleNumber={celebration.cycleNumber}
+            cycleName={celebration.cycleName}
+            reducedMotion={prefersReducedMotion}
+            onComplete={() => {
+              celebration.revealToast()
+              setCelebration(null)
+            }}
+          />
+        </Suspense>
+      ) : null}
 
       <div aria-hidden />
     </TabScrollLayout>
