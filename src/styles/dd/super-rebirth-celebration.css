@@ -1,0 +1,145 @@
+.sr-celebration {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  overflow: hidden;
+  max-width: 100vw;
+}
+
+.sr-celebration__skip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--tab-h) + 120px + env(safe-area-inset-bottom, 0px));
+  border: 0;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 5;
+}
+
+.sr-celebration__scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--c-scrim);
+  opacity: 0;
+  will-change: opacity;
+  pointer-events: none;
+}
+
+.sr-celebration__stage {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 390px);
+  padding: 0 var(--sp-page);
+  text-align: center;
+  pointer-events: none;
+}
+
+.sr-celebration__burst {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: min(72vw, 280px);
+  height: min(72vw, 280px);
+  margin-left: min(-36vw, -140px);
+  margin-top: min(-36vw, -140px);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--c-accent-graph) 85%, transparent) 0%,
+    transparent 68%
+  );
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.sr-celebration__shock {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: min(48vw, 200px);
+  height: min(48vw, 200px);
+  margin-left: min(-24vw, -100px);
+  margin-top: min(-24vw, -100px);
+  border-radius: 50%;
+  border: 3px solid color-mix(in srgb, var(--c-accent-graph) 70%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--c-accent-text) 35%, transparent);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.sr-celebration__particles {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.sr-celebration__particle {
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  width: 10px;
+  height: 10px;
+  border-radius: var(--r-chip, 4px);
+  background: var(--sr-p-color, var(--c-accent-graph));
+  opacity: 0;
+  will-change: transform, opacity;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--sr-p-color, var(--c-accent-graph)) 55%, transparent);
+}
+
+.sr-celebration__title {
+  position: relative;
+  margin: 0 0 8px;
+  font: var(--label-weight) var(--label-size) / 1.2 var(--label-font);
+  letter-spacing: var(--label-ls);
+  text-transform: var(--label-case);
+  color: var(--c-text-2);
+}
+
+.sr-celebration__cycle {
+  position: relative;
+  margin: 0;
+  font-family: var(--hrn-font);
+  font-size: min(var(--hrn-size), 22vw);
+  font-weight: var(--hrn-weight);
+  line-height: var(--hrn-lh);
+  letter-spacing: var(--hrn-ls);
+  font-variation-settings: var(--hrn-var);
+  color: var(--c-text);
+  text-transform: var(--title-case);
+}
+
+.sr-celebration__name {
+  position: relative;
+  margin: 10px 0 0;
+  font: var(--name-weight) var(--name-size) / 1.15 var(--name-font);
+  font-variation-settings: var(--name-var);
+  color: var(--c-accent-text);
+}
+
+.sr-tier-samples {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.sr-tier-samples .tier-chip {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
