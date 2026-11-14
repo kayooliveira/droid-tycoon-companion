@@ -1,3 +1,10 @@
+html[data-sr-show='1'] .app-shell {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  filter: none !important;
+  pointer-events: none;
+}
+
 html[data-sr-show='1'] .app-shell .toast-slot,
 html[data-sr-show='1'] .app-shell .tabbar,
 html[data-sr-show='1'] .app-shell .scroll {
@@ -13,6 +20,8 @@ html[data-sr-show='1'] .app-shell .scroll {
   max-width: 100vw;
   pointer-events: auto;
   isolation: isolate;
+  --sr-fg: #f5f4f0;
+  --sr-num-size: min(38vw, 168px);
 }
 
 .sr-celebration__skip {
@@ -28,22 +37,31 @@ html[data-sr-show='1'] .app-shell .scroll {
 
 .sr-celebration__backdrop {
   position: absolute;
-  inset: 0;
+  inset: -2px;
   z-index: 0;
   opacity: 0;
-  background:
+  background-color: #030304;
+  background-image:
     radial-gradient(
-      ellipse 95% 75% at 50% 42%,
+      ellipse 140% 110% at 50% 44%,
       color-mix(in srgb, var(--c-accent-graph) 18%, transparent) 0%,
       transparent 58%
     ),
-    radial-gradient(
-      ellipse 120% 100% at 50% 50%,
-      color-mix(in srgb, var(--c-bg) 45%, #030304) 0%,
-      color-mix(in srgb, var(--c-bg) 88%, #000) 52%,
-      #030304 100%
-    );
+    radial-gradient(ellipse 200% 180% at 50% 50%, #14151a 0%, #060608 55%, #030304 100%);
   will-change: opacity;
+}
+
+.sr-celebration__backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 95% 88% at 50% 46%,
+    transparent 35%,
+    rgba(0, 0, 0, 0.42) 72%,
+    rgba(0, 0, 0, 0.78) 100%
+  );
+  pointer-events: none;
 }
 
 .sr-celebration__canvas {
@@ -55,10 +73,118 @@ html[data-sr-show='1'] .app-shell .scroll {
   pointer-events: none;
 }
 
+.sr-celebration__viewport-fx {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.sr-celebration__flash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 46%, rgba(255, 255, 255, 0.92) 0%, transparent 58%);
+  opacity: 0;
+  will-change: opacity;
+}
+
+.sr-celebration__shock {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 160px;
+  height: 160px;
+  margin: -80px 0 0 -80px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  box-shadow:
+    0 0 0 0 rgba(255, 255, 255, 0),
+    0 0 18px 2px rgba(255, 255, 255, 0.55),
+    0 0 42px 6px color-mix(in srgb, var(--c-accent-graph) 45%, rgba(255, 255, 255, 0.85)),
+    0 0 72px 14px color-mix(in srgb, var(--c-accent-graph) 18%, transparent);
+  opacity: 0;
+  transform-origin: 50% 50%;
+  will-change: transform, opacity, filter;
+}
+
+.sr-celebration__shock--outer {
+  box-shadow:
+    0 0 0 0 rgba(255, 255, 255, 0),
+    0 0 28px 4px rgba(255, 255, 255, 0.22),
+    0 0 64px 16px color-mix(in srgb, var(--c-accent-graph) 22%, transparent),
+    0 0 110px 28px color-mix(in srgb, var(--c-accent-graph) 8%, transparent);
+}
+
+.sr-celebration__rays {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 0;
+  height: 0;
+}
+
+.sr-celebration__ray {
+  position: absolute;
+  left: -2px;
+  top: 0;
+  width: 4px;
+  height: min(52vh, 400px);
+  transform-origin: 50% 0;
+  transform: rotate(calc(var(--sr-ray-i) * 22.5deg)) translateY(-24px);
+  opacity: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--c-accent-graph) 85%, #fff) 0%,
+    transparent 88%
+  );
+  border-radius: 4px;
+  filter: blur(0.8px);
+  will-change: transform, opacity;
+}
+
+.sr-celebration__ray:nth-child(3n) {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--tier-gold, #e6b323) 85%, #fff) 0%,
+    transparent 90%
+  );
+}
+
+.sr-celebration__ray:nth-child(3n + 1) {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--tier-diamond, #2e78e6) 80%, #fff) 0%,
+    transparent 90%
+  );
+}
+
+.sr-celebration__core {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: min(58vw, 260px);
+  height: 3px;
+  margin: -1px 0 0 calc(min(-29vw, -130px));
+  transform-origin: 50% 50%;
+  transform: scaleX(0);
+  border-radius: 99px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--c-accent-graph) 90%, #fff),
+    transparent
+  );
+  box-shadow: 0 0 28px color-mix(in srgb, var(--c-accent-graph) 75%, #fff);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
 .sr-celebration__shake {
   position: absolute;
   inset: 0;
-  z-index: 3;
+  z-index: 4;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -69,112 +195,19 @@ html[data-sr-show='1'] .app-shell .scroll {
 .sr-celebration__stage {
   position: relative;
   width: min(100%, 390px);
-  min-height: 52dvh;
-  margin: 0 auto;
   padding: 0 var(--sp-page);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.sr-celebration__flash {
-  position: absolute;
-  inset: -20%;
-  background: radial-gradient(circle at 50% 46%, rgba(255, 255, 255, 0.95) 0%, transparent 62%);
-  opacity: 0;
-  pointer-events: none;
-  will-change: opacity;
-}
-
-.sr-celebration__shock {
-  position: absolute;
-  left: 50%;
-  top: 46%;
-  width: min(42vw, 180px);
-  height: min(42vw, 180px);
-  margin: calc(min(-21vw, -90px)) 0 0 calc(min(-21vw, -90px));
-  border-radius: 50%;
-  border: 2px solid color-mix(in srgb, var(--c-accent-graph) 75%, #fff);
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--c-text) 35%, transparent),
-    0 0 40px color-mix(in srgb, var(--c-accent-graph) 55%, transparent);
-  opacity: 0;
-  transform-origin: 50% 50%;
-  will-change: transform, opacity;
-}
-
-.sr-celebration__rays {
-  position: absolute;
-  left: 50%;
-  top: 46%;
-  width: 0;
-  height: 0;
-  pointer-events: none;
-}
-
-.sr-celebration__ray {
-  position: absolute;
-  left: -2px;
-  top: 0;
-  width: 4px;
-  height: min(48vh, 360px);
-  transform-origin: 50% 0;
-  transform: rotate(calc(var(--sr-ray-i) * 22.5deg)) translateY(-20px);
-  opacity: 0;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--tier-kyber, var(--c-accent-graph)) 0%, var(--c-accent-graph)) 0%,
-    transparent 85%
-  );
-  border-radius: 4px;
-  filter: blur(0.5px);
-  will-change: transform, opacity;
-}
-
-.sr-celebration__ray:nth-child(3n) {
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--tier-gold, var(--c-accent-text)) 70%, #fff) 0%,
-    transparent 88%
-  );
-}
-
-.sr-celebration__ray:nth-child(3n + 1) {
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--tier-diamond, #2e78e6) 65%, #fff) 0%,
-    transparent 88%
-  );
-}
-
-.sr-celebration__core {
-  position: absolute;
-  left: 50%;
-  top: 46%;
-  width: min(52vw, 220px);
-  height: 3px;
-  margin: -1px 0 0 calc(min(-26vw, -110px));
-  transform-origin: 50% 50%;
-  transform: scaleX(0);
-  border-radius: 99px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    color-mix(in srgb, var(--c-accent-graph) 90%, #fff),
-    transparent
-  );
-  box-shadow: 0 0 24px color-mix(in srgb, var(--c-accent-graph) 70%, #fff);
-  opacity: 0;
-  will-change: transform, opacity;
-}
-
 .sr-celebration__copy {
   position: relative;
-  z-index: 4;
+  z-index: 2;
   width: 100%;
   max-width: 100%;
   text-align: center;
-  color: var(--sr-fg, #f4f3ef);
+  color: var(--sr-fg);
 }
 
 .sr-celebration__title {
@@ -186,7 +219,8 @@ html[data-sr-show='1'] .app-shell .scroll {
   font: var(--label-weight) var(--label-size) / 1.15 var(--label-font);
   letter-spacing: var(--label-ls);
   text-transform: var(--label-case);
-  color: color-mix(in srgb, var(--sr-fg, #f4f3ef) 78%, var(--c-accent-graph));
+  color: #f8f7f4;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.55), 0 0 20px color-mix(in srgb, var(--c-accent-graph) 35%, transparent);
 }
 
 .sr-celebration__title-word {
@@ -198,47 +232,58 @@ html[data-sr-show='1'] .app-shell .scroll {
   position: relative;
   display: inline-block;
   max-width: 100%;
-  overflow: hidden;
   margin: 0 auto;
+  overflow: visible;
+  padding: 0.08em 0.12em;
+}
+
+.sr-celebration__num-glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 0;
+  width: min(160vw, 560px);
+  height: min(120vw, 420px);
+  margin: 0;
+  transform: translate(-50%, -50%) scale(0.6);
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.38) 0%,
+    color-mix(in srgb, var(--c-accent-graph) 32%, transparent) 22%,
+    transparent 62%
+  );
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
 }
 
 .sr-celebration__number {
+  position: relative;
+  z-index: 1;
   margin: 0;
   font-family: var(--hrn-font);
-  font-size: var(--sr-num-size, min(38vw, 168px));
+  font-size: var(--sr-num-size);
   font-weight: var(--hrn-weight);
-  line-height: 0.88;
+  line-height: 0.9;
   letter-spacing: 0.02em;
   font-variation-settings: var(--hrn-var);
   color: #fff;
+  -webkit-text-fill-color: #fff;
   text-shadow:
-    0 0 48px color-mix(in srgb, var(--c-accent-graph) 75%, #fff),
-    0 0 8px color-mix(in srgb, var(--c-accent-graph) 90%, #fff);
-  will-change: transform, opacity, filter, letter-spacing;
-}
-
-.sr-celebration__glint {
-  position: absolute;
-  inset: 0;
-  width: 42%;
-  background: linear-gradient(
-    105deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.05) 40%,
-    rgba(255, 255, 255, 0.85) 50%,
-    rgba(255, 255, 255, 0.08) 60%,
-    transparent 100%
-  );
-  mix-blend-mode: screen;
-  pointer-events: none;
-  will-change: transform, opacity;
+    0 0 10px rgba(255, 255, 255, 0.95),
+    0 0 32px color-mix(in srgb, var(--c-accent-graph) 85%, #fff),
+    0 0 64px color-mix(in srgb, var(--c-accent-graph) 40%, transparent),
+    0 3px 6px rgba(0, 0, 0, 0.55);
+  will-change: transform, opacity, letter-spacing;
 }
 
 .sr-celebration__subtitle {
   margin: 12px 0 0;
   font: var(--name-weight) var(--name-size) / 1.2 var(--name-font);
   font-variation-settings: var(--name-var);
-  color: color-mix(in srgb, var(--sr-fg, #f4f3ef) 88%, var(--c-accent-text));
+  color: #eceae6;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.5);
   will-change: transform, opacity;
 }
 
@@ -258,21 +303,10 @@ html[data-sr-show='1'] .app-shell .scroll {
   height: 28px;
 }
 
-[data-theme='cartaz'] .sr-celebration__number {
+[data-theme='cartaz'] .sr-celebration {
   --sr-num-size: min(34vw, 156px);
 }
 
-[data-mode='light'] .sr-celebration__copy {
-  --sr-fg: #f6f5f1;
-}
-
-html[data-mode='light'] .sr-celebration__backdrop,
-[data-theme][data-mode='light'] .sr-celebration__backdrop {
-  background:
-    radial-gradient(
-      ellipse 95% 75% at 50% 42%,
-      color-mix(in srgb, var(--c-accent-graph) 22%, #1a1a1e) 0%,
-      transparent 58%
-    ),
-    radial-gradient(ellipse 120% 100% at 50% 50%, #101012 0%, #030304 100%);
+[data-theme='cartaz'] .sr-celebration__number {
+  font-variation-settings: normal;
 }

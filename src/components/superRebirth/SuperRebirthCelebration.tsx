@@ -101,11 +101,12 @@ export function SuperRebirthCelebration({
       const core = root.querySelector('[data-sr-core]')
       const flash = root.querySelector('[data-sr-flash]')
       const shock = root.querySelector('[data-sr-shock]')
+      const shock2 = root.querySelector('[data-sr-shock-2]')
+      const numGlow = root.querySelector('[data-sr-num-glow]')
       const shake = root.querySelector('[data-sr-shake]')
       const rays = root.querySelectorAll('[data-sr-ray]')
       const titleWords = root.querySelectorAll('[data-sr-title-word]')
       const num = root.querySelector('[data-sr-number]')
-      const glint = root.querySelector('[data-sr-glint]')
       const subtitle = root.querySelector('[data-sr-subtitle]')
       const shell = shellRef.current
 
@@ -114,11 +115,9 @@ export function SuperRebirthCelebration({
       fxRef.current.resize()
 
       const centerBurst = () => {
-        const stage = root.querySelector('[data-sr-stage]')
-        const rect = stage?.getBoundingClientRect()
         const c = canvas.getBoundingClientRect()
-        const cx = (rect ? rect.left + rect.width / 2 : c.left + c.width / 2) - c.left
-        const cy = (rect ? rect.top + rect.height * 0.46 : c.top + c.height * 0.46) - c.top
+        const cx = c.width / 2
+        const cy = c.height * 0.46
         fxRef.current?.ignite(cx, cy, 1.05)
       }
 
@@ -143,29 +142,22 @@ export function SuperRebirthCelebration({
       gsap.set(backdrop, { opacity: 0 })
       gsap.set(core, { scaleX: 0, opacity: 0 })
       gsap.set(flash, { opacity: 0 })
-      gsap.set(shock, { scale: 0.15, opacity: 0 })
+      gsap.set(shock, { scale: 0.12, opacity: 0, filter: 'blur(0px)' })
+      gsap.set(shock2, { scale: 0.08, opacity: 0, filter: 'blur(0px)' })
+      gsap.set(numGlow, { opacity: 0, scale: 0.6 })
       gsap.set(rays, { scale: 0.4, opacity: 0 })
       gsap.set(titleWords, { y: 22, opacity: 0 })
       gsap.set(num, {
         scale: 2.15,
         opacity: 0,
-        filter: 'blur(14px)',
         letterSpacing: '0.35em',
       })
-      gsap.set(glint, { xPercent: -120, opacity: 0 })
       gsap.set(subtitle, { y: 16, opacity: 0 })
       if (shell) {
-        gsap.set(shell, { transformOrigin: '50% 42%', scale: 1, filter: 'blur(0px)', opacity: 1 })
+        gsap.set(shell, { opacity: 0 })
       }
 
       tl.to(backdrop, { opacity: 1, duration: 0.38, ease: 'power2.in' }, 0)
-      if (shell) {
-        tl.to(
-          shell,
-          { scale: 0.94, filter: 'blur(10px)', opacity: 0, duration: 0.4, ease: 'power3.in' },
-          0,
-        )
-      }
       tl.to(core, { scaleX: 1, opacity: 1, duration: 0.28, ease: 'power2.out' }, 0.12)
       tl.to(core, { opacity: 0.25, duration: 0.35, ease: 'power1.out' }, 0.42)
 
@@ -174,10 +166,17 @@ export function SuperRebirthCelebration({
 
       tl.to(
         shock,
-        { opacity: 0.85, scale: 3.6, duration: 0.9, ease: 'expo.out' },
+        { opacity: 0.88, scale: 4.8, filter: 'blur(6px)', duration: 0.78, ease: 'expo.out' },
         0.32,
       )
-      tl.to(shock, { opacity: 0, duration: 0.45, ease: 'power2.in' }, 0.95)
+      tl.to(shock, { opacity: 0.35, duration: 0.45, ease: 'power1.out' }, 0.55)
+      tl.to(
+        shock2,
+        { opacity: 0.55, scale: 5.6, filter: 'blur(14px)', duration: 1.0, ease: 'expo.out' },
+        0.38,
+      )
+      tl.to(shock2, { opacity: 0, duration: 0.65, ease: 'power2.in' }, 0.78)
+      tl.to(shock, { opacity: 0, scale: 5.4, filter: 'blur(20px)', duration: 0.5, ease: 'power2.in' }, 0.92)
 
       if (shake) {
         tl.to(shake, { x: 9, y: -7, duration: 0.045, repeat: 7, yoyo: true, ease: 'none' }, 0.34)
@@ -203,20 +202,18 @@ export function SuperRebirthCelebration({
         {
           scale: 1,
           opacity: 1,
-          filter: 'blur(0px)',
           letterSpacing: '0.02em',
-          duration: 0.58,
+          duration: 0.36,
           ease: 'power4.out',
         },
-        0.92,
+        0.78,
       )
-      tl.to(glint, { opacity: 0.85, duration: 0.12 }, 1.05)
-      tl.to(glint, { xPercent: 130, duration: 0.65, ease: 'power2.inOut' }, 1.05)
-      tl.to(glint, { opacity: 0, duration: 0.2 }, 1.55)
-      tl.to(subtitle, { y: 0, opacity: 1, duration: 0.42, ease: 'power2.out' }, 1.18)
+      tl.to(numGlow, { opacity: 0.72, scale: 1, duration: 0.38, ease: 'power2.out' }, 0.78)
+      tl.to(numGlow, { opacity: 0.3, scale: 1.06, duration: 0.9, ease: 'power1.out' }, 1.2)
+      tl.to(subtitle, { y: 0, opacity: 1, duration: 0.42, ease: 'power2.out' }, 1.05)
 
       tl.to(
-        [titleWords, num, subtitle, glint, core, shock, flash],
+        [titleWords, num, numGlow, subtitle, core, shock, shock2, flash],
         { opacity: 0, y: -14, duration: 0.42, stagger: 0.03, ease: 'power2.in' },
         2.85,
       )
@@ -269,21 +266,24 @@ export function SuperRebirthCelebration({
         </div>
         <div data-sr-backdrop className="sr-celebration__backdrop" />
         <canvas ref={canvasRef} className="sr-celebration__canvas" aria-hidden />
+        <div className="sr-celebration__viewport-fx" aria-hidden>
+          <div data-sr-flash className="sr-celebration__flash" />
+          <div data-sr-shock className="sr-celebration__shock" />
+          <div data-sr-shock-2 className="sr-celebration__shock sr-celebration__shock--outer" />
+          <div className="sr-celebration__rays">
+            {Array.from({ length: RAY_COUNT }, (_, i) => (
+              <i
+                key={i}
+                data-sr-ray
+                className="sr-celebration__ray"
+                style={{ ['--sr-ray-i' as string]: String(i) }}
+              />
+            ))}
+          </div>
+          <div data-sr-core className="sr-celebration__core" />
+        </div>
         <div data-sr-shake className="sr-celebration__shake">
           <div data-sr-stage className="sr-celebration__stage">
-            <div data-sr-flash className="sr-celebration__flash" aria-hidden />
-            <div data-sr-shock className="sr-celebration__shock" aria-hidden />
-            <div className="sr-celebration__rays" aria-hidden>
-              {Array.from({ length: RAY_COUNT }, (_, i) => (
-                <i
-                  key={i}
-                  data-sr-ray
-                  className="sr-celebration__ray"
-                  style={{ ['--sr-ray-i' as string]: String(i) }}
-                />
-              ))}
-            </div>
-            <div data-sr-core className="sr-celebration__core" aria-hidden />
             <div className="sr-celebration__copy">
               <p id="sr-celebration-title" className="sr-celebration__title">
                 {titleWords.map((word) => (
@@ -293,10 +293,10 @@ export function SuperRebirthCelebration({
                 ))}
               </p>
               <div className="sr-celebration__num-wrap">
+                <span data-sr-num-glow className="sr-celebration__num-glow" aria-hidden />
                 <p data-sr-number className="sr-celebration__number" aria-live="polite">
                   {cycleNumber}
                 </p>
-                <span data-sr-glint className="sr-celebration__glint" aria-hidden />
               </div>
               <p id="sr-celebration-desc" data-sr-subtitle className="sr-celebration__subtitle">
                 {cycleName}
