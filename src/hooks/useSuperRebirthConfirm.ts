@@ -13,6 +13,11 @@ export type SuperRebirthCelebrationPayload = {
   cycleName: string
 }
 
+export type RunSuperRebirthResult = {
+  /** Call after celebration (or immediately when animation is off). */
+  revealToast: () => void
+}
+
 export function useSuperRebirthConfirm() {
   const { t } = useTranslation()
   const { push } = useToast()
@@ -23,34 +28,44 @@ export function useSuperRebirthConfirm() {
   const runSuperRebirth = useCallback(
     (
       nextCycleName: string,
-      celebration?: SuperRebirthCelebrationPayload,
-      onCelebration?: (payload: SuperRebirthCelebrationPayload) => void,
-    ) => {
+      options?: {
+        celebration?: SuperRebirthCelebrationPayload
+        onCelebrateStart?: (
+          payload: SuperRebirthCelebrationPayload,
+          revealToast: () => void,
+        ) => void
+      },
+    ): RunSuperRebirthResult => {
       const before = useAppStore.getState()
       const inventorySnapshot = cloneInventory(before.inventory)
       const hadInventory = inventorySnapshot.length > 0
 
       superRebirthAdvance()
 
-      const payload = celebration
-      if (payload && onCelebration) {
-        onCelebration(payload)
+      const revealToast = () => {
+        push(t('path.switched', { name: nextCycleName }), {
+          variant: 'info',
+          durationMs: 12_000,
+          action: hadInventory
+            ? {
+                label: t('progress.inventoryUndo'),
+                onClick: () => {
+                  const persisted = toPersisted()
+                  importState({ ...persisted, inventory: cloneInventory(inventorySnapshot) })
+                  push(t('progress.inventoryRestored'), { variant: 'success' })
+                },
+              }
+            : undefined,
+        })
       }
 
-      push(t('path.switched', { name: nextCycleName }), {
-        variant: 'info',
-        durationMs: 12_000,
-        action: hadInventory
-          ? {
-              label: t('progress.inventoryUndo'),
-              onClick: () => {
-                const persisted = toPersisted()
-                importState({ ...persisted, inventory: cloneInventory(inventorySnapshot) })
-                push(t('progress.inventoryRestored'), { variant: 'success' })
-              },
-            }
-          : undefined,
-      })
+      if (options?.celebration && options.onCelebrateStart) {
+        options.onCelebrateStart(options.celebration, revealToast)
+        return { revealToast }
+      }
+
+      revealToast()
+      return { revealToast }
     },
     [importState, push, superRebirthAdvance, t, toPersisted],
   )

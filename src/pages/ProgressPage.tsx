@@ -51,6 +51,7 @@ const SuperRebirthCelebration = lazy(() =>
 type CelebrationState = {
   cycleNumber: number
   cycleName: string
+  revealToast: () => void
 }
 
 export function ProgressPage() {
@@ -130,11 +131,12 @@ export function ProgressPage() {
     hapticTap()
     setSuperConfirmOpen(false)
     const payload = { cycleNumber: nextCycleNumber, cycleName: nextName }
-    runSuperRebirth(
-      nextName,
-      animationsEnabled ? payload : undefined,
-      animationsEnabled ? (p) => setCelebration(p) : undefined,
-    )
+    runSuperRebirth(nextName, {
+      celebration: animationsEnabled ? payload : undefined,
+      onCelebrateStart: animationsEnabled
+        ? (p, reveal) => setCelebration({ ...p, revealToast: reveal })
+        : undefined,
+    })
   }
 
   const confirmUndo = () => {
@@ -380,7 +382,10 @@ export function ProgressPage() {
             cycleNumber={celebration.cycleNumber}
             cycleName={celebration.cycleName}
             reducedMotion={prefersReducedMotion}
-            onComplete={() => setCelebration(null)}
+            onComplete={() => {
+              celebration.revealToast()
+              setCelebration(null)
+            }}
           />
         </Suspense>
       ) : null}

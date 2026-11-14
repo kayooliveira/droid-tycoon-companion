@@ -21,6 +21,8 @@ const THEME_COMBOS: Array<{ theme: string; mode: string; label: string }> = [
   { theme: 'cartaz', mode: 'light', label: 'cartaz-light' },
 ]
 
+const BEAT_MS = [200, 400, 680, 1080, 3000] as const
+
 async function seedSuperEligible(page: Page, settings: Record<string, unknown>) {
   await page.goto('/onboarding')
   await page.evaluate(
@@ -104,9 +106,21 @@ test.afterEach(async ({}, testInfo) => {
   saveVideoWebm(video.path, path.join(ARTIFACTS, slug))
 })
 
+async function captureBeats(page: Page, label: string, startedAt: number) {
+  fs.mkdirSync(ARTIFACTS, { recursive: true })
+  const beats = ['beat-01-darken', 'beat-02-ignite', 'beat-03-shock', 'beat-04-slam', 'beat-05-settle']
+  for (let i = 0; i < BEAT_MS.length; i++) {
+    const elapsed = Date.now() - startedAt
+    await page.waitForTimeout(Math.max(0, BEAT_MS[i]! - elapsed))
+    await page.screenshot({
+      path: path.join(ARTIFACTS, `${label}-${beats[i]}.png`),
+    })
+  }
+}
+
 for (const combo of THEME_COMBOS) {
   test(`Super Renascimento celebration video ${combo.label}`, async ({ page }) => {
-    test.setTimeout(90_000)
+    test.setTimeout(120_000)
     await page.addInitScript(() => {
       document.documentElement.classList.add('e2e-safe-area')
     })
@@ -117,23 +131,14 @@ for (const combo of THEME_COMBOS) {
     await page.goto(`/progress?theme=${combo.theme}&mode=${combo.mode}&onboarding=skip`)
     await expect(page.getByTestId('progress-page')).toBeVisible({ timeout: 25_000 })
 
+    const startedAt = Date.now()
     await triggerSuperRebirth(page)
+    await expect(page.getByTestId('toast-item')).toHaveCount(0)
+
+    await captureBeats(page, combo.label, startedAt)
+
+    await expect(page.getByTestId('super-rebirth-celebration')).toBeHidden({ timeout: 9000 })
     await expect(page.getByTestId('toast-item')).toBeVisible({ timeout: 5000 })
-
-    fs.mkdirSync(ARTIFACTS, { recursive: true })
-    await page.screenshot({
-      path: path.join(ARTIFACTS, `${combo.label}-burst.png`),
-    })
-    await page.waitForTimeout(900)
-    await page.screenshot({
-      path: path.join(ARTIFACTS, `${combo.label}-slam.png`),
-    })
-    await page.waitForTimeout(2200)
-    await page.screenshot({
-      path: path.join(ARTIFACTS, `${combo.label}-settle.png`),
-    })
-
-    await expect(page.getByTestId('super-rebirth-celebration')).toBeHidden({ timeout: 8000 })
     await expect(page.getByTestId('path-switcher-trigger')).toContainText(/Ciclo 2/i)
   })
 }
@@ -151,6 +156,7 @@ test('Super Renascimento celebration reduced motion', async ({ page }) => {
   await page.goto('/progress?theme=oficina&mode=dark&onboarding=skip')
   await triggerSuperRebirth(page)
   await expect(page.getByTestId('super-rebirth-celebration')).toBeHidden({ timeout: 5000 })
+  await expect(page.getByTestId('toast-item')).toBeVisible()
   fs.mkdirSync(ARTIFACTS, { recursive: true })
   await page.screenshot({ path: path.join(ARTIFACTS, 'reduced-motion-end.png') })
 })

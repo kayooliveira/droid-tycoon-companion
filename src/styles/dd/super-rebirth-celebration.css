@@ -1,131 +1,245 @@
+html[data-sr-show='1'] .app-shell .toast-slot,
+html[data-sr-show='1'] .app-shell .tabbar,
+html[data-sr-show='1'] .app-shell .scroll {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .sr-celebration {
   position: fixed;
   inset: 0;
-  z-index: 1;
+  z-index: 80;
+  overflow: hidden;
+  max-width: 100vw;
+  pointer-events: auto;
+  isolation: isolate;
+}
+
+.sr-celebration__skip {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  background: transparent;
+}
+
+.sr-celebration__backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  background:
+    radial-gradient(
+      ellipse 95% 75% at 50% 42%,
+      color-mix(in srgb, var(--c-accent-graph) 18%, transparent) 0%,
+      transparent 58%
+    ),
+    radial-gradient(
+      ellipse 120% 100% at 50% 50%,
+      color-mix(in srgb, var(--c-bg) 45%, #030304) 0%,
+      color-mix(in srgb, var(--c-bg) 88%, #000) 52%,
+      #030304 100%
+    );
+  will-change: opacity;
+}
+
+.sr-celebration__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.sr-celebration__shake {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  overflow: hidden;
-  max-width: 100vw;
-}
-
-.sr-celebration__skip {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: calc(var(--tab-h) + 120px + env(safe-area-inset-bottom, 0px));
-  border: 0;
-  margin: 0;
-  padding: 0;
-  background: transparent;
-  cursor: pointer;
-  pointer-events: auto;
-  z-index: 5;
-}
-
-.sr-celebration__scrim {
-  position: absolute;
-  inset: 0;
-  background: var(--c-scrim);
-  opacity: 0;
-  will-change: opacity;
-  pointer-events: none;
+  will-change: transform;
 }
 
 .sr-celebration__stage {
   position: relative;
-  z-index: 2;
   width: min(100%, 390px);
+  min-height: 52dvh;
+  margin: 0 auto;
   padding: 0 var(--sp-page);
-  text-align: center;
-  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.sr-celebration__burst {
+.sr-celebration__flash {
   position: absolute;
-  left: 50%;
-  top: 42%;
-  width: min(72vw, 280px);
-  height: min(72vw, 280px);
-  margin-left: min(-36vw, -140px);
-  margin-top: min(-36vw, -140px);
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    color-mix(in srgb, var(--c-accent-graph) 85%, transparent) 0%,
-    transparent 68%
-  );
+  inset: -20%;
+  background: radial-gradient(circle at 50% 46%, rgba(255, 255, 255, 0.95) 0%, transparent 62%);
   opacity: 0;
-  will-change: transform, opacity;
+  pointer-events: none;
+  will-change: opacity;
 }
 
 .sr-celebration__shock {
   position: absolute;
   left: 50%;
-  top: 42%;
-  width: min(48vw, 200px);
-  height: min(48vw, 200px);
-  margin-left: min(-24vw, -100px);
-  margin-top: min(-24vw, -100px);
+  top: 46%;
+  width: min(42vw, 180px);
+  height: min(42vw, 180px);
+  margin: calc(min(-21vw, -90px)) 0 0 calc(min(-21vw, -90px));
   border-radius: 50%;
-  border: 3px solid color-mix(in srgb, var(--c-accent-graph) 70%, transparent);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--c-accent-text) 35%, transparent);
+  border: 2px solid color-mix(in srgb, var(--c-accent-graph) 75%, #fff);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--c-text) 35%, transparent),
+    0 0 40px color-mix(in srgb, var(--c-accent-graph) 55%, transparent);
   opacity: 0;
+  transform-origin: 50% 50%;
   will-change: transform, opacity;
 }
 
-.sr-celebration__particles {
+.sr-celebration__rays {
   position: absolute;
   left: 50%;
-  top: 42%;
+  top: 46%;
   width: 0;
   height: 0;
   pointer-events: none;
 }
 
-.sr-celebration__particle {
+.sr-celebration__ray {
   position: absolute;
-  left: -5px;
-  top: -5px;
-  width: 10px;
-  height: 10px;
-  border-radius: var(--r-chip, 4px);
-  background: var(--sr-p-color, var(--c-accent-graph));
+  left: -2px;
+  top: 0;
+  width: 4px;
+  height: min(48vh, 360px);
+  transform-origin: 50% 0;
+  transform: rotate(calc(var(--sr-ray-i) * 22.5deg)) translateY(-20px);
+  opacity: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--tier-kyber, var(--c-accent-graph)) 0%, var(--c-accent-graph)) 0%,
+    transparent 85%
+  );
+  border-radius: 4px;
+  filter: blur(0.5px);
+  will-change: transform, opacity;
+}
+
+.sr-celebration__ray:nth-child(3n) {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--tier-gold, var(--c-accent-text)) 70%, #fff) 0%,
+    transparent 88%
+  );
+}
+
+.sr-celebration__ray:nth-child(3n + 1) {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--tier-diamond, #2e78e6) 65%, #fff) 0%,
+    transparent 88%
+  );
+}
+
+.sr-celebration__core {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: min(52vw, 220px);
+  height: 3px;
+  margin: -1px 0 0 calc(min(-26vw, -110px));
+  transform-origin: 50% 50%;
+  transform: scaleX(0);
+  border-radius: 99px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--c-accent-graph) 90%, #fff),
+    transparent
+  );
+  box-shadow: 0 0 24px color-mix(in srgb, var(--c-accent-graph) 70%, #fff);
   opacity: 0;
   will-change: transform, opacity;
-  box-shadow: 0 0 10px color-mix(in srgb, var(--sr-p-color, var(--c-accent-graph)) 55%, transparent);
+}
+
+.sr-celebration__copy {
+  position: relative;
+  z-index: 4;
+  width: 100%;
+  max-width: 100%;
+  text-align: center;
+  color: var(--sr-fg, #f4f3ef);
 }
 
 .sr-celebration__title {
-  position: relative;
-  margin: 0 0 8px;
-  font: var(--label-weight) var(--label-size) / 1.2 var(--label-font);
+  margin: 0 0 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45em;
+  justify-content: center;
+  font: var(--label-weight) var(--label-size) / 1.15 var(--label-font);
   letter-spacing: var(--label-ls);
   text-transform: var(--label-case);
-  color: var(--c-text-2);
+  color: color-mix(in srgb, var(--sr-fg, #f4f3ef) 78%, var(--c-accent-graph));
 }
 
-.sr-celebration__cycle {
+.sr-celebration__title-word {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+.sr-celebration__num-wrap {
   position: relative;
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.sr-celebration__number {
   margin: 0;
   font-family: var(--hrn-font);
-  font-size: min(var(--hrn-size), 22vw);
+  font-size: var(--sr-num-size, min(38vw, 168px));
   font-weight: var(--hrn-weight);
-  line-height: var(--hrn-lh);
-  letter-spacing: var(--hrn-ls);
+  line-height: 0.88;
+  letter-spacing: 0.02em;
   font-variation-settings: var(--hrn-var);
-  color: var(--c-text);
-  text-transform: var(--title-case);
+  color: #fff;
+  text-shadow:
+    0 0 48px color-mix(in srgb, var(--c-accent-graph) 75%, #fff),
+    0 0 8px color-mix(in srgb, var(--c-accent-graph) 90%, #fff);
+  will-change: transform, opacity, filter, letter-spacing;
 }
 
-.sr-celebration__name {
-  position: relative;
-  margin: 10px 0 0;
-  font: var(--name-weight) var(--name-size) / 1.15 var(--name-font);
+.sr-celebration__glint {
+  position: absolute;
+  inset: 0;
+  width: 42%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.05) 40%,
+    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 255, 255, 0.08) 60%,
+    transparent 100%
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.sr-celebration__subtitle {
+  margin: 12px 0 0;
+  font: var(--name-weight) var(--name-size) / 1.2 var(--name-font);
   font-variation-settings: var(--name-var);
-  color: var(--c-accent-text);
+  color: color-mix(in srgb, var(--sr-fg, #f4f3ef) 88%, var(--c-accent-text));
+  will-change: transform, opacity;
 }
 
 .sr-tier-samples {
@@ -140,6 +254,25 @@
 
 .sr-tier-samples .tier-chip {
   display: block;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
+}
+
+[data-theme='cartaz'] .sr-celebration__number {
+  --sr-num-size: min(34vw, 156px);
+}
+
+[data-mode='light'] .sr-celebration__copy {
+  --sr-fg: #f6f5f1;
+}
+
+html[data-mode='light'] .sr-celebration__backdrop,
+[data-theme][data-mode='light'] .sr-celebration__backdrop {
+  background:
+    radial-gradient(
+      ellipse 95% 75% at 50% 42%,
+      color-mix(in srgb, var(--c-accent-graph) 22%, #1a1a1e) 0%,
+      transparent 58%
+    ),
+    radial-gradient(ellipse 120% 100% at 50% 50%, #101012 0%, #030304 100%);
 }
