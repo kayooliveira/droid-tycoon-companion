@@ -198,7 +198,6 @@ test('Super Renascimento celebration reduced motion', async ({ page }) => {
   confirmT = Date.now()
   await expect(page.getByTestId('super-rebirth-celebration')).toBeVisible({ timeout: 8000 })
   await expect(page.getByTestId('super-rebirth-celebration')).toBeHidden({ timeout: 5000 })
-  const endT = Date.now()
   await expect(page.getByTestId('toast-item')).toBeVisible()
   fs.mkdirSync(ARTIFACTS, { recursive: true })
   await page.screenshot({ path: path.join(ARTIFACTS, 'reduced-motion-end.png') })
